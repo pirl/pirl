@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
 )
 

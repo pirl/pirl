@@ -21,9 +21,9 @@ package geth
 import (
 	"encoding/json"
 
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/p2p/discv5"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/p2p/discv5"
+	"github.com/pirl/pirl/params"
 )
 
 // MainnetGenesis returns the JSON spec to use for the main Ethereum network. It

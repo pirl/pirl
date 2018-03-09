@@ -27,8 +27,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/swarm/api"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/swarm/api"
+	"github.com/pirl/pirl/swarm/storage"
 )
 
 type fileInfo struct {

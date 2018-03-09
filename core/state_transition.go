@@ -21,10 +21,10 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/vm"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/params"
 )
 
 var (

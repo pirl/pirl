@@ -20,8 +20,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/ethdb"
 )
 
 // Tests that the node iterator indeed walks over the entire database contents.

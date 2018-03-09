@@ -17,9 +17,9 @@
 package runtime
 
 import (
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/core/vm"
 )
 
 func NewEnv(cfg *Config) *vm.EVM {

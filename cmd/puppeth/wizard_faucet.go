@@ -20,8 +20,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/accounts/keystore"
+	"github.com/pirl/pirl/log"
 )
 
 // deployFaucet queries the user for various input on deploying a faucet, after

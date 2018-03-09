@@ -21,11 +21,11 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/common/math"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/crypto/bn256"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/common/math"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/crypto/bn256"
+	"github.com/pirl/pirl/params"
 	"golang.org/x/crypto/ripemd160"
 )
 

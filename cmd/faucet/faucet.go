@@ -41,23 +41,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/eth"
-	"github.com/DaCHRIS/Iceberg-/eth/downloader"
-	"github.com/DaCHRIS/Iceberg-/ethclient"
-	"github.com/DaCHRIS/Iceberg-/ethstats"
-	"github.com/DaCHRIS/Iceberg-/les"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/node"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/p2p/discover"
-	"github.com/DaCHRIS/Iceberg-/p2p/discv5"
-	"github.com/DaCHRIS/Iceberg-/p2p/nat"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/accounts/keystore"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/eth"
+	"github.com/pirl/pirl/eth/downloader"
+	"github.com/pirl/pirl/ethclient"
+	"github.com/pirl/pirl/ethstats"
+	"github.com/pirl/pirl/les"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/node"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/p2p/discover"
+	"github.com/pirl/pirl/p2p/discv5"
+	"github.com/pirl/pirl/p2p/nat"
+	"github.com/pirl/pirl/params"
 	"golang.org/x/net/websocket"
 )
 
@@ -450,7 +450,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 		case *noauthFlag:
 			username, avatar, address, err = authNoAuth(msg.URL)
 		default:
-			err = errors.New("Something funky happened, please open an issue at https://github.com/DaCHRIS/Iceberg-/issues")
+			err = errors.New("Something funky happened, please open an issue at https://github.com/pirl/pirl/issues")
 		}
 		if err != nil {
 			if err = sendError(conn, err); err != nil {

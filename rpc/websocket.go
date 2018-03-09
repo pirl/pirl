@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/log"
 	"golang.org/x/net/websocket"
 	"gopkg.in/fatih/set.v0"
 )

@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/pirl/pirl/common/math"
 )
 
 func memorySha3(stack *Stack) *big.Int {

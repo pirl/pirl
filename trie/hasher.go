@@ -21,9 +21,9 @@ import (
 	"hash"
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/crypto/sha3"
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/crypto/sha3"
+	"github.com/pirl/pirl/rlp"
 )
 
 type hasher struct {

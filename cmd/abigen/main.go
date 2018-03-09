@@ -24,8 +24,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/accounts/abi/bind"
-	"github.com/DaCHRIS/Iceberg-/common/compiler"
+	"github.com/pirl/pirl/accounts/abi/bind"
+	"github.com/pirl/pirl/common/compiler"
 )
 
 var (

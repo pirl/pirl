@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/common"
 )
 
 // destinations stores one map per contract (keyed by hash of code).

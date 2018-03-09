@@ -18,11 +18,11 @@
 package consensus
 
 import (
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/state"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/params"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/state"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/params"
+	"github.com/pirl/pirl/rpc"
 	"math/big"
 )
 

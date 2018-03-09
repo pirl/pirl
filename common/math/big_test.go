@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/common"
 )
 
 func TestHexOrDecimal256(t *testing.T) {

@@ -54,7 +54,7 @@ func TestBloom(t *testing.T) {
 import (
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/pirl/pirl/core/state"
 )
 
 func TestBloom9(t *testing.T) {

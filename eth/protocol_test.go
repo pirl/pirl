@@ -22,12 +22,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/eth/downloader"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/eth/downloader"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/rlp"
 )
 
 func init() {

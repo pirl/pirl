@@ -25,14 +25,14 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
-	"github.com/DaCHRIS/Iceberg-/accounts/usbwallet"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/accounts/keystore"
+	"github.com/pirl/pirl/accounts/usbwallet"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/p2p/discover"
 )
 
 const (

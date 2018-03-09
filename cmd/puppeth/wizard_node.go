@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/accounts/keystore"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/log"
 )
 
 // deployNode creates a new node configuration based on some user input.

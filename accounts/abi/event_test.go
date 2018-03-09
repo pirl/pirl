@@ -25,8 +25,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -244,7 +244,7 @@ func unpackTestEventData(dest interface{}, hexData string, jsonEvent []byte, ass
 
 /*
 Taken from
-https://github.com/DaCHRIS/Iceberg-/pull/15568
+https://github.com/pirl/pirl/pull/15568
 */
 
 type testResult struct {

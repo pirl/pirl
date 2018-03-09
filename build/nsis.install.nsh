@@ -3,9 +3,9 @@ InstallDir "$InstDir"
 OutFile "${OUTPUTFILE}" # set through command line arguments
 
 # Links for "Add/Remove Programs"
-!define HELPURL "https://github.com/DaCHRIS/Iceberg-/issues"
-!define UPDATEURL "https://github.com/DaCHRIS/Iceberg-/releases"
-!define ABOUTURL "https://github.com/DaCHRIS/Iceberg-#ethereum-go"
+!define HELPURL "https://github.com/pirl/pirl/issues"
+!define UPDATEURL "https://github.com/pirl/pirl/releases"
+!define ABOUTURL "https://github.com/pirl/pirl#ethereum-go"
 !define /date NOW "%Y%m%d"
 
 PageEx license

@@ -22,10 +22,10 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/accounts/abi"
-	"github.com/DaCHRIS/Iceberg-/accounts/abi/bind"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/pirl/pirl/accounts/abi"
+	"github.com/pirl/pirl/accounts/abi/bind"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/types"
 )
 
 // Signer is an interaface defining the callback when a contract requires a

@@ -22,8 +22,8 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/types"
 )
 
 // NotFound is returned by API methods if the requested item does not exist.

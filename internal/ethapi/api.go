@@ -25,21 +25,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
-	"github.com/DaCHRIS/Iceberg-/common/math"
-	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/params"
-	"github.com/DaCHRIS/Iceberg-/rlp"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/accounts/keystore"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/common/hexutil"
+	"github.com/pirl/pirl/common/math"
+	"github.com/pirl/pirl/consensus/ethash"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/core/vm"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/params"
+	"github.com/pirl/pirl/rlp"
+	"github.com/pirl/pirl/rpc"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -421,7 +421,7 @@ func signHash(data []byte) []byte {
 //
 // The key used to calculate the signature is decrypted with the given password.
 //
-// https://github.com/DaCHRIS/Iceberg-/wiki/Management-APIs#personal_sign
+// https://github.com/pirl/pirl/wiki/Management-APIs#personal_sign
 func (s *PrivateAccountAPI) Sign(ctx context.Context, data hexutil.Bytes, addr common.Address, passwd string) (hexutil.Bytes, error) {
 	// Look up the wallet containing the requested signer
 	account := accounts.Account{Address: addr}
@@ -448,7 +448,7 @@ func (s *PrivateAccountAPI) Sign(ctx context.Context, data hexutil.Bytes, addr c
 // Note, the signature must conform to the secp256k1 curve R, S and V values, where
 // the V value must be be 27 or 28 for legacy reasons.
 //
-// https://github.com/DaCHRIS/Iceberg-/wiki/Management-APIs#personal_ecRecover
+// https://github.com/pirl/pirl/wiki/Management-APIs#personal_ecRecover
 func (s *PrivateAccountAPI) EcRecover(ctx context.Context, data, sig hexutil.Bytes) (common.Address, error) {
 	if len(sig) != 65 {
 		return common.Address{}, fmt.Errorf("signature must be 65 bytes long")

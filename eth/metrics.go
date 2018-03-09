@@ -17,8 +17,8 @@
 package eth
 
 import (
-	"github.com/DaCHRIS/Iceberg-/metrics"
-	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/pirl/pirl/metrics"
+	"github.com/pirl/pirl/p2p"
 )
 
 var (

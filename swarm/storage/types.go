@@ -24,9 +24,9 @@ import (
 	"io"
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/bmt"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/crypto/sha3"
+	"github.com/pirl/pirl/bmt"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/crypto/sha3"
 )
 
 type Hasher func() hash.Hash

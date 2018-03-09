@@ -25,13 +25,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/state"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/event"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/metrics"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/state"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/event"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/metrics"
+	"github.com/pirl/pirl/params"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 

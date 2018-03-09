@@ -22,9 +22,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/ethdb"
 )
 
 func newEmptySecure() *SecureTrie {

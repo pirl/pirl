@@ -19,7 +19,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/log"
 )
 
 // ensureVirtualHost checks whether a reverse-proxy is running on the specified

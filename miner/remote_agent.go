@@ -23,11 +23,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/consensus"
-	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/consensus"
+	"github.com/pirl/pirl/consensus/ethash"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/log"
 )
 
 type hashrate struct {

@@ -29,7 +29,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/params"
 )
 
 var (

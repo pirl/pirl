@@ -19,10 +19,10 @@ package shhclient
 import (
 	"context"
 
-	"github.com/DaCHRIS/Iceberg-"
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
-	"github.com/DaCHRIS/Iceberg-/rpc"
-	whisper "github.com/DaCHRIS/Iceberg-/whisper/whisperv5"
+	"github.com/pirl/pirl"
+	"github.com/pirl/pirl/common/hexutil"
+	"github.com/pirl/pirl/rpc"
+	whisper "github.com/pirl/pirl/whisper/whisperv5"
 )
 
 // Client defines typed wrappers for the Whisper v5 RPC API.

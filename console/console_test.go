@@ -26,12 +26,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/eth"
-	"github.com/DaCHRIS/Iceberg-/internal/jsre"
-	"github.com/DaCHRIS/Iceberg-/node"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/consensus/ethash"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/eth"
+	"github.com/pirl/pirl/internal/jsre"
+	"github.com/pirl/pirl/node"
 )
 
 const (

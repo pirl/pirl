@@ -23,7 +23,7 @@ import (
 	"os"
 	"runtime/trace"
 
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/log"
 )
 
 // StartGoTrace turns on tracing, writing to the given file.

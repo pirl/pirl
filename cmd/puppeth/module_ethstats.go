@@ -25,7 +25,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/log"
 )
 
 // ethstatsDockerfile is the Dockerfile required to build an ethstats backend

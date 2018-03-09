@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/swarm/storage"
 )
 
 // syncer parameters (global, not peer specific) default values

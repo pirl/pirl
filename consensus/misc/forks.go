@@ -19,9 +19,9 @@ package misc
 import (
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/params"
 )
 
 // VerifyForkHashes verifies that blocks conforming to network hard-forks do have

@@ -22,7 +22,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/core/asm"
+	"github.com/pirl/pirl/core/asm"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

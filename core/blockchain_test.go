@@ -24,14 +24,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
-	"github.com/DaCHRIS/Iceberg-/core/state"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/consensus/ethash"
+	"github.com/pirl/pirl/core/state"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/core/vm"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/ethdb"
+	"github.com/pirl/pirl/params"
 )
 
 // newTestBlockChain creates a blockchain without validation.
@@ -1202,7 +1202,7 @@ func TestEIP161AccountRemoval(t *testing.T) {
 // tests that under weird reorg conditions the blockchain and its internal header-
 // chain return the same latest block/header.
 //
-// https://github.com/DaCHRIS/Iceberg-/pull/15941
+// https://github.com/pirl/pirl/pull/15941
 func TestBlockchainHeaderchainReorgConsistency(t *testing.T) {
 	// Generate a canonical chain to act as the main dataset
 	engine := ethash.NewFaker()

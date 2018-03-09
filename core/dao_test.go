@@ -20,10 +20,10 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/consensus/ethash"
+	"github.com/pirl/pirl/core/vm"
+	"github.com/pirl/pirl/ethdb"
+	"github.com/pirl/pirl/params"
 )
 
 // Tests that DAO-fork enabled clients can properly filter out fork-commencing

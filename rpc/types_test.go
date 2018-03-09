@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/pirl/pirl/common/math"
 )
 
 func TestBlockNumberJSONUnmarshal(t *testing.T) {

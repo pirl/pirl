@@ -26,8 +26,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/internal/jsre/deps"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/internal/jsre/deps"
 	"github.com/robertkrimen/otto"
 )
 

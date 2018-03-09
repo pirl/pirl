@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/rpc"
 )
 
 // In this example, our client whishes to track the latest 'block number'

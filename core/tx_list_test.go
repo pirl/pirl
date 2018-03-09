@@ -20,8 +20,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/crypto"
 )
 
 // Tests that transactions can be added to strict lists and list contents and

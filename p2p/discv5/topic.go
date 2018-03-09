@@ -23,8 +23,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common/mclock"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/common/mclock"
+	"github.com/pirl/pirl/log"
 )
 
 const (

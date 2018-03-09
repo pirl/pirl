@@ -22,9 +22,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
-	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/common/hexutil"
+	"github.com/pirl/pirl/crypto"
 )
 
 // PublicWhisperAPI provides the whisper RPC service.

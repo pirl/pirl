@@ -21,7 +21,7 @@ package p2p
 import (
 	"net"
 
-	"github.com/DaCHRIS/Iceberg-/metrics"
+	"github.com/pirl/pirl/metrics"
 )
 
 var (

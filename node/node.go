@@ -26,13 +26,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
-	"github.com/DaCHRIS/Iceberg-/event"
-	"github.com/DaCHRIS/Iceberg-/internal/debug"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/ethdb"
+	"github.com/pirl/pirl/event"
+	"github.com/pirl/pirl/internal/debug"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/rpc"
 	"github.com/prometheus/prometheus/util/flock"
 )
 

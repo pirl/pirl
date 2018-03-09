@@ -21,9 +21,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/eth/downloader"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/pirl/pirl/eth/downloader"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/p2p/discover"
 )
 
 // Tests that fast sync gets disabled as soon as a real block is successfully

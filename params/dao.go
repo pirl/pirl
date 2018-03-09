@@ -19,7 +19,7 @@ package params
 import (
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/common"
 )
 
 // DAOForkBlockExtra is the block header extra-data field to set for the DAO fork

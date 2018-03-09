@@ -19,8 +19,8 @@
 package whisperv5
 
 import (
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/common/hexutil"
 )
 
 // Topic represents a cryptographically secure, probabilistic partial

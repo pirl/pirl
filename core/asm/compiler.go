@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/common/math"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/pirl/pirl/common/math"
+	"github.com/pirl/pirl/core/vm"
 )
 
 // Compiler contains information about the parsed source

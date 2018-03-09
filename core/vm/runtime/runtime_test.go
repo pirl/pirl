@@ -21,11 +21,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/accounts/abi"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/state"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/pirl/pirl/accounts/abi"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/state"
+	"github.com/pirl/pirl/core/vm"
+	"github.com/pirl/pirl/ethdb"
 )
 
 func TestDefaults(t *testing.T) {

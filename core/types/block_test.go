@@ -23,8 +23,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/rlp"
 )
 
 // from bcValidBlockTest.json, "SimpleTx"

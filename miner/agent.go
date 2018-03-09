@@ -21,8 +21,8 @@ import (
 
 	"sync/atomic"
 
-	"github.com/DaCHRIS/Iceberg-/consensus"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/consensus"
+	"github.com/pirl/pirl/log"
 )
 
 type CpuAgent struct {

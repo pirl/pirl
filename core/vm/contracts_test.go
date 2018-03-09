@@ -21,7 +21,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/common"
 )
 
 // precompiledTest defines the input/output pairs for precompiled contract tests.

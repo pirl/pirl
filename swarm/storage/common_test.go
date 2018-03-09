@@ -24,7 +24,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/log"
 )
 
 type brokenLimitedReader struct {

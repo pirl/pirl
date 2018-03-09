@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/swarm/storage"
 )
 
 // Handler for storage/retrieval related protocol requests

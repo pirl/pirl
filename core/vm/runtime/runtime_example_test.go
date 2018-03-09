@@ -19,8 +19,8 @@ package runtime_test
 import (
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/vm/runtime"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/vm/runtime"
 )
 
 func ExampleExecute() {

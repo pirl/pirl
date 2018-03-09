@@ -22,7 +22,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/log"
 	"gopkg.in/urfave/cli.v1"
 )
 

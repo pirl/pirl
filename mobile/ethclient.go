@@ -21,8 +21,8 @@ package geth
 import (
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/ethclient"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/ethclient"
 )
 
 // EthereumClient provides access to the Ethereum APIs.

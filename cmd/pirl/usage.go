@@ -24,8 +24,8 @@ import (
 
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/internal/debug"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/internal/debug"
 	"gopkg.in/urfave/cli.v1"
 )
 

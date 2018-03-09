@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
-	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/pirl/pirl/common/hexutil"
+	"github.com/pirl/pirl/crypto"
 )
 
 type bytesBacked interface {

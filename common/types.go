@@ -23,8 +23,8 @@ import (
 	"math/rand"
 	"reflect"
 
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
-	"github.com/DaCHRIS/Iceberg-/crypto/sha3"
+	"github.com/pirl/pirl/common/hexutil"
+	"github.com/pirl/pirl/crypto/sha3"
 )
 
 const (

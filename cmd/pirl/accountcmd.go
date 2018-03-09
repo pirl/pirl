@@ -20,12 +20,12 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/console"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/accounts/keystore"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/console"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/log"
 	"gopkg.in/urfave/cli.v1"
 )
 

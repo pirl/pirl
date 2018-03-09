@@ -25,9 +25,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/node"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/node"
+	"github.com/pirl/pirl/rpc"
 	"github.com/gizak/termui"
 	"gopkg.in/urfave/cli.v1"
 )

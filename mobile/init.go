@@ -22,7 +22,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/log"
 )
 
 func init() {

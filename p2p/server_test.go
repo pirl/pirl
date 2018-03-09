@@ -25,10 +25,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/crypto/sha3"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/crypto/sha3"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/p2p/discover"
 )
 
 func init() {

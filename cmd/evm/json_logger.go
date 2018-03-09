@@ -22,9 +22,9 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/common/math"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/common/math"
+	"github.com/pirl/pirl/core/vm"
 )
 
 type JSONLogger struct {

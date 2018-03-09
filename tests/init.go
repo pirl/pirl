@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/params"
 )
 
 // This table defines supported forks and their chain config.

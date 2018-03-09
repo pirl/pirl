@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/common/hexutil"
 )
 
 var _ = (*logMarshaling)(nil)

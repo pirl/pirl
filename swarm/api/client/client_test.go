@@ -25,8 +25,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/swarm/api"
-	"github.com/DaCHRIS/Iceberg-/swarm/testutil"
+	"github.com/pirl/pirl/swarm/api"
+	"github.com/pirl/pirl/swarm/testutil"
 )
 
 // TestClientUploadDownloadRaw test uploading and downloading raw data to swarm

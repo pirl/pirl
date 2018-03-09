@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
-	"github.com/DaCHRIS/Iceberg-/trie"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/ethdb"
+	"github.com/pirl/pirl/trie"
 	lru "github.com/hashicorp/golang-lru"
 )
 

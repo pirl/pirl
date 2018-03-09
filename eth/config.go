@@ -24,13 +24,13 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
-	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/eth/downloader"
-	"github.com/DaCHRIS/Iceberg-/eth/gasprice"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/common/hexutil"
+	"github.com/pirl/pirl/consensus/ethash"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/eth/downloader"
+	"github.com/pirl/pirl/eth/gasprice"
+	"github.com/pirl/pirl/params"
 )
 
 // DefaultConfig contains default settings for use on the Ethereum main net.

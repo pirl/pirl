@@ -19,7 +19,7 @@ package ethapi
 import (
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/common"
 )
 
 type AddrLocker struct {

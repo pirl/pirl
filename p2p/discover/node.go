@@ -31,9 +31,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/crypto/secp256k1"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/crypto/secp256k1"
 )
 
 const NodeIDBits = 512

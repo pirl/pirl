@@ -27,12 +27,12 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/dashboard"
-	"github.com/DaCHRIS/Iceberg-/eth"
-	"github.com/DaCHRIS/Iceberg-/node"
-	"github.com/DaCHRIS/Iceberg-/params"
-	whisper "github.com/DaCHRIS/Iceberg-/whisper/whisperv5"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/dashboard"
+	"github.com/pirl/pirl/eth"
+	"github.com/pirl/pirl/node"
+	"github.com/pirl/pirl/params"
+	whisper "github.com/pirl/pirl/whisper/whisperv5"
 	"github.com/naoina/toml"
 )
 

@@ -20,9 +20,9 @@ import (
 	"context"
 	"sync"
 
-	ethereum "github.com/DaCHRIS/Iceberg-"
-	"github.com/DaCHRIS/Iceberg-/event"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	ethereum "github.com/pirl/pirl"
+	"github.com/pirl/pirl/event"
+	"github.com/pirl/pirl/rpc"
 )
 
 // PublicDownloaderAPI provides an API which gives information about the current synchronisation status.

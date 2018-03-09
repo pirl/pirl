@@ -22,9 +22,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/swarm/api"
-	httpapi "github.com/DaCHRIS/Iceberg-/swarm/api/http"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/swarm/api"
+	httpapi "github.com/pirl/pirl/swarm/api/http"
+	"github.com/pirl/pirl/swarm/storage"
 )
 
 func NewTestSwarmServer(t *testing.T) *TestSwarmServer {

@@ -27,10 +27,10 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/crypto/ecies"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/crypto/ecies"
+	"github.com/pirl/pirl/log"
 )
 
 // Options specifies the exact way a message should be wrapped into an Envelope.

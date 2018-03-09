@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/DaCHRIS/Iceberg-/common/math"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common/math"
+	"github.com/pirl/pirl/params"
 )
 
 // Config are the configuration options for the Interpreter

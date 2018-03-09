@@ -37,12 +37,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/contracts/chequebook"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	bzzswap "github.com/DaCHRIS/Iceberg-/swarm/services/swap"
-	"github.com/DaCHRIS/Iceberg-/swarm/services/swap/swap"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/contracts/chequebook"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/p2p"
+	bzzswap "github.com/pirl/pirl/swarm/services/swap"
+	"github.com/pirl/pirl/swarm/services/swap/swap"
+	"github.com/pirl/pirl/swarm/storage"
 )
 
 const (

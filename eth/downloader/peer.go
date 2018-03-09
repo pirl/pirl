@@ -29,9 +29,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/event"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/event"
+	"github.com/pirl/pirl/log"
 )
 
 const (

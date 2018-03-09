@@ -22,7 +22,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/compression/rle"
+	"github.com/pirl/pirl/compression/rle"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
 	"github.com/syndtr/goleveldb/leveldb/opt"

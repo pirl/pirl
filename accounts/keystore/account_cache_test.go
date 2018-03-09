@@ -29,8 +29,8 @@ import (
 
 	"github.com/cespare/cp"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/common"
 )
 
 var (

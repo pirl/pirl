@@ -19,10 +19,10 @@ package core
 import (
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/consensus"
-	"github.com/DaCHRIS/Iceberg-/core/state"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/consensus"
+	"github.com/pirl/pirl/core/state"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/params"
 )
 
 // BlockValidator is responsible for validating block headers, uncles and

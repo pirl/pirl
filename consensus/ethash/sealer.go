@@ -24,10 +24,10 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/consensus"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/consensus"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/log"
 )
 
 // Seal implements consensus.Engine, attempting to find a nonce that satisfies

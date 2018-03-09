@@ -21,8 +21,8 @@ import (
 	mrand "math/rand"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/rlp"
 )
 
 func generateMessageParams() (*MessageParams, error) {

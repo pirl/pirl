@@ -23,9 +23,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common/math"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common/math"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/params"
 )
 
 type diffTest struct {

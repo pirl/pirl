@@ -38,9 +38,9 @@ import (
 	"math/big"
 	"unsafe"
 
-	"github.com/DaCHRIS/Iceberg-/core/state"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/core/state"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/params"
 )
 
 type JitVm struct {

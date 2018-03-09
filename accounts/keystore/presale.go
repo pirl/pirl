@@ -25,8 +25,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/crypto"
 	"github.com/pborman/uuid"
 	"golang.org/x/crypto/pbkdf2"
 )

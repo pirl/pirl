@@ -40,7 +40,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/pirl/pirl/crypto"
 )
 
 var dumpEnc bool

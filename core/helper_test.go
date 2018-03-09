@@ -20,9 +20,9 @@ import (
 	"container/list"
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
-	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/ethdb"
+	"github.com/pirl/pirl/event"
 )
 
 // Implement our EthTest Manager

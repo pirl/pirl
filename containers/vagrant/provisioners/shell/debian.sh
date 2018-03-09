@@ -6,6 +6,6 @@ sudo apt-get update
 wget --continue https://storage.googleapis.com/golang/go1.8.1.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.8.1.linux-amd64.tar.gz
 
-GETH_PATH="~vagrant/go/src/github.com/DaCHRIS/Iceberg-/build/bin/"
+GETH_PATH="~vagrant/go/src/github.com/pirl/pirl/build/bin/"
 
 echo "export PATH=$PATH:/usr/local/go/bin:$GETH_PATH" >> ~vagrant/.bashrc 

@@ -27,9 +27,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/internal/jsre"
-	"github.com/DaCHRIS/Iceberg-/internal/web3ext"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/internal/jsre"
+	"github.com/pirl/pirl/internal/web3ext"
+	"github.com/pirl/pirl/rpc"
 	"github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
 	"github.com/robertkrimen/otto"

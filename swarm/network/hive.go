@@ -22,12 +22,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/p2p/discover"
-	"github.com/DaCHRIS/Iceberg-/p2p/netutil"
-	"github.com/DaCHRIS/Iceberg-/swarm/network/kademlia"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/p2p/discover"
+	"github.com/pirl/pirl/p2p/netutil"
+	"github.com/pirl/pirl/swarm/network/kademlia"
+	"github.com/pirl/pirl/swarm/storage"
 )
 
 // Hive is the logistic manager of the swarm

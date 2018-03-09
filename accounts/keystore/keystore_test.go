@@ -26,9 +26,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/event"
 )
 
 var testSigData = make([]byte, 32)

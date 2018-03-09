@@ -17,9 +17,9 @@
 package core
 
 import (
-	"github.com/DaCHRIS/Iceberg-/core/state"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/pirl/pirl/core/state"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/core/vm"
 )
 
 // Validator is an interface which defines the standard for block validation. It

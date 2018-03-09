@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/crypto/ecies"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/crypto/ecies"
 )
 
 func TestEnvelopeOpen(t *testing.T) {

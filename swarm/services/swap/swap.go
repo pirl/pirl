@@ -26,14 +26,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/accounts/abi/bind"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/contracts/chequebook"
-	"github.com/DaCHRIS/Iceberg-/contracts/chequebook/contract"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/swarm/services/swap/swap"
+	"github.com/pirl/pirl/accounts/abi/bind"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/contracts/chequebook"
+	"github.com/pirl/pirl/contracts/chequebook/contract"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/swarm/services/swap/swap"
 )
 
 // SwAP       Swarm Accounting Protocol with

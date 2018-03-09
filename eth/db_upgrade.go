@@ -21,11 +21,11 @@ import (
 	"bytes"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/ethdb"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/rlp"
 )
 
 var deduplicateData = []byte("dbUpgrade_20170714deduplicateData")

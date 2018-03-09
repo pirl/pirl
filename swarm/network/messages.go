@@ -21,11 +21,11 @@ import (
 	"net"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/contracts/chequebook"
-	"github.com/DaCHRIS/Iceberg-/p2p/discover"
-	"github.com/DaCHRIS/Iceberg-/swarm/network/kademlia"
-	"github.com/DaCHRIS/Iceberg-/swarm/services/swap"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/contracts/chequebook"
+	"github.com/pirl/pirl/p2p/discover"
+	"github.com/pirl/pirl/swarm/network/kademlia"
+	"github.com/pirl/pirl/swarm/services/swap"
+	"github.com/pirl/pirl/swarm/storage"
 )
 
 /*

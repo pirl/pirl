@@ -20,7 +20,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/core/asm"
+	"github.com/pirl/pirl/core/asm"
 )
 
 func Compile(fn string, src []byte, debug bool) (string, error) {

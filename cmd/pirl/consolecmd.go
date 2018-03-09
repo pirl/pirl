@@ -23,10 +23,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/console"
-	"github.com/DaCHRIS/Iceberg-/node"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/console"
+	"github.com/pirl/pirl/node"
+	"github.com/pirl/pirl/rpc"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -42,7 +42,7 @@ var (
 		Description: `
 The Geth console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://github.com/DaCHRIS/Iceberg-/wiki/Javascipt-Console.`,
+See https://github.com/pirl/pirl/wiki/Javascipt-Console.`,
 	}
 
 	attachCommand = cli.Command{
@@ -55,7 +55,7 @@ See https://github.com/DaCHRIS/Iceberg-/wiki/Javascipt-Console.`,
 		Description: `
 The Geth console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://github.com/DaCHRIS/Iceberg-/wiki/Javascipt-Console.
+See https://github.com/pirl/pirl/wiki/Javascipt-Console.
 This command allows to open a console on a running geth node.`,
 	}
 
@@ -68,7 +68,7 @@ This command allows to open a console on a running geth node.`,
 		Category:  "CONSOLE COMMANDS",
 		Description: `
 The JavaScript VM exposes a node admin interface as well as the Ðapp
-JavaScript API. See https://github.com/DaCHRIS/Iceberg-/wiki/Javascipt-Console`,
+JavaScript API. See https://github.com/pirl/pirl/wiki/Javascipt-Console`,
 	}
 )
 

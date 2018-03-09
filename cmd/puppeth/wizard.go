@@ -30,9 +30,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/log"
 	"golang.org/x/crypto/ssh/terminal"
 )
 

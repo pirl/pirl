@@ -19,8 +19,8 @@ package miner
 import (
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/types"
 )
 
 // noopHeaderRetriever is an implementation of headerRetriever that always

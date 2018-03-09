@@ -25,10 +25,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/params"
 )
 
 // makeGenesis creates a new genesis struct based on some user input.

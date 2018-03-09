@@ -20,7 +20,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/params"
 )
 
 func TestTransaction(t *testing.T) {

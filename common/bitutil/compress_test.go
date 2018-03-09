@@ -21,7 +21,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/pirl/pirl/common/hexutil"
 )
 
 // Tests that data bitset encoding and decoding works and is bijective.

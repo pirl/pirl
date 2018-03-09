@@ -19,11 +19,11 @@ package node
 import (
 	"reflect"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
-	"github.com/DaCHRIS/Iceberg-/event"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/ethdb"
+	"github.com/pirl/pirl/event"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/rpc"
 )
 
 // ServiceContext is a collection of service independent options inherited from

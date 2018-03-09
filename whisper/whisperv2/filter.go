@@ -21,7 +21,7 @@ package whisperv2
 import (
 	"crypto/ecdsa"
 
-	"github.com/DaCHRIS/Iceberg-/event/filter"
+	"github.com/pirl/pirl/event/filter"
 )
 
 // Filter is used to subscribe to specific types of whisper messages.

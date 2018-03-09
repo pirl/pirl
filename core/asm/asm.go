@@ -21,7 +21,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/pirl/pirl/core/vm"
 )
 
 // Iterator for disassembled EVM instructions

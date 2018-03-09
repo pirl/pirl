@@ -19,7 +19,7 @@ package tests
 import (
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/pirl/pirl/core/vm"
 )
 
 func TestVM(t *testing.T) {

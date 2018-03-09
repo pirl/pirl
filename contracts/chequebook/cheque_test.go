@@ -24,12 +24,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/accounts/abi/bind"
-	"github.com/DaCHRIS/Iceberg-/accounts/abi/bind/backends"
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/contracts/chequebook/contract"
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/pirl/pirl/accounts/abi/bind"
+	"github.com/pirl/pirl/accounts/abi/bind/backends"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/contracts/chequebook/contract"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/crypto"
 )
 
 var (

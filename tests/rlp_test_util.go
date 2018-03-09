@@ -24,7 +24,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/rlp"
 )
 
 // RLPTest is the JSON structure of a single RLP test.

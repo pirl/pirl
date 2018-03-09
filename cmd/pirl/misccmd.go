@@ -23,10 +23,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
-	"github.com/DaCHRIS/Iceberg-/eth"
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/consensus/ethash"
+	"github.com/pirl/pirl/eth"
+	"github.com/pirl/pirl/params"
 	"gopkg.in/urfave/cli.v1"
 )
 

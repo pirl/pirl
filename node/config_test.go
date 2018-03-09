@@ -24,8 +24,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/crypto"
-	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/pirl/pirl/crypto"
+	"github.com/pirl/pirl/p2p"
 )
 
 // Tests that datadirs can be successfully created, be them manually configured

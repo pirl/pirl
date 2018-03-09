@@ -20,7 +20,7 @@ import (
 	"html/template"
 	"path"
 
-	"github.com/DaCHRIS/Iceberg-/swarm/api"
+	"github.com/pirl/pirl/swarm/api"
 )
 
 type htmlListData struct {

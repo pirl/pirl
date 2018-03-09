@@ -22,9 +22,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/accounts"
-	"github.com/DaCHRIS/Iceberg-/event"
-	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/pirl/pirl/accounts"
+	"github.com/pirl/pirl/event"
+	"github.com/pirl/pirl/log"
 	"github.com/karalabe/hid"
 )
 

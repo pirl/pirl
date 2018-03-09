@@ -16,7 +16,7 @@
 
 package core
 
-import "github.com/DaCHRIS/Iceberg-/common"
+import "github.com/pirl/pirl/common"
 
 // BadHashes represent a set of manually tracked bad hashes (usually hard forks)
 var BadHashes = map[common.Hash]bool{

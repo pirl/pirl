@@ -24,9 +24,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/p2p/discover"
-	"github.com/DaCHRIS/Iceberg-/p2p/netutil"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/p2p/discover"
+	"github.com/pirl/pirl/p2p/netutil"
 )
 
 const (

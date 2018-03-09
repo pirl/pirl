@@ -22,8 +22,8 @@ package node
 import (
 	"reflect"
 
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/rpc"
 )
 
 // NoopService is a trivial implementation of the Service interface.

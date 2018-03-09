@@ -19,7 +19,7 @@ package event_test
 import (
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/pirl/pirl/event"
 )
 
 func ExampleFeed_acknowledgedEvents() {

@@ -22,9 +22,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/DaCHRIS/Iceberg-/cmd/utils"
-	"github.com/DaCHRIS/Iceberg-/log"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
+	"github.com/pirl/pirl/cmd/utils"
+	"github.com/pirl/pirl/log"
+	"github.com/pirl/pirl/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
 )
 

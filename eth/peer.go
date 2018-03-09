@@ -23,10 +23,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/core/types"
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/core/types"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/rlp"
 	"gopkg.in/fatih/set.v0"
 )
 

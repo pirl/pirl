@@ -21,8 +21,8 @@ package geth
 import (
 	"errors"
 
-	ethereum "github.com/DaCHRIS/Iceberg-"
-	"github.com/DaCHRIS/Iceberg-/common"
+	ethereum "github.com/pirl/pirl"
+	"github.com/pirl/pirl/common"
 )
 
 // Subscription represents an event subscription where events are

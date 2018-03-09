@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/rpc"
 )
 
 func TestUnmarshalJSONNewFilterArgs(t *testing.T) {

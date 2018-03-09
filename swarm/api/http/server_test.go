@@ -26,11 +26,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/swarm/api"
-	swarm "github.com/DaCHRIS/Iceberg-/swarm/api/client"
-	"github.com/DaCHRIS/Iceberg-/swarm/storage"
-	"github.com/DaCHRIS/Iceberg-/swarm/testutil"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/swarm/api"
+	swarm "github.com/pirl/pirl/swarm/api/client"
+	"github.com/pirl/pirl/swarm/storage"
+	"github.com/pirl/pirl/swarm/testutil"
 )
 
 func TestBzzGetPath(t *testing.T) {

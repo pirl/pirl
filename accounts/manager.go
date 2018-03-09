@@ -21,7 +21,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/pirl/pirl/event"
 )
 
 // Manager is an overarching account manager that can communicate with various

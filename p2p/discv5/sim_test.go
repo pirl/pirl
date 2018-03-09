@@ -28,7 +28,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/common"
 )
 
 // In this test, nodes try to randomly resolve each other.

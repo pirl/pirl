@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/params"
 )
 
 const (

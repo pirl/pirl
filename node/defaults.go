@@ -22,8 +22,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/DaCHRIS/Iceberg-/p2p"
-	"github.com/DaCHRIS/Iceberg-/p2p/nat"
+	"github.com/pirl/pirl/p2p"
+	"github.com/pirl/pirl/p2p/nat"
 )
 
 const (

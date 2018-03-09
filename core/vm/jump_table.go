@@ -20,7 +20,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/pirl/pirl/params"
 )
 
 type (

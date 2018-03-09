@@ -26,7 +26,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/pirl/pirl/common"
 	"golang.org/x/tools/imports"
 )
 

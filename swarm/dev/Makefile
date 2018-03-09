@@ -3,12 +3,12 @@
 default: build
 
 build:
-	go build -o bin/swarm    github.com/DaCHRIS/Iceberg-/cmd/swarm
-	go build -o bin/geth     github.com/DaCHRIS/Iceberg-/cmd/geth
-	go build -o bin/bootnode github.com/DaCHRIS/Iceberg-/cmd/bootnode
+	go build -o bin/swarm    github.com/pirl/pirl/cmd/swarm
+	go build -o bin/geth     github.com/pirl/pirl/cmd/geth
+	go build -o bin/bootnode github.com/pirl/pirl/cmd/bootnode
 
 cluster: build
 	scripts/boot-cluster.sh
 
 test:
-	go test -v github.com/DaCHRIS/Iceberg-/swarm/...
+	go test -v github.com/pirl/pirl/swarm/...

@@ -34,8 +34,8 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/DaCHRIS/Iceberg-/core"
-	"github.com/DaCHRIS/Iceberg-/rlp"
+	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/rlp"
 )
 
 type allocItem struct{ Addr, Balance *big.Int }

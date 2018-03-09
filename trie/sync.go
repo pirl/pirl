@@ -20,8 +20,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/DaCHRIS/Iceberg-/common"
-	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/pirl/pirl/common"
+	"github.com/pirl/pirl/ethdb"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 
