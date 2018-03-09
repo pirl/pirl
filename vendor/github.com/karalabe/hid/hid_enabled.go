@@ -2,7 +2,7 @@
 // Copyright (c) 2017 Péter Szilágyi. All rights reserved.
 //
 // This file is released under the 3-clause BSD license. Note however that Linux
-// support depends on libusb, released under GNU GPL 2.1 or later.
+// support depends on libusb, released under LGNU GPL 2.1 or later.
 
 // +build linux,cgo darwin,!ios,cgo windows,cgo
 
@@ -48,6 +48,15 @@ import (
 	"unsafe"
 )
 
+// enumerateLock is a mutex serializing access to USB device enumeration needed
+// by the macOS USB HID system calls, which require 2 consecutive method calls
+// for enumeration, causing crashes if called concurrently.
+//
+// For more details, see:
+//   https://developer.apple.com/documentation/iokit/1438371-iohidmanagersetdevicematching
+//   > "subsequent calls will cause the hid manager to release previously enumerated devices"
+var enumerateLock sync.Mutex
+
 func init() {
 	// Initialize the HIDAPI library
 	C.hid_init()
@@ -56,7 +65,6 @@ func init() {
 // Supported returns whether this platform is supported by the HID library or not.
 // The goal of this method is to allow programatically handling platforms that do
 // not support USB HID and not having to fall back to build constraints.
-var enumerateLock sync.Mutex
 func Supported() bool {
 	return true
 }
@@ -69,6 +77,7 @@ func Supported() bool {
 func Enumerate(vendorID uint16, productID uint16) []DeviceInfo {
 	enumerateLock.Lock()
 	defer enumerateLock.Unlock()
+
 	// Gather all device infos and ensure they are freed before returning
 	head := C.hid_enumerate(C.ushort(vendorID), C.ushort(productID))
 	if head == nil {

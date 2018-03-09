@@ -83,7 +83,7 @@ func (self *Api) Resolve(uri *URI) (storage.Key, error) {
 
 	// if the URI is immutable, check if the address is a hash
 	isHash := hashMatcher.MatchString(uri.Addr)
-	if uri.Immutable() {
+	if uri.Immutable() || uri.DeprecatedImmutable() {
 		if !isHash {
 			return nil, fmt.Errorf("immutable address not a content hash: %q", uri.Addr)
 		}
@@ -132,6 +132,7 @@ func (self *Api) Put(content, contentType string) (storage.Key, error) {
 func (self *Api) Get(key storage.Key, path string) (reader storage.LazySectionReader, mimeType string, status int, err error) {
 	trie, err := loadManifest(self.dpa, key, nil)
 	if err != nil {
+		status = http.StatusNotFound
 		log.Warn(fmt.Sprintf("loadManifestTrie error: %v", err))
 		return
 	}
@@ -143,9 +144,13 @@ func (self *Api) Get(key storage.Key, path string) (reader storage.LazySectionRe
 	if entry != nil {
 		key = common.Hex2Bytes(entry.Hash)
 		status = entry.Status
-		mimeType = entry.ContentType
-		log.Trace(fmt.Sprintf("content lookup key: '%v' (%v)", key, mimeType))
-		reader = self.dpa.Retrieve(key)
+		if status == http.StatusMultipleChoices {
+			return
+		} else {
+			mimeType = entry.ContentType
+			log.Trace(fmt.Sprintf("content lookup key: '%v' (%v)", key, mimeType))
+			reader = self.dpa.Retrieve(key)
+		}
 	} else {
 		status = http.StatusNotFound
 		err = fmt.Errorf("manifest entry for '%s' not found", path)

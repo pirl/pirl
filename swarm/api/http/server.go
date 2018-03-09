@@ -86,7 +86,7 @@ type Request struct {
 	uri *api.URI
 }
 
-// HandlePostRaw handles a POST request to a raw bzzr:/ URI, stores the request
+// HandlePostRaw handles a POST request to a raw bzz-raw:/ URI, stores the request
 // body in swarm and returns the resulting storage key as a text/plain response
 func (s *Server) HandlePostRaw(w http.ResponseWriter, r *Request) {
 	if r.uri.Path != "" {
@@ -290,9 +290,12 @@ func (s *Server) HandleDelete(w http.ResponseWriter, r *Request) {
 	fmt.Fprint(w, newKey)
 }
 
-// HandleGetRaw handles a GET request to bzzr://<key> and responds with
-// the raw content stored at the given storage key
-func (s *Server) HandleGetRaw(w http.ResponseWriter, r *Request) {
+// HandleGet handles a GET request to
+// - bzz-raw://<key> and responds with the raw content stored at the
+//   given storage key
+// - bzz-hash://<key> and responds with the hash of the content stored
+//   at the given storage key as a text/plain response
+func (s *Server) HandleGet(w http.ResponseWriter, r *Request) {
 	key, err := s.api.Resolve(r.uri)
 	if err != nil {
 		s.Error(w, r, fmt.Errorf("error resolving %s: %s", r.uri.Addr, err))
@@ -332,7 +335,7 @@ func (s *Server) HandleGetRaw(w http.ResponseWriter, r *Request) {
 			return api.SkipManifest
 		})
 		if entry == nil {
-			http.NotFound(w, &r.Request)
+			s.NotFound(w, r, fmt.Errorf("Manifest entry could not be loaded"))
 			return
 		}
 		key = storage.Key(common.Hex2Bytes(entry.Hash))
@@ -341,20 +344,26 @@ func (s *Server) HandleGetRaw(w http.ResponseWriter, r *Request) {
 	// check the root chunk exists by retrieving the file's size
 	reader := s.api.Retrieve(key)
 	if _, err := reader.Size(nil); err != nil {
-		s.logDebug("key not found %s: %s", key, err)
-		http.NotFound(w, &r.Request)
+		s.NotFound(w, r, fmt.Errorf("Root chunk not found %s: %s", key, err))
 		return
 	}
 
-	// allow the request to overwrite the content type using a query
-	// parameter
-	contentType := "application/octet-stream"
-	if typ := r.URL.Query().Get("content_type"); typ != "" {
-		contentType = typ
-	}
-	w.Header().Set("Content-Type", contentType)
+	switch {
+	case r.uri.Raw():
+		// allow the request to overwrite the content type using a query
+		// parameter
+		contentType := "application/octet-stream"
+		if typ := r.URL.Query().Get("content_type"); typ != "" {
+			contentType = typ
+		}
+		w.Header().Set("Content-Type", contentType)
 
-	http.ServeContent(w, &r.Request, "", time.Now(), reader)
+		http.ServeContent(w, &r.Request, "", time.Now(), reader)
+	case r.uri.Hash():
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, key)
+	}
 }
 
 // HandleGetFiles handles a GET request to bzz:/<manifest> with an Accept
@@ -425,14 +434,13 @@ func (s *Server) HandleGetFiles(w http.ResponseWriter, r *Request) {
 	}
 }
 
-// HandleGetList handles a GET request to bzz:/<manifest>/<path> which has
-// the "list" query parameter set to "true" and returns a list of all files
-// contained in <manifest> under <path> grouped into common prefixes using
-// "/" as a delimiter
+// HandleGetList handles a GET request to bzz-list:/<manifest>/<path> and returns
+// a list of all files contained in <manifest> under <path> grouped into
+// common prefixes using "/" as a delimiter
 func (s *Server) HandleGetList(w http.ResponseWriter, r *Request) {
 	// ensure the root path has a trailing slash so that relative URLs work
 	if r.uri.Path == "" && !strings.HasSuffix(r.URL.Path, "/") {
-		http.Redirect(w, &r.Request, r.URL.Path+"/?list=true", http.StatusMovedPermanently)
+		http.Redirect(w, &r.Request, r.URL.Path+"/", http.StatusMovedPermanently)
 		return
 	}
 
@@ -442,14 +450,41 @@ func (s *Server) HandleGetList(w http.ResponseWriter, r *Request) {
 		return
 	}
 
-	walker, err := s.api.NewManifestWalker(key, nil)
+	list, err := s.getManifestList(key, r.uri.Path)
+
 	if err != nil {
 		s.Error(w, r, err)
 		return
 	}
 
-	var list api.ManifestList
-	prefix := r.uri.Path
+	// if the client wants HTML (e.g. a browser) then render the list as a
+	// HTML index with relative URLs
+	if strings.Contains(r.Header.Get("Accept"), "text/html") {
+		w.Header().Set("Content-Type", "text/html")
+		err := htmlListTemplate.Execute(w, &htmlListData{
+			URI: &api.URI{
+				Scheme: "bzz",
+				Addr:   r.uri.Addr,
+				Path:   r.uri.Path,
+			},
+			List: &list,
+		})
+		if err != nil {
+			s.logError("error rendering list HTML: %s", err)
+		}
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(&list)
+}
+
+func (s *Server) getManifestList(key storage.Key, prefix string) (list api.ManifestList, err error) {
+	walker, err := s.api.NewManifestWalker(key, nil)
+	if err != nil {
+		return
+	}
+
 	err = walker.Walk(func(entry *api.ManifestEntry) error {
 		// handle non-manifest files
 		if entry.ContentType != api.ManifestType {
@@ -496,27 +531,8 @@ func (s *Server) HandleGetList(w http.ResponseWriter, r *Request) {
 		// so just skip it
 		return api.SkipManifest
 	})
-	if err != nil {
-		s.Error(w, r, err)
-		return
-	}
 
-	// if the client wants HTML (e.g. a browser) then render the list as a
-	// HTML index with relative URLs
-	if strings.Contains(r.Header.Get("Accept"), "text/html") {
-		w.Header().Set("Content-Type", "text/html")
-		err := htmlListTemplate.Execute(w, &htmlListData{
-			URI:  r.uri,
-			List: &list,
-		})
-		if err != nil {
-			s.logError("error rendering list HTML: %s", err)
-		}
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(&list)
+	return list, nil
 }
 
 // HandleGetFile handles a GET request to bzz://<manifest>/<path> and responds
@@ -534,16 +550,36 @@ func (s *Server) HandleGetFile(w http.ResponseWriter, r *Request) {
 		return
 	}
 
-	reader, contentType, _, err := s.api.Get(key, r.uri.Path)
+	reader, contentType, status, err := s.api.Get(key, r.uri.Path)
 	if err != nil {
-		s.Error(w, r, err)
+		switch status {
+		case http.StatusNotFound:
+			s.NotFound(w, r, err)
+		default:
+			s.Error(w, r, err)
+		}
+		return
+	}
+
+	//the request results in ambiguous files
+	//e.g. /read with readme.md and readinglist.txt available in manifest
+	if status == http.StatusMultipleChoices {
+		list, err := s.getManifestList(key, r.uri.Path)
+
+		if err != nil {
+			s.Error(w, r, err)
+			return
+		}
+
+		s.logDebug(fmt.Sprintf("Multiple choices! -->  %v", list))
+		//show a nice page links to available entries
+		ShowMultipleChoices(w, &r.Request, list)
 		return
 	}
 
 	// check the root chunk exists by retrieving the file's size
 	if _, err := reader.Size(nil); err != nil {
-		s.logDebug("file not found %s: %s", r.uri, err)
-		http.NotFound(w, &r.Request)
+		s.NotFound(w, r, fmt.Errorf("File not found %s: %s", r.uri, err))
 		return
 	}
 
@@ -556,17 +592,17 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.logDebug("HTTP %s request URL: '%s', Host: '%s', Path: '%s', Referer: '%s', Accept: '%s'", r.Method, r.RequestURI, r.URL.Host, r.URL.Path, r.Referer(), r.Header.Get("Accept"))
 
 	uri, err := api.Parse(strings.TrimLeft(r.URL.Path, "/"))
+	req := &Request{Request: *r, uri: uri}
 	if err != nil {
 		s.logError("Invalid URI %q: %s", r.URL.Path, err)
-		http.Error(w, fmt.Sprintf("Invalid bzz URI: %s", err), http.StatusBadRequest)
+		s.BadRequest(w, req, fmt.Sprintf("Invalid URI %q: %s", r.URL.Path, err))
 		return
 	}
 	s.logDebug("%s request received for %s", r.Method, uri)
 
-	req := &Request{Request: *r, uri: uri}
 	switch r.Method {
 	case "POST":
-		if uri.Raw() {
+		if uri.Raw() || uri.DeprecatedRaw() {
 			s.HandlePostRaw(w, req)
 		} else {
 			s.HandlePostFiles(w, req)
@@ -578,23 +614,28 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		//   new manifest leaving the existing one intact, so it isn't
 		//   strictly a traditional PUT request which replaces content
 		//   at a URI, and POST is more ubiquitous)
-		if uri.Raw() {
-			http.Error(w, fmt.Sprintf("No PUT to %s allowed.", uri), http.StatusBadRequest)
+		if uri.Raw() || uri.DeprecatedRaw() {
+			ShowError(w, r, fmt.Sprintf("No PUT to %s allowed.", uri), http.StatusBadRequest)
 			return
 		} else {
 			s.HandlePostFiles(w, req)
 		}
 
 	case "DELETE":
-		if uri.Raw() {
-			http.Error(w, fmt.Sprintf("No DELETE to %s allowed.", uri), http.StatusBadRequest)
+		if uri.Raw() || uri.DeprecatedRaw() {
+			ShowError(w, r, fmt.Sprintf("No DELETE to %s allowed.", uri), http.StatusBadRequest)
 			return
 		}
 		s.HandleDelete(w, req)
 
 	case "GET":
-		if uri.Raw() {
-			s.HandleGetRaw(w, req)
+		if uri.Raw() || uri.Hash() || uri.DeprecatedRaw() {
+			s.HandleGet(w, req)
+			return
+		}
+
+		if uri.List() {
+			s.HandleGetList(w, req)
 			return
 		}
 
@@ -603,15 +644,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if r.URL.Query().Get("list") == "true" {
-			s.HandleGetList(w, req)
-			return
-		}
-
 		s.HandleGetFile(w, req)
 
 	default:
-		http.Error(w, "Method "+r.Method+" is not supported.", http.StatusMethodNotAllowed)
+		ShowError(w, r, fmt.Sprintf("Method "+r.Method+" is not supported.", uri), http.StatusMethodNotAllowed)
 
 	}
 }
@@ -643,11 +679,13 @@ func (s *Server) logError(format string, v ...interface{}) {
 }
 
 func (s *Server) BadRequest(w http.ResponseWriter, r *Request, reason string) {
-	s.logDebug("bad request %s %s: %s", r.Method, r.uri, reason)
-	http.Error(w, reason, http.StatusBadRequest)
+	ShowError(w, &r.Request, fmt.Sprintf("Bad request %s %s: %s", r.Method, r.uri, reason), http.StatusBadRequest)
 }
 
 func (s *Server) Error(w http.ResponseWriter, r *Request, err error) {
-	s.logError("error serving %s %s: %s", r.Method, r.uri, err)
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+	ShowError(w, &r.Request, fmt.Sprintf("Error serving %s %s: %s", r.Method, r.uri, err), http.StatusInternalServerError)
+}
+
+func (s *Server) NotFound(w http.ResponseWriter, r *Request, err error) {
+	ShowError(w, &r.Request, fmt.Sprintf("NOT FOUND error serving %s %s: %s", r.Method, r.uri, err), http.StatusNotFound)
 }

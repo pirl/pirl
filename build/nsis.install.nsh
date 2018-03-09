@@ -24,14 +24,14 @@ Section "Pirl" GETH_IDX
   createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "" ""
 
   # Firewall - remove rules (if exists)
-  SimpleFC::AdvRemoveRule "Pirl incoming peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "Pirl outgoing peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "Pirl UDP discovery (UDP:30303)"
+  SimpleFC::AdvRemoveRule "pirl incoming peers (TCP:30303)"
+  SimpleFC::AdvRemoveRule "pirl outgoing peers (TCP:30303)"
+  SimpleFC::AdvRemoveRule "pirl UDP discovery (UDP:30303)"
 
   # Firewall - add rules
-  SimpleFC::AdvAddRule "Pirl incoming peers (TCP:30303)" ""  6 1 1 2147483647 1 "$INSTDIR\pirl.exe" "" "" "Ethereum" 30303 "" "" ""
-  SimpleFC::AdvAddRule "Pirl outgoing peers (TCP:30303)" ""  6 2 1 2147483647 1 "$INSTDIR\pirl.exe" "" "" "Ethereum" "" 30303 "" ""
-  SimpleFC::AdvAddRule "Pirl UDP discovery (UDP:30303)" "" 17 2 1 2147483647 1 "$INSTDIR\pirl.exe" "" "" "Ethereum" "" 30303 "" ""
+  SimpleFC::AdvAddRule "pirl incoming peers (TCP:30303)" ""  6 1 1 2147483647 1 "$INSTDIR\pirl.exe" "" "" "Ethereum" 30303 "" "" ""
+  SimpleFC::AdvAddRule "pirl outgoing peers (TCP:30303)" ""  6 2 1 2147483647 1 "$INSTDIR\pirl.exe" "" "" "Ethereum" "" 30303 "" ""
+  SimpleFC::AdvAddRule "pirl UDP discovery (UDP:30303)" "" 17 2 1 2147483647 1 "$INSTDIR\pirl.exe" "" "" "Ethereum" "" 30303 "" ""
 
   # Set default IPC endpoint (https://github.com/ethereum/EIPs/issues/147)
   ${EnvVarUpdate} $0 "ETHEREUM_SOCKET" "R" "HKLM" "\\.\pipe\pirl.ipc"

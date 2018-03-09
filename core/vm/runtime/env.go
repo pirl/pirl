@@ -17,8 +17,6 @@
 package runtime
 
 import (
-	"math/big"
-
 	"github.com/pirl/pirl/common"
 	"github.com/pirl/pirl/core"
 	"github.com/pirl/pirl/core/vm"
@@ -35,7 +33,7 @@ func NewEnv(cfg *Config) *vm.EVM {
 		BlockNumber: cfg.BlockNumber,
 		Time:        cfg.Time,
 		Difficulty:  cfg.Difficulty,
-		GasLimit:    new(big.Int).SetUint64(cfg.GasLimit),
+		GasLimit:    cfg.GasLimit,
 		GasPrice:    cfg.GasPrice,
 	}
 

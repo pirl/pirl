@@ -24,6 +24,7 @@ import (
 	"github.com/pirl/pirl/common"
 	"github.com/pirl/pirl/common/math"
 	"github.com/pirl/pirl/core"
+	"github.com/pirl/pirl/core/bloombits"
 	"github.com/pirl/pirl/core/state"
 	"github.com/pirl/pirl/core/types"
 	"github.com/pirl/pirl/core/vm"
@@ -170,4 +171,18 @@ func (b *LesApiBackend) EventMux() *event.TypeMux {
 
 func (b *LesApiBackend) AccountManager() *accounts.Manager {
 	return b.eth.accountManager
+}
+
+func (b *LesApiBackend) BloomStatus() (uint64, uint64) {
+	if b.eth.bloomIndexer == nil {
+		return 0, 0
+	}
+	sections, _, _ := b.eth.bloomIndexer.Sections()
+	return light.BloomTrieFrequency, sections
+}
+
+func (b *LesApiBackend) ServiceFilter(ctx context.Context, session *bloombits.MatcherSession) {
+	for i := 0; i < bloomFilterThreads; i++ {
+		go session.Multiplex(bloomRetrievalBatch, bloomRetrievalWait, b.eth.bloomRequests)
+	}
 }

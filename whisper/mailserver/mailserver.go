@@ -26,7 +26,7 @@ import (
 	"github.com/pirl/pirl/crypto"
 	"github.com/pirl/pirl/log"
 	"github.com/pirl/pirl/rlp"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	whisper "github.com/pirl/pirl/whisper/whisperv6"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )

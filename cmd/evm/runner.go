@@ -96,7 +96,9 @@ func runCmd(ctx *cli.Context) error {
 	}
 	if ctx.GlobalString(GenesisFlag.Name) != "" {
 		gen := readGenesis(ctx.GlobalString(GenesisFlag.Name))
-		_, statedb = gen.ToBlock()
+		db, _ := ethdb.NewMemDatabase()
+		genesis := gen.ToBlock(db)
+		statedb, _ = state.New(genesis.Root(), state.NewDatabase(db))
 		chainConfig = gen.Config
 	} else {
 		db, _ := ethdb.NewMemDatabase()
@@ -234,13 +236,13 @@ Gas used:           %d
 `, execTime, mem.HeapObjects, mem.Alloc, mem.TotalAlloc, mem.NumGC, initialGas-leftOverGas)
 	}
 	if tracer != nil {
-		tracer.CaptureEnd(ret, initialGas-leftOverGas, execTime)
+		tracer.CaptureEnd(ret, initialGas-leftOverGas, execTime, err)
 	} else {
 		fmt.Printf("0x%x\n", ret)
+		if err != nil {
+			fmt.Printf(" error: %v\n", err)
+		}
 	}
 
-	if err != nil {
-		fmt.Printf(" error: %v\n", err)
-	}
 	return nil
 }

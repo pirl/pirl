@@ -43,11 +43,11 @@ var ProtocolVersions = []uint{eth63, eth62}
 // Number of implemented message corresponding to different protocol versions.
 var ProtocolLengths = []uint64{17, 8}
 
-//const ProtocolMaxMsgSize = 10 * 1024 * 1024 // Maximum cap on the size of a protocol message
 const (
-	NetworkId          = 3125659152
-	ProtocolMaxMsgSize = 10 * 1024 * 1024 // Maximum cap on the size of a protocol message
-)
+		NetworkId          = 3125659152
+		ProtocolMaxMsgSize = 10 * 1024 * 1024 // Maximum cap on the size of a protocol message
+	)
+
 // eth protocol message codes
 const (
 	// Protocol messages belonging to eth/62
@@ -100,7 +100,7 @@ var errorToString = map[int]string{
 
 type txPool interface {
 	// AddRemotes should add the given transactions to the pool.
-	AddRemotes([]*types.Transaction) error
+	AddRemotes([]*types.Transaction) []error
 
 	// Pending should return pending transactions.
 	// The slice should be modifiable by the caller.
