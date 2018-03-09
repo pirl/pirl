@@ -25,12 +25,12 @@ import (
 	mrand "math/rand"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/consensus"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/params"
 	"github.com/hashicorp/golang-lru"
 )
 
@@ -267,7 +267,7 @@ func (hc *HeaderChain) InsertHeaderChain(chain []*types.Header, writeHeader WhCa
 			return i, errors.New("aborted")
 		}
 		// If the header's already known, skip it, otherwise store
-		if hc.GetHeader(header.Hash(), header.Number.Uint64()) != nil {
+		if hc.HasHeader(header.Hash(), header.Number.Uint64()) {
 			stats.ignored++
 			continue
 		}
@@ -361,10 +361,13 @@ func (hc *HeaderChain) GetHeaderByHash(hash common.Hash) *types.Header {
 	return hc.GetHeader(hash, hc.GetBlockNumber(hash))
 }
 
-// HasHeader checks if a block header is present in the database or not, caching
-// it if present.
-func (hc *HeaderChain) HasHeader(hash common.Hash) bool {
-	return hc.GetHeaderByHash(hash) != nil
+// HasHeader checks if a block header is present in the database or not.
+func (hc *HeaderChain) HasHeader(hash common.Hash, number uint64) bool {
+	if hc.numberCache.Contains(hash) || hc.headerCache.Contains(hash) {
+		return true
+	}
+	ok, _ := hc.chainDb.Has(headerKey(hash, number))
+	return ok
 }
 
 // GetHeaderByNumber retrieves a block header from the database by number,

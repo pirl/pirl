@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"github.com/DaCHRIS/Iceberg-/common"
 )
 
 // ContractRef is a reference to the contract's backing object

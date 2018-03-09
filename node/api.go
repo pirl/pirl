@@ -17,14 +17,16 @@
 package node
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -73,8 +75,46 @@ func (api *PrivateAdminAPI) RemovePeer(url string) (bool, error) {
 	return true, nil
 }
 
+// PeerEvents creates an RPC subscription which receives peer events from the
+// node's p2p.Server
+func (api *PrivateAdminAPI) PeerEvents(ctx context.Context) (*rpc.Subscription, error) {
+	// Make sure the server is running, fail otherwise
+	server := api.node.Server()
+	if server == nil {
+		return nil, ErrNodeStopped
+	}
+
+	// Create the subscription
+	notifier, supported := rpc.NotifierFromContext(ctx)
+	if !supported {
+		return nil, rpc.ErrNotificationsUnsupported
+	}
+	rpcSub := notifier.CreateSubscription()
+
+	go func() {
+		events := make(chan *p2p.PeerEvent)
+		sub := server.SubscribeEvents(events)
+		defer sub.Unsubscribe()
+
+		for {
+			select {
+			case event := <-events:
+				notifier.Notify(rpcSub.ID, event)
+			case <-sub.Err():
+				return
+			case <-rpcSub.Err():
+				return
+			case <-notifier.Closed():
+				return
+			}
+		}
+	}()
+
+	return rpcSub, nil
+}
+
 // StartRPC starts the HTTP RPC API server.
-func (api *PrivateAdminAPI) StartRPC(host *string, port *int, cors *string, apis *string) (bool, error) {
+func (api *PrivateAdminAPI) StartRPC(host *string, port *int, cors *string, apis *string, vhosts *string) (bool, error) {
 	api.node.lock.Lock()
 	defer api.node.lock.Unlock()
 
@@ -101,6 +141,14 @@ func (api *PrivateAdminAPI) StartRPC(host *string, port *int, cors *string, apis
 		}
 	}
 
+	allowedVHosts := api.node.config.HTTPVirtualHosts
+	if vhosts != nil {
+		allowedVHosts = nil
+		for _, vhost := range strings.Split(*host, ",") {
+			allowedVHosts = append(allowedVHosts, strings.TrimSpace(vhost))
+		}
+	}
+
 	modules := api.node.httpWhitelist
 	if apis != nil {
 		modules = nil
@@ -109,7 +157,7 @@ func (api *PrivateAdminAPI) StartRPC(host *string, port *int, cors *string, apis
 		}
 	}
 
-	if err := api.node.startHTTP(fmt.Sprintf("%s:%d", *host, *port), api.node.rpcAPIs, modules, allowedOrigins); err != nil {
+	if err := api.node.startHTTP(fmt.Sprintf("%s:%d", *host, *port), api.node.rpcAPIs, modules, allowedOrigins, allowedVHosts); err != nil {
 		return false, err
 	}
 	return true, nil
@@ -163,7 +211,7 @@ func (api *PrivateAdminAPI) StartWS(host *string, port *int, allowedOrigins *str
 		}
 	}
 
-	if err := api.node.startWS(fmt.Sprintf("%s:%d", *host, *port), api.node.rpcAPIs, modules, origins); err != nil {
+	if err := api.node.startWS(fmt.Sprintf("%s:%d", *host, *port), api.node.rpcAPIs, modules, origins, api.node.config.WSExposeAll); err != nil {
 		return false, err
 	}
 	return true, nil

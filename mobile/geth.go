@@ -24,17 +24,17 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/ethclient"
-	"github.com/pirl/pirl/ethstats"
-	"github.com/pirl/pirl/les"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
-	"github.com/pirl/pirl/params"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/eth"
+	"github.com/DaCHRIS/Iceberg-/eth/downloader"
+	"github.com/DaCHRIS/Iceberg-/ethclient"
+	"github.com/DaCHRIS/Iceberg-/ethstats"
+	"github.com/DaCHRIS/Iceberg-/les"
+	"github.com/DaCHRIS/Iceberg-/node"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p/nat"
+	"github.com/DaCHRIS/Iceberg-/params"
+	whisper "github.com/DaCHRIS/Iceberg-/whisper/whisperv5"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the Geth
@@ -78,7 +78,7 @@ type NodeConfig struct {
 // or some fields are missing from the user's specified list.
 var defaultNodeConfig = &NodeConfig{
 	BootstrapNodes:        FoundationBootnodes(),
-	MaxPeers:              25,
+	MaxPeers:              100,
 	EthereumEnabled:       true,
 	EthereumNetworkID:     1,
 	EthereumDatabaseCache: 16,
@@ -116,7 +116,6 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 		P2P: p2p.Config{
 			NoDiscovery:      true,
 			DiscoveryV5:      true,
-			DiscoveryV5Addr:  ":0",
 			BootstrapNodesV5: config.BootstrapNodes.nodes,
 			ListenAddr:       ":0",
 			NAT:              nat.Any(),

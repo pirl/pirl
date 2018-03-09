@@ -19,7 +19,7 @@ package event_test
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/event"
+	"github.com/DaCHRIS/Iceberg-/event"
 )
 
 func ExampleNewSubscription() {

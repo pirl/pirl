@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/mclock"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/mclock"
 )
 
 func TestTopicRadius(t *testing.T) {

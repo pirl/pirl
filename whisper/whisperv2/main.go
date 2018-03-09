@@ -27,12 +27,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/logger"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
-	"github.com/pirl/pirl/whisper"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/logger"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p/nat"
+	"github.com/DaCHRIS/Iceberg-/whisper"
 )
 
 func main() {

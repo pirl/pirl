@@ -24,12 +24,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 )
 
 const (
@@ -104,7 +104,7 @@ func (api *PublicWhisperAPI) Info(ctx context.Context) Info {
 	stats := api.w.Stats()
 	return Info{
 		Memory:         stats.memoryUsed,
-		Messages:        len(api.w.messageQueue) + len(api.w.p2pMsgQueue),
+		Messages:       len(api.w.messageQueue) + len(api.w.p2pMsgQueue),
 		MinPow:         api.w.MinPow(),
 		MaxMessageSize: api.w.MaxMessageSize(),
 	}
@@ -562,7 +562,7 @@ func (api *PublicWhisperAPI) NewMessageFilter(req Criteria) (string, error) {
 	}
 
 	if len(req.Topics) > 0 {
-		topics = make([][]byte, 1)
+		topics = make([][]byte, 0, len(req.Topics))
 		for _, topic := range req.Topics {
 			topics = append(topics, topic[:])
 		}

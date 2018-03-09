@@ -22,19 +22,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/storage"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/swarm/storage"
 )
 
 // Handler for storage/retrieval related protocol requests
 // implements the StorageHandler interface used by the bzz protocol
 type Depo struct {
-	hashfunc   storage.Hasher
+	hashfunc   storage.SwarmHasher
 	localStore storage.ChunkStore
 	netStore   storage.ChunkStore
 }
 
-func NewDepo(hash storage.Hasher, localStore, remoteStore storage.ChunkStore) *Depo {
+func NewDepo(hash storage.SwarmHasher, localStore, remoteStore storage.ChunkStore) *Depo {
 	return &Depo{
 		hashfunc:   hash,
 		localStore: localStore,
@@ -55,7 +55,7 @@ func (self *Depo) HandleUnsyncedKeysMsg(req *unsyncedKeysMsgData, p *peer) error
 	var err error
 	for _, req := range unsynced {
 		// skip keys that are found,
-		chunk, err = self.localStore.Get(storage.Key(req.Key[:]))
+		chunk, err = self.localStore.Get(req.Key[:])
 		if err != nil || chunk.SData == nil {
 			missing = append(missing, req)
 		}

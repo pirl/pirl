@@ -20,9 +20,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/light"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/eth/downloader"
+	"github.com/DaCHRIS/Iceberg-/light"
 )
 
 const (

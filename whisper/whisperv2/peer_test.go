@@ -20,8 +20,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p/discover"
 )
 
 type testPeer struct {

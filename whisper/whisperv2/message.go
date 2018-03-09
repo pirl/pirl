@@ -26,10 +26,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/ecies"
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/crypto/ecies"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 // Message represents an end-user data packet to transmit through the Whisper

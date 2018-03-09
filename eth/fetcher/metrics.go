@@ -19,7 +19,7 @@
 package fetcher
 
 import (
-	"github.com/pirl/pirl/metrics"
+	"github.com/DaCHRIS/Iceberg-/metrics"
 )
 
 var (

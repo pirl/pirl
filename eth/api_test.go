@@ -1,4 +1,4 @@
-// Copyright 2016 The go-ethereum Authors
+// Copyright 2017 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/ethdb"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
 )
 
 var dumper = spew.ConfigState{Indent: "    "}
@@ -79,7 +79,10 @@ func TestStorageRangeAt(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		result := storageRangeAt(state.StorageTrie(addr), test.start, test.limit)
+		result, err := storageRangeAt(state.StorageTrie(addr), test.start, test.limit)
+		if err != nil {
+			t.Error(err)
+		}
 		if !reflect.DeepEqual(result, test.want) {
 			t.Fatalf("wrong result for range 0x%x.., limit %d:\ngot %s\nwant %s",
 				test.start, test.limit, dumper.Sdump(result), dumper.Sdump(&test.want))

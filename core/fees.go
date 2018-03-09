@@ -20,6 +20,4 @@ import (
 	"math/big"
 )
 
-//var BlockReward = big.NewInt(0).SetBytes([]byte("12000000000000000000"))
-//var BlockReward = big.NewInt(12e+18)
 var BlockReward *big.Int = new(big.Int).Mul(big.NewInt(12), big.NewInt(1e+18))

@@ -22,12 +22,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/p2p/netutil"
-	"github.com/pirl/pirl/swarm/network/kademlia"
-	"github.com/pirl/pirl/swarm/storage"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/p2p/netutil"
+	"github.com/DaCHRIS/Iceberg-/swarm/network/kademlia"
+	"github.com/DaCHRIS/Iceberg-/swarm/storage"
 )
 
 // Hive is the logistic manager of the swarm
@@ -70,17 +70,23 @@ type HiveParams struct {
 	*kademlia.KadParams
 }
 
-func NewHiveParams(path string) *HiveParams {
-	kad := kademlia.NewKadParams()
+//create default params
+func NewDefaultHiveParams() *HiveParams {
+	kad := kademlia.NewDefaultKadParams()
 	// kad.BucketSize = bucketSize
 	// kad.MaxProx = maxProx
 	// kad.ProxBinSize = proxBinSize
 
 	return &HiveParams{
 		CallInterval: callInterval,
-		KadDbPath:    filepath.Join(path, "bzz-peers.json"),
 		KadParams:    kad,
 	}
+}
+
+//this can only finally be set after all config options (file, cmd line, env vars)
+//have been evaluated
+func (self *HiveParams) Init(path string) {
+	self.KadDbPath = filepath.Join(path, "bzz-peers.json")
 }
 
 func NewHive(addr common.Hash, params *HiveParams, swapEnabled, syncEnabled bool) *Hive {

@@ -20,23 +20,23 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 /*
 http roundtripper to register for bzz url scheme
-see https://github.com/pirl/pirl/issues/2040
+see https://github.com/DaCHRIS/Iceberg-/issues/2040
 Usage:
 
 import (
- "github.com/pirl/pirl/common/httpclient"
- "github.com/pirl/pirl/swarm/api/http"
+ "github.com/DaCHRIS/Iceberg-/common/httpclient"
+ "github.com/DaCHRIS/Iceberg-/swarm/api/http"
 )
 client := httpclient.New()
 // for (private) swarm proxy running locally
 client.RegisterScheme("bzz", &http.RoundTripper{Port: port})
-client.RegisterScheme("bzzi", &http.RoundTripper{Port: port})
-client.RegisterScheme("bzzr", &http.RoundTripper{Port: port})
+client.RegisterScheme("bzz-immutable", &http.RoundTripper{Port: port})
+client.RegisterScheme("bzz-raw", &http.RoundTripper{Port: port})
 
 The port you give the Roundtripper is the port the swarm proxy is listening on.
 If Host is left empty, localhost is assumed.

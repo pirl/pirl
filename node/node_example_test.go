@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/node"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 )
 
 // SampleService is a trivial network service that can be attached to a node for

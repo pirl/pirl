@@ -22,12 +22,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rlp"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 )
 
 // TransactionTest checks RLP decoding and sender derivation of transactions.
@@ -46,7 +46,7 @@ type ttJSON struct {
 
 type ttTransaction struct {
 	Data     []byte         `gencodec:"required"`
-	GasLimit *big.Int       `gencodec:"required"`
+	GasLimit uint64         `gencodec:"required"`
 	GasPrice *big.Int       `gencodec:"required"`
 	Nonce    uint64         `gencodec:"required"`
 	Value    *big.Int       `gencodec:"required"`
@@ -58,7 +58,7 @@ type ttTransaction struct {
 
 type ttTransactionMarshaling struct {
 	Data     hexutil.Bytes
-	GasLimit *math.HexOrDecimal256
+	GasLimit math.HexOrDecimal64
 	GasPrice *math.HexOrDecimal256
 	Nonce    math.HexOrDecimal64
 	Value    *math.HexOrDecimal256
@@ -100,8 +100,8 @@ func (tt *ttTransaction) verify(signer types.Signer, tx *types.Transaction) erro
 	if !bytes.Equal(tx.Data(), tt.Data) {
 		return fmt.Errorf("Tx input data mismatch: got %x want %x", tx.Data(), tt.Data)
 	}
-	if tx.Gas().Cmp(tt.GasLimit) != 0 {
-		return fmt.Errorf("GasLimit mismatch: got %v, want %v", tx.Gas(), tt.GasLimit)
+	if tx.Gas() != tt.GasLimit {
+		return fmt.Errorf("GasLimit mismatch: got %d, want %d", tx.Gas(), tt.GasLimit)
 	}
 	if tx.GasPrice().Cmp(tt.GasPrice) != 0 {
 		return fmt.Errorf("GasPrice mismatch: got %v, want %v", tx.GasPrice(), tt.GasPrice)

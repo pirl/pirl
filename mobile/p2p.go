@@ -21,7 +21,7 @@ package geth
 import (
 	"errors"
 
-	"github.com/pirl/pirl/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p"
 )
 
 // NodeInfo represents pi short summary of the information known about the host.

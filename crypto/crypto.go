@@ -28,10 +28,10 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto/sha3"
-	"github.com/pirl/pirl/rlp"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/crypto/sha3"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 )
 
 var (
@@ -79,7 +79,7 @@ func ToECDSA(d []byte) (*ecdsa.PrivateKey, error) {
 	return toECDSA(d, true)
 }
 
-// ToECDSAUnsafe blidly converts a binary blob to a private key. It should almost
+// ToECDSAUnsafe blindly converts a binary blob to a private key. It should almost
 // never be used unless you are sure the input is valid and want to avoid hitting
 // errors due to bad origin encoding (0 prefixes cut off).
 func ToECDSAUnsafe(d []byte) *ecdsa.PrivateKey {
@@ -97,7 +97,20 @@ func toECDSA(d []byte, strict bool) (*ecdsa.PrivateKey, error) {
 		return nil, fmt.Errorf("invalid length, need %d bits", priv.Params().BitSize)
 	}
 	priv.D = new(big.Int).SetBytes(d)
+
+	// The priv.D must < N
+	if priv.D.Cmp(secp256k1_N) >= 0 {
+		return nil, fmt.Errorf("invalid private key, >=N")
+	}
+	// The priv.D must not be zero or negative.
+	if priv.D.Sign() <= 0 {
+		return nil, fmt.Errorf("invalid private key, zero or negative")
+	}
+
 	priv.PublicKey.X, priv.PublicKey.Y = priv.PublicKey.Curve.ScalarBaseMult(d)
+	if priv.PublicKey.X == nil {
+		return nil, errors.New("invalid private key")
+	}
 	return priv, nil
 }
 

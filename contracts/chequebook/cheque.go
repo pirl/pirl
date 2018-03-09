@@ -21,7 +21,7 @@
 // as well as (auto)depositing ether to the chequebook contract.
 package chequebook
 
-//go:generate abigen --sol contract/chequebook.sol --pkg contract --out contract/chequebook.go
+//go:generate abigen --sol contract/chequebook.sol --exc contract/mortal.sol:mortal,contract/owned.sol:owned --pkg contract --out contract/chequebook.go
 //go:generate go run ./gencode.go
 
 import (
@@ -36,14 +36,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/contracts/chequebook/contract"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/services/swap/swap"
+	"github.com/DaCHRIS/Iceberg-/accounts/abi/bind"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/contracts/chequebook/contract"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/swarm/services/swap/swap"
 )
 
 // TODO(zelig): watch peer solvency and notify of bouncing cheques
@@ -56,8 +56,8 @@ import (
 // * watching incoming ether
 
 var (
-	gasToCash = big.NewInt(2000000) // gas cost of a cash transaction using chequebook
-	// gasToDeploy = big.NewInt(3000000)
+	gasToCash = uint64(2000000) // gas cost of a cash transaction using chequebook
+	// gasToDeploy = uint64(3000000)
 )
 
 // Backend wraps all methods required for chequebook operation.

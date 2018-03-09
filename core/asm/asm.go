@@ -21,7 +21,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/pirl/pirl/core/vm"
+	"github.com/DaCHRIS/Iceberg-/core/vm"
 )
 
 // Iterator for disassembled EVM instructions
@@ -114,10 +114,7 @@ func PrintDisassembled(code string) error {
 			fmt.Printf("%06v: %v\n", it.PC(), it.Op())
 		}
 	}
-	if err := it.Error(); err != nil {
-		return err
-	}
-	return nil
+	return it.Error()
 }
 
 // Return all disassembled EVM instructions in human-readable format.

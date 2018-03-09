@@ -23,10 +23,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/cmd/utils"
+	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
+	"github.com/DaCHRIS/Iceberg-/eth"
+	"github.com/DaCHRIS/Iceberg-/params"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -134,7 +134,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with geth. If not, see <http://www.gnu.org/licenses/>.
-`)
+along with geth. If not, see <http://www.gnu.org/licenses/>.`)
 	return nil
 }

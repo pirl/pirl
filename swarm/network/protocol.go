@@ -37,12 +37,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pirl/pirl/contracts/chequebook"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	bzzswap "github.com/pirl/pirl/swarm/services/swap"
-	"github.com/pirl/pirl/swarm/services/swap/swap"
-	"github.com/pirl/pirl/swarm/storage"
+	"github.com/DaCHRIS/Iceberg-/contracts/chequebook"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	bzzswap "github.com/DaCHRIS/Iceberg-/swarm/services/swap"
+	"github.com/DaCHRIS/Iceberg-/swarm/services/swap/swap"
+	"github.com/DaCHRIS/Iceberg-/swarm/storage"
 )
 
 const (
@@ -309,7 +309,7 @@ func (self *bzz) handleStatus() (err error) {
 		Version:   uint64(Version),
 		ID:        "honey",
 		Addr:      self.selfAddr(),
-		NetworkId: uint64(self.NetworkId),
+		NetworkId: self.NetworkId,
 		Swap: &bzzswap.SwapProfile{
 			Profile:    self.swapParams.Profile,
 			PayProfile: self.swapParams.PayProfile,

@@ -1,4 +1,4 @@
-// Copyright 2015 The go-ethereum Authors
+// Copyright 2017 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/params"
 )
 
 var (
@@ -39,6 +39,7 @@ var (
 	transactionTestDir = filepath.Join(baseDir, "TransactionTests")
 	vmTestDir          = filepath.Join(baseDir, "VMTests")
 	rlpTestDir         = filepath.Join(baseDir, "RLPTests")
+	difficultyTestDir  = filepath.Join(baseDir, "BasicTests")
 )
 
 func readJson(reader io.Reader, value interface{}) error {

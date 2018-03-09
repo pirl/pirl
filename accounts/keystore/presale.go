@@ -25,8 +25,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/crypto"
+	"github.com/DaCHRIS/Iceberg-/accounts"
+	"github.com/DaCHRIS/Iceberg-/crypto"
 	"github.com/pborman/uuid"
 	"golang.org/x/crypto/pbkdf2"
 )
@@ -57,6 +57,9 @@ func decryptPreSaleKey(fileContent []byte, password string) (key *Key, err error
 	encSeedBytes, err := hex.DecodeString(preSaleKeyStruct.EncSeed)
 	if err != nil {
 		return nil, errors.New("invalid hex in encSeed")
+	}
+	if len(encSeedBytes) < 16 {
+		return nil, errors.New("invalid encSeed, too short")
 	}
 	iv := encSeedBytes[:16]
 	cipherText := encSeedBytes[16:]

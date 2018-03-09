@@ -19,7 +19,7 @@ package trie
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/common"
+	"github.com/DaCHRIS/Iceberg-/common"
 )
 
 // MissingNodeError is returned by the trie functions (TryGet, TryUpdate, TryDelete)

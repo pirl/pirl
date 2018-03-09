@@ -22,15 +22,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rlp"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 )
 
 const (
@@ -358,7 +358,7 @@ func (pool *TxPool) validateTx(ctx context.Context, tx *types.Transaction) error
 	// Check the transaction doesn't exceed the current
 	// block limit gas.
 	header := pool.chain.GetHeaderByHash(pool.head)
-	if header.GasLimit.Cmp(tx.Gas()) < 0 {
+	if header.GasLimit < tx.Gas() {
 		return core.ErrGasLimit
 	}
 
@@ -376,10 +376,13 @@ func (pool *TxPool) validateTx(ctx context.Context, tx *types.Transaction) error
 	}
 
 	// Should supply enough intrinsic gas
-	if tx.Gas().Cmp(core.IntrinsicGas(tx.Data(), tx.To() == nil, pool.homestead)) < 0 {
+	gas, err := core.IntrinsicGas(tx.Data(), tx.To() == nil, pool.homestead)
+	if err != nil {
+		return err
+	}
+	if tx.Gas() < gas {
 		return core.ErrIntrinsicGas
 	}
-
 	return currentState.Error()
 }
 

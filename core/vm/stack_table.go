@@ -19,7 +19,7 @@ package vm
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/params"
 )
 
 func makeStackFunc(pop, push int) stackValidationFunc {

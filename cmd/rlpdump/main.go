@@ -26,7 +26,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pirl/pirl/rlp"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 )
 
 var (
@@ -51,7 +51,7 @@ func main() {
 	var r io.Reader
 	switch {
 	case *hexMode != "":
-		data, err := hex.DecodeString(*hexMode)
+		data, err := hex.DecodeString(strings.TrimPrefix(*hexMode, "0x"))
 		if err != nil {
 			die(err)
 		}

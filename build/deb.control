@@ -2,11 +2,11 @@ Source: {{.Name}}
 Section: science
 Priority: extra
 Maintainer: {{.Author}}
-Build-Depends: debhelper (>= 8.0.0), golang-1.8
+Build-Depends: debhelper (>= 8.0.0), golang-1.9
 Standards-Version: 3.9.5
 Homepage: https://ethereum.org
-Vcs-Git: git://github.com/pirl/pirl.git
-Vcs-Browser: https://github.com/pirl/pirl
+Vcs-Git: git://github.com/DaCHRIS/Iceberg-.git
+Vcs-Browser: https://github.com/DaCHRIS/Iceberg-
 
 Package: {{.Name}}
 Architecture: any

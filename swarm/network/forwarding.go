@@ -21,8 +21,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/storage"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/swarm/storage"
 )
 
 const requesterCount = 3

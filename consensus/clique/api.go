@@ -17,10 +17,10 @@
 package clique
 
 import (
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/consensus"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 )
 
 // API is a user facing RPC API to allow controlling the signer and voting

@@ -27,8 +27,8 @@ import (
 	"testing/quick"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
 )
 
 func ExampleNewNode() {

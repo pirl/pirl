@@ -23,22 +23,22 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/contracts/chequebook"
-	"github.com/pirl/pirl/contracts/ens"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/ethclient"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/rpc"
-	"github.com/pirl/pirl/swarm/api"
-	httpapi "github.com/pirl/pirl/swarm/api/http"
-	"github.com/pirl/pirl/swarm/fuse"
-	"github.com/pirl/pirl/swarm/network"
-	"github.com/pirl/pirl/swarm/storage"
+	"github.com/DaCHRIS/Iceberg-/accounts/abi/bind"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/contracts/chequebook"
+	"github.com/DaCHRIS/Iceberg-/contracts/ens"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/ethclient"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/node"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/DaCHRIS/Iceberg-/swarm/api"
+	httpapi "github.com/DaCHRIS/Iceberg-/swarm/api/http"
+	"github.com/DaCHRIS/Iceberg-/swarm/fuse"
+	"github.com/DaCHRIS/Iceberg-/swarm/network"
+	"github.com/DaCHRIS/Iceberg-/swarm/storage"
 )
 
 // the swarm stack
@@ -220,7 +220,7 @@ func (self *Swarm) Start(srv *p2p.Server) error {
 // stops all component services.
 func (self *Swarm) Stop() error {
 	self.dpa.Stop()
-	self.hive.Stop()
+	err := self.hive.Stop()
 	if ch := self.config.Swap.Chequebook(); ch != nil {
 		ch.Stop()
 		ch.Save()
@@ -230,7 +230,7 @@ func (self *Swarm) Stop() error {
 		self.lstore.DbStore.Close()
 	}
 	self.sfs.Stop()
-	return self.config.Save()
+	return err
 }
 
 // implements the node.Service interface
@@ -301,7 +301,6 @@ func (self *Swarm) SetChequebook(ctx context.Context) error {
 		return err
 	}
 	log.Info(fmt.Sprintf("new chequebook set (%v): saving config file, resetting all connections in the hive", self.config.Swap.Contract.Hex()))
-	self.config.Save()
 	self.hive.DropAll()
 	return nil
 }
@@ -314,10 +313,9 @@ func NewLocalSwarm(datadir, port string) (self *Swarm, err error) {
 		return
 	}
 
-	config, err := api.NewConfig(datadir, common.Address{}, prvKey, network.NetworkId)
-	if err != nil {
-		return
-	}
+	config := api.NewDefaultConfig()
+	config.Path = datadir
+	config.Init(prvKey)
 	config.Port = port
 
 	dpa, err := storage.NewLocalDPA(datadir)

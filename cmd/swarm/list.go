@@ -22,8 +22,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/pirl/pirl/cmd/utils"
-	swarm "github.com/pirl/pirl/swarm/api/client"
+	"github.com/DaCHRIS/Iceberg-/cmd/utils"
+	swarm "github.com/DaCHRIS/Iceberg-/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

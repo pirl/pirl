@@ -31,7 +31,7 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 func TestClientRequest(t *testing.T) {
@@ -229,6 +229,38 @@ func TestClientSubscribe(t *testing.T) {
 	nc := make(chan int)
 	count := 10
 	sub, err := client.EthSubscribe(context.Background(), nc, "someSubscription", count, 0)
+	if err != nil {
+		t.Fatal("can't subscribe:", err)
+	}
+	for i := 0; i < count; i++ {
+		if val := <-nc; val != i {
+			t.Fatalf("value mismatch: got %d, want %d", val, i)
+		}
+	}
+
+	sub.Unsubscribe()
+	select {
+	case v := <-nc:
+		t.Fatal("received value after unsubscribe:", v)
+	case err := <-sub.Err():
+		if err != nil {
+			t.Fatalf("Err returned a non-nil error after explicit unsubscribe: %q", err)
+		}
+	case <-time.After(1 * time.Second):
+		t.Fatalf("subscription not closed within 1s after unsubscribe")
+	}
+}
+
+func TestClientSubscribeCustomNamespace(t *testing.T) {
+	namespace := "custom"
+	server := newTestServer(namespace, new(NotificationTestService))
+	defer server.Stop()
+	client := DialInProc(server)
+	defer client.Close()
+
+	nc := make(chan int)
+	count := 10
+	sub, err := client.Subscribe(context.Background(), namespace, nc, "someSubscription", count, 0)
 	if err != nil {
 		t.Fatal("can't subscribe:", err)
 	}

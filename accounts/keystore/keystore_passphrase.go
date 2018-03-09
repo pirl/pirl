@@ -28,6 +28,7 @@ package keystore
 import (
 	"bytes"
 	"crypto/aes"
+	crand "crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -35,10 +36,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/randentropy"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/crypto/randentropy"
 	"github.com/pborman/uuid"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/scrypt"
@@ -88,6 +89,12 @@ func (ks keyStorePassphrase) GetKey(addr common.Address, filename, auth string) 
 		return nil, fmt.Errorf("key content mismatch: have account %x, want %x", key.Address, addr)
 	}
 	return key, nil
+}
+
+// StoreKey generates a key, encrypts with 'auth' and stores in the given directory
+func StoreKey(dir, auth string, scryptN, scryptP int) (common.Address, error) {
+	_, a, err := storeNewKey(&keyStorePassphrase{dir, scryptN, scryptP}, crand.Reader, auth)
+	return a.Address, err
 }
 
 func (ks keyStorePassphrase) StoreKey(filename string, key *Key, auth string) error {

@@ -26,11 +26,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/sync/syncmap"
@@ -171,7 +171,7 @@ func (w *Whisper) SetMaxMessageSize(size uint32) error {
 	if size > MaxMessageSize {
 		return fmt.Errorf("message size too large [%d>%d]", size, MaxMessageSize)
 	}
-	w.settings.Store(maxMsgSizeIdx, uint32(size))
+	w.settings.Store(maxMsgSizeIdx, size)
 	return nil
 }
 

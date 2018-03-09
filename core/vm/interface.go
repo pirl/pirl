@@ -19,8 +19,8 @@ package vm
 import (
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core/types"
 )
 
 // StateDB is an EVM database for full state querying.
@@ -39,8 +39,8 @@ type StateDB interface {
 	SetCode(common.Address, []byte)
 	GetCodeSize(common.Address) int
 
-	AddRefund(*big.Int)
-	GetRefund() *big.Int
+	AddRefund(uint64)
+	GetRefund() uint64
 
 	GetState(common.Address, common.Hash) common.Hash
 	SetState(common.Address, common.Hash, common.Hash)

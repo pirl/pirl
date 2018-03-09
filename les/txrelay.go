@@ -19,8 +19,8 @@ package les
 import (
 	"sync"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core/types"
 )
 
 type ltrInfo struct {

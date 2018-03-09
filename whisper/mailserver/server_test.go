@@ -24,9 +24,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	whisper "github.com/DaCHRIS/Iceberg-/whisper/whisperv6"
 )
 
 const powRequirement = 0.00001

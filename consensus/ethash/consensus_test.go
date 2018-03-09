@@ -23,9 +23,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/params"
 )
 
 type diffTest struct {
@@ -71,6 +71,7 @@ func TestCalcDifficulty(t *testing.T) {
 	}
 
 	config := &params.ChainConfig{HomesteadBlock: big.NewInt(1150000)}
+
 	for name, test := range tests {
 		number := new(big.Int).Sub(test.CurrentBlocknumber, big.NewInt(1))
 		diff := CalcDifficulty(config, test.CurrentTimestamp, &types.Header{

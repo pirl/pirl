@@ -23,11 +23,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/consensus"
+	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 type hashrate struct {
@@ -163,7 +163,7 @@ func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.
 }
 
 // loop monitors mining events on the work and quit channels, updating the internal
-// state of the rmeote miner until a termination is requested.
+// state of the remote miner until a termination is requested.
 //
 // Note, the reason the work and quit channels are passed as parameters is because
 // RemoteAgent.Start() constantly recreates these channels, so the loop code cannot

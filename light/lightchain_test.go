@@ -21,12 +21,12 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/params"
 )
 
 // So we can deterministically seed different blockchains
@@ -37,7 +37,7 @@ var (
 
 // makeHeaderChain creates a deterministic chain of headers rooted at parent.
 func makeHeaderChain(parent *types.Header, n int, db ethdb.Database, seed int) []*types.Header {
-	blocks, _ := core.GenerateChain(params.TestChainConfig, types.NewBlockWithHeader(parent), db, n, func(i int, b *core.BlockGen) {
+	blocks, _ := core.GenerateChain(params.TestChainConfig, types.NewBlockWithHeader(parent), ethash.NewFaker(), db, n, func(i int, b *core.BlockGen) {
 		b.SetCoinbase(common.Address{0: byte(seed), 19: byte(i)})
 	})
 	headers := make([]*types.Header, len(blocks))

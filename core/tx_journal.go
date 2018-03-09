@@ -21,15 +21,24 @@ import (
 	"io"
 	"os"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/rlp"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 )
 
 // errNoActiveJournal is returned if a transaction is attempted to be inserted
 // into the journal, but no such file is currently open.
 var errNoActiveJournal = errors.New("no active journal")
+
+// devNull is a WriteCloser that just discards anything written into it. Its
+// goal is to allow the transaction journal to write into a fake journal when
+// loading transactions on startup without printing warnings due to no file
+// being readt for write.
+type devNull struct{}
+
+func (*devNull) Write(p []byte) (n int, err error) { return len(p), nil }
+func (*devNull) Close() error                      { return nil }
 
 // txJournal is a rotating log of transactions with the aim of storing locally
 // created transactions to allow non-executed ones to survive node restarts.
@@ -58,6 +67,10 @@ func (journal *txJournal) load(add func(*types.Transaction) error) error {
 		return err
 	}
 	defer input.Close()
+
+	// Temporarily discard any journal additions (don't double add on load)
+	journal.writer = new(devNull)
+	defer func() { journal.writer = nil }()
 
 	// Inject all transactions from the journal into the pool
 	stream := rlp.NewStream(input, 0)

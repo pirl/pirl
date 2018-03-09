@@ -1,4 +1,4 @@
-// Copyright 2016 The go-ethereum Authors
+// Copyright 2017 The go-ethereum Authors
 // This file is part of go-ethereum.
 //
 // go-ethereum is free software: you can redistribute it and/or modify
@@ -27,12 +27,13 @@ import (
 	"time"
 
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/internal/cmdtest"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
-	"github.com/pirl/pirl/swarm"
+	"github.com/DaCHRIS/Iceberg-/accounts"
+	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
+	"github.com/DaCHRIS/Iceberg-/internal/cmdtest"
+	"github.com/DaCHRIS/Iceberg-/node"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/rpc"
+	"github.com/DaCHRIS/Iceberg-/swarm"
 )
 
 func init() {
@@ -156,9 +157,9 @@ type testNode struct {
 
 const testPassphrase = "swarm-test-passphrase"
 
-func newTestNode(t *testing.T, dir string) *testNode {
+func getTestAccount(t *testing.T, dir string) (conf *node.Config, account accounts.Account) {
 	// create key
-	conf := &node.Config{
+	conf = &node.Config{
 		DataDir: dir,
 		IPCPath: "bzzd.ipc",
 		NoUSB:   true,
@@ -167,17 +168,23 @@ func newTestNode(t *testing.T, dir string) *testNode {
 	if err != nil {
 		t.Fatal(err)
 	}
-	account, err := n.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore).NewAccount(testPassphrase)
+	account, err = n.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore).NewAccount(testPassphrase)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	node := &testNode{Dir: dir}
 
 	// use a unique IPCPath when running tests on Windows
 	if runtime.GOOS == "windows" {
 		conf.IPCPath = fmt.Sprintf("bzzd-%s.ipc", account.Address.String())
 	}
+
+	return conf, account
+}
+
+func newTestNode(t *testing.T, dir string) *testNode {
+
+	conf, account := getTestAccount(t, dir)
+	node := &testNode{Dir: dir}
 
 	// assign ports
 	httpPort, err := assignTCPPort()

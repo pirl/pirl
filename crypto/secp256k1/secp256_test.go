@@ -24,8 +24,8 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto/randentropy"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/crypto/randentropy"
 )
 
 const TestCount = 1000

@@ -20,12 +20,12 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/console"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/accounts"
+	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
+	"github.com/DaCHRIS/Iceberg-/cmd/utils"
+	"github.com/DaCHRIS/Iceberg-/console"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/log"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -291,15 +291,28 @@ func ambiguousAddrRecovery(ks *keystore.KeyStore, err *keystore.AmbiguousAddrErr
 
 // accountCreate creates a new account into the keystore defined by the CLI flags.
 func accountCreate(ctx *cli.Context) error {
-	stack, _ := makeConfigNode(ctx)
+	cfg := gethConfig{Node: defaultNodeConfig()}
+	// Load config file.
+	if file := ctx.GlobalString(configFileFlag.Name); file != "" {
+		if err := loadConfig(file, &cfg); err != nil {
+			utils.Fatalf("%v", err)
+		}
+	}
+	utils.SetNodeConfig(ctx, &cfg.Node)
+	scryptN, scryptP, keydir, err := cfg.Node.AccountConfig()
+
+	if err != nil {
+		utils.Fatalf("Failed to read configuration: %v", err)
+	}
+
 	password := getPassPhrase("Your new account is locked with a password. Please give a password. Do not forget this password.", true, 0, utils.MakePasswordList(ctx))
 
-	ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
-	account, err := ks.NewAccount(password)
+	address, err := keystore.StoreKey(keydir, password, scryptN, scryptP)
+
 	if err != nil {
 		utils.Fatalf("Failed to create account: %v", err)
 	}
-	fmt.Printf("Address: {%x}\n", account.Address)
+	fmt.Printf("Address: {%x}\n", address)
 	return nil
 }
 

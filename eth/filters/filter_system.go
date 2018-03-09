@@ -25,11 +25,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/rpc"
+	ethereum "github.com/DaCHRIS/Iceberg-"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 )
 
 // Type determines the kind of filter and is used to put the filter in to
@@ -75,7 +76,7 @@ type subscription struct {
 	id        rpc.ID
 	typ       Type
 	created   time.Time
-	logsCrit  FilterCriteria
+	logsCrit  ethereum.FilterQuery
 	logs      chan []*types.Log
 	hashes    chan common.Hash
 	headers   chan *types.Header
@@ -162,7 +163,7 @@ func (es *EventSystem) subscribe(sub *subscription) *Subscription {
 // SubscribeLogs creates a subscription that will write all logs matching the
 // given criteria to the given logs channel. Default value for the from and to
 // block is "latest". If the fromBlock > toBlock an error is returned.
-func (es *EventSystem) SubscribeLogs(crit FilterCriteria, logs chan []*types.Log) (*Subscription, error) {
+func (es *EventSystem) SubscribeLogs(crit ethereum.FilterQuery, logs chan []*types.Log) (*Subscription, error) {
 	var from, to rpc.BlockNumber
 	if crit.FromBlock == nil {
 		from = rpc.LatestBlockNumber
@@ -200,7 +201,7 @@ func (es *EventSystem) SubscribeLogs(crit FilterCriteria, logs chan []*types.Log
 
 // subscribeMinedPendingLogs creates a subscription that returned mined and
 // pending logs that match the given criteria.
-func (es *EventSystem) subscribeMinedPendingLogs(crit FilterCriteria, logs chan []*types.Log) *Subscription {
+func (es *EventSystem) subscribeMinedPendingLogs(crit ethereum.FilterQuery, logs chan []*types.Log) *Subscription {
 	sub := &subscription{
 		id:        rpc.NewID(),
 		typ:       MinedAndPendingLogsSubscription,
@@ -212,13 +213,12 @@ func (es *EventSystem) subscribeMinedPendingLogs(crit FilterCriteria, logs chan 
 		installed: make(chan struct{}),
 		err:       make(chan error),
 	}
-
 	return es.subscribe(sub)
 }
 
 // subscribeLogs creates a subscription that will write all logs matching the
 // given criteria to the given logs channel.
-func (es *EventSystem) subscribeLogs(crit FilterCriteria, logs chan []*types.Log) *Subscription {
+func (es *EventSystem) subscribeLogs(crit ethereum.FilterQuery, logs chan []*types.Log) *Subscription {
 	sub := &subscription{
 		id:        rpc.NewID(),
 		typ:       LogsSubscription,
@@ -230,13 +230,12 @@ func (es *EventSystem) subscribeLogs(crit FilterCriteria, logs chan []*types.Log
 		installed: make(chan struct{}),
 		err:       make(chan error),
 	}
-
 	return es.subscribe(sub)
 }
 
 // subscribePendingLogs creates a subscription that writes transaction hashes for
 // transactions that enter the transaction pool.
-func (es *EventSystem) subscribePendingLogs(crit FilterCriteria, logs chan []*types.Log) *Subscription {
+func (es *EventSystem) subscribePendingLogs(crit ethereum.FilterQuery, logs chan []*types.Log) *Subscription {
 	sub := &subscription{
 		id:        rpc.NewID(),
 		typ:       PendingLogsSubscription,
@@ -248,7 +247,6 @@ func (es *EventSystem) subscribePendingLogs(crit FilterCriteria, logs chan []*ty
 		installed: make(chan struct{}),
 		err:       make(chan error),
 	}
-
 	return es.subscribe(sub)
 }
 
@@ -265,7 +263,6 @@ func (es *EventSystem) SubscribeNewHeads(headers chan *types.Header) *Subscripti
 		installed: make(chan struct{}),
 		err:       make(chan error),
 	}
-
 	return es.subscribe(sub)
 }
 
@@ -282,7 +279,6 @@ func (es *EventSystem) SubscribePendingTxEvents(hashes chan common.Hash) *Subscr
 		installed: make(chan struct{}),
 		err:       make(chan error),
 	}
-
 	return es.subscribe(sub)
 }
 

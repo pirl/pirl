@@ -31,11 +31,11 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/ecies"
-	"github.com/pirl/pirl/crypto/sha3"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/rlp"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/crypto/ecies"
+	"github.com/DaCHRIS/Iceberg-/crypto/sha3"
+	"github.com/DaCHRIS/Iceberg-/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 )
 
 func TestSharedSecret(t *testing.T) {

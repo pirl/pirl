@@ -30,8 +30,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
 )
 
 // Node represents a host on the network.
@@ -271,6 +271,11 @@ func (n NodeID) String() string {
 // The Go syntax representation of a NodeID is a call to HexID.
 func (n NodeID) GoString() string {
 	return fmt.Sprintf("discover.HexID(\"%x\")", n[:])
+}
+
+// TerminalString returns a shortened hex string for terminal logging.
+func (n NodeID) TerminalString() string {
+	return hex.EncodeToString(n[:8])
 }
 
 // HexID converts a hex string to a NodeID.

@@ -24,11 +24,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/swarm/api"
-	swarm "github.com/pirl/pirl/swarm/api/client"
+	"github.com/DaCHRIS/Iceberg-/cmd/utils"
+	"github.com/DaCHRIS/Iceberg-/swarm/api"
+	swarm "github.com/DaCHRIS/Iceberg-/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
+
+const bzzManifestJSON = "application/bzz-manifest+json"
 
 func add(ctx *cli.Context) {
 	args := ctx.Args()
@@ -145,7 +147,7 @@ func addEntryToManifest(ctx *cli.Context, mhash, path, hash, ctype string) strin
 		if path == entry.Path {
 			utils.Fatalf("Path %s already present, not adding anything", path)
 		} else {
-			if entry.ContentType == "application/bzz-manifest+json" {
+			if entry.ContentType == bzzManifestJSON {
 				prfxlen := strings.HasPrefix(path, entry.Path)
 				if prfxlen && len(path) > len(longestPathEntry.Path) {
 					longestPathEntry = entry
@@ -207,7 +209,7 @@ func updateEntryInManifest(ctx *cli.Context, mhash, path, hash, ctype string) st
 		if path == entry.Path {
 			newEntry = entry
 		} else {
-			if entry.ContentType == "application/bzz-manifest+json" {
+			if entry.ContentType == bzzManifestJSON {
 				prfxlen := strings.HasPrefix(path, entry.Path)
 				if prfxlen && len(path) > len(longestPathEntry.Path) {
 					longestPathEntry = entry
@@ -281,7 +283,7 @@ func removeEntryFromManifest(ctx *cli.Context, mhash, path string) string {
 		if path == entry.Path {
 			entryToRemove = entry
 		} else {
-			if entry.ContentType == "application/bzz-manifest+json" {
+			if entry.ContentType == bzzManifestJSON {
 				prfxlen := strings.HasPrefix(path, entry.Path)
 				if prfxlen && len(path) > len(longestPathEntry.Path) {
 					longestPathEntry = entry

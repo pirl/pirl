@@ -21,11 +21,11 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/bn256"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/crypto/bn256"
+	"github.com/DaCHRIS/Iceberg-/params"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -46,9 +46,9 @@ var PrecompiledContractsHomestead = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{4}): &dataCopy{},
 }
 
-// PrecompiledContractsMetropolis contains the default set of pre-compiled Ethereum
-// contracts used in the Metropolis release.
-var PrecompiledContractsMetropolis = map[common.Address]PrecompiledContract{
+// PrecompiledContractsByzantium contains the default set of pre-compiled Ethereum
+// contracts used in the Byzantium release.
+var PrecompiledContractsByzantium = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{1}): &ecrecover{},
 	common.BytesToAddress([]byte{2}): &sha256hash{},
 	common.BytesToAddress([]byte{3}): &ripemd160hash{},

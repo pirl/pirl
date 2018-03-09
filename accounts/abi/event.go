@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
 )
 
 // Event is an event potentially triggered by the EVM's LOG mechanism. The Event
@@ -30,7 +30,18 @@ import (
 type Event struct {
 	Name      string
 	Anonymous bool
-	Inputs    []Argument
+	Inputs    Arguments
+}
+
+func (event Event) String() string {
+	inputs := make([]string, len(event.Inputs))
+	for i, input := range event.Inputs {
+		inputs[i] = fmt.Sprintf("%v %v", input.Name, input.Type)
+		if input.Indexed {
+			inputs[i] = fmt.Sprintf("%v indexed %v", input.Name, input.Type)
+		}
+	}
+	return fmt.Sprintf("event %v(%v)", event.Name, strings.Join(inputs, ", "))
 }
 
 // Id returns the canonical representation of the event's signature used by the

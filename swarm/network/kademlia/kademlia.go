@@ -23,7 +23,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 const (
@@ -52,7 +52,7 @@ type KadParams struct {
 	ConnRetryExp         int
 }
 
-func NewKadParams() *KadParams {
+func NewDefaultKadParams() *KadParams {
 	return &KadParams{
 		MaxProx:              maxProx,
 		ProxBinSize:          proxBinSize,

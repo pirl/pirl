@@ -1,4 +1,4 @@
-// Copyright 2017 The go-ethereum Authors
+// Copyright 2015 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -17,24 +17,24 @@
 package tests
 
 import (
-	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
-	"reflect"
 	"strings"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/crypto/sha3"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 )
 
 // StateTest checks transaction processing without block context.
@@ -63,7 +63,7 @@ type stJSON struct {
 
 type stPostState struct {
 	Root    common.UnprefixedHash `json:"hash"`
-	Logs    *[]stLog              `json:"logs"`
+	Logs    common.UnprefixedHash `json:"logs"`
 	Indexes struct {
 		Data  int `json:"data"`
 		Gas   int `json:"gas"`
@@ -76,7 +76,7 @@ type stPostState struct {
 type stEnv struct {
 	Coinbase   common.Address `json:"currentCoinbase"   gencodec:"required"`
 	Difficulty *big.Int       `json:"currentDifficulty" gencodec:"required"`
-	GasLimit   *big.Int       `json:"currentGasLimit"   gencodec:"required"`
+	GasLimit   uint64         `json:"currentGasLimit"   gencodec:"required"`
 	Number     uint64         `json:"currentNumber"     gencodec:"required"`
 	Timestamp  uint64         `json:"currentTimestamp"  gencodec:"required"`
 }
@@ -84,7 +84,7 @@ type stEnv struct {
 type stEnvMarshaling struct {
 	Coinbase   common.UnprefixedAddress
 	Difficulty *math.HexOrDecimal256
-	GasLimit   *math.HexOrDecimal256
+	GasLimit   math.HexOrDecimal64
 	Number     math.HexOrDecimal64
 	Timestamp  math.HexOrDecimal64
 }
@@ -108,26 +108,11 @@ type stTransactionMarshaling struct {
 	PrivateKey hexutil.Bytes
 }
 
-//go:generate gencodec -type stLog -field-override stLogMarshaling -out gen_stlog.go
-
-type stLog struct {
-	Address common.Address `json:"address"`
-	Data    []byte         `json:"data"`
-	Topics  []common.Hash  `json:"topics"`
-	Bloom   string         `json:"bloom"`
-}
-
-type stLogMarshaling struct {
-	Address common.UnprefixedAddress
-	Data    hexutil.Bytes
-	Topics  []common.UnprefixedHash
-}
-
 // Subtests returns all valid subtests of the test.
 func (t *StateTest) Subtests() []StateSubtest {
 	var sub []StateSubtest
 	for fork, pss := range t.json.Post {
-		for i, _ := range pss {
+		for i := range pss {
 			sub = append(sub, StateSubtest{fork, i})
 		}
 	}
@@ -135,19 +120,19 @@ func (t *StateTest) Subtests() []StateSubtest {
 }
 
 // Run executes a specific subtest.
-func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) error {
+func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) (*state.StateDB, error) {
 	config, ok := Forks[subtest.Fork]
 	if !ok {
-		return UnsupportedForkError{subtest.Fork}
+		return nil, UnsupportedForkError{subtest.Fork}
 	}
-	block, _ := t.genesis(config).ToBlock()
+	block := t.genesis(config).ToBlock(nil)
 	db, _ := ethdb.NewMemDatabase()
-	statedb := makePreState(db, t.json.Pre)
+	statedb := MakePreState(db, t.json.Pre)
 
 	post := t.json.Post[subtest.Fork][subtest.Index]
 	msg, err := t.json.Tx.toMessage(post)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	context := core.NewEVMContext(msg, block.Header(), nil, &t.json.Env.Coinbase)
 	context.GetHash = vmTestBlockHash
@@ -156,26 +141,24 @@ func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) error {
 	gaspool := new(core.GasPool)
 	gaspool.AddGas(block.GasLimit())
 	snapshot := statedb.Snapshot()
-	if _, _, err := core.ApplyMessage(evm, msg, gaspool); err != nil {
+	if _, _, _, err := core.ApplyMessage(evm, msg, gaspool); err != nil {
 		statedb.RevertToSnapshot(snapshot)
 	}
-	if post.Logs != nil {
-		if err := checkLogs(statedb.Logs(), *post.Logs); err != nil {
-			return err
-		}
+	if logs := rlpHash(statedb.Logs()); logs != common.Hash(post.Logs) {
+		return statedb, fmt.Errorf("post state logs hash mismatch: got %x, want %x", logs, post.Logs)
 	}
-	root, _ := statedb.CommitTo(db, config.IsEIP158(block.Number()))
+	root, _ := statedb.Commit(config.IsEIP158(block.Number()))
 	if root != common.Hash(post.Root) {
-		return fmt.Errorf("post state root mismatch: got %x, want %x", root, post.Root)
+		return statedb, fmt.Errorf("post state root mismatch: got %x, want %x", root, post.Root)
 	}
-	return nil
+	return statedb, nil
 }
 
 func (t *StateTest) gasLimit(subtest StateSubtest) uint64 {
 	return t.json.Tx.GasLimit[t.json.Post[subtest.Fork][subtest.Index].Indexes.Gas]
 }
 
-func makePreState(db ethdb.Database, accounts core.GenesisAlloc) *state.StateDB {
+func MakePreState(db ethdb.Database, accounts core.GenesisAlloc) *state.StateDB {
 	sdb := state.NewDatabase(db)
 	statedb, _ := state.New(common.Hash{}, sdb)
 	for addr, a := range accounts {
@@ -187,7 +170,7 @@ func makePreState(db ethdb.Database, accounts core.GenesisAlloc) *state.StateDB 
 		}
 	}
 	// Commit and re-open to start with a clean state.
-	root, _ := statedb.CommitTo(db, false)
+	root, _ := statedb.Commit(false)
 	statedb, _ = state.New(root, sdb)
 	return statedb
 }
@@ -197,7 +180,7 @@ func (t *StateTest) genesis(config *params.ChainConfig) *core.Genesis {
 		Config:     config,
 		Coinbase:   t.json.Env.Coinbase,
 		Difficulty: t.json.Env.Difficulty,
-		GasLimit:   t.json.Env.GasLimit.Uint64(),
+		GasLimit:   t.json.Env.GasLimit,
 		Number:     t.json.Env.Number,
 		Timestamp:  t.json.Env.Timestamp,
 		Alloc:      t.json.Pre,
@@ -250,32 +233,13 @@ func (tx *stTransaction) toMessage(ps stPostState) (core.Message, error) {
 		return nil, fmt.Errorf("invalid tx data %q", dataHex)
 	}
 
-	msg := types.NewMessage(from, to, tx.Nonce, value, new(big.Int).SetUint64(gasLimit), tx.GasPrice, data, true)
+	msg := types.NewMessage(from, to, tx.Nonce, value, gasLimit, tx.GasPrice, data, true)
 	return msg, nil
 }
 
-func checkLogs(have []*types.Log, want []stLog) error {
-	if len(have) != len(want) {
-		return fmt.Errorf("logs length mismatch: got %d, want %d", len(have), len(want))
-	}
-	for i := range have {
-		if have[i].Address != want[i].Address {
-			return fmt.Errorf("log address %d: got %x, want %x", i, have[i].Address, want[i].Address)
-		}
-		if !bytes.Equal(have[i].Data, want[i].Data) {
-			return fmt.Errorf("log data %d: got %x, want %x", i, have[i].Data, want[i].Data)
-		}
-		if !reflect.DeepEqual(have[i].Topics, want[i].Topics) {
-			return fmt.Errorf("log topics %d:\ngot  %x\nwant %x", i, have[i].Topics, want[i].Topics)
-		}
-		genBloom := math.PaddedBigBytes(types.LogsBloom([]*types.Log{have[i]}), 256)
-		var wantBloom types.Bloom
-		if err := hexutil.UnmarshalFixedUnprefixedText("Bloom", []byte(want[i].Bloom), wantBloom[:]); err != nil {
-			return fmt.Errorf("test log %d has invalid bloom: %v", i, err)
-		}
-		if !bytes.Equal(genBloom, wantBloom[:]) {
-			return fmt.Errorf("bloom mismatch")
-		}
-	}
-	return nil
+func rlpHash(x interface{}) (h common.Hash) {
+	hw := sha3.NewKeccak256()
+	rlp.Encode(hw, x)
+	hw.Sum(h[:0])
+	return h
 }

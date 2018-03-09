@@ -81,19 +81,23 @@ func Env() Environment {
 
 // LocalEnv returns build environment metadata gathered from git.
 func LocalEnv() Environment {
-	env := applyEnvFlags(Environment{Name: "local", Repo: "pirl/pirl"})
-	if _, err := os.Stat(".git"); err != nil {
+	env := applyEnvFlags(Environment{Name: "local", Repo: "ethereum/go-ethereum"})
+
+	head := readGitFile("HEAD")
+	if splits := strings.Split(head, " "); len(splits) == 2 {
+		head = splits[1]
+	} else {
 		return env
 	}
 	if env.Commit == "" {
-		env.Commit = RunGit("rev-parse", "HEAD")
+		env.Commit = readGitFile(head)
 	}
 	if env.Branch == "" {
-		if b := RunGit("rev-parse", "--abbrev-ref", "HEAD"); b != "HEAD" {
-			env.Branch = b
+		if head != "HEAD" {
+			env.Branch = strings.TrimPrefix(head, "refs/heads/")
 		}
 	}
-	if env.Tag == "" {
+	if info, err := os.Stat(".git/objects"); err == nil && info.IsDir() && env.Tag == "" {
 		env.Tag = firstLine(RunGit("tag", "-l", "--points-at", "HEAD"))
 	}
 	return env

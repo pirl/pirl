@@ -30,8 +30,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/core/types"
+	"github.com/DaCHRIS/Iceberg-/accounts/keystore"
+	"github.com/DaCHRIS/Iceberg-/core/types"
 )
 
 // Tests that the account management snippets work correctly.

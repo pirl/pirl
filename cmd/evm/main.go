@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/pirl/pirl/cmd/utils"
+	"github.com/DaCHRIS/Iceberg-/cmd/utils"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -143,6 +143,7 @@ func init() {
 		compileCommand,
 		disasmCommand,
 		runCommand,
+		stateTestCommand,
 	}
 }
 

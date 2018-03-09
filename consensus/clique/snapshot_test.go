@@ -22,12 +22,12 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/params"
 )
 
 type testerVote struct {
@@ -74,7 +74,7 @@ type testerChainReader struct {
 	db ethdb.Database
 }
 
-func (r *testerChainReader) Config() *params.ChainConfig                 { panic("not supported") }
+func (r *testerChainReader) Config() *params.ChainConfig                 { return params.AllCliqueProtocolChanges }
 func (r *testerChainReader) CurrentHeader() *types.Header                { panic("not supported") }
 func (r *testerChainReader) GetHeader(common.Hash, uint64) *types.Header { panic("not supported") }
 func (r *testerChainReader) GetBlock(common.Hash, uint64) *types.Block   { panic("not supported") }

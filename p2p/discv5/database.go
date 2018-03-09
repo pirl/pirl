@@ -28,9 +28,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/rlp"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
@@ -239,14 +239,14 @@ func (db *nodeDB) ensureExpirer() {
 // expirer should be started in a go routine, and is responsible for looping ad
 // infinitum and dropping stale data from the database.
 func (db *nodeDB) expirer() {
-	tick := time.Tick(nodeDBCleanupCycle)
+	tick := time.NewTicker(nodeDBCleanupCycle)
+	defer tick.Stop()
 	for {
 		select {
-		case <-tick:
+		case <-tick.C:
 			if err := db.expireNodes(); err != nil {
 				log.Error(fmt.Sprintf("Failed to expire nodedb items: %v", err))
 			}
-
 		case <-db.quit:
 			return
 		}

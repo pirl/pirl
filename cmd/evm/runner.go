@@ -27,16 +27,16 @@ import (
 
 	goruntime "runtime"
 
-	"github.com/pirl/pirl/cmd/evm/internal/compiler"
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/core/vm/runtime"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/params"
+	"github.com/DaCHRIS/Iceberg-/cmd/evm/internal/compiler"
+	"github.com/DaCHRIS/Iceberg-/cmd/utils"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/DaCHRIS/Iceberg-/core/vm/runtime"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/params"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -96,7 +96,9 @@ func runCmd(ctx *cli.Context) error {
 	}
 	if ctx.GlobalString(GenesisFlag.Name) != "" {
 		gen := readGenesis(ctx.GlobalString(GenesisFlag.Name))
-		_, statedb = gen.ToBlock()
+		db, _ := ethdb.NewMemDatabase()
+		genesis := gen.ToBlock(db)
+		statedb, _ = state.New(genesis.Root(), state.NewDatabase(db))
 		chainConfig = gen.Config
 	} else {
 		db, _ := ethdb.NewMemDatabase()
@@ -234,13 +236,13 @@ Gas used:           %d
 `, execTime, mem.HeapObjects, mem.Alloc, mem.TotalAlloc, mem.NumGC, initialGas-leftOverGas)
 	}
 	if tracer != nil {
-		tracer.CaptureEnd(ret, initialGas-leftOverGas, execTime)
+		tracer.CaptureEnd(ret, initialGas-leftOverGas, execTime, err)
 	} else {
 		fmt.Printf("0x%x\n", ret)
+		if err != nil {
+			fmt.Printf(" error: %v\n", err)
+		}
 	}
 
-	if err != nil {
-		fmt.Printf(" error: %v\n", err)
-	}
 	return nil
 }

@@ -24,9 +24,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/storage"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/swarm/storage"
 )
 
 func testApi(t *testing.T, f func(*Api)) {
@@ -216,7 +216,7 @@ func TestAPIResolve(t *testing.T) {
 			api := &Api{dns: x.dns}
 			uri := &URI{Addr: x.addr, Scheme: "bzz"}
 			if x.immutable {
-				uri.Scheme = "bzzi"
+				uri.Scheme = "bzz-immutable"
 			}
 			res, err := api.Resolve(uri)
 			if err == nil {

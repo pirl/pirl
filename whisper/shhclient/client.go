@@ -19,10 +19,10 @@ package shhclient
 import (
 	"context"
 
-	"github.com/pirl/pirl"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/rpc"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	"github.com/DaCHRIS/Iceberg-"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/rpc"
+	whisper "github.com/DaCHRIS/Iceberg-/whisper/whisperv5"
 )
 
 // Client defines typed wrappers for the Whisper v5 RPC API.
@@ -45,8 +45,8 @@ func NewClient(c *rpc.Client) *Client {
 }
 
 // Version returns the Whisper sub-protocol version.
-func (sc *Client) Version(ctx context.Context) (uint, error) {
-	var result uint
+func (sc *Client) Version(ctx context.Context) (string, error) {
+	var result string
 	err := sc.c.CallContext(ctx, &result, "shh_version")
 	return result, err
 }

@@ -22,7 +22,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"github.com/DaCHRIS/Iceberg-/common"
 )
 
 // A BigInt represents a signed multi-precision integer.
@@ -60,6 +60,16 @@ func (bi *BigInt) SetBytes(buf []byte) {
 // SetInt64 sets the big int to x.
 func (bi *BigInt) SetInt64(x int64) {
 	bi.bigint.SetInt64(x)
+}
+
+// Sign returns:
+//
+//	-1 if x <  0
+//	 0 if x == 0
+//	+1 if x >  0
+//
+func (bi *BigInt) Sign() int {
+	return bi.bigint.Sign()
 }
 
 // SetString sets the big int to x.

@@ -22,8 +22,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/metrics"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/metrics"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/filter"
@@ -107,6 +107,10 @@ func (db *LDBDatabase) Put(key []byte, value []byte) error {
 		db.writeMeter.Mark(int64(len(value)))
 	}
 	return db.db.Put(key, value, nil)
+}
+
+func (db *LDBDatabase) Has(key []byte) (bool, error) {
+	return db.db.Has(key, nil)
 }
 
 // Get returns the given key if it's present.
@@ -271,24 +275,33 @@ func (db *LDBDatabase) meter(refresh time.Duration) {
 	}
 }
 
-// TODO: remove this stuff and expose leveldb directly
-
 func (db *LDBDatabase) NewBatch() Batch {
 	return &ldbBatch{db: db.db, b: new(leveldb.Batch)}
 }
 
 type ldbBatch struct {
-	db *leveldb.DB
-	b  *leveldb.Batch
+	db   *leveldb.DB
+	b    *leveldb.Batch
+	size int
 }
 
 func (b *ldbBatch) Put(key, value []byte) error {
 	b.b.Put(key, value)
+	b.size += len(value)
 	return nil
 }
 
 func (b *ldbBatch) Write() error {
 	return b.db.Write(b.b, nil)
+}
+
+func (b *ldbBatch) ValueSize() int {
+	return b.size
+}
+
+func (b *ldbBatch) Reset() {
+	b.b.Reset()
+	b.size = 0
 }
 
 type table struct {
@@ -307,6 +320,10 @@ func NewTable(db Database, prefix string) Database {
 
 func (dt *table) Put(key []byte, value []byte) error {
 	return dt.db.Put(append([]byte(dt.prefix), key...), value)
+}
+
+func (dt *table) Has(key []byte) (bool, error) {
+	return dt.db.Has(append([]byte(dt.prefix), key...))
 }
 
 func (dt *table) Get(key []byte) ([]byte, error) {
@@ -341,4 +358,12 @@ func (tb *tableBatch) Put(key, value []byte) error {
 
 func (tb *tableBatch) Write() error {
 	return tb.batch.Write()
+}
+
+func (tb *tableBatch) ValueSize() int {
+	return tb.batch.ValueSize()
+}
+
+func (tb *tableBatch) Reset() {
+	tb.batch.Reset()
 }

@@ -17,14 +17,16 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/console"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/cmd/utils"
+	"github.com/DaCHRIS/Iceberg-/console"
+	"github.com/DaCHRIS/Iceberg-/node"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -40,7 +42,7 @@ var (
 		Description: `
 The Geth console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://github.com/pirl/pirl/wiki/Javascipt-Console.`,
+See https://github.com/DaCHRIS/Iceberg-/wiki/Javascipt-Console.`,
 	}
 
 	attachCommand = cli.Command{
@@ -53,7 +55,7 @@ See https://github.com/pirl/pirl/wiki/Javascipt-Console.`,
 		Description: `
 The Geth console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://github.com/pirl/pirl/wiki/Javascipt-Console.
+See https://github.com/DaCHRIS/Iceberg-/wiki/Javascipt-Console.
 This command allows to open a console on a running geth node.`,
 	}
 
@@ -66,7 +68,7 @@ This command allows to open a console on a running geth node.`,
 		Category:  "CONSOLE COMMANDS",
 		Description: `
 The JavaScript VM exposes a node admin interface as well as the Ðapp
-JavaScript API. See https://github.com/pirl/pirl/wiki/Javascipt-Console`,
+JavaScript API. See https://github.com/DaCHRIS/Iceberg-/wiki/Javascipt-Console`,
 	}
 )
 
@@ -112,7 +114,22 @@ func localConsole(ctx *cli.Context) error {
 // console to it.
 func remoteConsole(ctx *cli.Context) error {
 	// Attach to a remotely running geth instance and start the JavaScript console
-	client, err := dialRPC(ctx.Args().First())
+	endpoint := ctx.Args().First()
+	if endpoint == "" {
+		path := node.DefaultDataDir()
+		if ctx.GlobalIsSet(utils.DataDirFlag.Name) {
+			path = ctx.GlobalString(utils.DataDirFlag.Name)
+		}
+		if path != "" {
+			if ctx.GlobalBool(utils.TestnetFlag.Name) {
+				path = filepath.Join(path, "testnet")
+			} else if ctx.GlobalBool(utils.RinkebyFlag.Name) {
+				path = filepath.Join(path, "rinkeby")
+			}
+		}
+		endpoint = fmt.Sprintf("%s/pirl.ipc", path)
+	}
+	client, err := dialRPC(endpoint)
 	if err != nil {
 		utils.Fatalf("Unable to attach to remote geth: %v", err)
 	}

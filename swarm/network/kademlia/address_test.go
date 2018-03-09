@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"github.com/DaCHRIS/Iceberg-/common"
 )
 
 func (Address) Generate(rand *rand.Rand, size int) reflect.Value {

@@ -33,7 +33,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 // Handler is the global debugging handler.
@@ -174,6 +174,17 @@ func (*HandlerT) Stacks() string {
 	buf := make([]byte, 1024*1024)
 	buf = buf[:runtime.Stack(buf, true)]
 	return string(buf)
+}
+
+// FreeOSMemory returns unused memory to the OS.
+func (*HandlerT) FreeOSMemory() {
+	debug.FreeOSMemory()
+}
+
+// SetGCPercent sets the garbage collection target percentage. It returns the previous
+// setting. A negative value disables GC.
+func (*HandlerT) SetGCPercent(v int) int {
+	return debug.SetGCPercent(v)
 }
 
 func writeProfile(name, file string) error {

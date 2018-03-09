@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/pirl/pirl/event"
+	"github.com/DaCHRIS/Iceberg-/event"
 )
 
 // This example demonstrates how SubscriptionScope can be used to control the lifetime of

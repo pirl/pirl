@@ -27,12 +27,12 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/accounts/usbwallet/internal/trezor"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/accounts"
+	"github.com/DaCHRIS/Iceberg-/accounts/usbwallet/internal/trezor"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/log"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -180,7 +180,7 @@ func (w *trezorDriver) trezorSign(derivationPath []uint32, tx *types.Transaction
 		AddressN:   derivationPath,
 		Nonce:      new(big.Int).SetUint64(tx.Nonce()).Bytes(),
 		GasPrice:   tx.GasPrice().Bytes(),
-		GasLimit:   tx.Gas().Bytes(),
+		GasLimit:   new(big.Int).SetUint64(tx.Gas()).Bytes(),
 		Value:      tx.Value().Bytes(),
 		DataLength: &length,
 	}

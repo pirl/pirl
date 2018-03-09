@@ -21,29 +21,30 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/accounts"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/DaCHRIS/Iceberg-/eth/downloader"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 )
 
 // Backend interface provides the common API services (that are provided by
 // both full and light clients) with access to necessary functions.
 type Backend interface {
-	// general Ethereum API
+	// General Ethereum API
 	Downloader() *downloader.Downloader
 	ProtocolVersion() int
 	SuggestPrice(ctx context.Context) (*big.Int, error)
 	ChainDb() ethdb.Database
 	EventMux() *event.TypeMux
 	AccountManager() *accounts.Manager
+
 	// BlockChain API
 	SetHead(number uint64)
 	HeaderByNumber(ctx context.Context, blockNr rpc.BlockNumber) (*types.Header, error)
@@ -59,7 +60,6 @@ type Backend interface {
 
 	// TxPool API
 	SendTx(ctx context.Context, signedTx *types.Transaction) error
-	RemoveTx(txHash common.Hash)
 	GetPoolTransactions() (types.Transactions, error)
 	GetPoolTransaction(txHash common.Hash) *types.Transaction
 	GetPoolNonce(ctx context.Context, addr common.Address) (uint64, error)

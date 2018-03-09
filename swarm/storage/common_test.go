@@ -24,7 +24,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 type brokenLimitedReader struct {
@@ -76,7 +76,7 @@ func testStore(m ChunkStore, l int64, branches int64, t *testing.T) {
 	}()
 	chunker := NewTreeChunker(&ChunkerParams{
 		Branches: branches,
-		Hash:     defaultHash,
+		Hash:     SHA3Hash,
 	})
 	swg := &sync.WaitGroup{}
 	key, _ := chunker.Split(rand.Reader, l, chunkC, swg, nil)

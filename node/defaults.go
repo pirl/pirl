@@ -22,8 +22,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p/nat"
 )
 
 const (
@@ -41,10 +41,9 @@ var DefaultConfig = Config{
 	WSPort:      DefaultWSPort,
 	WSModules:   []string{"net", "web3"},
 	P2P: p2p.Config{
-		ListenAddr:      ":30303",
-		DiscoveryV5Addr: ":30304",
-		MaxPeers:        25,
-		NAT:             nat.Any(),
+		ListenAddr: ":30303",
+		MaxPeers:   100,
+		NAT:        nat.Any(),
 	},
 }
 

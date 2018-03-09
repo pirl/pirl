@@ -20,7 +20,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"github.com/DaCHRIS/Iceberg-/common"
 )
 
 const (

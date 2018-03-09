@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/pirl/pirl/log"
+	"github.com/DaCHRIS/Iceberg-/log"
 )
 
 const (
@@ -78,7 +78,7 @@ type memTree struct {
 func newMemTree(b uint, parent *memTree, pidx uint) (node *memTree) {
 	node = new(memTree)
 	node.bits = b
-	node.width = 1 << uint(b)
+	node.width = 1 << b
 	node.subtree = make([]*memTree, node.width)
 	node.access = make([]uint64, node.width-1)
 	node.parent = parent

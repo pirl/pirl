@@ -17,7 +17,7 @@
 package api
 
 import (
-	"github.com/pirl/pirl/swarm/network"
+	"github.com/DaCHRIS/Iceberg-/swarm/network"
 )
 
 type Control struct {

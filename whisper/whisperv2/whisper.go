@@ -22,13 +22,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/ecies"
-	"github.com/pirl/pirl/event/filter"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/crypto"
+	"github.com/DaCHRIS/Iceberg-/crypto/ecies"
+	"github.com/DaCHRIS/Iceberg-/event/filter"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 
 	"gopkg.in/fatih/set.v0"
 )
@@ -262,7 +262,7 @@ func (self *Whisper) add(envelope *Envelope) error {
 	// Insert the message into the tracked pool
 	hash := envelope.Hash()
 	if _, ok := self.messages[hash]; ok {
-		log.Trace(fmt.Sprintf("whisper envelope already cached: %x\n", envelope))
+		log.Trace(fmt.Sprintf("whisper envelope already cached: %x\n", hash))
 		return nil
 	}
 	self.messages[hash] = envelope
@@ -277,7 +277,7 @@ func (self *Whisper) add(envelope *Envelope) error {
 		// Notify the local node of a message arrival
 		go self.postEvent(envelope)
 	}
-	log.Trace(fmt.Sprintf("cached whisper envelope %x\n", envelope))
+	log.Trace(fmt.Sprintf("cached whisper envelope %x\n", hash))
 	return nil
 }
 

@@ -23,13 +23,13 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/trie"
+	"github.com/DaCHRIS/Iceberg-/consensus/ethash"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/DaCHRIS/Iceberg-/trie"
 )
 
 func TestNodeIterator(t *testing.T) {
@@ -40,8 +40,8 @@ func TestNodeIterator(t *testing.T) {
 		genesis    = gspec.MustCommit(fulldb)
 	)
 	gspec.MustCommit(lightdb)
-	blockchain, _ := core.NewBlockChain(fulldb, params.TestChainConfig, ethash.NewFullFaker(), vm.Config{})
-	gchain, _ := core.GenerateChain(params.TestChainConfig, genesis, fulldb, 4, testChainGen)
+	blockchain, _ := core.NewBlockChain(fulldb, nil, params.TestChainConfig, ethash.NewFullFaker(), vm.Config{})
+	gchain, _ := core.GenerateChain(params.TestChainConfig, genesis, ethash.NewFaker(), fulldb, 4, testChainGen)
 	if _, err := blockchain.InsertChain(gchain); err != nil {
 		panic(err)
 	}

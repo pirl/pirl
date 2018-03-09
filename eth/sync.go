@@ -21,11 +21,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p/discover"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/eth/downloader"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/p2p/discover"
 )
 
 const (
@@ -188,8 +188,13 @@ func (pm *ProtocolManager) synchronise(peer *peer) {
 		atomic.StoreUint32(&pm.fastSync, 1)
 		mode = downloader.FastSync
 	}
+	// Run the sync cycle, and disable fast sync if we've went past the pivot block
 	if err := pm.downloader.Synchronise(peer.id, pHead, pTd, mode); err != nil {
 		return
+	}
+	if atomic.LoadUint32(&pm.fastSync) == 1 {
+		log.Info("Fast sync complete, auto disabling")
+		atomic.StoreUint32(&pm.fastSync, 0)
 	}
 	atomic.StoreUint32(&pm.acceptTxs, 1) // Mark initial sync done
 	if head := pm.blockchain.CurrentBlock(); head.NumberU64() > 0 {
@@ -200,13 +205,5 @@ func (pm *ProtocolManager) synchronise(peer *peer) {
 		// degenerate connectivity, but it should be healthy for the mainnet too to
 		// more reliably update peers or the local TD state.
 		go pm.BroadcastBlock(head, false)
-	}
-	// If fast sync was enabled, and we synced up, disable it
-	if atomic.LoadUint32(&pm.fastSync) == 1 {
-		// Disable fast sync if we indeed have something in our chain
-		if pm.blockchain.CurrentBlock().NumberU64() > 0 {
-			log.Info("Fast sync complete, auto disabling")
-			atomic.StoreUint32(&pm.fastSync, 0)
-		}
 	}
 }

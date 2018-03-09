@@ -22,29 +22,32 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/eth/filters"
-	"github.com/pirl/pirl/eth/gasprice"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/internal/ethapi"
-	"github.com/pirl/pirl/light"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discv5"
-	"github.com/pirl/pirl/params"
-	rpc "github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/accounts"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/hexutil"
+	"github.com/DaCHRIS/Iceberg-/consensus"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/bloombits"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/eth"
+	"github.com/DaCHRIS/Iceberg-/eth/downloader"
+	"github.com/DaCHRIS/Iceberg-/eth/filters"
+	"github.com/DaCHRIS/Iceberg-/eth/gasprice"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/DaCHRIS/Iceberg-/internal/ethapi"
+	"github.com/DaCHRIS/Iceberg-/light"
+	"github.com/DaCHRIS/Iceberg-/log"
+	"github.com/DaCHRIS/Iceberg-/node"
+	"github.com/DaCHRIS/Iceberg-/p2p"
+	"github.com/DaCHRIS/Iceberg-/p2p/discv5"
+	"github.com/DaCHRIS/Iceberg-/params"
+	rpc "github.com/DaCHRIS/Iceberg-/rpc"
 )
 
 type LightEthereum struct {
+	config *eth.Config
+
 	odr         *LesOdr
 	relay       *LesTxRelay
 	chainConfig *params.ChainConfig
@@ -60,6 +63,9 @@ type LightEthereum struct {
 	retriever       *retrieveManager
 	// DB interfaces
 	chainDb ethdb.Database // Block chain database
+
+	bloomRequests                              chan chan *bloombits.Retrieval // Channel receiving bloom data retrieval requests
+	bloomIndexer, chtIndexer, bloomTrieIndexer *core.ChainIndexer
 
 	ApiBackend *LesApiBackend
 
@@ -87,47 +93,62 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 	peers := newPeerSet()
 	quitSync := make(chan struct{})
 
-	eth := &LightEthereum{
-		chainConfig:    chainConfig,
-		chainDb:        chainDb,
-		eventMux:       ctx.EventMux,
-		peers:          peers,
-		reqDist:        newRequestDistributor(peers, quitSync),
-		accountManager: ctx.AccountManager,
-		engine:         eth.CreateConsensusEngine(ctx, config, chainConfig, chainDb),
-		shutdownChan:   make(chan bool),
-		networkId:      config.NetworkId,
+	leth := &LightEthereum{
+		config:           config,
+		chainConfig:      chainConfig,
+		chainDb:          chainDb,
+		eventMux:         ctx.EventMux,
+		peers:            peers,
+		reqDist:          newRequestDistributor(peers, quitSync),
+		accountManager:   ctx.AccountManager,
+		engine:           eth.CreateConsensusEngine(ctx, &config.Ethash, chainConfig, chainDb),
+		shutdownChan:     make(chan bool),
+		networkId:        config.NetworkId,
+		bloomRequests:    make(chan chan *bloombits.Retrieval),
+		bloomIndexer:     eth.NewBloomIndexer(chainDb, light.BloomTrieFrequency),
+		chtIndexer:       light.NewChtIndexer(chainDb, true),
+		bloomTrieIndexer: light.NewBloomTrieIndexer(chainDb, true),
 	}
 
-	eth.relay = NewLesTxRelay(peers, eth.reqDist)
-	eth.serverPool = newServerPool(chainDb, quitSync, &eth.wg)
-	eth.retriever = newRetrieveManager(peers, eth.reqDist, eth.serverPool)
-	eth.odr = NewLesOdr(chainDb, eth.retriever)
-	if eth.blockchain, err = light.NewLightChain(eth.odr, eth.chainConfig, eth.engine); err != nil {
+	leth.relay = NewLesTxRelay(peers, leth.reqDist)
+	leth.serverPool = newServerPool(chainDb, quitSync, &leth.wg)
+	leth.retriever = newRetrieveManager(peers, leth.reqDist, leth.serverPool)
+	leth.odr = NewLesOdr(chainDb, leth.chtIndexer, leth.bloomTrieIndexer, leth.bloomIndexer, leth.retriever)
+	if leth.blockchain, err = light.NewLightChain(leth.odr, leth.chainConfig, leth.engine); err != nil {
 		return nil, err
 	}
+	leth.bloomIndexer.Start(leth.blockchain)
 	// Rewind the chain in case of an incompatible config upgrade.
 	if compat, ok := genesisErr.(*params.ConfigCompatError); ok {
 		log.Warn("Rewinding chain to upgrade configuration", "err", compat)
-		eth.blockchain.SetHead(compat.RewindTo)
+		leth.blockchain.SetHead(compat.RewindTo)
 		core.WriteChainConfig(chainDb, genesisHash, chainConfig)
 	}
 
-	eth.txPool = light.NewTxPool(eth.chainConfig, eth.blockchain, eth.relay)
-	if eth.protocolManager, err = NewProtocolManager(eth.chainConfig, true, config.NetworkId, eth.eventMux, eth.engine, eth.peers, eth.blockchain, nil, chainDb, eth.odr, eth.relay, quitSync, &eth.wg); err != nil {
+	leth.txPool = light.NewTxPool(leth.chainConfig, leth.blockchain, leth.relay)
+	if leth.protocolManager, err = NewProtocolManager(leth.chainConfig, true, ClientProtocolVersions, config.NetworkId, leth.eventMux, leth.engine, leth.peers, leth.blockchain, nil, chainDb, leth.odr, leth.relay, quitSync, &leth.wg); err != nil {
 		return nil, err
 	}
-	eth.ApiBackend = &LesApiBackend{eth, nil}
+	leth.ApiBackend = &LesApiBackend{leth, nil}
 	gpoParams := config.GPO
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.GasPrice
 	}
-	eth.ApiBackend.gpo = gasprice.NewOracle(eth.ApiBackend, gpoParams)
-	return eth, nil
+	leth.ApiBackend.gpo = gasprice.NewOracle(leth.ApiBackend, gpoParams)
+	return leth, nil
 }
 
-func lesTopic(genesisHash common.Hash) discv5.Topic {
-	return discv5.Topic("LES@" + common.Bytes2Hex(genesisHash.Bytes()[0:8]))
+func lesTopic(genesisHash common.Hash, protocolVersion uint) discv5.Topic {
+	var name string
+	switch protocolVersion {
+	case lpv1:
+		name = "LES"
+	case lpv2:
+		name = "LES2"
+	default:
+		panic(nil)
+	}
+	return discv5.Topic(name + "@" + common.Bytes2Hex(genesisHash.Bytes()[0:8]))
 }
 
 type LightDummyAPI struct{}
@@ -200,10 +221,13 @@ func (s *LightEthereum) Protocols() []p2p.Protocol {
 // Start implements node.Service, starting all internal goroutines needed by the
 // Ethereum protocol implementation.
 func (s *LightEthereum) Start(srvr *p2p.Server) error {
+	s.startBloomHandlers()
 	log.Warn("Light client mode is an experimental feature")
 	s.netRPCService = ethapi.NewPublicNetAPI(srvr, s.networkId)
-	s.serverPool.start(srvr, lesTopic(s.blockchain.Genesis().Hash()))
-	s.protocolManager.Start()
+	// clients are searching for the first advertised protocol in the list
+	protocolVersion := AdvertiseProtocolVersions[0]
+	s.serverPool.start(srvr, lesTopic(s.blockchain.Genesis().Hash(), protocolVersion))
+	s.protocolManager.Start(s.config.LightPeers)
 	return nil
 }
 
@@ -211,6 +235,15 @@ func (s *LightEthereum) Start(srvr *p2p.Server) error {
 // Ethereum protocol.
 func (s *LightEthereum) Stop() error {
 	s.odr.Stop()
+	if s.bloomIndexer != nil {
+		s.bloomIndexer.Close()
+	}
+	if s.chtIndexer != nil {
+		s.chtIndexer.Close()
+	}
+	if s.bloomTrieIndexer != nil {
+		s.bloomTrieIndexer.Close()
+	}
 	s.blockchain.Stop()
 	s.protocolManager.Stop()
 	s.txPool.Stop()

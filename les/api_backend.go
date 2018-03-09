@@ -20,20 +20,21 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/eth/gasprice"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/light"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rpc"
+	"github.com/DaCHRIS/Iceberg-/accounts"
+	"github.com/DaCHRIS/Iceberg-/common"
+	"github.com/DaCHRIS/Iceberg-/common/math"
+	"github.com/DaCHRIS/Iceberg-/core"
+	"github.com/DaCHRIS/Iceberg-/core/bloombits"
+	"github.com/DaCHRIS/Iceberg-/core/state"
+	"github.com/DaCHRIS/Iceberg-/core/types"
+	"github.com/DaCHRIS/Iceberg-/core/vm"
+	"github.com/DaCHRIS/Iceberg-/eth/downloader"
+	"github.com/DaCHRIS/Iceberg-/eth/gasprice"
+	"github.com/DaCHRIS/Iceberg-/ethdb"
+	"github.com/DaCHRIS/Iceberg-/event"
+	"github.com/DaCHRIS/Iceberg-/light"
+	"github.com/DaCHRIS/Iceberg-/params"
+	"github.com/DaCHRIS/Iceberg-/rpc"
 )
 
 type LesApiBackend struct {
@@ -170,4 +171,18 @@ func (b *LesApiBackend) EventMux() *event.TypeMux {
 
 func (b *LesApiBackend) AccountManager() *accounts.Manager {
 	return b.eth.accountManager
+}
+
+func (b *LesApiBackend) BloomStatus() (uint64, uint64) {
+	if b.eth.bloomIndexer == nil {
+		return 0, 0
+	}
+	sections, _, _ := b.eth.bloomIndexer.Sections()
+	return light.BloomTrieFrequency, sections
+}
+
+func (b *LesApiBackend) ServiceFilter(ctx context.Context, session *bloombits.MatcherSession) {
+	for i := 0; i < bloomFilterThreads; i++ {
+		go session.Multiplex(bloomRetrievalBatch, bloomRetrievalWait, b.eth.bloomRequests)
+	}
 }

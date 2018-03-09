@@ -1,4 +1,4 @@
-// Copyright 2015 The go-ethereum Authors
+// Copyright 2017 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"github.com/DaCHRIS/Iceberg-/common"
 )
 
 func TestPack(t *testing.T) {
@@ -322,12 +322,12 @@ func TestPack(t *testing.T) {
 	} {
 		typ, err := NewType(test.typ)
 		if err != nil {
-			t.Fatal("unexpected parse error:", err)
+			t.Fatalf("%v failed. Unexpected parse error: %v", i, err)
 		}
 
 		output, err := typ.pack(reflect.ValueOf(test.input))
 		if err != nil {
-			t.Fatal("unexpected pack error:", err)
+			t.Fatalf("%v failed. Unexpected pack error: %v", i, err)
 		}
 
 		if !bytes.Equal(output, test.output) {
@@ -434,8 +434,5 @@ func TestPackNumber(t *testing.T) {
 		if !bytes.Equal(packed, tt.packed) {
 			t.Errorf("test %d: pack mismatch: have %x, want %x", i, packed, tt.packed)
 		}
-	}
-	if packed := packNum(reflect.ValueOf("string")); packed != nil {
-		t.Errorf("expected 'string' to pack to nil. got %x instead", packed)
 	}
 }
