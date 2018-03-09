@@ -10,8 +10,8 @@ fi
 # Create fake Go workspace if it doesn't exist yet.
 workspace="$PWD/build/_workspace"
 root="$PWD"
-ethdir="$workspace/src/github.com/DaCHRIS"
-if [ ! -L "$ethdir/Iceberg-" ]; then
+ethdir="$workspace/src/github.com/pirl"
+if [ ! -L "$ethdir/pirl" ]; then
     mkdir -p "$ethdir"
     cd "$ethdir"
     ln -s ../../../../../. Iceberg-
@@ -23,8 +23,8 @@ GOPATH="$workspace"
 export GOPATH
 
 # Run the command inside the workspace.
-cd "$ethdir/Iceberg-"
-PWD="$ethdir/Iceberg-"
+cd "$ethdir/pirl"
+PWD="$ethdir/pirl"
 
 # Launch the arguments with the configured environment.
 exec "$@"
