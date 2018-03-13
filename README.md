@@ -1,4 +1,4 @@
-## Go Pirl
+## Go Pirl 1.8.1 ( testing )
 
 Official golang implementation of the Pirl protocol.
 
