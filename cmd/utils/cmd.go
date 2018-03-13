@@ -23,6 +23,8 @@ import (
 	"io"
 	"os"
 	"os/signal"
+
+	"syscall"
 	"runtime"
 	"strings"
 
@@ -64,7 +66,7 @@ func StartNode(stack *node.Node) {
 	}
 	go func() {
 		sigc := make(chan os.Signal, 1)
-		signal.Notify(sigc, os.Interrupt)
+		signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
 		defer signal.Stop(sigc)
 		<-sigc
 		log.Info("Got interrupt, shutting down...")
