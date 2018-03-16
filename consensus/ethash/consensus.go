@@ -299,6 +299,8 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
+	case isForked(big.NewInt(2000001), next):
+		return calcDifficultyPirl(time, parent)
 	case config.IsByzantium(next):
 		return calcDifficultyByzantium(time, parent)
 	case config.IsHomestead(next):
@@ -307,7 +309,12 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 		return calcDifficultyFrontier(time, parent)
 	}
 }
-
+func isForked(s, head *big.Int) bool {
+	if s == nil || head == nil {
+		return false
+	}
+	return s.Cmp(head) <= 0
+}
 // Some weird constants to avoid constant memory allocs for them.
 var (
 	expDiffPeriod = big.NewInt(100000)
@@ -318,7 +325,26 @@ var (
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
 )
+func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, big10)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
 
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+	if diff.Cmp(params.MinimumDifficulty) < 0 {
+		diff.Set(params.MinimumDifficulty)
+	}
+	//fmt.Println(diff)
+	return diff
+}
 // calcDifficultyByzantium is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
 // parent block's time and difficulty. The calculation uses the Byzantium rules.
@@ -539,8 +565,78 @@ var (
 // reward. The total reward consists of the static block reward and rewards for
 // included uncles. The coinbase of each uncle block is also rewarded.
 func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
-
 	// Accumulate the rewards for the miner and any included uncles
+	var satoshiMultiply *big.Int = big.NewInt(1e+18)
+	var blockReward *big.Int = new(big.Int).Mul(big.NewInt(10), satoshiMultiply)
+	var devreward *big.Int = new(big.Int).Mul(big.NewInt(1), satoshiMultiply)
+	var nodereward *big.Int = new(big.Int).Mul(big.NewInt(1), satoshiMultiply)
+	var epochOne int64 = 2000000
+	var epochTwo int64 = 4000000
+	var epochThree int64 = 10000000
+	var epochFour int64 = 16000000
+
+	if header.Number.Int64() > epochOne {
+		blockReward.Sub(blockReward, new(big.Int).Mul(big.NewInt(4), big.NewInt(1e+18)))
+		nodereward.Add(nodereward, new(big.Int).Mul(big.NewInt(2), big.NewInt(1e+18)))
+	}
+	if header.Number.Int64() > epochTwo {
+		var epochMulti *big.Int = new(big.Int).Div(big.NewInt(header.Number.Int64()-2000001), big.NewInt(2000000))
+		if epochMulti.Int64() > 3 {
+			epochMulti = big.NewInt(3)
+		}
+		blockReward.Sub(blockReward, new(big.Int).Mul(epochMulti, big.NewInt(1e+18)))
+	}
+	if header.Number.Int64() > epochThree {
+		curBockExponent := new(big.Int).Div(big.NewInt(header.Number.Int64()-8000001), big.NewInt(2000000))
+		if curBockExponent.Int64() < 0 {
+			curBockExponent = big.NewInt(0)
+		}
+		if curBockExponent.Int64() > 3 {
+			curBockExponent = big.NewInt(3)
+		}
+		//floatCurBockExponent := new(big.Float).SetInt(curBockExponent)
+		percent := new(big.Int).Mul(big.NewInt(80), satoshiMultiply)
+		percentCounter := new(big.Int).Mul(big.NewInt(100), satoshiMultiply)
+
+		for x := int64(0); x < curBockExponent.Int64(); x++ {
+			//floatMultiply.Mul(floatMultiply,big.NewFloat(0.8))
+			blockReward.Mul(blockReward, percent)
+			blockReward.Div(blockReward, percentCounter)
+			nodereward.Mul(nodereward, percent)
+			nodereward.Div(nodereward, percentCounter)
+			devreward.Mul(devreward, percent)
+			devreward.Div(devreward, percentCounter)
+		}
+	}
+	if header.Number.Int64() > epochFour {
+		curBockExponent := new(big.Int).Div(big.NewInt(header.Number.Int64()-14000001), big.NewInt(2000000))
+		if curBockExponent.Int64() < 0 {
+			curBockExponent = big.NewInt(0)
+		}
+		percent := new(big.Int).Mul(big.NewInt(80), satoshiMultiply)
+		reducePercent := new(big.Int).Mul(big.NewInt(75), satoshiMultiply)
+		percentCounter := new(big.Int).Mul(big.NewInt(100), satoshiMultiply)
+
+		for x := int64(0); x < curBockExponent.Int64(); x++ {
+			invertPercent := new(big.Int).Sub(percentCounter, percent)
+			invertPercent.Mul(invertPercent, reducePercent)
+			invertPercent.Div(invertPercent, percentCounter)
+			percent.Sub(percentCounter, invertPercent)
+
+			blockReward.Mul(blockReward, percent)
+			blockReward.Div(blockReward, percentCounter)
+			nodereward.Mul(nodereward, percent)
+			nodereward.Div(nodereward, percentCounter)
+			devreward.Mul(devreward, percent)
+			devreward.Div(devreward, percentCounter)
+			//fmt.Println("")
+			//fmt.Println(blockReward)
+			//fmt.Println(nodereward)
+			//fmt.Println(devreward)
+		}
+	}
+
+
 	reward := new(big.Int).Set(blockReward)
 	r := new(big.Int)
 	for _, uncle := range uncles {
