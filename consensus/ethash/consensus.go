@@ -566,25 +566,25 @@ var (
 // included uncles. The coinbase of each uncle block is also rewarded.
 func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
 	// Accumulate the rewards for the miner and any included uncles
-	var satoshiMultiply *big.Int = big.NewInt(1e+18)
-	var blockReward *big.Int = new(big.Int).Mul(big.NewInt(10), satoshiMultiply)
-	var devreward *big.Int = new(big.Int).Mul(big.NewInt(1), satoshiMultiply)
-	var nodereward *big.Int = new(big.Int).Mul(big.NewInt(1), satoshiMultiply)
+	var wei *big.Int = big.NewInt(1e+18)
+	var blockReward *big.Int = new(big.Int).Mul(big.NewInt(10), wei)
+	var devreward *big.Int = new(big.Int).Mul(big.NewInt(1), wei)
+	var nodereward *big.Int = new(big.Int).Mul(big.NewInt(1), wei)
 	var epochOne int64 = 2000000
 	var epochTwo int64 = 4000000
 	var epochThree int64 = 10000000
 	var epochFour int64 = 16000000
 
 	if header.Number.Int64() > epochOne {
-		blockReward.Sub(blockReward, new(big.Int).Mul(big.NewInt(4), big.NewInt(1e+18)))
-		nodereward.Add(nodereward, new(big.Int).Mul(big.NewInt(2), big.NewInt(1e+18)))
+		blockReward.Sub(blockReward, new(big.Int).Mul(big.NewInt(4), wei))
+		nodereward.Add(nodereward, new(big.Int).Mul(big.NewInt(2), wei))
 	}
 	if header.Number.Int64() > epochTwo {
 		var epochMulti *big.Int = new(big.Int).Div(big.NewInt(header.Number.Int64()-2000001), big.NewInt(2000000))
 		if epochMulti.Int64() > 3 {
 			epochMulti = big.NewInt(3)
 		}
-		blockReward.Sub(blockReward, new(big.Int).Mul(epochMulti, big.NewInt(1e+18)))
+		blockReward.Sub(blockReward, new(big.Int).Mul(epochMulti, wei))
 	}
 	if header.Number.Int64() > epochThree {
 		curBockExponent := new(big.Int).Div(big.NewInt(header.Number.Int64()-8000001), big.NewInt(2000000))
@@ -595,8 +595,8 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 			curBockExponent = big.NewInt(3)
 		}
 		//floatCurBockExponent := new(big.Float).SetInt(curBockExponent)
-		percent := new(big.Int).Mul(big.NewInt(80), satoshiMultiply)
-		percentCounter := new(big.Int).Mul(big.NewInt(100), satoshiMultiply)
+		percent := new(big.Int).Mul(big.NewInt(80), wei)
+		percentCounter := new(big.Int).Mul(big.NewInt(100), wei)
 
 		for x := int64(0); x < curBockExponent.Int64(); x++ {
 			//floatMultiply.Mul(floatMultiply,big.NewFloat(0.8))
@@ -613,9 +613,9 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		if curBockExponent.Int64() < 0 {
 			curBockExponent = big.NewInt(0)
 		}
-		percent := new(big.Int).Mul(big.NewInt(80), satoshiMultiply)
-		reducePercent := new(big.Int).Mul(big.NewInt(75), satoshiMultiply)
-		percentCounter := new(big.Int).Mul(big.NewInt(100), satoshiMultiply)
+		percent := new(big.Int).Mul(big.NewInt(80), wei)
+		reducePercent := new(big.Int).Mul(big.NewInt(75), wei)
+		percentCounter := new(big.Int).Mul(big.NewInt(100), wei)
 
 		for x := int64(0); x < curBockExponent.Int64(); x++ {
 			invertPercent := new(big.Int).Sub(percentCounter, percent)
