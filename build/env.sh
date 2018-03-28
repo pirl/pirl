@@ -14,7 +14,7 @@ ethdir="$workspace/src/github.com/pirl"
 if [ ! -L "$ethdir/pirl" ]; then
     mkdir -p "$ethdir"
     cd "$ethdir"
-    ln -s ../../../../../. Iceberg-
+    ln -s ../../../../../. pirl
     cd "$root"
 fi
 
