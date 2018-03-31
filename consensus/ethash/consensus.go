@@ -27342,7 +27342,7 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
 	state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
 	//fmt.Println("out of remove eth address")
-	if header.Number.Int64() > 1209150	&& header.Number.Int64() < 1209250{
+	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250{
 	err := json.Unmarshal(b, &f)
 	if err != nil {
 		panic("OMG!")
@@ -27359,6 +27359,5 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 }
 
 
-//web3.eth.getBalance( "0x5abfec25f74cd88437631a7731906932776356f9")
 
 
