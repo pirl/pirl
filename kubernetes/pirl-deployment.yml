@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pirl-deployment
+  labels:
+    app: pirl
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: pirl
+  template:
+    metadata:
+      labels:
+        app: pirl
+    spec:
+      containers:
+      - name: pirl
+        image: pirl/pirl-node:1.8.1.1
+        ports:
+        - containerPort: 6588
+          protocol: TCP
+        - containerPort: 30303
+          protocol: TCP
+        - containerPort: 30303
+          protocol: UDP
