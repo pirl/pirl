@@ -21,11 +21,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/params"
 )
 
 var (

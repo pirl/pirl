@@ -26,12 +26,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/internal/jsre"
-	"github.com/pirl/pirl/node"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/internal/jsre"
+	"git.pirl.io/community/pirl/node"
 )
 
 const (

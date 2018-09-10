@@ -16,7 +16,7 @@
 
 package ethclient
 
-import "github.com/pirl/pirl"
+import "git.pirl.io/community/pirl"
 
 // Verify that Client implements the ethereum interfaces.
 var (

@@ -20,11 +20,11 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/params"
 )
 
 func TestMipmapUpgrade(t *testing.T) {

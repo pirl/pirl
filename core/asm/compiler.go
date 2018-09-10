@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core/vm"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core/vm"
 )
 
 // Compiler contains information about the parsed source

@@ -19,8 +19,8 @@ package trie
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
 )
 
 // SecureTrie wraps a trie with key hashing. In a secure trie, all

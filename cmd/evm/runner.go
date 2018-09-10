@@ -27,16 +27,16 @@ import (
 
 	goruntime "runtime"
 
-	"github.com/pirl/pirl/cmd/evm/internal/compiler"
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/core/vm/runtime"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/cmd/evm/internal/compiler"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/core/vm/runtime"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/params"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

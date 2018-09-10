@@ -27,12 +27,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/p2p/simulations/adapters"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/simulations/adapters"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // testService implements the node.Service interface and provides protocols

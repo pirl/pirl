@@ -18,11 +18,11 @@
 package consensus
 
 import (
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rpc"
 	"math/big"
 )
 

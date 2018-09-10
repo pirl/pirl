@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 func TestHexOrDecimal256(t *testing.T) {

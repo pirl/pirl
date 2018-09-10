@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/params"
 )
 
 // This table defines supported forks and their chain config.

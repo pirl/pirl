@@ -24,7 +24,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // RLPTest is the JSON structure of a single RLP test.

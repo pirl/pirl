@@ -22,8 +22,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/nat"
 )
 
 const (

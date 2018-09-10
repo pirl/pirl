@@ -30,9 +30,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/log"
 	"golang.org/x/crypto/ssh/terminal"
 )
 

@@ -23,17 +23,17 @@ import (
 	"math"
 	"sync"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/les/flowcontrol"
-	"github.com/pirl/pirl/light"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discv5"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/les/flowcontrol"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discv5"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 type LesServer struct {

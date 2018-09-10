@@ -26,8 +26,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pirl/pirl/common/bitutil"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/common/bitutil"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 // bloomIndexes represents the bit indexes inside the bloom filter that belong

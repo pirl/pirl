@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 // manageServers displays a list of servers the user can disconnect from, and an

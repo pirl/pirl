@@ -19,7 +19,7 @@ package bloombits
 import (
 	"errors"
 
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 // errSectionOutOfBounds is returned if the user tried to add more bloom filters

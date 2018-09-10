@@ -20,8 +20,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
 )
 
 func startTestCluster(n int) []*Whisper {

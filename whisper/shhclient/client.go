@@ -19,10 +19,10 @@ package shhclient
 import (
 	"context"
 
-	"github.com/pirl/pirl"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/rpc"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	"git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/rpc"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
 )
 
 // Client defines typed wrappers for the Whisper v5 RPC API.

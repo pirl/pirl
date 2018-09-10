@@ -25,13 +25,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/metrics"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/params"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 

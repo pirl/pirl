@@ -7,10 +7,10 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/params"
 )
 
 var _ = (*genesisSpecMarshaling)(nil)

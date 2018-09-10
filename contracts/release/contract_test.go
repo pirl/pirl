@@ -21,11 +21,11 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/accounts/abi/bind/backends"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/accounts/abi/bind/backends"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 // setupReleaseTest creates a blockchain simulator and deploys a version oracle

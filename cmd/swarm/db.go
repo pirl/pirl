@@ -22,9 +22,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
 )
 

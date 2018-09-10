@@ -19,7 +19,7 @@ package state
 import (
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 type journalEntry interface {

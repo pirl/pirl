@@ -27,13 +27,13 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
 	"github.com/naoina/toml"
 
-	bzzapi "github.com/pirl/pirl/swarm/api"
+	bzzapi "git.pirl.io/community/pirl/swarm/api"
 )
 
 var (
@@ -83,7 +83,7 @@ var tomlSettings = toml.Config{
 	MissingField: func(rt reflect.Type, field string) error {
 		link := ""
 		if unicode.IsUpper(rune(rt.Name()[0])) && rt.PkgPath() != "main" {
-			link = fmt.Sprintf(", check github.com/pirl/pirl/swarm/api/config.go for available fields")
+			link = fmt.Sprintf(", check git.pirl.io/community/pirl/swarm/api/config.go for available fields")
 		}
 		return fmt.Errorf("field '%s' is not defined in %s%s", field, rt.String(), link)
 	},

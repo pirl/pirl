@@ -26,8 +26,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
 )
 
 // faucetDockerfile is the Dockerfile required to build an faucet container to

@@ -28,7 +28,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/crypto/sha3"
 )
 
 const (

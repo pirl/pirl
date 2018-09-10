@@ -22,9 +22,9 @@ import (
 	"math/big"
 	"sort"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/log"
 )
 
 // nonceHeap is a heap.Interface implementation over 64bit unsigned integers for

@@ -38,9 +38,9 @@ import (
 	"math/big"
 	"unsafe"
 
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/params"
 )
 
 type JitVm struct {

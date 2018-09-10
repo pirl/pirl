@@ -22,13 +22,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/mclock"
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/light"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/log"
 )
 
 const (

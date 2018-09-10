@@ -23,10 +23,10 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 type Storage map[common.Hash]common.Hash

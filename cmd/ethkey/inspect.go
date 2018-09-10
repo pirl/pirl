@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/crypto"
 	"gopkg.in/urfave/cli.v1"
 )
 

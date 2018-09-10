@@ -26,8 +26,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
 )
 
 // nodeDockerfile is the Dockerfile required to run an Ethereum node.

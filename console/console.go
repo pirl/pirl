@@ -27,9 +27,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/pirl/pirl/internal/jsre"
-	"github.com/pirl/pirl/internal/web3ext"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/internal/jsre"
+	"git.pirl.io/community/pirl/internal/web3ext"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
 	"github.com/robertkrimen/otto"

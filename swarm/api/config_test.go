@@ -20,8 +20,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 func TestConfig(t *testing.T) {

@@ -24,9 +24,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/swarm/api"
-	swarm "github.com/pirl/pirl/swarm/api/client"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/swarm/api"
+	swarm "git.pirl.io/community/pirl/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

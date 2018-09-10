@@ -21,7 +21,7 @@ import (
 	"container/heap"
 	"errors"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Iterator is a key-value trie iterator that traverses a Trie.

@@ -25,15 +25,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/internal/ethapi"
-	"github.com/pirl/pirl/les"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/internal/ethapi"
+	"git.pirl.io/community/pirl/les"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // Interval to check for new releases
@@ -149,7 +149,7 @@ func (r *ReleaseService) checkVersion() {
 
 		warning := fmt.Sprintf("Client v%d.%d.%d-%x seems older than the latest upstream release v%d.%d.%d-%x",
 			r.config.Major, r.config.Minor, r.config.Patch, r.config.Commit[:4], version.Major, version.Minor, version.Patch, version.Commit[:4])
-		howtofix := fmt.Sprintf("Please check https://github.com/pirl/pirl/releases for new releases")
+		howtofix := fmt.Sprintf("Please check https://git.pirl.io/community/pirl/releases for new releases")
 		separator := strings.Repeat("-", len(warning))
 
 		log.Warn(separator)

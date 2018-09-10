@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // destinations stores one map per contract (keyed by hash of code).

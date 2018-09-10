@@ -26,7 +26,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 const (

@@ -20,9 +20,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/rlp"
-	"github.com/pirl/pirl/trie"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/trie"
 )
 
 type DumpAccount struct {

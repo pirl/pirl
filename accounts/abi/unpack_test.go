@@ -26,7 +26,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 	"github.com/stretchr/testify/require"
 )
 

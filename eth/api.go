@@ -25,17 +25,17 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/miner"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rlp"
-	"github.com/pirl/pirl/rpc"
-	"github.com/pirl/pirl/trie"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/miner"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/trie"
 )
 
 // PublicEthereumAPI provides an API to access Ethereum full node-related

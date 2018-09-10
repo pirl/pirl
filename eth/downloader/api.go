@@ -20,9 +20,9 @@ import (
 	"context"
 	"sync"
 
-	ethereum "github.com/pirl/pirl"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/rpc"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // PublicDownloaderAPI provides an API which gives information about the current synchronisation status.

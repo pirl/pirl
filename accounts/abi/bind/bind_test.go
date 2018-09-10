@@ -26,7 +26,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 	"golang.org/x/tools/imports"
 )
 

@@ -35,10 +35,10 @@ import (
 	"time"
 
 	"github.com/elastic/gosigar"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/rcrowley/go-metrics"
 	"golang.org/x/net/websocket"
 )

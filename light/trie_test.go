@@ -23,13 +23,13 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/trie"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/trie"
 )
 
 func TestNodeIterator(t *testing.T) {

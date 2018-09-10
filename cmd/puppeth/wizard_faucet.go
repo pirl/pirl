@@ -20,8 +20,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/log"
 )
 
 // deployFaucet queries the user for various input on deploying a faucet, after

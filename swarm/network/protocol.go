@@ -37,12 +37,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/pirl/pirl/contracts/chequebook"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	bzzswap "github.com/pirl/pirl/swarm/services/swap"
-	"github.com/pirl/pirl/swarm/services/swap/swap"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/contracts/chequebook"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	bzzswap "git.pirl.io/community/pirl/swarm/services/swap"
+	"git.pirl.io/community/pirl/swarm/services/swap/swap"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 const (

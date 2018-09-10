@@ -26,14 +26,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/contracts/chequebook"
-	"github.com/pirl/pirl/contracts/chequebook/contract"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/services/swap/swap"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/chequebook"
+	"git.pirl.io/community/pirl/contracts/chequebook/contract"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/services/swap/swap"
 )
 
 // SwAP       Swarm Accounting Protocol with

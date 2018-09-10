@@ -22,12 +22,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/pirl/pirl"
-	"github.com/pirl/pirl/accounts/abi"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/event"
+	"git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/accounts/abi"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/event"
 )
 
 // SignerFn is a signer function callback when a contract requires a method to

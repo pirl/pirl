@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/ecies"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/ecies"
 )
 
 func TestEnvelopeOpen(t *testing.T) {

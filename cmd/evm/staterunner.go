@@ -23,10 +23,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/tests"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/tests"
 
 	cli "gopkg.in/urfave/cli.v1"
 )

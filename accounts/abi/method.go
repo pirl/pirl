@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 // Method represents a callable given a `Name` and whether the method is a constant.

@@ -21,10 +21,10 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/params"
 )
 
 var (

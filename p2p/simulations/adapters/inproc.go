@@ -23,12 +23,12 @@ import (
 	"net"
 	"sync"
 
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // SimAdapter is a NodeAdapter which creates in-memory simulation nodes and

@@ -21,9 +21,9 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/ethdb"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 var dumper = spew.ConfigState{Indent: "    "}

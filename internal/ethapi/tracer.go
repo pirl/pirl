@@ -23,9 +23,9 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/core/vm"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/core/vm"
 	"github.com/robertkrimen/otto"
 )
 

@@ -25,9 +25,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 // Tests that verification caches can be correctly generated.

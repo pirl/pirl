@@ -19,8 +19,8 @@ package state
 import (
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/ethdb"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 var addr = common.BytesToAddress([]byte("test"))

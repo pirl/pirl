@@ -24,7 +24,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pirl/pirl/swarm/testutil"
+	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 func TestError(t *testing.T) {

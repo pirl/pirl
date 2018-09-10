@@ -22,8 +22,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/p2p/simulations/adapters"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/simulations/adapters"
 )
 
 // TestNetworkSimulation creates a multi-node simulation network with each node

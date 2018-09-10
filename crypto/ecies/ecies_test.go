@@ -40,7 +40,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 var dumpEnc bool

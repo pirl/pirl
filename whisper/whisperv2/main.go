@@ -27,12 +27,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/logger"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
-	"github.com/pirl/pirl/whisper"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/logger"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/whisper"
 )
 
 func main() {

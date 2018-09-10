@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/pirl/pirl/cmd/evm/internal/compiler"
+	"git.pirl.io/community/pirl/cmd/evm/internal/compiler"
 
 	cli "gopkg.in/urfave/cli.v1"
 )

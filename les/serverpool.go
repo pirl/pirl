@@ -27,13 +27,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common/mclock"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/p2p/discv5"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/discv5"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 const (

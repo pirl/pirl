@@ -19,9 +19,9 @@ package keystore
 import (
 	"math/big"
 
-	ethereum "github.com/pirl/pirl"
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/core/types"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 // keystoreWallet implements the accounts.Wallet interface for the original

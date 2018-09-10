@@ -28,10 +28,10 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto/sha3"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 var (

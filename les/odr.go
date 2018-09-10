@@ -19,10 +19,10 @@ package les
 import (
 	"context"
 
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/light"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/log"
 )
 
 // LesOdr implements light.OdrBackend

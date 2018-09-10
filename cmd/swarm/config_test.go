@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/rpc"
-	"github.com/pirl/pirl/swarm"
-	"github.com/pirl/pirl/swarm/api"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm"
+	"git.pirl.io/community/pirl/swarm/api"
 
 	"github.com/docker/docker/pkg/reexec"
 )

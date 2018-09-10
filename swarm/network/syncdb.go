@@ -20,8 +20,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/storage"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
 )

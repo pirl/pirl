@@ -23,9 +23,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // A Nonce is a 64-bit hash which proves (combined with the mix-hash) that

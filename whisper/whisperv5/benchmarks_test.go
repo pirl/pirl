@@ -19,7 +19,7 @@ package whisperv5
 import (
 	"testing"
 
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 func BenchmarkDeriveKeyMaterial(b *testing.B) {

@@ -27,12 +27,12 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/dashboard"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/params"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/dashboard"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/params"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
 	"github.com/naoina/toml"
 )
 

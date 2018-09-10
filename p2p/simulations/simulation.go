@@ -20,7 +20,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/pirl/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/discover"
 )
 
 // Simulation provides a framework for running actions in a simulated network

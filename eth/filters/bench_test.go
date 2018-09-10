@@ -23,14 +23,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/bitutil"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/bloombits"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/node"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/bitutil"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/bloombits"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/node"
 )
 
 func BenchmarkBloomBits512(b *testing.B) {

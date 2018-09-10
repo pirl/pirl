@@ -24,12 +24,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/accounts/abi/bind/backends"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/contracts/chequebook/contract"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/accounts/abi/bind/backends"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/chequebook/contract"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 var (

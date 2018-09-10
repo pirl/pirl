@@ -22,8 +22,8 @@ import (
 	"io"
 	"net"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Entry is implemented by known node record entry types.

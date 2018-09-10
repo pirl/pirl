@@ -19,7 +19,7 @@ package event_test
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/event"
+	"git.pirl.io/community/pirl/event"
 )
 
 func ExampleNewSubscription() {

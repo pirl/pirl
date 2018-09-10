@@ -22,9 +22,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
 	"github.com/karalabe/hid"
 )
 

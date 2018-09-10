@@ -22,8 +22,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 var seed int64

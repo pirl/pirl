@@ -24,17 +24,17 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/ethclient"
-	"github.com/pirl/pirl/ethstats"
-	"github.com/pirl/pirl/les"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
-	"github.com/pirl/pirl/params"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/ethclient"
+	"git.pirl.io/community/pirl/ethstats"
+	"git.pirl.io/community/pirl/les"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/params"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the Geth

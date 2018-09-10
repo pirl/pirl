@@ -19,8 +19,8 @@
 package whisperv6
 
 import (
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
 )
 
 // TopicType represents a cryptographically secure, probabilistic partial

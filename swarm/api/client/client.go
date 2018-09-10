@@ -33,7 +33,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pirl/pirl/swarm/api"
+	"git.pirl.io/community/pirl/swarm/api"
 )
 
 var (

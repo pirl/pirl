@@ -23,9 +23,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/params"
 )
 
 type account struct{}

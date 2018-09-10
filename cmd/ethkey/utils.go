@@ -22,9 +22,9 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/console"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/console"
+	"git.pirl.io/community/pirl/crypto"
 	"gopkg.in/urfave/cli.v1"
 )
 

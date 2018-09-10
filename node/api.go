@@ -22,11 +22,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/rcrowley/go-metrics"
 )
 

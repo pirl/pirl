@@ -20,9 +20,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/light"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/light"
 )
 
 const (

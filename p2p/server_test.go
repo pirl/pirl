@@ -25,10 +25,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/sha3"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p/discover"
 )
 
 func init() {

@@ -31,9 +31,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/secp256k1"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/secp256k1"
 )
 
 const NodeIDBits = 512

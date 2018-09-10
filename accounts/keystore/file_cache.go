@@ -24,7 +24,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 	set "gopkg.in/fatih/set.v0"
 )
 

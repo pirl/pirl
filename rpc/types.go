@@ -23,7 +23,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pirl/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/hexutil"
 	"gopkg.in/fatih/set.v0"
 )
 

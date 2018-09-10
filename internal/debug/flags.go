@@ -24,8 +24,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/log/term"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/log/term"
 	colorable "github.com/mattn/go-colorable"
 	"gopkg.in/urfave/cli.v1"
 )

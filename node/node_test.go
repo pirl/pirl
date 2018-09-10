@@ -24,9 +24,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 var (

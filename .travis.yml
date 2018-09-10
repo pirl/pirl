@@ -1,5 +1,5 @@
 language: go
-go_import_path: github.com/pirl/pirl
+go_import_path: git.pirl.io/community/pirl
 sudo: false
 matrix:
   include:

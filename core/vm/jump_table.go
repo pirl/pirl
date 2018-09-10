@@ -20,7 +20,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/params"
 )
 
 type (

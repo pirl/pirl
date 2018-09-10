@@ -25,9 +25,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/gizak/termui"
 	"gopkg.in/urfave/cli.v1"
 )

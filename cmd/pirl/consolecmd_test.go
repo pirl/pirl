@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/params"
 )
 
 const (

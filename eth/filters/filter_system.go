@@ -25,12 +25,12 @@ import (
 	"sync"
 	"time"
 
-	ethereum "github.com/pirl/pirl"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/rpc"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // Type determines the kind of filter and is used to put the filter in to

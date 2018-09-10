@@ -27,10 +27,10 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/ecies"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/ecies"
+	"git.pirl.io/community/pirl/log"
 )
 
 // Options specifies the exact way a message should be wrapped into an Envelope.

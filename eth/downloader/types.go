@@ -19,7 +19,7 @@ package downloader
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 // peerDropFn is a callback type for dropping a peer detected as malicious.

@@ -26,11 +26,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/swarm/api"
-	swarm "github.com/pirl/pirl/swarm/api/client"
-	"github.com/pirl/pirl/swarm/storage"
-	"github.com/pirl/pirl/swarm/testutil"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/api"
+	swarm "git.pirl.io/community/pirl/swarm/api/client"
+	"git.pirl.io/community/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 func TestBzzGetPath(t *testing.T) {

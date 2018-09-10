@@ -30,8 +30,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 // Tests that the account management snippets work correctly.

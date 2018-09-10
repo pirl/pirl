@@ -27,13 +27,13 @@ import (
 	"time"
 
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/internal/cmdtest"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
-	"github.com/pirl/pirl/swarm"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/internal/cmdtest"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm"
 )
 
 func init() {

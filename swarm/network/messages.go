@@ -21,11 +21,11 @@ import (
 	"net"
 	"time"
 
-	"github.com/pirl/pirl/contracts/chequebook"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/swarm/network/kademlia"
-	"github.com/pirl/pirl/swarm/services/swap"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/contracts/chequebook"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/swarm/network/kademlia"
+	"git.pirl.io/community/pirl/swarm/services/swap"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 /*

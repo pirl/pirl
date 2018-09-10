@@ -42,7 +42,7 @@ import (
 	"fmt"
 	"hash"
 
-	ethcrypto "github.com/pirl/pirl/crypto"
+	ethcrypto "git.pirl.io/community/pirl/crypto"
 )
 
 var (

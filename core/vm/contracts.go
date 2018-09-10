@@ -21,11 +21,11 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/bn256"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/bn256"
+	"git.pirl.io/community/pirl/params"
 	"golang.org/x/crypto/ripemd160"
 )
 

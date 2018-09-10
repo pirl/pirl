@@ -23,8 +23,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/pirl/pirl/common/mclock"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/log"
 )
 
 const (

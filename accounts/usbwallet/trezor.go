@@ -27,12 +27,12 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/accounts/usbwallet/internal/trezor"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/usbwallet/internal/trezor"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/log"
 	"github.com/golang/protobuf/proto"
 )
 

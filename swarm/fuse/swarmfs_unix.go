@@ -29,9 +29,9 @@ import (
 
 	"bazil.org/fuse"
 	"bazil.org/fuse/fs"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/api"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/api"
 )
 
 var (

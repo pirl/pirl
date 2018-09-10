@@ -19,7 +19,7 @@ package ethapi
 import (
 	"sync"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 type AddrLocker struct {

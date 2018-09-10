@@ -24,9 +24,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	whisper "github.com/pirl/pirl/whisper/whisperv6"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
 const powRequirement = 0.00001

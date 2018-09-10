@@ -25,7 +25,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 	"gopkg.in/fatih/set.v0"
 )
 

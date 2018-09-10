@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
 )
 
 // deployNode creates a new node configuration based on some user input.

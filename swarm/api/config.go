@@ -22,14 +22,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/contracts/ens"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/swarm/network"
-	"github.com/pirl/pirl/swarm/services/swap"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/ens"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/swarm/network"
+	"git.pirl.io/community/pirl/swarm/services/swap"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 const (

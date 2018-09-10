@@ -22,8 +22,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/metrics"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/metrics"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/filter"

@@ -21,11 +21,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/params"
 )
 
 // Tests that simple header verification works, for both good and bad blocks.

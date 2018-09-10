@@ -20,17 +20,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 /*
 http roundtripper to register for bzz url scheme
-see https://github.com/pirl/pirl/issues/2040
+see https://git.pirl.io/community/pirl/issues/2040
 Usage:
 
 import (
- "github.com/pirl/pirl/common/httpclient"
- "github.com/pirl/pirl/swarm/api/http"
+ "git.pirl.io/community/pirl/common/httpclient"
+ "git.pirl.io/community/pirl/swarm/api/http"
 )
 client := httpclient.New()
 // for (private) swarm proxy running locally

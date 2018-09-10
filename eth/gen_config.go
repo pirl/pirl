@@ -5,12 +5,12 @@ package eth
 import (
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/eth/gasprice"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/eth/gasprice"
 )
 
 var _ = (*configMarshaling)(nil)

@@ -16,7 +16,7 @@
 
 package core
 
-import "github.com/pirl/pirl/common"
+import "git.pirl.io/community/pirl/common"
 
 // BadHashes represent a set of manually tracked bad hashes (usually hard forks)
 var BadHashes = map[common.Hash]bool{

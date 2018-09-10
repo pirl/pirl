@@ -17,8 +17,8 @@
 package les
 
 import (
-	"github.com/pirl/pirl/metrics"
-	"github.com/pirl/pirl/p2p"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/p2p"
 )
 
 var (

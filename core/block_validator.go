@@ -19,10 +19,10 @@ package core
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/params"
 )
 
 // BlockValidator is responsible for validating block headers, uncles and

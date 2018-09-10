@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/pirl/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/hexutil"
 )
 
 type MyType [5]byte

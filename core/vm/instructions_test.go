@@ -20,8 +20,8 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/params"
 )
 
 func TestByteOp(t *testing.T) {

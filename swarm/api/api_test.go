@@ -24,9 +24,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 func testApi(t *testing.T, f func(*Api)) {

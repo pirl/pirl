@@ -25,8 +25,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/crypto"
 	"github.com/pborman/uuid"
 	"golang.org/x/crypto/pbkdf2"
 )

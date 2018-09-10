@@ -23,9 +23,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/accounts/usbwallet"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/accounts/usbwallet"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/robertkrimen/otto"
 )
 

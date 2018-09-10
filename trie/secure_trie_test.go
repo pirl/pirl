@@ -22,9 +22,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/ethdb"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 func newEmptySecure() *SecureTrie {

@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 func TestUnmarshalJSONNewFilterArgs(t *testing.T) {

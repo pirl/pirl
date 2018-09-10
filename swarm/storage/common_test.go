@@ -24,7 +24,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 type brokenLimitedReader struct {

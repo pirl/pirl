@@ -1,4 +1,4 @@
-export ROOT="${GOPATH}/src/github.com/pirl/pirl"
+export ROOT="${GOPATH}/src/git.pirl.io/community/pirl"
 export PATH="${ROOT}/swarm/dev/bin:${PATH}"
 
 cd "${ROOT}/swarm/dev"

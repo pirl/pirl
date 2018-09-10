@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/pirl/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/cmd/utils"
 	"gopkg.in/urfave/cli.v1"
 )
 

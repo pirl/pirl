@@ -25,7 +25,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/pirl/pirl/ethdb"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 func newTestLDB() (*ethdb.LDBDatabase, func()) {

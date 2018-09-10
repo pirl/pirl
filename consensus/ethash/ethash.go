@@ -33,9 +33,9 @@ import (
 	"unsafe"
 
 	mmap "github.com/edsrzf/mmap-go"
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/hashicorp/golang-lru/simplelru"
 	metrics "github.com/rcrowley/go-metrics"
 )

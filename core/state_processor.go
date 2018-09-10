@@ -17,14 +17,14 @@
 package core
 
 import (
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/consensus"
-	"github.com/pirl/pirl/consensus/misc"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/consensus/misc"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/params"
 )
 
 // StateProcessor is a basic Processor, which takes care of transitioning

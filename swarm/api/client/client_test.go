@@ -25,8 +25,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/pirl/pirl/swarm/api"
-	"github.com/pirl/pirl/swarm/testutil"
+	"git.pirl.io/community/pirl/swarm/api"
+	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 // TestClientUploadDownloadRaw test uploading and downloading raw data to swarm

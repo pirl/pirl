@@ -19,7 +19,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 // deployDashboard queries the user for various input on deploying a web-service

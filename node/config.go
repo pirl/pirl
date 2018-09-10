@@ -25,14 +25,14 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/accounts/usbwallet"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/accounts/usbwallet"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
 )
 
 const (

@@ -21,9 +21,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
 )
 
 // Tests that fast sync gets disabled as soon as a real block is successfully

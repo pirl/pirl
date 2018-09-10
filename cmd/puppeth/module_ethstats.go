@@ -25,7 +25,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 // ethstatsDockerfile is the Dockerfile required to build an ethstats backend

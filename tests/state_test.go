@@ -22,7 +22,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/pirl/pirl/core/vm"
+	"git.pirl.io/community/pirl/core/vm"
 )
 
 func TestState(t *testing.T) {

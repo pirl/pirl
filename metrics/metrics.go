@@ -23,7 +23,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rcrowley/go-metrics/exp"
 )

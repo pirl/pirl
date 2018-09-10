@@ -29,9 +29,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
 )
 
 const (

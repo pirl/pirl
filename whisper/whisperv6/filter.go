@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
 )
 
 // Filter represents a Whisper message filter

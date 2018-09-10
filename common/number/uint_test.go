@@ -20,7 +20,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 func TestSet(t *testing.T) {

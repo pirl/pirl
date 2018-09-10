@@ -19,7 +19,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 // ensureVirtualHost checks whether a reverse-proxy is running on the specified

@@ -27,8 +27,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pirl/pirl/swarm/api"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/api"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 type fileInfo struct {

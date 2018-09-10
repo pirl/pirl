@@ -21,9 +21,9 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 var (

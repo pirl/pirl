@@ -41,23 +41,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/ethclient"
-	"github.com/pirl/pirl/ethstats"
-	"github.com/pirl/pirl/les"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/p2p/discv5"
-	"github.com/pirl/pirl/p2p/nat"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/ethclient"
+	"git.pirl.io/community/pirl/ethstats"
+	"git.pirl.io/community/pirl/les"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/discv5"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/params"
 	"golang.org/x/net/websocket"
 )
 
@@ -450,7 +450,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 		case *noauthFlag:
 			username, avatar, address, err = authNoAuth(msg.URL)
 		default:
-			err = errors.New("Something funky happened, please open an issue at https://github.com/pirl/pirl/issues")
+			err = errors.New("Something funky happened, please open an issue at https://git.pirl.io/community/pirl/issues")
 		}
 		if err != nil {
 			if err = sendError(conn, err); err != nil {

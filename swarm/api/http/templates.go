@@ -20,7 +20,7 @@ import (
 	"html/template"
 	"path"
 
-	"github.com/pirl/pirl/swarm/api"
+	"git.pirl.io/community/pirl/swarm/api"
 )
 
 type htmlListData struct {

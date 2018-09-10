@@ -24,8 +24,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 var testDownloadDir, _ = ioutil.TempDir(os.TempDir(), "bzz-test")

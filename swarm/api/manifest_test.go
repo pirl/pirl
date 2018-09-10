@@ -25,7 +25,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 func manifest(paths ...string) (manifestReader storage.LazySectionReader) {

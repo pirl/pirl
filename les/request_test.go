@@ -21,12 +21,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/light"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/light"
 )
 
 var testBankSecureTrieKey = secAddr(testBankAddress)

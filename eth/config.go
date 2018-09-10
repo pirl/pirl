@@ -24,13 +24,13 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/eth/gasprice"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/eth/gasprice"
+	"git.pirl.io/community/pirl/params"
 )
 
 // DefaultConfig contains default settings for use on the Ethereum main net.

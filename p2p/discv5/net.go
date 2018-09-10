@@ -24,13 +24,13 @@ import (
 	"net"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/mclock"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/sha3"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p/netutil"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p/netutil"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 var (

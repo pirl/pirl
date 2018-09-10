@@ -23,11 +23,11 @@ package ens
 import (
 	"strings"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/contracts/ens/contract"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/ens/contract"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 var (

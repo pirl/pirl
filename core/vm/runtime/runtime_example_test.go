@@ -19,8 +19,8 @@ package runtime_test
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/vm/runtime"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/vm/runtime"
 )
 
 func ExampleExecute() {

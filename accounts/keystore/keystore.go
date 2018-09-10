@@ -33,11 +33,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/event"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/event"
 )
 
 var (

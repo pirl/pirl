@@ -24,8 +24,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common/compiler"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common/compiler"
 )
 
 var (

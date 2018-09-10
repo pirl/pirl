@@ -24,8 +24,8 @@ import (
 
 	"strings"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/internal/debug"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/internal/debug"
 	"gopkg.in/urfave/cli.v1"
 )
 

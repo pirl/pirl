@@ -29,7 +29,7 @@ import (
 	"net"
 	"sort"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 const (

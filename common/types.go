@@ -23,8 +23,8 @@ import (
 	"math/rand"
 	"reflect"
 
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/crypto/sha3"
 )
 
 const (

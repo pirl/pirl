@@ -22,7 +22,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Interface represents a wrapped version of Go's interface{}, with the capacity

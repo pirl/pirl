@@ -16,7 +16,7 @@
 
 package bind
 
-import "github.com/pirl/pirl/accounts/abi"
+import "git.pirl.io/community/pirl/accounts/abi"
 
 // tmplData is the data structure required to fill the binding template.
 type tmplData struct {

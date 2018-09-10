@@ -25,10 +25,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/params"
 )
 
 // makeGenesis creates a new genesis struct based on some user input.

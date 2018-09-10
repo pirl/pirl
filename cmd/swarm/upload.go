@@ -30,8 +30,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pirl/pirl/cmd/utils"
-	swarm "github.com/pirl/pirl/swarm/api/client"
+	"git.pirl.io/community/pirl/cmd/utils"
+	swarm "git.pirl.io/community/pirl/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

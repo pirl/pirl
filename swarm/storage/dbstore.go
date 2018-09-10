@@ -32,8 +32,8 @@ import (
 	"io/ioutil"
 	"sync"
 
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
 )

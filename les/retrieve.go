@@ -26,7 +26,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pirl/pirl/common/mclock"
+	"git.pirl.io/community/pirl/common/mclock"
 )
 
 var (

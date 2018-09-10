@@ -28,12 +28,12 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // ledgerOpcode is an enumeration encoding the supported Ledger opcodes.

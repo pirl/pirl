@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/common/math"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/math"
 )
 
 var _ = (*stTransactionMarshaling)(nil)

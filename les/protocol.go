@@ -26,11 +26,11 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/secp256k1"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/secp256k1"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Constants to match up protocol versions and messages

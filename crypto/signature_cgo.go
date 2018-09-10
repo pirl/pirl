@@ -23,8 +23,8 @@ import (
 	"crypto/elliptic"
 	"fmt"
 
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto/secp256k1"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/crypto/secp256k1"
 )
 
 // Ecrecover returns the uncompressed public key that created the given signature.

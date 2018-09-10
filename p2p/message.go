@@ -27,9 +27,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Msg defines the structure of a p2p message.

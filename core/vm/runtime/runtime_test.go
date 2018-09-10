@@ -21,11 +21,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pirl/pirl/accounts/abi"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/state"
-	"github.com/pirl/pirl/core/vm"
-	"github.com/pirl/pirl/ethdb"
+	"git.pirl.io/community/pirl/accounts/abi"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 func TestDefaults(t *testing.T) {

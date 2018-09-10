@@ -22,10 +22,10 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/pirl/pirl/accounts/abi"
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/accounts/abi"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 // Signer is an interaface defining the callback when a contract requires a

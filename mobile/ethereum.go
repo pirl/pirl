@@ -21,8 +21,8 @@ package geth
 import (
 	"errors"
 
-	ethereum "github.com/pirl/pirl"
-	"github.com/pirl/pirl/common"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Subscription represents an event subscription where events are

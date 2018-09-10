@@ -22,12 +22,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/p2p/netutil"
-	"github.com/pirl/pirl/swarm/network/kademlia"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/netutil"
+	"git.pirl.io/community/pirl/swarm/network/kademlia"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 // Hive is the logistic manager of the swarm

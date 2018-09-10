@@ -21,11 +21,11 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto/sha3"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Tests block header storage and retrieval operations.

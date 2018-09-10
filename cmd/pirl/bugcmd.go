@@ -26,10 +26,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/pirl/pirl/cmd/internal/browser"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/cmd/internal/browser"
+	"git.pirl.io/community/pirl/params"
 
-	"github.com/pirl/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/cmd/utils"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -41,7 +41,7 @@ var bugCommand = cli.Command{
 	Category:  "MISCELLANEOUS COMMANDS",
 }
 
-const issueUrl = "https://github.com/pirl/pirl/issues/new"
+const issueUrl = "https://git.pirl.io/community/pirl/issues/new"
 
 // reportBug reports a bug by opening a new URL to the go-ethereum GH issue
 // tracker and setting default values as the issue body.

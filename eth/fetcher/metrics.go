@@ -19,7 +19,7 @@
 package fetcher
 
 import (
-	"github.com/pirl/pirl/metrics"
+	"git.pirl.io/community/pirl/metrics"
 )
 
 var (

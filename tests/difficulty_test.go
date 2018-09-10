@@ -21,8 +21,8 @@ import (
 
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/params"
 )
 
 var (

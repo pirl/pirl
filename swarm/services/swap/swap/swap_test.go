@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 type testInPayment struct {

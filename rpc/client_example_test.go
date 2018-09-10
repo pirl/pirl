@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 type Block struct {

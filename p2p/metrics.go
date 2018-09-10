@@ -21,7 +21,7 @@ package p2p
 import (
 	"net"
 
-	"github.com/pirl/pirl/metrics"
+	"git.pirl.io/community/pirl/metrics"
 )
 
 var (

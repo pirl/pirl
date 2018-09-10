@@ -24,9 +24,9 @@ import (
 	"io"
 	"sync"
 
-	"github.com/pirl/pirl/bmt"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/bmt"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto/sha3"
 )
 
 type Hasher func() hash.Hash

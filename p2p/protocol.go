@@ -19,7 +19,7 @@ package p2p
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/discover"
 )
 
 // Protocol represents a P2P subprotocol implementation.

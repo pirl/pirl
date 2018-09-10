@@ -22,9 +22,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/pirl/pirl/swarm/api"
-	httpapi "github.com/pirl/pirl/swarm/api/http"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/api"
+	httpapi "git.pirl.io/community/pirl/swarm/api/http"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 func NewTestSwarmServer(t *testing.T) *TestSwarmServer {

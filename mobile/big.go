@@ -22,7 +22,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // A BigInt represents a signed multi-precision integer.

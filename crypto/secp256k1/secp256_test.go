@@ -24,8 +24,8 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto/randentropy"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/crypto/randentropy"
 )
 
 const TestCount = 1000

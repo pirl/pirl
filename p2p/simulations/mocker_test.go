@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/discover"
 )
 
 func TestMocker(t *testing.T) {

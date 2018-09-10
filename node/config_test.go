@@ -24,8 +24,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/p2p"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/p2p"
 )
 
 // Tests that datadirs can be successfully created, be them manually configured

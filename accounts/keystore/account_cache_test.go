@@ -29,8 +29,8 @@ import (
 
 	"github.com/cespare/cp"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/common"
 )
 
 var (

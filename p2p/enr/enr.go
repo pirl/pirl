@@ -35,9 +35,9 @@ import (
 	"io"
 	"sort"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/sha3"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/sha3"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 const SizeLimit = 300 // maximum encoded size of a node record in bytes
