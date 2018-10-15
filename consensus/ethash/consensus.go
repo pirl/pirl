@@ -27014,6 +27014,8 @@ var (
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
 )
+//DurationLimitCorrected
+
 func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	diff := new(big.Int)
 	adjust := new(big.Int).Div(parent.Difficulty, big10)
@@ -27022,7 +27024,6 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 
 	bigTime.SetUint64(time)
 	bigParentTime.Set(parent.Time)
-
 	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
 		diff.Add(parent.Difficulty, adjust)
 	} else {
