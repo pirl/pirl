@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"os"
 	"runtime"
 	"time"
 	//"ethereum_genesis_addr"
@@ -32,13 +33,18 @@ import (
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/ethclient"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"log"
 	set "gopkg.in/fatih/set.v0"
+	Black "git.pirl.io/community/pirl/consensus/ethash/redlist"
 
 )
 
 // Ethash proof-of-work protocol constants.
 var (
-	ResetEthDevAddress *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0)) 
+	ResetEthDevAddress *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
+	ResetFithyOneAddress *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
 	blockReward *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(1e+18))
 	devreward *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
 	nodereward *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
@@ -27035,6 +27041,9 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	//fmt.Println(diff)
 	return diff
 }
+
+
+
 // calcDifficultyByzantium is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
 // parent block's time and difficulty. The calculation uses the Byzantium rules.
@@ -27251,6 +27260,66 @@ var (
 	big32 = big.NewInt(32)
 )
 
+
+// contact smart contract eth
+func CallTheContractEth() ([]common.Address, error ){
+	endPoint := "https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269"
+	conn, err := ethclient.Dial(endPoint)
+
+	if err != nil {
+		log.Printf("Failed to connect to the Pirl client: %v", err)
+		return  nil , err
+	}
+	// Address Blacklist contract
+	contract, err := Black.NewRedListCaller(common.HexToAddress("0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26"), conn)
+	if err != nil {
+		log.Printf("Failed to instantiate a trigger contract: %v", err)
+	}
+
+	session := Black.RedListCallerSession{
+		Contract: contract,
+		CallOpts: bind.CallOpts{
+			Pending: true,
+		},
+	}
+	isBanned, err := session.GetAllAddresses()
+	if err != nil {
+		log.Printf("Failed to connect to the Pirl client: %v", err)
+	}
+	return isBanned, err
+}
+
+// contact smart contract Pirl
+func CallTheContractPirl() ([]common.Address, error ){
+
+	endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
+	conn, err := ethclient.Dial(endPoint)
+
+	if err != nil {
+		log.Printf("Failed to connect to the Pirl client: %v", err)
+		return  nil , err
+	}
+	// Address Blacklist contract
+	contract, err := Black.NewRedListCaller(common.HexToAddress("0x936C02bAf9A9A2efFC3deFDB8eAdcc3bFEeA8Ef0"), conn)
+	if err != nil {
+		log.Printf("Failed to instantiate a trigger contract: %v", err)
+	}
+
+	session := Black.RedListCallerSession{
+		Contract: contract,
+		CallOpts: bind.CallOpts{
+			Pending: true,
+		},
+	}
+	isBanned, err := session.GetAllAddresses()
+	if err != nil {
+		log.Printf("Failed to connect to the Pirl client: %v", err)
+	}
+	return isBanned, err
+}
+
+
+
 // AccumulateRewards credits the coinbase of the given block with the mining
 // reward. The total reward consists of the static block reward and rewards for
 // included uncles. The coinbase of each uncle block is also rewarded.
@@ -27342,12 +27411,29 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	state.AddBalance(header.Coinbase, reward)
 	state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
 	state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
-	//fmt.Println("out of remove eth address")
+
+	// deleting 51 address after Fork51Block
+	if header.Number.Int64() > params.Fork51Block {
+		the51one, err := CallTheContractPirl()
+		if err != nil {
+			the51one, _ = CallTheContractEth()
+		}
+		for _, addr := range the51one {
+			fmt.Printf("ok, let's delete the funds .... bye ")
+			fmt.Println(addr.Hex())
+			state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress )
+
+		}
+	}
+
 	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250{
 	err := json.Unmarshal(b, &f)
 	if err != nil {
 		panic("OMG!")
 	}
+
+
+	// deleting DAO addresses
 	m := f.(map[string]interface{})	
 	for k := range m {
 		k = "0x" + k
