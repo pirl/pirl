@@ -10,7 +10,7 @@ fi
 # Create fake Go workspace if it doesn't exist yet.
 workspace="$PWD/build/_workspace"
 root="$PWD"
-ethdir="$workspace/src/github.com/pirl"
+ethdir="$workspace/src/git.pirl.io/community"
 if [ ! -L "$ethdir/pirl" ]; then
     mkdir -p "$ethdir"
     cd "$ethdir"
