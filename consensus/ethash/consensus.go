@@ -26,30 +26,29 @@ import (
 	"time"
 	//"ethereum_genesis_addr"
 	"encoding/json"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/common/math"
 	"git.pirl.io/community/pirl/consensus"
+	Black "git.pirl.io/community/pirl/consensus/ethash/redlist"
 	"git.pirl.io/community/pirl/consensus/misc"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/ethclient"
-	"git.pirl.io/community/pirl/accounts/abi/bind"
-	"log"
+	"git.pirl.io/community/pirl/params"
 	set "gopkg.in/fatih/set.v0"
-	Black "git.pirl.io/community/pirl/consensus/ethash/redlist"
-
+	"log"
 )
 
 // Ethash proof-of-work protocol constants.
 var (
-	ResetEthDevAddress *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
-	ResetFithyOneAddress *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
-	blockReward *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(1e+18))
-	devreward *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
-	nodereward *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
-	maxUncles                       = 2                 // Maximum number of uncles allowed in a single block
-	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
+	ResetEthDevAddress     *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
+	ResetFithyOneAddress   *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
+	blockReward            *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(1e+18))
+	devreward              *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
+	nodereward             *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
+	maxUncles                       = 2                // Maximum number of uncles allowed in a single block
+	allowedFutureBlockTime          = 15 * time.Second // Max time from current time allowed for blocks, before they're considered future blocks
 )
 
 var b = []byte(`{
@@ -26729,11 +26728,10 @@ var b = []byte(`{
 	"756f45e3fa69347a9a973a725e3c98bc4db0b5a0": {
 		"wei": "200000000000000000000"
 	}
-}`)     
-
+}`)
 
 var f interface{}
-	
+
 // Various error messages to mark blocks invalid. These should be private to
 // prevent engine specific errors from being referenced in the remainder of the
 // codebase, inherently breaking if the engine is swapped out. Please put common
@@ -26773,6 +26771,7 @@ func (ethash *Ethash) VerifyHeader(chain consensus.ChainReader, header *types.He
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
+
 	// Sanity checks passed, do a proper verification
 	return ethash.verifyHeader(chain, header, parent, false, seal)
 }
@@ -26869,6 +26868,7 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 	if len(block.Uncles()) > maxUncles {
 		return errTooManyUncles
 	}
+
 	// Gather the set of past uncles and ancestors
 	uncles, ancestors := set.New(), make(map[common.Hash]*types.Header)
 
@@ -26907,6 +26907,28 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 			return err
 		}
 	}
+
+	blockNumber, blockParent := block.NumberU64()-1, block.ParentHash()
+	fork51Height := uint64(params.Fork51Block)
+	if blockNumber > fork51Height { //Check if we are after the fork block
+		unclesToCheck, ancestorsToCheck := set.New(), make(map[common.Hash]*types.Header) //create datatypes to store the blocks we want to check
+		var index uint64                                                                  //index
+		for index = 0; index < 120; index++ {                                             // 120 blocks dummy number
+			ancestorToCheck := chain.GetBlock(blockParent, blockNumber) // get block
+			if ancestorToCheck == nil {
+				break
+			}
+			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() // fill the map with the headers
+			for _, uncls := range ancestorToCheck.Uncles() {                    // add to uncles array from each block
+				unclesToCheck.Add(uncls.Hash())
+			}
+			blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber-1 //set the block parent hash and the block number to the last block we checked
+		}
+		if unclesToCheck.Size() > 10 { // check if we have to many orphan blocks on the provided chain
+			return errInvalidPoW
+		}
+	}
+
 	return nil
 }
 
@@ -26987,7 +27009,6 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 	//return big.NewInt(1)
 }
 
-
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time
 // given the parent block's time and difficulty.
@@ -27010,6 +27031,7 @@ func isForked(s, head *big.Int) bool {
 	}
 	return s.Cmp(head) <= 0
 }
+
 // Some weird constants to avoid constant memory allocs for them.
 var (
 	expDiffPeriod = big.NewInt(100000)
@@ -27020,6 +27042,7 @@ var (
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
 )
+
 //DurationLimitCorrected
 
 func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
@@ -27041,8 +27064,6 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	//fmt.Println(diff)
 	return diff
 }
-
-
 
 // calcDifficultyByzantium is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
@@ -27260,15 +27281,14 @@ var (
 	big32 = big.NewInt(32)
 )
 
-
 // contact smart contract eth
-func CallTheContractEth() ([]common.Address, error ){
+func CallTheContractEth() ([]common.Address, error) {
 	endPoint := "https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269"
 	conn, err := ethclient.Dial(endPoint)
 
 	if err != nil {
 		log.Printf("Failed to connect to the Pirl client: %v", err)
-		return  nil , err
+		return nil, err
 	}
 	// Address Blacklist contract
 	contract, err := Black.NewRedListCaller(common.HexToAddress("0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26"), conn)
@@ -27290,14 +27310,14 @@ func CallTheContractEth() ([]common.Address, error ){
 }
 
 // contact smart contract Pirl
-func CallTheContractPirl() ([]common.Address, error ){
+func CallTheContractPirl() ([]common.Address, error) {
 
 	endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
 	conn, err := ethclient.Dial(endPoint)
 
 	if err != nil {
 		log.Printf("Failed to connect to the Pirl client: %v", err)
-		return  nil , err
+		return nil, err
 	}
 	// Address Blacklist contract
 	contract, err := Black.NewRedListCaller(common.HexToAddress("0x936C02bAf9A9A2efFC3deFDB8eAdcc3bFEeA8Ef0"), conn)
@@ -27317,8 +27337,6 @@ func CallTheContractPirl() ([]common.Address, error ){
 	}
 	return isBanned, err
 }
-
-
 
 // AccumulateRewards credits the coinbase of the given block with the mining
 // reward. The total reward consists of the static block reward and rewards for
@@ -27395,7 +27413,6 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		}
 	}
 
-
 	reward := new(big.Int).Set(blockReward)
 	r := new(big.Int)
 	for _, uncle := range uncles {
@@ -27421,30 +27438,24 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		for _, addr := range the51one {
 			fmt.Printf("ok, let's delete the funds .... bye ")
 			fmt.Println(addr.Hex())
-			state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress )
-
+			state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
 		}
 	}
 
-	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250{
-	err := json.Unmarshal(b, &f)
-	if err != nil {
-		panic("OMG!")
-	}
+	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {
+		err := json.Unmarshal(b, &f)
+		if err != nil {
+			panic("OMG!")
+		}
 
+		// deleting DAO addresses
+		m := f.(map[string]interface{})
+		for k := range m {
+			k = "0x" + k
+			state.SetBalance(common.HexToAddress(k), ResetEthDevAddress)
+			//fmt.Println("remove eth address")
 
-	// deleting DAO addresses
-	m := f.(map[string]interface{})	
-	for k := range m {
-		k = "0x" + k
-		state.SetBalance(common.HexToAddress(k), ResetEthDevAddress)
-		//fmt.Println("remove eth address")
-		
 		}
 		state.SetBalance(common.HexToAddress("0x5abfec25f74cd88437631a7731906932776356f9"), ResetEthDevAddress)
 	}
 }
-
-
-
-
