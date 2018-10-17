@@ -1089,12 +1089,15 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	delayValues := make(map[common.Hash]*big.Int) // block delay values map
 	penaltyValues := make(map[common.Hash]*big.Int) //penatly for each block
 	blockNumber := len(chain) - 1 // Last block on chain
+	log.Info("blockNumber :", blockNumber)
 	blockParent := chain[blockNumber].ParentHash() // Last block parent
 	ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 	hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+	log.Info("hulkblockNumber :", hulkBlockNumber)
 	hulkBlockParentHash := chain[hulkBlockNumber].ParentHash()      // the hash of the parent of the block to start the checking
 	startTime := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber).Time()         // time on the block we want to check
+	log.Info("startTime :", startTime)
 	var index uint64
 	for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 		ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber)) // get blocks
