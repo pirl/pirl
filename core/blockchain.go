@@ -1085,11 +1085,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		seals[i] = true
 	}
 
-
-
 	var penaltyTimeThreshold uint64 = 10
 	delayValues := make(map[common.Hash]*big.Int) // block delay values map
-	penatlyValues := make(map[common.Hash]*big.Int) //penatly for each block
+	penaltyValues := make(map[common.Hash]*big.Int) //penatly for each block
 	blockNumber := len(chain) - 1 // Last block on chain
 	blockParent := chain[blockNumber].ParentHash() // Last block parent
 	ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
@@ -1111,23 +1109,17 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		bTime := ancs.Time // get block time
 		delay := sTime.Sub(sTime, bTime) // delay here is the delay between the blocks
 		delayValues[ancs.Hash()] = delay //set the map of delays
-		penatlyValues[ancs.Hash()] = nil //
+		penaltyValues[ancs.Hash()] = nil //
 		// End
 		sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
 	}
-	var q uint64
-	for q = 0; q < params.HulkEnforcementBlockThreshold; q++ {
 
-	}
 	for hash := range ancestorsToCheck {
 		if delayValues[hash].Uint64() > penaltyTimeThreshold {
 			penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-			penatlyValues[hash].Add(penatlyValues[hash], penalty)
+			penaltyValues[hash].Add(penaltyValues[hash], penalty)
 		}
 	}
-
-
-
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
