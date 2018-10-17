@@ -1350,13 +1350,13 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 	blockNumber := len(newChain) - 1 // Last block on chain
-
+	log.Error("Penalty Calculations")
 	if int64(blockNumber) > params.Fork51Block {
+		log.Info("We are in a fork!")
 		var penaltyTimeThreshold uint64 = 1
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penatly for each block
-
 
 		blockParent := newChain[blockNumber].ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
