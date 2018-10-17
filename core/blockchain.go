@@ -1085,54 +1085,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		seals[i] = true
 	}
 
-	blockNumber := chain[0].Number().Uint64() // Last block on chain
-	fmt.Printf("Calculating the attack vector!!!")
-	fmt.Println(blockNumber)
-	fmt.Println(params.Fork51Block)
-	if int64(blockNumber) > params.Fork51Block {
-		fmt.Printf("We are in a fork!")
-		var penaltyTimeThreshold uint64 = 1
-
-		delayValues := make(map[common.Hash]*big.Int) // block delay values map
-		penaltyValues := make(map[common.Hash]*big.Int) //penatly for each block
-
-		blockParent := chain[blockNumber].ParentHash() // Last block parent
-		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
-
-		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		fmt.Printf("hulkBlockNumber :")
-		hulkBlockParentHash := chain[hulkBlockNumber].ParentHash()      // the hash of the parent of the block to start the checking
-		startTime := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber).Time()         // time on the block we want to check
-		fmt.Printf("startTime :", startTime.String())
-		var index uint64
-		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
-			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber)) // get blocks
-			if ancestorToCheck == nil {
-				break
-			}
-			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
-			blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber - 1 // go back one block
-		}
-		sTime := startTime // set sTime to start time
-		for _, ancs := range ancestorsToCheck {
-			bTime := ancs.Time // get block time
-			delay := sTime.Sub(sTime, bTime) // delay here is the delay between the blocks
-			delayValues[ancs.Hash()] = delay //set the map of delays
-			penaltyValues[ancs.Hash()] = nil //
-			// End
-			sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
-		}
-
-		for hash := range ancestorsToCheck {
-			if delayValues[hash].Uint64() > penaltyTimeThreshold {
-				fmt.Printf("we got delay issues")
-				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-				penaltyValues[hash].Add(penaltyValues[hash], penalty)
-				fmt.Printf("penalty :", penalty)
-			}
-		}
-	}
-
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
