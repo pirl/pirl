@@ -1084,6 +1084,49 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		headers[i] = block.Header()
 		seals[i] = true
 	}
+
+	var penaltyTimeThreshold uint64 = 10
+	delayValues := make(map[common.Hash]*big.Int) // block delay values map
+	penatlyValues := make(map[common.Hash]*big.Int) //penatly for each block
+	blockNumber := len(chain) - 1 // Last block on chain
+	blockParent := chain[blockNumber].ParentHash() // Last block parent
+	ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
+
+	hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+	hulkBlockParentHash := bc.GetHeaderByNumber(hulkBlockNumber).ParentHash       // the hash of the parent of the block to start the checking
+	startTime := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber).Time()         // time on the block we want to check
+	var index uint64
+	for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
+		ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber)) // get blocks
+		if ancestorToCheck == nil {
+			break
+		}
+		ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
+		blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber - 1 // go back one block
+	}
+	sTime := startTime // set sTime to start time
+	for _, ancs := range ancestorsToCheck {
+		bTime := ancs.Time // get block time
+		delay := sTime.Sub(sTime, bTime) // delay here is the delay between the blocks
+		delayValues[ancs.Hash()] = delay //set the map of delays
+		penatlyValues[ancs.Hash()] = nil //
+		// End
+		sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
+	}
+	var q uint64
+	for q = 0; q < params.HulkEnforcementBlockThreshold; q++ {
+
+	}
+	for hash := range ancestorsToCheck {
+		if delayValues[hash].Uint64() > penaltyTimeThreshold {
+			penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+			penatlyValues[hash].Add(penatlyValues[hash], penalty)
+		}
+	}
+
+
+
+
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
