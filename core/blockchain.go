@@ -1093,7 +1093,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 	hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-	hulkBlockParentHash := bc.GetHeaderByNumber(hulkBlockNumber).ParentHash       // the hash of the parent of the block to start the checking
+	hulkBlockParentHash := chain[hulkBlockNumber].ParentHash()      // the hash of the parent of the block to start the checking
 	startTime := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber).Time()         // time on the block we want to check
 	var index uint64
 	for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
@@ -1116,8 +1116,10 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	for hash := range ancestorsToCheck {
 		if delayValues[hash].Uint64() > penaltyTimeThreshold {
+			log.Info("we got delay issues")
 			penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 			penaltyValues[hash].Add(penaltyValues[hash], penalty)
+			log.Info("penalty :", penalty)
 		}
 	}
 
