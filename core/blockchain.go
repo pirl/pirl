@@ -23,7 +23,6 @@ import (
 	"io"
 	"math/big"
 	mrand "math/rand"
-	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -1086,7 +1085,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		seals[i] = true
 	}
 	blockNumber := len(chain) - 1 // Last block on chain
-	log.Info("blockNumber :", strconv.Itoa(blockNumber))
+	fmt.Println("blockNumber :",blockNumber)
 	forkBlock := int(params.Fork51Block)
 	if blockNumber > forkBlock {
 		var penaltyTimeThreshold uint64 = 1
@@ -1099,10 +1098,10 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		log.Info("hulkblockNumber :", hulkBlockNumber)
+		fmt.Println("hulkBlockNumber :", hulkBlockNumber)
 		hulkBlockParentHash := chain[hulkBlockNumber].ParentHash()      // the hash of the parent of the block to start the checking
 		startTime := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber).Time()         // time on the block we want to check
-		log.Info("startTime :", startTime)
+		log.Info("startTime :", startTime.String())
 		var index uint64
 		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber)) // get blocks
