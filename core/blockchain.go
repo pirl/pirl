@@ -1351,7 +1351,8 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 	}
 	blockNumber := len(newChain) - 1 // Last block on chain
 	fmt.Printf("Calculating the attack vector!!!")
-
+	fmt.Println(blockNumber)
+	fmt.Println(params.Fork51Block)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Printf("We are in a fork!")
 		var penaltyTimeThreshold uint64 = 1
