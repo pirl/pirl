@@ -174,10 +174,10 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		fmt.Printf("hulkBlockNumber :")
+		fmt.Println("hulkBlockNumber :")
 		hulkBlockParentHash := chain.GetHeaderByNumber(hulkBlockNumber).ParentHash      // the hash of the parent of the block to start the checking
 		startTime := chain.GetBlock(hulkBlockParentHash, hulkBlockNumber).Time()         // time on the block we want to check
-		fmt.Printf("startTime :", startTime.String())
+		//fmt.Printf("startTime :", startTime.String())
 		var index uint64
 		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 			ancestorToCheck := chain.GetBlock(blockParent, uint64(blockNumber)) // get blocks
