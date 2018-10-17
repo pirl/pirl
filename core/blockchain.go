@@ -1085,9 +1085,8 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		seals[i] = true
 	}
 	blockNumber := len(chain) - 1 // Last block on chain
-	fmt.Println("blockNumber :",blockNumber)
-	forkBlock := int(params.Fork51Block)
-	if blockNumber > forkBlock {
+
+	if int64(blockNumber) > params.Fork51Block {
 		var penaltyTimeThreshold uint64 = 1
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
