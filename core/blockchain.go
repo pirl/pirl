@@ -1350,9 +1350,10 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 	blockNumber := len(newChain) - 1 // Last block on chain
-	log.Error("Penalty Calculations")
+	fmt.Printf("Calculating the attack vector!!!")
+
 	if int64(blockNumber) > params.Fork51Block {
-		log.Info("We are in a fork!")
+		fmt.Printf("We are in a fork!")
 		var penaltyTimeThreshold uint64 = 1
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
@@ -1362,10 +1363,10 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		log.Error("hulkBlockNumber :")
+		fmt.Printf("hulkBlockNumber :")
 		hulkBlockParentHash := newChain[hulkBlockNumber].ParentHash()      // the hash of the parent of the block to start the checking
 		startTime := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber).Time()         // time on the block we want to check
-		log.Error("startTime :", startTime.String())
+		fmt.Printf("startTime :", startTime.String())
 		var index uint64
 		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber)) // get blocks
@@ -1387,10 +1388,10 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 
 		for hash := range ancestorsToCheck {
 			if delayValues[hash].Uint64() > penaltyTimeThreshold {
-				log.Error("we got delay issues")
+				fmt.Printf("we got delay issues")
 				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 				penaltyValues[hash].Add(penaltyValues[hash], penalty)
-				log.Error("penalty :", penalty)
+				fmt.Printf("penalty :", penalty)
 			}
 		}
 	}
