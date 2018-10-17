@@ -1085,6 +1085,8 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		seals[i] = true
 	}
 
+
+
 	var penaltyTimeThreshold uint64 = 10
 	delayValues := make(map[common.Hash]*big.Int) // block delay values map
 	penatlyValues := make(map[common.Hash]*big.Int) //penatly for each block
