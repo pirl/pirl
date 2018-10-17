@@ -1,5 +1,5 @@
-//package fifthyonecontract
-package main
+package fifthyonecontracttest
+//package main_test
 
 import (
 	Black "./redlist"
