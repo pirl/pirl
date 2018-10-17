@@ -1349,7 +1349,7 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 			return fmt.Errorf("Invalid new chain")
 		}
 	}
-	blockNumber := len(newChain) - 1 // Last block on chain
+	blockNumber := len(oldChain) - 1 // Last block on chain
 	fmt.Printf("Calculating the attack vector!!!")
 	fmt.Println(blockNumber)
 	fmt.Println(params.Fork51Block)
