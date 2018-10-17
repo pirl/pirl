@@ -200,10 +200,10 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 
 		for hash := range ancestorsToCheck {
 			if delayValues[hash].Uint64() > penaltyTimeThreshold {
-				fmt.Printf("we got delay issues")
+				fmt.Println("we got delay issues")
 				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 				penaltyValues[hash].Add(penaltyValues[hash], penalty)
-				fmt.Printf("penalty :", penalty)
+				fmt.Println("penalty :", penalty)
 			}
 		}
 	}
