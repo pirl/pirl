@@ -1085,7 +1085,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		seals[i] = true
 	}
 
-	blockNumber := len(chain) - 1 // Last block on chain
+	blockNumber := chain[0].Number().Uint64() // Last block on chain
 	fmt.Printf("Calculating the attack vector!!!")
 	fmt.Println(blockNumber)
 	fmt.Println(params.Fork51Block)
