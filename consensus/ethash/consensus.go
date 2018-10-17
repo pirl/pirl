@@ -228,29 +228,6 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 			return err
 		}
 	}
-
-
-
-	//blockNumber, blockParent := block.NumberU64()-1, block.ParentHash()
-	//fork51Height := uint64(params.Fork51Block)
-	//if blockNumber > fork51Height { //Check if we are after the fork block
-	//	unclesToCheck, ancestorsToCheck := set.New(), make(map[common.Hash]*types.Header) //create datatypes to store the blocks we want to check
-	//	var index uint64                                                                  //index
-	//	for index = 0; index < 120; index++ {                                             // 120 blocks dummy number
-	//		ancestorToCheck := chain.GetBlock(blockParent, blockNumber) // get block
-	//		if ancestorToCheck == nil {
-	//			break
-	//		}
-	//		ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() // fill the map with the headers
-	//		for _, uncls := range ancestorToCheck.Uncles() {                    // add to uncles array from each block
-	//			unclesToCheck.Add(uncls.Hash())
-	//		}
-	//		blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber-1 //set the block parent hash and the block number to the last block we checked
-	//	}
-	//	if unclesToCheck.Size() > 10 { // check if we have to many orphan blocks on the provided chain
-	//		return errInvalidPoW
-	//	}
-	//}
 	return nil
 }
 
