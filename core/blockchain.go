@@ -901,7 +901,7 @@ func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
 
 	err := errors.New("there is a error here")
 
-	blockNumber := block.NumberU64() // Last block on chain
+	blockNumber := block.NumberU64() - 1 // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
@@ -1424,11 +1424,13 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 	}
 
 	if oldBlock != nil {
+		fmt.Println("We have old block!")
 		err := bc.checkFor51Attack(oldBlock); if err != nil {
 			return err
 		}
 	}
 	if newBlock != nil {
+		fmt.Println("We have new block")
 		err := bc.checkFor51Attack(newBlock); if err != nil {
 			return err
 		}
