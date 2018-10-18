@@ -1423,12 +1423,12 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
-	if oldBlock != nil {
-		fmt.Println("We have old block!")
-		err := bc.checkFor51Attack(oldBlock); if err != nil {
-			return err
-		}
-	}
+	//if oldBlock != nil {
+	//	fmt.Println("We have old block!")
+	//	err := bc.checkFor51Attack(oldBlock); if err != nil {
+	//		return err
+	//	}
+	//}
 	if newBlock != nil {
 		fmt.Println("We have new block")
 		err := bc.checkFor51Attack(newBlock); if err != nil {
