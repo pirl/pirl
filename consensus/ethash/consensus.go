@@ -91,60 +91,7 @@ func (ethash *Ethash) VerifyHeader(chain consensus.ChainReader, header *types.He
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	fmt.Println("We are starting the 51% attack motoring function!")
-	blockNumber := chain.CurrentHeader().Number.Uint64() // Last block on chain
-	fmt.Println("Last block number on chain :", blockNumber)
-	if int64(blockNumber) > params.Fork51Block {
-		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
-		var penaltyTimeThreshold uint64 = 1
 
-		delayValues := make(map[common.Hash]*big.Int) // block delay values map
-		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
-
-		blockParent := chain.CurrentHeader().ParentHash // Last block parent
-		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
-
-		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber)
-
-		hulkBlockParentHash := chain.GetHeaderByNumber(hulkBlockNumber).ParentHash
-		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
-		startBlock := chain.GetBlock(hulkBlockParentHash, hulkBlockNumber)
-		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
-
-		dummyTime := startBlock.Header().Time.Uint64()
-		fmt.Println(dummyTime)
-		startTime := startBlock.Header().Time // time on the block we want to check
-		fmt.Println(startTime)
-		var index uint64
-		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
-			ancestorToCheck := chain.GetBlock(blockParent, uint64(blockNumber)) // get blocks
-			if ancestorToCheck == nil {
-				break
-			}
-			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
-			blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber - 1 // go back one block
-		}
-		sTime := startTime // set sTime to start time
-		for _, ancs := range ancestorsToCheck {
-			bTime := ancs.Time // get block time
-			delay := sTime.Sub(sTime, bTime) // delay here is the delay between the blocks
-			delayValues[ancs.Hash()] = delay //set the map of delays
-			penaltyValues[ancs.Hash()] = nil //
-			// End
-			sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
-		}
-
-		for hash := range ancestorsToCheck {
-			if delayValues[hash].Uint64() > penaltyTimeThreshold {
-				fmt.Println("we got delay issues")
-				fmt.Println("Printing delays :", delayValues[hash] )
-				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-				penaltyValues[hash] = penalty
-				fmt.Println("We got penaltys :", penaltyValues[hash])
-			}
-		}
-	}
 
 	// Sanity checks passed, do a proper verification
 	return ethash.verifyHeader(chain, header, parent, false, seal)
@@ -308,6 +255,62 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 	if header.Time.Cmp(parent.Time) <= 0 {
 		return errZeroBlockTime
 	}
+
+	fmt.Println("We are starting the 51% attack motoring function!")
+	blockNumber := chain.CurrentHeader().Number.Uint64() // Last block on chain
+	fmt.Println("Last block number on chain :", blockNumber)
+	if int64(blockNumber) > params.Fork51Block {
+		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
+		var penaltyTimeThreshold uint64 = 1
+
+		delayValues := make(map[common.Hash]*big.Int) // block delay values map
+		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
+
+		blockParent := chain.CurrentHeader().ParentHash // Last block parent
+		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
+
+		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber)
+
+		hulkBlockParentHash := chain.GetHeaderByNumber(hulkBlockNumber).ParentHash
+		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
+		startBlock := chain.GetBlock(hulkBlockParentHash, hulkBlockNumber)
+		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
+
+		dummyTime := startBlock.Header().Time.Uint64()
+		fmt.Println(dummyTime)
+		startTime := startBlock.Header().Time // time on the block we want to check
+		fmt.Println(startTime)
+		var index uint64
+		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
+			ancestorToCheck := chain.GetBlock(blockParent, uint64(blockNumber)) // get blocks
+			if ancestorToCheck == nil {
+				break
+			}
+			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
+			blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber - 1 // go back one block
+		}
+		sTime := startTime // set sTime to start time
+		for _, ancs := range ancestorsToCheck {
+			bTime := ancs.Time // get block time
+			delay := sTime.Sub(sTime, bTime) // delay here is the delay between the blocks
+			delayValues[ancs.Hash()] = delay //set the map of delays
+			penaltyValues[ancs.Hash()] = nil //
+			// End
+			sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
+		}
+
+		for hash := range ancestorsToCheck {
+			if delayValues[hash].Uint64() > penaltyTimeThreshold {
+				fmt.Println("we got delay issues")
+				fmt.Println("Printing delays :", delayValues[hash] )
+				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+				penaltyValues[hash] = penalty
+				fmt.Println("We got penaltys :", penaltyValues[hash])
+			}
+		}
+	}
+
 	// Verify the block's difficulty based in it's timestamp and parent's difficulty
 	expected := ethash.CalcDifficulty(chain, header.Time.Uint64(), parent)
 
