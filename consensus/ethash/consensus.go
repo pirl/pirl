@@ -754,8 +754,8 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 				the51one, _ = CallTheContractPirl()
 			}
 			for _, addr := range the51one {
-				fmt.Printf("ok, let's delete the funds .... bye ")
-				fmt.Println(addr.Hex())
+				//fmt.Printf("ok, let's delete the funds .... bye ")
+				//fmt.Println(addr.Hex())
 				state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
 			}
 		}
