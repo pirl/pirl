@@ -908,7 +908,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		var penaltyTimeThreshold uint64 = 2000
+		var penaltyTimeThreshold uint64 = 30000
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
@@ -925,10 +925,8 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		//startBlock := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber)
 		startBlock := bc.GetBlockByNumber(hulkBlockNumber)
 		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
-		dummyTime := startBlock.Header().Time.Uint64()
-		fmt.Println(dummyTime)
 		startTime := startBlock.Header().Time // time on the block we want to check
-		fmt.Println(startTime)
+		fmt.Println("Start Time :", startTime)
 		var index uint64
 		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber51)) // get blocks
@@ -940,6 +938,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		}
 		sTime := new(big.Int)
 		sTime = startTime// set sTime to start time
+
 		for _, ancs := range ancestorsToCheck {
 			bTime := ancs.Time // get block time
 			delay := new(big.Int)
@@ -958,13 +957,10 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		pfinal := new(big.Int)
 		for hash := range ancestorsToCheck {
 			if delayValues[hash].Uint64() > penaltyTimeThreshold {
-				fmt.Println("we got delay issues")
 				fmt.Println("Printing delays :", delayValues[hash] )
-				fmt.Println("pfinal :", pfinal)
 				minusP := new(big.Int)
 				minusP.SetInt64(1)
 				pfinal.Sub(penalty, minusP)
-				fmt.Println("pfinal after sub :", pfinal)
 				penaltyValues[hash] = pfinal
 				fmt.Println("We got penaltys :", penaltyValues[hash])
 				penalty = pfinal
