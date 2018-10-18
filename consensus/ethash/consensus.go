@@ -293,11 +293,15 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 		sTime := startTime // set sTime to start time
 		for _, ancs := range ancestorsToCheck {
 			bTime := ancs.Time // get block time
+			fmt.Println("Start Time :", sTime)
+			fmt.Println("Current block time :", bTime)
 			delay := sTime.Sub(sTime, bTime) // delay here is the delay between the blocks
+			fmt.Println("Delay value should be sTime - bTime :", delay)
 			delayValues[ancs.Hash()] = delay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
 			// End
 			sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
+			fmt.Println("sTime new time", sTime)
 		}
 
 		for hash := range ancestorsToCheck {
