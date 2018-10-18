@@ -901,7 +901,7 @@ func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
 
 	err := errors.New("there is a error here")
 
-	blockNumber := bc.GetBlock(block.Hash(),block.NumberU64()).NumberU64() // Last block on chain
+	blockNumber := block.NumberU64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
@@ -911,7 +911,7 @@ func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
 
-		blockParent := bc.GetBlock(block.Hash(),block.NumberU64()).ParentHash() // Last block parent
+		blockParent := block.ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
