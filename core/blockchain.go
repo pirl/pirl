@@ -950,13 +950,12 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			// End
 			sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
 		}
-
+		penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+		pfinal := new(big.Int)
 		for hash := range ancestorsToCheck {
 			if delayValues[hash].Uint64() > penaltyTimeThreshold {
 				fmt.Println("we got delay issues")
 				fmt.Println("Printing delays :", delayValues[hash] )
-				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-				pfinal := new(big.Int)
 				fmt.Println("pfinal :", pfinal)
 				pfinal.Sub(penalty,new(big.Int).SetInt64( 1))
 				fmt.Println("pfinal after sub :", pfinal)
