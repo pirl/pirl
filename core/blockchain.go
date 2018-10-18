@@ -953,7 +953,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 				fmt.Println("we got delay issues")
 				fmt.Println("Printing delays :", delayValues[hash] )
 				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-				penaltyValues[hash] = penalty.Sub(penalty, new(big.Int).SetInt64( -1))
+				penaltyValues[hash] = penalty.Sub(penalty, new(big.Int).SetInt64( 1))
 				fmt.Println("We got penaltys :", penaltyValues[hash])
 			}
 		}
