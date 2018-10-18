@@ -963,6 +963,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 				fmt.Println("pfinal after sub :", pfinal)
 				penaltyValues[hash] = pfinal
 				fmt.Println("We got penaltys :", penaltyValues[hash])
+				penalty = pfinal
 			}
 		}
 	}
