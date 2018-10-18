@@ -233,7 +233,7 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 	return nil
 }
 
-func checkFor51Attack(chain consensus.ChainReader, header *types.Header) error {
+func checkFor51Attack(chain consensus.ChainReader, header, parent *types.Header) error {
 	err := errors.New("there is a error here")
 
 	blockNumber := header.Number.Uint64() // Last block on chain
@@ -246,7 +246,7 @@ func checkFor51Attack(chain consensus.ChainReader, header *types.Header) error {
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
 
-		blockParent := header.ParentHash // Last block parent
+		blockParent := parent.ParentHash // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
@@ -317,7 +317,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 		return errZeroBlockTime
 	}
 
-	 err := checkFor51Attack(chain, header)
+	 err := checkFor51Attack(chain, header, parent)
 	 if err != nil {
 	 	fmt.Println(err.Error())
 	 	os.Exit(1)
