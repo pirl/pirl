@@ -360,7 +360,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
 	//return CalcDifficulty(chain.Config(), time, parent)
 	// difficulty for the new block during dev to be static
-	return big.NewInt(1)
+	return big.NewInt(2)
 }
 
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
