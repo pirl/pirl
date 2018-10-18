@@ -233,35 +233,14 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 	return nil
 }
 
-
-// verifyHeader checks whether a header conforms to the consensus rules of the
-// stock Ethereum ethash engine.
-// See YP section 4.3.4. "Block Header Validity"
-func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *types.Header, uncle bool, seal bool) error {
-	// Ensure that the header's extra-data section is of a reasonable size
-	if uint64(len(header.Extra)) > params.MaximumExtraDataSize {
-		return fmt.Errorf("extra-data too long: %d > %d", len(header.Extra), params.MaximumExtraDataSize)
-	}
-	// Verify the header's timestamp
-	if uncle {
-		if header.Time.Cmp(math.MaxBig256) > 0 {
-			return errLargeBlockTime
-		}
-	} else {
-		if header.Time.Cmp(big.NewInt(time.Now().Add(allowedFutureBlockTime).Unix())) > 0 {
-			return consensus.ErrFutureBlock
-		}
-	}
-	if header.Time.Cmp(parent.Time) <= 0 {
-		return errZeroBlockTime
-	}
-
+func checkFor51Attack(chain consensus.ChainReader) error {
+	err := errors.New("there is a error here")
 	fmt.Println("We are starting the 51% attack motoring function!")
 	blockNumber := chain.CurrentHeader().Number.Uint64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
-		var penaltyTimeThreshold uint64 = 1
+		var penaltyTimeThreshold uint64 = 1000
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
@@ -314,6 +293,37 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 			}
 		}
 	}
+	err = nil //dummy
+	return  err
+}
+
+// verifyHeader checks whether a header conforms to the consensus rules of the
+// stock Ethereum ethash engine.
+// See YP section 4.3.4. "Block Header Validity"
+func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *types.Header, uncle bool, seal bool) error {
+	// Ensure that the header's extra-data section is of a reasonable size
+	if uint64(len(header.Extra)) > params.MaximumExtraDataSize {
+		return fmt.Errorf("extra-data too long: %d > %d", len(header.Extra), params.MaximumExtraDataSize)
+	}
+	// Verify the header's timestamp
+	if uncle {
+		if header.Time.Cmp(math.MaxBig256) > 0 {
+			return errLargeBlockTime
+		}
+	} else {
+		if header.Time.Cmp(big.NewInt(time.Now().Add(allowedFutureBlockTime).Unix())) > 0 {
+			return consensus.ErrFutureBlock
+		}
+	}
+	if header.Time.Cmp(parent.Time) <= 0 {
+		return errZeroBlockTime
+	}
+
+	 err := checkFor51Attack(chain)
+	 if err != nil {
+	 	fmt.Println(err.Error())
+	 	os.Exit(1)
+	 }
 
 	// Verify the block's difficulty based in it's timestamp and parent's difficulty
 	expected := ethash.CalcDifficulty(chain, header.Time.Uint64(), parent)
