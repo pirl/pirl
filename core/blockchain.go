@@ -947,7 +947,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value should be sTime - bTime :", delay)
 			div := new(big.Int)
-			div.SetInt64(time.Nanosecond * (time.Millisecond) * 100)
+			div.SetInt64(int64(time.Nanosecond) * int64(time.Millisecond) * 100)
 			fmt.Println("this is div value", div)
 			fdelay := new(big.Int)
 			fdelay.Div(delay, div)
