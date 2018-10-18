@@ -207,9 +207,9 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 			if delayValues[hash].Uint64() > penaltyTimeThreshold {
 				fmt.Println("we got delay issues")
 				fmt.Println("Printing delays :", delayValues[hash] )
-				//penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-				//penaltyValues[hash].Add(penaltyValues[hash], penalty)
-				//fmt.Println("penalty :", penalty)
+				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+				penaltyValues[hash] = penalty
+				fmt.Println("We got penaltys :", penaltyValues[hash])
 			}
 		}
 	}
