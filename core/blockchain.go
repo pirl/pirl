@@ -897,12 +897,11 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 var lastWrite uint64
 
 
-func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
-	bc.mu.Lock()
-	defer bc.mu.Unlock()
+func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
+
 	err := errors.New("there is a error here")
 
-	blockNumber := block.NumberU64() - 1 // Last block on chain
+	blockNumber := blocks[len(blocks) - 1].NumberU64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
@@ -912,7 +911,7 @@ func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
 
-		blockParent := block.ParentHash() // Last block parent
+		blockParent := blocks[blockNumber].ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
@@ -1424,16 +1423,16 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
-	//if oldBlock != nil {
-	//	fmt.Println("We have old block!")
-	//	err := bc.checkFor51Attack(oldBlock); if err != nil {
-	//		return err
-	//	}
-	//}
+	if oldChain != nil {
+		fmt.Println("We have old block!")
+		err := bc.checkFor51Attack(oldChain); if err != nil {
+			return err
+		}
+	}
 
-	if newBlock != nil {
+	if newChain != nil {
 		fmt.Println("We have new block")
-		err := bc.checkFor51Attack(newBlock); if err != nil {
+		err := bc.checkFor51Attack(newChain); if err != nil {
 			return err
 		}
 	}
