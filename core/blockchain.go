@@ -943,7 +943,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		for _, ancs := range ancestorsToCheck {
 			bTime := ancs.Time // get block time
 			delay := new(big.Int)
-			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
+			delay.Sub(sTime, bTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value should be sTime - bTime :", delay)
 			delayValues[ancs.Hash()] = delay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
@@ -956,7 +956,11 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 				fmt.Println("we got delay issues")
 				fmt.Println("Printing delays :", delayValues[hash] )
 				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-				penaltyValues[hash] = penalty.Sub(penalty, new(big.Int).SetInt64( 1))
+				pfinal := new(big.Int)
+				fmt.Println("pfinal :", pfinal)
+				pfinal.Sub(penalty,new(big.Int).SetInt64( 1))
+				fmt.Println("pfinal after sub :", pfinal)
+				penaltyValues[hash] = pfinal
 				fmt.Println("We got penaltys :", penaltyValues[hash])
 			}
 		}
