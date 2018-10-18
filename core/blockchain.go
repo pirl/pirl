@@ -895,7 +895,7 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 }
 
 var lastWrite uint64
-
+var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 
@@ -950,7 +950,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			// End
 			sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
 		}
-		penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+
 		pfinal := new(big.Int)
 		for hash := range ancestorsToCheck {
 			if delayValues[hash].Uint64() > penaltyTimeThreshold {
