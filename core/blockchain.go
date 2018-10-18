@@ -908,7 +908,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		var penaltyTimeThreshold uint64 = 100
+		var penaltyTimeThreshold uint64 = 2000
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
