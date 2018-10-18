@@ -159,12 +159,11 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 			}
 		}
 	}()
+	fmt.Println("We are starting the 51% attack motoring function!")
 	blockNumber := chain.CurrentHeader().Number.Uint64() // Last block on chain
-	fmt.Printf("Calculating the attack vector!!!")
-	fmt.Println(blockNumber)
-	fmt.Println(params.Fork51Block)
+	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
-		fmt.Println("We are in the new fork!")
+		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		var penaltyTimeThreshold uint64 = 1
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
@@ -174,12 +173,12 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		fmt.Println(hulkBlockNumber)
+		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber)
 
-		hulkBlockParentHash := chain.GetHeaderByNumber(2280547).ParentHash
-		fmt.Println(hulkBlockParentHash)// the hash of the parent of the block to start the checking
+		hulkBlockParentHash := chain.GetHeaderByNumber(hulkBlockNumber).ParentHash
+		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :")// the hash of the parent of the block to start the checking
 		startBlock := chain.GetBlock(hulkBlockParentHash, hulkBlockNumber)
-		fmt.Println(startBlock)
+		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
 		os.Exit(1)
 		dummyTime := startBlock.Header().Time.Uint64()
 		fmt.Println(dummyTime)
