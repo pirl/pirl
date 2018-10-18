@@ -895,10 +895,10 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 }
 
 var lastWrite uint64
-var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+
 
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
-
+	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("there is a error here")
 	fmt.Println("Lenght of the incoming blocks")
 	fmt.Println(len(blocks))
