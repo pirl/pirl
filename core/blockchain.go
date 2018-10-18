@@ -897,11 +897,11 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 var lastWrite uint64
 
 
-func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
+func (bc *BlockChain) checkFor51Attack (oldBlock, newBlock *types.Block) error {
 
 	err := errors.New("there is a error here")
 
-	blockNumber := block.NumberU64() // Last block on chain
+	blockNumber := oldBlock.NumberU64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
@@ -911,7 +911,7 @@ func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
 
-		blockParent := block.ParentHash() // Last block parent
+		blockParent := oldBlock.ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
@@ -921,7 +921,6 @@ func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
 		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
 		startBlock := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber)
 		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
-
 		dummyTime := startBlock.Header().Time.Uint64()
 		fmt.Println(dummyTime)
 		startTime := startBlock.Header().Time // time on the block we want to check
@@ -1395,9 +1394,7 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
-	if err := bc.checkFor51Attack(newBlock);  err != nil {
-		return err
-	}
+
 
 	if oldBlock == nil {
 		return fmt.Errorf("Invalid old chain")
@@ -1426,6 +1423,9 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
+	if err := bc.checkFor51Attack(oldBlock, newBlock);  err != nil {
+		return err
+	}
 
 	// Ensure the user sees large reorgs
 	if len(oldChain) > 0 && len(newChain) > 0 {
