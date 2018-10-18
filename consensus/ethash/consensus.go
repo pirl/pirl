@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	"os"
 	"runtime"
 	"time"
 	//"ethereum_genesis_addr"
@@ -34,7 +33,6 @@ import (
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/params"
 	"gopkg.in/fatih/set.v0"
-	"log"
 )
 
 // Ethash proof-of-work protocol constants.
@@ -682,24 +680,24 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 	// deleting 51 address after Fork51Block
 	//fmt.Print(params.Fork51Block)
-	log.Print(params.Fork51Block)
-	if header.Number.Int64() > params.Fork51Block {
-		endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
-		if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
-			the51one, err := CallTheContractEth()
-			if err != nil {
-				the51one, _ = CallTheContractPirl()
-			}
-			for _, addr := range the51one {
+	//log.Print(params.Fork51Block)
+	//if header.Number.Int64() > params.Fork51Block {
+	//	endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
+	//	if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
+	//		the51one, err := CallTheContractEth()
+	//		if err != nil {
+	//			the51one, _ = CallTheContractPirl()
+	//		}
+	//		for _, addr := range the51one {
 				//fmt.Printf("ok, let's delete the funds .... bye ")
 				//fmt.Println(addr.Hex())
-				state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
-			}
-		}
+	//			state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
+	//		}
+	//	}
 
 
 
-	}
+	//}
 
 	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {
 		err := json.Unmarshal(b, &f)
