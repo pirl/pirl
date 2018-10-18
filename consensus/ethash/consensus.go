@@ -159,7 +159,7 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 			}
 		}
 	}()
-	blockNumber := chain.CurrentHeader().Number.Uint64() - 1 // Last block on chain
+	blockNumber := chain.CurrentHeader().Number.Uint64() // Last block on chain
 	fmt.Printf("Calculating the attack vector!!!")
 	fmt.Println(blockNumber)
 	fmt.Println(params.Fork51Block)
