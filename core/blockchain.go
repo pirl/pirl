@@ -895,7 +895,7 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 }
 
 var lastWrite uint64
-
+var sTime = new(big.Int)
 
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
@@ -936,7 +936,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
 			blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51 - 1 // go back one block
 		}
-		sTime := new(big.Int)
+
 		sTime = startTime// set sTime to start time
 
 		for _, ancs := range ancestorsToCheck {
