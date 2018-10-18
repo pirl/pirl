@@ -902,25 +902,28 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	err := errors.New("there is a error here")
 	fmt.Println("Lenght of the incoming blocks")
 	fmt.Println(len(blocks))
-	blockNumber := blocks[len(blocks)].NumberU64() // Last block on chain
-	fmt.Println("Last block number on chain :", blockNumber)
-	if int64(blockNumber) > params.Fork51Block {
+	//blockNumber := blocks[len(blocks)].NumberU64() // Last block on chain
+	blockNumber51 := blocks[len(blocks)-1].NumberU64()
+	fmt.Println("Last block number on chain :", blockNumber51)
+	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
 		var penaltyTimeThreshold uint64 = 100
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
-
-		blockParent := blocks[blockNumber].ParentHash() // Last block parent
+		fmt.Println("We are in blockParent ")
+		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
+		fmt.Println("We are in ancestorsToCheck ")
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
-		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber)
+		hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber +1 )
 
-		hulkBlockParentHash := bc.GetHeaderByNumber(hulkBlockNumber).ParentHash
-		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
-		startBlock := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber)
+		//hulkBlockParentHash := bc.GetHeaderByNumber(hulkBlockNumber +1 ).ParentHash
+		//fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
+		//startBlock := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber)
+		startBlock := bc.GetBlockByNumber(hulkBlockNumber)
 		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
 		dummyTime := startBlock.Header().Time.Uint64()
 		fmt.Println(dummyTime)
@@ -928,12 +931,12 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		fmt.Println(startTime)
 		var index uint64
 		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
-			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber)) // get blocks
+			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber51)) // get blocks
 			if ancestorToCheck == nil {
 				break
 			}
 			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
-			blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber - 1 // go back one block
+			blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51 - 1 // go back one block
 		}
 		sTime := new(big.Int)
 		sTime = startTime// set sTime to start time
