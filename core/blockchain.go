@@ -900,7 +900,8 @@ var lastWrite uint64
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 
 	err := errors.New("there is a error here")
-
+	fmt.Println("Lenght of the incoming blocks")
+	fmt.Println(len(blocks))
 	blockNumber := blocks[len(blocks)].NumberU64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
@@ -1422,7 +1423,8 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 			return fmt.Errorf("Invalid new chain")
 		}
 	}
-
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
 	if oldChain != nil {
 		fmt.Println("We have old block!")
 		err := bc.checkFor51Attack(oldChain); if err != nil {
