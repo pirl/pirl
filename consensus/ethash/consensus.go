@@ -233,8 +233,8 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 	return nil
 }
 
-func checkFor51Attack(chain consensus.ChainReader, header *types.Header) error {
-	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
+func checkFor51Attack(chain consensus.ChainReader, header, parent *types.Header) error {
+
 	err := errors.New("there is a error here")
 
 	blockNumber := header.Number.Uint64() - 1 // Last block on chain
@@ -276,7 +276,7 @@ func checkFor51Attack(chain consensus.ChainReader, header *types.Header) error {
 		for _, ancs := range ancestorsToCheck {
 			bTime := ancs.Time // get block time
 			delay := new(big.Int)
-			delay.Sub(sTime, bTime) // delay here is the delay between the blocks
+			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value should be sTime - bTime :", delay)
 			delayValues[ancs.Hash()] = delay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
@@ -320,7 +320,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 		return errZeroBlockTime
 	}
 
-	 err := checkFor51Attack(chain, header)
+	 err := checkFor51Attack(chain, header, header)
 	 if err != nil {
 	 	fmt.Println(err.Error())
 	 	os.Exit(1)
