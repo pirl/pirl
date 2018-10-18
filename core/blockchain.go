@@ -898,7 +898,8 @@ var lastWrite uint64
 
 
 func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
-
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
 	err := errors.New("there is a error here")
 
 	blockNumber := block.NumberU64() - 1 // Last block on chain
@@ -1423,12 +1424,13 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
-	//if oldBlock != nil {
-	//	fmt.Println("We have old block!")
-	//	err := bc.checkFor51Attack(oldBlock); if err != nil {
-	//		return err
-	//	}
-	//}
+	if oldBlock != nil {
+		fmt.Println("We have old block!")
+		err := bc.checkFor51Attack(oldBlock); if err != nil {
+			return err
+		}
+	}
+
 	if newBlock != nil {
 		fmt.Println("We have new block")
 		err := bc.checkFor51Attack(newBlock); if err != nil {
