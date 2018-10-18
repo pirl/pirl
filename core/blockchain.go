@@ -1423,8 +1423,7 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 			return fmt.Errorf("Invalid new chain")
 		}
 	}
-	bc.mu.Lock()
-	defer bc.mu.Unlock()
+
 	if oldChain != nil {
 		fmt.Println("We have old block!")
 		err := bc.checkFor51Attack(oldChain); if err != nil {
