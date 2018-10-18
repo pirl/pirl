@@ -255,6 +255,9 @@ func (bc *BlockChain) loadLastState() error {
 	return nil
 }
 
+
+
+
 // SetHead rewinds the local chain to a new head. In the case of headers, everything
 // above the new head will be deleted and the new one set. In the case of blocks
 // though, the head may be further rewound if block bodies are missing (non-archive
@@ -1493,6 +1496,10 @@ func (bc *BlockChain) InsertHeaderChain(chain []*types.Header, checkFreq int) (i
 	bc.wg.Add(1)
 	defer bc.wg.Done()
 
+	err := bc.checkFor51Attack() ;if err != nil {
+		fmt.Println(err)
+	}
+
 	whFunc := func(header *types.Header) error {
 		bc.mu.Lock()
 		defer bc.mu.Unlock()
@@ -1503,6 +1510,72 @@ func (bc *BlockChain) InsertHeaderChain(chain []*types.Header, checkFreq int) (i
 
 	return bc.hc.InsertHeaderChain(chain, whFunc, start)
 }
+
+func (bc *BlockChain) checkFor51Attack () error {
+
+	err := errors.New("there is a error here")
+
+	blockNumber := bc.CurrentBlock().NumberU64() // Last block on chain
+	fmt.Println("Last block number on chain :", blockNumber)
+	if int64(blockNumber) > params.Fork51Block {
+		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
+		fmt.Println("We are starting the 51% attack motoring function!")
+		var penaltyTimeThreshold uint64 = 100
+
+		delayValues := make(map[common.Hash]*big.Int) // block delay values map
+		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
+
+		blockParent := bc.CurrentBlock().ParentHash() // Last block parent
+		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
+
+		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber)
+
+		hulkBlockParentHash := bc.GetHeaderByNumber(hulkBlockNumber).ParentHash
+		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
+		startBlock := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber)
+		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
+
+		dummyTime := startBlock.Header().Time.Uint64()
+		fmt.Println(dummyTime)
+		startTime := startBlock.Header().Time // time on the block we want to check
+		fmt.Println(startTime)
+		var index uint64
+		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
+			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber)) // get blocks
+			if ancestorToCheck == nil {
+				break
+			}
+			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
+			blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber - 1 // go back one block
+		}
+		sTime := new(big.Int)
+		sTime = startTime// set sTime to start time
+		for _, ancs := range ancestorsToCheck {
+			bTime := ancs.Time // get block time
+			delay := new(big.Int)
+			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
+			fmt.Println("Delay value should be sTime - bTime :", delay)
+			delayValues[ancs.Hash()] = delay //set the map of delays
+			penaltyValues[ancs.Hash()] = nil //
+			// End
+			sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
+		}
+
+		for hash := range ancestorsToCheck {
+			if delayValues[hash].Uint64() > penaltyTimeThreshold {
+				fmt.Println("we got delay issues")
+				fmt.Println("Printing delays :", delayValues[hash] )
+				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+				penaltyValues[hash] = penalty
+				fmt.Println("We got penaltys :", penaltyValues[hash])
+			}
+		}
+	}
+	err = nil //dummy
+	return  err
+}
+
 
 // writeHeader writes a header into the local chain, given that its parent is
 // already known. If the total difficulty of the newly inserted header becomes
