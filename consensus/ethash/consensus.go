@@ -235,12 +235,13 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 
 func checkFor51Attack(chain consensus.ChainReader) error {
 	err := errors.New("there is a error here")
-	fmt.Println("We are starting the 51% attack motoring function!")
+
 	blockNumber := chain.CurrentHeader().Number.Uint64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
-		var penaltyTimeThreshold uint64 = 10
+		fmt.Println("We are starting the 51% attack motoring function!")
+		var penaltyTimeThreshold uint64 = 100
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
@@ -272,7 +273,7 @@ func checkFor51Attack(chain consensus.ChainReader) error {
 		sTime := startTime // set sTime to start time
 		for _, ancs := range ancestorsToCheck {
 			bTime := ancs.Time // get block time
-			delay := sTime.Sub(bTime, sTime) // delay here is the delay between the blocks
+			delay := new(big.Int).Sub(sTime, bTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value should be sTime - bTime :", delay)
 			delayValues[ancs.Hash()] = delay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
