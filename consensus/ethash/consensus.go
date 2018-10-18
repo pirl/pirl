@@ -176,7 +176,7 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber)
 
 		hulkBlockParentHash := chain.GetHeaderByNumber(hulkBlockNumber).ParentHash
-		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :")// the hash of the parent of the block to start the checking
+		fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
 		startBlock := chain.GetBlock(hulkBlockParentHash, hulkBlockNumber)
 		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
 		os.Exit(1)
