@@ -897,11 +897,11 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 var lastWrite uint64
 
 
-func (bc *BlockChain) checkFor51Attack (oldBlock, newBlock *types.Block) error {
+func (bc *BlockChain) checkFor51Attack (block *types.Block) error {
 
 	err := errors.New("there is a error here")
 
-	blockNumber := newBlock.NumberU64() // Last block on chain
+	blockNumber := block.NumberU64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
@@ -911,7 +911,7 @@ func (bc *BlockChain) checkFor51Attack (oldBlock, newBlock *types.Block) error {
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
 
-		blockParent := newBlock.ParentHash() // Last block parent
+		blockParent := block.ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
@@ -952,7 +952,7 @@ func (bc *BlockChain) checkFor51Attack (oldBlock, newBlock *types.Block) error {
 				fmt.Println("we got delay issues")
 				fmt.Println("Printing delays :", delayValues[hash] )
 				penalty := new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-				penaltyValues[hash] = penalty
+				penaltyValues[hash] = penalty.Sub(penalty, new(big.Int).SetInt64( -1))
 				fmt.Println("We got penaltys :", penaltyValues[hash])
 			}
 		}
@@ -1423,8 +1423,15 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
-	if err := bc.checkFor51Attack(oldBlock, newBlock);  err != nil {
-		return err
+	if oldBlock != nil {
+		err := bc.checkFor51Attack(oldBlock); if err != nil {
+			return err
+		}
+	}
+	if newBlock != nil {
+		err := bc.checkFor51Attack(newBlock); if err != nil {
+			return err
+		}
 	}
 
 	// Ensure the user sees large reorgs
