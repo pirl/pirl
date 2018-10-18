@@ -164,7 +164,7 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 	fmt.Println(blockNumber)
 	fmt.Println(params.Fork51Block)
 	if int64(blockNumber) > params.Fork51Block {
-		fmt.Printf("We are in a fork!")
+		fmt.Println("We are in the new fork!")
 		var penaltyTimeThreshold uint64 = 1
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
@@ -175,10 +175,12 @@ func (ethash *Ethash) VerifyHeaders(chain consensus.ChainReader, headers []*type
 
 		hulkBlockNumber := uint64(blockNumber) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 		fmt.Println(hulkBlockNumber)
-		hulkBlockParentHash := chain.GetHeaderByNumber(hulkBlockNumber).ParentHash
+
+		hulkBlockParentHash := chain.GetHeaderByNumber(2280547).ParentHash
 		fmt.Println(hulkBlockParentHash)// the hash of the parent of the block to start the checking
 		startBlock := chain.GetBlock(hulkBlockParentHash, hulkBlockNumber)
 		fmt.Println(startBlock)
+		os.Exit(1)
 		dummyTime := startBlock.Header().Time.Uint64()
 		fmt.Println(dummyTime)
 		startTime := startBlock.Header().Time // time on the block we want to check
