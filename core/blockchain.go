@@ -969,9 +969,7 @@ func (bc *BlockChain) WriteBlockWithoutState(block *types.Block, td *big.Int) (e
 	bc.wg.Add(1)
 	defer bc.wg.Done()
 
-	if err := bc.checkFor51Attack(block);  err != nil {
-		return err
-	}
+
 	if err := bc.hc.WriteTd(block.Hash(), block.NumberU64(), td); err != nil {
 		return err
 	}
@@ -1396,6 +1394,11 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 			newChain = append(newChain, newBlock)
 		}
 	}
+
+	if err := bc.checkFor51Attack(newBlock);  err != nil {
+		return err
+	}
+
 	if oldBlock == nil {
 		return fmt.Errorf("Invalid old chain")
 	}
