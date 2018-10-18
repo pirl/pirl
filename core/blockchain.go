@@ -940,7 +940,9 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		sTime = startTime// set sTime to start time
 
 		for _, ancs := range ancestorsToCheck {
+			fmt.Println("sTime out :", sTime)
 			bTime := ancs.Time // get block time
+			fmt.Println("bTime out :", bTime)
 			delay := new(big.Int)
 			delay.Sub(sTime, bTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value should be sTime - bTime :", delay)
@@ -948,6 +950,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			div.SetInt64(int64(time.Millisecond))
 			fdelay := new(big.Int)
 			fdelay.Div(delay, div)
+			fmt.Println("fdelay out :", fdelay)
 			delayValues[ancs.Hash()] = fdelay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
 			// End
