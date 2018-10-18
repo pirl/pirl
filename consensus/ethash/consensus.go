@@ -233,10 +233,11 @@ func (ethash *Ethash) VerifyUncles(chain consensus.ChainReader, block *types.Blo
 	return nil
 }
 
-func checkFor51Attack(chain consensus.ChainReader, header, parent *types.Header) error {
+func checkFor51Attack(chain consensus.ChainReader, header *types.Header) error {
+	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
 	err := errors.New("there is a error here")
 
-	blockNumber := header.Number.Uint64() // Last block on chain
+	blockNumber := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1).Number.Uint64() // Last block on chain
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
@@ -270,15 +271,17 @@ func checkFor51Attack(chain consensus.ChainReader, header, parent *types.Header)
 			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
 			blockParent, blockNumber = ancestorToCheck.ParentHash(), blockNumber - 1 // go back one block
 		}
-		sTime := startTime // set sTime to start time
+		sTime := new(big.Int)
+		sTime = startTime// set sTime to start time
 		for _, ancs := range ancestorsToCheck {
 			bTime := ancs.Time // get block time
-			delay := new(big.Int).Sub(sTime, bTime) // delay here is the delay between the blocks
+			delay := new(big.Int)
+			delay.Sub(sTime, bTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value should be sTime - bTime :", delay)
 			delayValues[ancs.Hash()] = delay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
 			// End
-			sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
+			sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
 		}
 
 		for hash := range ancestorsToCheck {
@@ -317,7 +320,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 		return errZeroBlockTime
 	}
 
-	 err := checkFor51Attack(chain, header, parent)
+	 err := checkFor51Attack(chain, header)
 	 if err != nil {
 	 	fmt.Println(err.Error())
 	 	os.Exit(1)
