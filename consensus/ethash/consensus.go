@@ -240,7 +240,7 @@ func checkFor51Attack(chain consensus.ChainReader) error {
 	fmt.Println("Last block number on chain :", blockNumber)
 	if int64(blockNumber) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
-		var penaltyTimeThreshold uint64 = 1000
+		var penaltyTimeThreshold uint64 = 10
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
@@ -272,15 +272,12 @@ func checkFor51Attack(chain consensus.ChainReader) error {
 		sTime := startTime // set sTime to start time
 		for _, ancs := range ancestorsToCheck {
 			bTime := ancs.Time // get block time
-			fmt.Println("Start Time :", sTime)
-			fmt.Println("Current block time :", bTime)
-			delay := sTime.Sub(sTime, bTime) // delay here is the delay between the blocks
+			delay := sTime.Sub(bTime, sTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value should be sTime - bTime :", delay)
 			delayValues[ancs.Hash()] = delay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
 			// End
 			sTime = sTime.Add(sTime, bTime) // add the time of the delay so the next block delay can be calculated
-			fmt.Println("sTime new time", sTime)
 		}
 
 		for hash := range ancestorsToCheck {
