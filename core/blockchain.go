@@ -903,18 +903,13 @@ var sTime *big.Float
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("there is a error here")
-	fmt.Println("Lenght of the incoming blocks")
-	fmt.Println(len(blocks))
-	//blockNumber := blocks[len(blocks)].NumberU64() // Last block on chain
 	blockNumber51 := blocks[len(blocks)-1].NumberU64()
 	fmt.Println("Last block number on chain :", blockNumber51)
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
 		var penaltyTimeThreshold float64 = 5
-
 		delayValues := make(map[uint64]float64) // block delay values map
-		//penaltyValues := make(map[uint64]float64) //penalty for each block
 		fmt.Println("We are in blockParent ")
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		fmt.Println("We are in ancestorsToCheck ")
@@ -956,7 +951,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			fmt.Println("Delay value  :", math.Abs(delay))
 
 			delayValues[k.Key] = math.Abs(delay) //set the map of delays
-			// penaltyValues[k.Key] = 0 //
+
 			// End
 			turncSt = bTime + math.Abs(delay) // add the time of the delay so the next block delay can be calculated
 		}
@@ -968,25 +963,11 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			if delayValues[k] > penaltyTimeThreshold {
 				fmt.Println("We have delay times in the chain that exceed threshold! Value :", delayValues[k])
 				penaltyFinal := turncPF - 1
-				//penaltyValues[k] = penaltyFinal
 				turncPF = penaltyFinal
 			}
 		}
 
 		fmt.Println("Last penalty value for chain :", turncPF)
-
-		//pfinal := new(big.Int)
-		//for _, k := range ancestorsToCheck {
-		//	if delayValues[k.Number.Uint64()].Uint64() > penaltyTimeThreshold {
-		//		fmt.Println("Printing delays :", delayValues[k.Number.Uint64()] )
-		//		minusP := new(big.Int)
-		//		minusP.SetInt64(1)
-		//		pfinal.Sub(penalty, minusP)
-		//		penaltyValues[k.Number.Uint64()] = pfinal
-		//		fmt.Println("We got penaltys :", penaltyValues[k.Number.Uint64()])
-		//		penalty = pfinal
-		//	}
-		//}
 	}
 	err = nil //dummy
 	return  err
