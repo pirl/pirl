@@ -907,7 +907,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		var penaltyTimeThreshold float64 = 5
+		var penaltyTimeThreshold float64 = 2
 		delayValues := make(map[uint64]float64) // block delay values map
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
@@ -958,6 +958,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 				chainPenaltyFactor = penaltyFinal
 				penaltyMap[k] = chainPenaltyFactor
 				turncPF = penaltyFinal
+				fmt.Println("penalty final value :", penaltyFinal)
 			}
 		}
 		fmt.Println("Last penalty value for chain :", turncPF)
