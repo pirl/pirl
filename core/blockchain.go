@@ -908,7 +908,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		var penaltyTimeThreshold uint64 = 30000
+		var penaltyTimeThreshold uint64 = 2
 
 		delayValues := make(map[common.Hash]*big.Int) // block delay values map
 		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
@@ -937,7 +937,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51 - 1 // go back one block
 		}
 
-		sTime = startTime// set sTime to start time
+		sTime = startTime // set init time sTime as startTime
 
 		for _, ancs := range ancestorsToCheck {
 			fmt.Println("sTime out :", sTime)
@@ -945,9 +945,9 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			fmt.Println("bTime out :", bTime)
 			delay := new(big.Int)
 			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
-			fmt.Println("Delay value should be sTime - bTime :", delay)
+			fmt.Println("Delay value  :", delay)
 			div := new(big.Int)
-			div.SetInt64(int64(time.Nanosecond) * int64(time.Millisecond) * 100)
+			div.SetInt64(int64(time.Nanosecond) * int64(time.Millisecond))
 			fmt.Println("this is div value", div)
 			fdelay := new(big.Int)
 			fdelay.Div(delay, div)
