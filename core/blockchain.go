@@ -900,7 +900,7 @@ var lastWrite uint64
 var sTime *big.Float
 
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
-	//var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("there is a error here")
 	fmt.Println("Lenght of the incoming blocks")
 	fmt.Println(len(blocks))
@@ -910,7 +910,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		//var penaltyTimeThreshold uint64 = 2
+		var penaltyTimeThreshold float64 = 2
 
 		delayValues := make(map[uint64]float64) // block delay values map
 		penaltyValues := make(map[uint64]float64) //penalty for each block
@@ -960,6 +960,17 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			turncSt = bTime + math.Abs(delay) // add the time of the delay so the next block delay can be calculated
 		}
 
+		pF := new(big.Float).SetInt(penalty)
+		pFlt, _ := pF.Float64()
+		turncPF := turnacateFloat64(pFlt)
+		for k := range sortedChainMap {
+			if delayValues[k] > penaltyTimeThreshold {
+				fmt.Println("We have delay times in the chain that exceed threshold! Value :", delayValues[k])
+				penaltyFinal := turncPF - 1
+				penaltyValues[k] = penaltyFinal
+				turncPF = penaltyFinal
+			}
+		}
 		//pfinal := new(big.Int)
 		//for _, k := range ancestorsToCheck {
 		//	if delayValues[k.Number.Uint64()].Uint64() > penaltyTimeThreshold {
@@ -978,7 +989,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 }
 
 func turnacateFloat64(in float64 ) float64 {
-	return float64(int(in * 100)) / 100
+	return float64(int(in * 100000)) / 100000
 }
 
 // A data structure to hold key/value pairs
