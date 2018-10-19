@@ -45,6 +45,7 @@ import (
 	"git.pirl.io/community/pirl/trie"
 	"github.com/hashicorp/golang-lru"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
+
 )
 
 var (
@@ -910,7 +911,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		var penaltyTimeThreshold float64 = 2
+		var penaltyTimeThreshold float64 = 5
 
 		delayValues := make(map[uint64]float64) // block delay values map
 		penaltyValues := make(map[uint64]float64) //penalty for each block
@@ -989,7 +990,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 }
 
 func turnacateFloat64(in float64 ) float64 {
-	return float64(int(in * 100000)) / 100000
+	return float64(math.Floor(in * 100)) / 100
 }
 
 // A data structure to hold key/value pairs
