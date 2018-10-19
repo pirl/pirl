@@ -896,10 +896,10 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 }
 
 var lastWrite uint64
-var sTime = new(big.Int)
+var sTime *big.Float
 
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
-	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
+	//var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("there is a error here")
 	fmt.Println("Lenght of the incoming blocks")
 	fmt.Println(len(blocks))
@@ -909,10 +909,10 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		var penaltyTimeThreshold uint64 = 2
+		//var penaltyTimeThreshold uint64 = 2
 
-		delayValues := make(map[uint64]*big.Int) // block delay values map
-		penaltyValues := make(map[uint64]*big.Int) //penalty for each block
+		delayValues := make(map[uint64]float64) // block delay values map
+		penaltyValues := make(map[uint64]float64) //penalty for each block
 		fmt.Println("We are in blockParent ")
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		fmt.Println("We are in ancestorsToCheck ")
@@ -941,46 +941,36 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			p[i] = Pair{k, v}
 			i++
 		}
-
 		sort.Sort(p)
 
-		for _, k := range p {
-			fmt.Println("sorted out :", k.Key)
-		}
-
-		sTime = startTime // set init time sTime as startTime
-
+		sTime = new(big.Float).SetInt(startTime) // set init time sTime as startTime
+		sT, _ := sTime.Float64()
+		fmt.Println(sT)
 		for _, k := range p {
 			fmt.Println("sTime out :", sTime)
-			bTime := new(big.Int).SetUint64(k.Value) // get block time
+			bTime := k.Value // get block time
 			fmt.Println("bTime out :", bTime)
-			delay := new(big.Int)
-			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
+			delay := sT - float64(bTime)
 			fmt.Println("Delay value  :", delay)
-			div := new(big.Int)
-			div.SetInt64(1000)
-			fmt.Println("this is div value", div)
-			fdelay := new(big.Int)
-			fdelay.Mul(delay, div)
-			fmt.Println("fdelay out :", fdelay)
-			delayValues[k.Key] = fdelay //set the map of delays
-			penaltyValues[k.Key] = nil //
+
+			delayValues[k.Key] = delay //set the map of delays
+			penaltyValues[k.Key] = 0 //
 			// End
-			sTime.Add(sTime, delay) // add the time of the delay so the next block delay can be calculated
+			sT = float64(bTime) + delay // add the time of the delay so the next block delay can be calculated
 		}
 
-		pfinal := new(big.Int)
-		for _, k := range ancestorsToCheck {
-			if delayValues[k.Number.Uint64()].Uint64() > penaltyTimeThreshold {
-				fmt.Println("Printing delays :", delayValues[k.Number.Uint64()] )
-				minusP := new(big.Int)
-				minusP.SetInt64(1)
-				pfinal.Sub(penalty, minusP)
-				penaltyValues[k.Number.Uint64()] = pfinal
-				fmt.Println("We got penaltys :", penaltyValues[k.Number.Uint64()])
-				penalty = pfinal
-			}
-		}
+		//pfinal := new(big.Int)
+		//for _, k := range ancestorsToCheck {
+		//	if delayValues[k.Number.Uint64()].Uint64() > penaltyTimeThreshold {
+		//		fmt.Println("Printing delays :", delayValues[k.Number.Uint64()] )
+		//		minusP := new(big.Int)
+		//		minusP.SetInt64(1)
+		//		pfinal.Sub(penalty, minusP)
+		//		penaltyValues[k.Number.Uint64()] = pfinal
+		//		fmt.Println("We got penaltys :", penaltyValues[k.Number.Uint64()])
+		//		penalty = pfinal
+		//	}
+		//}
 	}
 	err = nil //dummy
 	return  err
