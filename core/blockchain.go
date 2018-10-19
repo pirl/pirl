@@ -911,8 +911,8 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		fmt.Println("We are starting the 51% attack motoring function!")
 		var penaltyTimeThreshold uint64 = 2
 
-		delayValues := make(map[common.Hash]*big.Int) // block delay values map
-		penaltyValues := make(map[common.Hash]*big.Int) //penalty for each block
+		delayValues := make(map[uint64]*big.Int) // block delay values map
+		penaltyValues := make(map[uint64]*big.Int) //penalty for each block
 		fmt.Println("We are in blockParent ")
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		fmt.Println("We are in ancestorsToCheck ")
@@ -950,9 +950,9 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 
 		sTime = startTime // set init time sTime as startTime
 
-		for _, ancs := range ancestorsToCheck {
+		for _, k := range p {
 			fmt.Println("sTime out :", sTime)
-			bTime := ancs.Time // get block time
+			bTime := new(big.Int).SetUint64(k.Value) // get block time
 			fmt.Println("bTime out :", bTime)
 			delay := new(big.Int)
 			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
@@ -963,21 +963,21 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			fdelay := new(big.Int)
 			fdelay.Div(delay, div)
 			fmt.Println("fdelay out :", fdelay)
-			delayValues[ancs.Hash()] = fdelay //set the map of delays
-			penaltyValues[ancs.Hash()] = nil //
+			delayValues[k.Key] = fdelay //set the map of delays
+			penaltyValues[k.Key] = nil //
 			// End
 			sTime.Add(bTime, fdelay) // add the time of the delay so the next block delay can be calculated
 		}
 
 		pfinal := new(big.Int)
-		for hash := range ancestorsToCheck {
-			if delayValues[hash].Uint64() > penaltyTimeThreshold {
-				fmt.Println("Printing delays :", delayValues[hash] )
+		for _, k := range ancestorsToCheck {
+			if delayValues[k.Number.Uint64()].Uint64() > penaltyTimeThreshold {
+				fmt.Println("Printing delays :", delayValues[k.Number.Uint64()] )
 				minusP := new(big.Int)
 				minusP.SetInt64(1)
 				pfinal.Sub(penalty, minusP)
-				penaltyValues[hash] = pfinal
-				fmt.Println("We got penaltys :", penaltyValues[hash])
+				penaltyValues[k.Number.Uint64()] = pfinal
+				fmt.Println("We got penaltys :", penaltyValues[k.Number.Uint64()])
 				penalty = pfinal
 			}
 		}
