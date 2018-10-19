@@ -945,10 +945,10 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 
 		sTime = new(big.Float).SetInt(startTime) // set init time sTime as startTime
 		sT, _ := sTime.Float64()
-		turncSt := turnacateFloat64(sT, 1000)
+		turncSt := turnacateFloat64(sT)
 		for _, k := range p {
 			fmt.Println("sTime out :", turncSt)
-			bTime := turnacateFloat64(float64(k.Value), 1000) // get block time
+			bTime := turnacateFloat64(float64(k.Value)) // get block time
 			fmt.Println("bTime out :", bTime)
 			delay := turncSt - bTime
 			fmt.Println("Delay value  :", delay)
@@ -976,8 +976,8 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	return  err
 }
 
-func turnacateFloat64(in float64, turncValue int) float64 {
-	return float64(int(in * turncValue)) / turncValue
+func turnacateFloat64(in float64 ) float64 {
+	return float64(int(in * 1000)) / 1000
 }
 
 // A data structure to hold key/value pairs
