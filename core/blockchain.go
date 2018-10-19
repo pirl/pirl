@@ -23,6 +23,7 @@ import (
 	"io"
 	"math/big"
 	mrand "math/rand"
+	"sort"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -916,13 +917,9 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		fmt.Println("We are in ancestorsToCheck ")
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
-
+		sortedChainMap := make(map[uint64]uint64) // sorted map block number and time
 		hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber +1 )
-
-		//hulkBlockParentHash := bc.GetHeaderByNumber(hulkBlockNumber +1 ).ParentHash
-		//fmt.Println("Hulk parent hash should be the parent hash of the hulkblockNumber :", hulkBlockParentHash.String())// the hash of the parent of the block to start the checking
-		//startBlock := bc.GetBlock(hulkBlockParentHash, hulkBlockNumber)
 		startBlock := bc.GetBlockByNumber(hulkBlockNumber)
 		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
 		startTime := startBlock.Header().Time // time on the block we want to check
@@ -934,9 +931,23 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 				break
 			}
 			ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
+			sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
 			blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51 - 1 // go back one block
 		}
 
+		type sm struct {
+			Key uint64
+			Value uint64
+		}
+
+		var ss []sm
+		for s, m := range sortedChainMap {
+			ss = append(ss, sm{s, m})
+		}
+		sort.Slice(ss, func(i, j int) bool {
+			return ss[i].Value > ss[j].Value
+		})
+		 fmt.Println("sortedChainMap out:", sortedChainMap)
 		sTime = startTime // set init time sTime as startTime
 
 		for _, ancs := range ancestorsToCheck {
