@@ -966,7 +966,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			delayValues[k.Key] = delay //set the map of delays
 			penaltyValues[k.Key] = nil //
 			// End
-			sTime.Add(bTime, delay) // add the time of the delay so the next block delay can be calculated
+			sTime.Add(sTime, delay) // add the time of the delay so the next block delay can be calculated
 		}
 
 		pfinal := new(big.Int)
