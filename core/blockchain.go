@@ -935,17 +935,12 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51 - 1 // go back one block
 		}
 
-		type sm struct {
-			Key uint64
-			Value uint64
-		}
 
-		var ss []sm
 		for s, m := range sortedChainMap {
 			ss = append(ss, sm{s, m})
 		}
 		sort.Slice(ss, func(i, j int) bool {
-			return ss[i].Key < ss[j].Key
+			return ss[i].Key > ss[j].Key
 		})
 		fmt.Println("sortedChainMap out:", sortedChainMap)
 		sTime = startTime // set init time sTime as startTime
@@ -985,6 +980,13 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	err = nil //dummy
 	return  err
 }
+
+type sm struct {
+	Key uint64
+	Value uint64
+}
+
+var ss []sm
 
 // WriteBlockWithoutState writes only the block and its metadata to the database,
 // but does not write any state. This is used to construct competing side forks
