@@ -1451,7 +1451,7 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 
 	if oldChain != nil {
 		fmt.Println("We have old Chain!")
-		fmt.Println(oldChain)
+		fmt.Println("Old chain lenght :", len(oldChain))
 		err := bc.checkFor51Attack(oldChain); if err != nil {
 			return err
 		}
@@ -1459,7 +1459,7 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 
 	if newChain != nil {
 		fmt.Println("We have new Chain")
-		fmt.Println(newChain)
+		fmt.Println("New chain lenght :", len(newChain))
 		err := bc.checkFor51Attack(newChain); if err != nil {
 			return err
 		}
