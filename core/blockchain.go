@@ -948,15 +948,15 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		fmt.Println(sT)
 		for _, k := range p {
 			fmt.Println("sTime out :", sTime)
-			bTime := k.Value // get block time
-			fmt.Println("bTime out :", bTime)
-			delay := sT - float64(bTime)
+			bTime := float64(k.Value) // get block time
+			fmt.Println("bTime out :", )
+			delay := (sT - bTime) * 1000
 			fmt.Println("Delay value  :", delay)
 
 			delayValues[k.Key] = delay //set the map of delays
 			penaltyValues[k.Key] = 0 //
 			// End
-			sT = float64(bTime) + delay // add the time of the delay so the next block delay can be calculated
+			sT = bTime + delay // add the time of the delay so the next block delay can be calculated
 		}
 
 		//pfinal := new(big.Int)
