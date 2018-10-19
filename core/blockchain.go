@@ -904,23 +904,19 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("there is a error here")
 	blockNumber51 := blocks[len(blocks)-1].NumberU64()
-	fmt.Println("Last block number on chain :", blockNumber51)
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
 		var penaltyTimeThreshold float64 = 5
 		delayValues := make(map[uint64]float64) // block delay values map
-		fmt.Println("We are in blockParent ")
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
-		fmt.Println("We are in ancestorsToCheck ")
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 		sortedChainMap := make(map[uint64]uint64) // sorted map block number and time
+		penaltyMap := make(map[uint64]float64)
+		var chainPenaltyFactor float64
 		hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		fmt.Println("Hulk block number should be block number - the enforcement :", hulkBlockNumber +1 )
 		startBlock := bc.GetBlockByNumber(hulkBlockNumber)
-		fmt.Println("Start block is the start block of the chain scan for delayed blocks :", startBlock)
 		startTime := startBlock.Header().Time // time on the block we want to check
-		fmt.Println("Start Time :", startTime)
 		var index uint64
 		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 			ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber51)) // get blocks
@@ -944,15 +940,11 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		sT, _ := sTime.Float64()
 		turncSt := turnacateFloat64(sT)
 		for _, k := range p {
-			fmt.Println("sTime out :", turncSt)
 			bTime := turnacateFloat64(float64(k.Value)) // get block time
-			fmt.Println("bTime out :", bTime)
 			delay := turncSt - bTime
+			fmt.Println("Block time value :", bTime)
 			fmt.Println("Delay value  :", math.Abs(delay))
-
 			delayValues[k.Key] = math.Abs(delay) //set the map of delays
-
-			// End
 			turncSt = bTime + math.Abs(delay) // add the time of the delay so the next block delay can be calculated
 		}
 
@@ -963,12 +955,19 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			if delayValues[k] > penaltyTimeThreshold {
 				fmt.Println("We have delay times in the chain that exceed threshold! Value :", delayValues[k])
 				penaltyFinal := turncPF - 1
+				chainPenaltyFactor = penaltyFinal
+				penaltyMap[k] = chainPenaltyFactor
 				turncPF = penaltyFinal
 			}
 		}
-
 		fmt.Println("Last penalty value for chain :", turncPF)
+		if chainPenaltyFactor > 0 {
+			fmt.Println("Chain penalty value is over the threshold we should reject this as malicious and move on")
+		} else {
+			fmt.Println("Chain has 0 penalty")
+		}
 	}
+
 	err = nil //dummy
 	return  err
 }
