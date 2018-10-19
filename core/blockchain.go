@@ -939,6 +939,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		for s, m := range sortedChainMap {
 			ss = append(ss, sm{s, m})
 		}
+
 		sort.Slice(ss, func(i, j int) bool {
 			return ss[i].Key > ss[j].Key
 		})
