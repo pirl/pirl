@@ -942,7 +942,12 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		sort.Slice(ss, func(i, j int) bool {
 			return ss[i].Key > ss[j].Key
 		})
-		fmt.Println("sortedChainMap out:", sortedChainMap)
+
+		for bn, tm := range sortedChainMap {
+			fmt.Println("Shorted block numbers :", bn)
+			fmt.Println("Timestamps :", tm)
+		}
+
 		sTime = startTime // set init time sTime as startTime
 
 		for _, ancs := range ancestorsToCheck {
