@@ -947,18 +947,15 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			delay.Sub(bTime, sTime) // delay here is the delay between the blocks
 			fmt.Println("Delay value  :", delay)
 			div := new(big.Int)
-			div.SetInt64(int64(time.Nanosecond) * int64(time.Millisecond))
+			div.SetInt64(1000)
 			fmt.Println("this is div value", div)
-			divDelay := new(big.Int)
-			divDelay.Div(div, delay)
-			fmt.Println("divDelay out :", divDelay)
-			absDelay := new(big.Int)
-			absDelay.Abs(divDelay)
-			fmt.Println("Absolute value :", absDelay)
-			delayValues[ancs.Hash()] = absDelay //set the map of delays
+			fdelay := new(big.Int)
+			fdelay.Div(delay, div)
+			fmt.Println("fdelay out :", fdelay)
+			delayValues[ancs.Hash()] = fdelay //set the map of delays
 			penaltyValues[ancs.Hash()] = nil //
 			// End
-			sTime.Add(absDelay, bTime) // add the time of the delay so the next block delay can be calculated
+			sTime.Add(bTime, fdelay) // add the time of the delay so the next block delay can be calculated
 		}
 
 		pfinal := new(big.Int)
