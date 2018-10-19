@@ -945,12 +945,12 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 
 		sTime = new(big.Float).SetInt(startTime) // set init time sTime as startTime
 		sT, _ := sTime.Float64()
-		fmt.Println(sT)
+		turncSt := turnacateFloat64(sT, 1000)
 		for _, k := range p {
-			fmt.Println("sTime out :", sTime)
-			bTime := float64(k.Value) // get block time
-			fmt.Println("bTime out :", )
-			delay := (sT - bTime) * 1000
+			fmt.Println("sTime out :", turncSt)
+			bTime := turnacateFloat64(float64(k.Value), 1000) // get block time
+			fmt.Println("bTime out :", bTime)
+			delay := turncSt - bTime
 			fmt.Println("Delay value  :", delay)
 
 			delayValues[k.Key] = delay //set the map of delays
@@ -976,6 +976,9 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	return  err
 }
 
+func turnacateFloat64(in float64, turncValue int) float64 {
+	return float64(int(in * turncValue)) / turncValue
+}
 
 // A data structure to hold key/value pairs
 type Pair struct {
