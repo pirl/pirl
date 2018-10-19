@@ -942,8 +942,6 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		for _, k := range p {
 			bTime := turnacateFloat64(float64(k.Value)) // get block time
 			delay := turncSt - bTime
-			fmt.Println("Block time value :", bTime)
-			fmt.Println("Delay value  :", math.Abs(delay))
 			delayValues[k.Key] = math.Abs(delay) //set the map of delays
 			turncSt = bTime + math.Abs(delay) // add the time of the delay so the next block delay can be calculated
 		}
@@ -953,23 +951,21 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		turncPF := turnacateFloat64(pFlt)
 		for k := range sortedChainMap {
 			if delayValues[k] > penaltyTimeThreshold {
-				fmt.Println("We have delay times in the chain that exceed threshold! Value :", delayValues[k])
+				fmt.Println("We have delay times in the chain that exceed threshold! Block value :", k)
+				fmt.Println("We have delay times in the chain that exceed threshold! Delay value :", delayValues[k])
 				penaltyFinal := turncPF - 1
 				chainPenaltyFactor = penaltyFinal
 				turncPF = penaltyFinal
-				fmt.Println("penalty final value :", penaltyFinal)
 			}
 		}
-
-		fmt.Println("Last penalty value for chain :", turncPF)
 		if chainPenaltyFactor > 0 {
 			fmt.Println("Chain penalty value is over the threshold we should reject this as malicious and move on")
+			err = errors.New("Chain penalty detected!")
 		} else {
 			fmt.Println("Chain has 0 penalty")
+			err = nil
 		}
 	}
-
-	err = nil //dummy
 	return  err
 }
 
@@ -1454,14 +1450,16 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 	}
 
 	if oldChain != nil {
-		fmt.Println("We have old block!")
+		fmt.Println("We have old Chain!")
+		fmt.Println(oldChain)
 		err := bc.checkFor51Attack(oldChain); if err != nil {
 			return err
 		}
 	}
 
 	if newChain != nil {
-		fmt.Println("We have new block")
+		fmt.Println("We have new Chain")
+		fmt.Println(newChain)
 		err := bc.checkFor51Attack(newChain); if err != nil {
 			return err
 		}
