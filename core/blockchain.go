@@ -935,18 +935,17 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51 - 1 // go back one block
 		}
 
-
-		for s, m := range sortedChainMap {
-			ss = append(ss, sm{s, m})
+		p := make(PairList, len(sortedChainMap))
+		i := 0
+		for k, v := range sortedChainMap {
+			p[i] = Pair{k, v}
+			i++
 		}
 
-		sort.Slice(ss, func(i, j int) bool {
-			return ss[i].Key > ss[j].Key
-		})
+		sort.Sort(p)
 
-		for bn, tm := range sortedChainMap {
-			fmt.Println("Shorted block numbers :", bn)
-			fmt.Println("Timestamps :", tm)
+		for _, k := range p {
+			fmt.Println("sorted out :", k.Key)
 		}
 
 		sTime = startTime // set init time sTime as startTime
@@ -987,12 +986,20 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	return  err
 }
 
-type sm struct {
-	Key uint64
+
+// A data structure to hold key/value pairs
+type Pair struct {
+	Key   uint64
 	Value uint64
 }
 
-var ss []sm
+// A slice of pairs that implements sort.Interface to sort by values
+type PairList []Pair
+
+func (p PairList) Len() int           { return len(p) }
+func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (p PairList) Less(i, j int) bool { return p[i].Key < p[j].Key }
+
 
 // WriteBlockWithoutState writes only the block and its metadata to the database,
 // but does not write any state. This is used to construct competing side forks
