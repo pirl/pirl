@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"math/big"
 	mrand "math/rand"
 	"sort"
@@ -951,12 +952,12 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			bTime := turnacateFloat64(float64(k.Value)) // get block time
 			fmt.Println("bTime out :", bTime)
 			delay := turncSt - bTime
-			fmt.Println("Delay value  :", delay)
+			fmt.Println("Delay value  :", math.Abs(delay))
 
-			delayValues[k.Key] = delay //set the map of delays
+			delayValues[k.Key] = math.Abs(delay) //set the map of delays
 			penaltyValues[k.Key] = 0 //
 			// End
-			sT = bTime + delay // add the time of the delay so the next block delay can be calculated
+			sT = bTime + math.Abs(delay) // add the time of the delay so the next block delay can be calculated
 		}
 
 		//pfinal := new(big.Int)
@@ -977,7 +978,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 }
 
 func turnacateFloat64(in float64 ) float64 {
-	return float64(int(in * 1000)) / 1000
+	return float64(int(in * 100)) / 100
 }
 
 // A data structure to hold key/value pairs
