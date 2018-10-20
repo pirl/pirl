@@ -902,12 +902,13 @@ var sTime *big.Float
 
 func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-	err := errors.New("there is a error here")
+	err := errors.New("new error")
+	err = nil
 	blockNumber51 := blocks[len(blocks)-1].NumberU64()
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		penaltyTimeThreshold  := 0.5
+		penaltyTimeThreshold  := 5.0
 		delayValues := make(map[uint64]float64) // block delay values map
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
