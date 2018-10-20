@@ -908,7 +908,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		penaltyTimeThreshold  := 5.0
+		penaltyTimeThreshold  := 100.0
 		delayValues := make(map[uint64]float64) // block delay values map
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
@@ -963,7 +963,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			fmt.Println("Chain penalty value is over the threshold we should reject this as malicious and move on")
 			err = errors.New("Chain penalty detected!")
 		} else {
-			fmt.Println("Chain has 0 penalty")
+			fmt.Println("Chain has 0 penalty and its the legit one!Moving on!")
 			err = nil
 		}
 	}
