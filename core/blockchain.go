@@ -1183,8 +1183,13 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
+	err := bc.checkFor51Attack(chain)
+	if err != nil {
+		fmt.Println(err)
+	}
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
+
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Debug("Premature abort during blocks processing")
@@ -1449,21 +1454,7 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
-	if oldChain != nil {
-		fmt.Println("We have old Chain!")
-		fmt.Println("Old chain lenght :", len(oldChain))
-		err := bc.checkFor51Attack(oldChain); if err != nil {
-			return err
-		}
-	}
 
-	if newChain != nil {
-		fmt.Println("We have new Chain")
-		fmt.Println("New chain lenght :", len(newChain))
-		err := bc.checkFor51Attack(newChain); if err != nil {
-			return err
-		}
-	}
 
 	// Ensure the user sees large reorgs
 	if len(oldChain) > 0 && len(newChain) > 0 {
