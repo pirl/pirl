@@ -1201,16 +1201,19 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		bstart := time.Now()
 
 		err := <-results
+
+		errDelay := bc.checkFor51Attack(chain)
+		if errDelay != nil {
+			fmt.Println(errDelay.Error())
+			err = errDelay
+		}
+
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
+
+
 		switch {
-		case err == ErrDelayTooHigh:
-			errDelay := bc.checkFor51Attack(chain)
-			if errDelay != nil {
-				fmt.Println(errDelay)
-				continue
-			}
 		case err == ErrKnownBlock:
 			// Block and state both already known. However if the current block is below
 			// this number we did a rollback and we should reimport it nonetheless.
