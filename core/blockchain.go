@@ -908,7 +908,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		penaltyTimeThreshold  := 25.0
+		penaltyTimeThreshold  := 500.0
 		delayValues := make(map[uint64]float64) // block delay values map
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
@@ -1214,6 +1214,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 
 		switch {
+		case err == ErrDelayTooHigh:
+			fmt.Println(err)
+			continue
 		case err == ErrKnownBlock:
 			// Block and state both already known. However if the current block is below
 			// this number we did a rollback and we should reimport it nonetheless.
