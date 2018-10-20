@@ -961,7 +961,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		}
 		if chainPenaltyFactor > 0 {
 			fmt.Println("Chain penalty value is over the threshold we should reject this as malicious and move on")
-			err = errors.New("Chain penalty detected!")
+			err = ErrDelayTooHigh
 		} else {
 			fmt.Println("Chain has 0 penalty and its the legit one!Moving on!")
 			err = nil
@@ -1184,10 +1184,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-	err := bc.checkFor51Attack(chain)
-	if err != nil {
-		fmt.Println(err)
-	}
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
 
@@ -1209,6 +1205,12 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 			err = bc.Validator().ValidateBody(block)
 		}
 		switch {
+		case err == ErrDelayTooHigh:
+			errDelay := bc.checkFor51Attack(chain)
+			if errDelay != nil {
+				fmt.Println(errDelay)
+				continue
+			}
 		case err == ErrKnownBlock:
 			// Block and state both already known. However if the current block is below
 			// this number we did a rollback and we should reimport it nonetheless.
