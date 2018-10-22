@@ -918,7 +918,9 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 		fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
 		startBlock := bc.GetBlockByNumber(hulkBlockNumber)
+		fmt.Println("Start block value :", startBlock)
 		startTime := startBlock.Header().Time // time on the block we want to check
+		fmt.Println("Start time value :", startTime)
 		var index uint64
 		for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 			fmt.Println("index value :", index)
@@ -1189,10 +1191,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-	errDelay := bc.checkFor51Attack(chain)
-	if errDelay != nil {
-		fmt.Println(errDelay.Error())
-	}
+
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
@@ -1216,6 +1215,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 			err = bc.Validator().ValidateBody(block)
 		}
 
+		errDelay := bc.checkFor51Attack(chain)
+		if errDelay != nil {
+			fmt.Println(errDelay.Error())
+			err = errDelay
+		}
 
 		switch {
 		case err == ErrDelayTooHigh:
