@@ -1271,7 +1271,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 			}
 			// Import all the pruned blocks to make the state available
 			bc.chainmu.Unlock()
-			errDelay := bc.checkFor51Attack(chain)
+			errDelay := bc.checkFor51Attack(winner)
 			if errDelay != nil {
 				fmt.Println(errDelay.Error())
 			}
