@@ -915,9 +915,7 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 			hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 			fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
 			startBlock := bc.GetBlockByNumber(hulkBlockNumber)
-			if startBlock == nil {
-				time.Sleep(3)
-			}
+
 			fmt.Println("Start block value :", startBlock)
 			startTime := startBlock.Header().Time // time on the block we want to check
 			fmt.Println("Start time value :", startTime)
