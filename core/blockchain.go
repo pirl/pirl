@@ -1192,15 +1192,17 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-	bc.chainmu.Lock()
+
 	errDelay := bc.checkFor51Attack(chain)
 	if errDelay != nil {
 		fmt.Println(errDelay.Error())
 	}
-	bc.chainmu.Unlock()
+
+
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
-
+		fmt.Println("we are in the chain loop!!!", block)
+		fmt.Println("index inside :", i)
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Debug("Premature abort during blocks processing")
