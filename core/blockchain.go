@@ -1269,14 +1269,17 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 			// Import all the pruned blocks to make the state available
 			bc.chainmu.Unlock()
-			_, evs, logs, err := bc.insertChain(winner)
-			bc.chainmu.Lock()
-			events, coalescedLogs = evs, logs
 
 			errDelay := bc.checkFor51Attack(winner)
 			if errDelay != nil {
 				fmt.Println(errDelay.Error())
 			}
+
+			_, evs, logs, err := bc.insertChain(winner)
+			bc.chainmu.Lock()
+			events, coalescedLogs = evs, logs
+
+
 
 			if err != nil {
 				return i, events, coalescedLogs, err
