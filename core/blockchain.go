@@ -971,6 +971,8 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 				fmt.Println("Chain has 0 penalty and its the legit one!Moving on!")
 				err = nil
 			}
+		} else {
+			fmt.Println("Not enough blocks :", len(blocks))
 		}
 	}
 
