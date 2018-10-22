@@ -1174,6 +1174,10 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	defer bc.wg.Done()
 
 	bc.chainmu.Lock()
+	errDelay := bc.checkFor51Attack(chain)
+	if errDelay != nil {
+		fmt.Println(errDelay.Error())
+	}
 	defer bc.chainmu.Unlock()
 
 	// A queued approach to delivering events. This is generally
@@ -1199,10 +1203,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-	errDelay := bc.checkFor51Attack(chain)
-	if errDelay != nil {
-		fmt.Println(errDelay.Error())
-	}
+
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
