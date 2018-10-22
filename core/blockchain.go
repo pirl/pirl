@@ -1033,6 +1033,45 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	bc.futureBlocks.Remove(block.Hash())
 	return status, nil
 }
+type LegitChainValidator struct {
+	Blocks []*types.Block
+	BlockChannel chan *types.Block
+	QuitChan chan chan struct{}
+}
+
+func (l *LegitChainValidator) Loop() {
+	for {
+		select {
+		case b := <- l.BlockChannel:
+			l.Blocks = append(l.Blocks, b)
+			fmt.Println(b.NumberU64())
+			case q := <- l.QuitChan:
+				close(q)
+				return
+		}
+	}
+}
+
+func (l *LegitChainValidator) Stop() {
+	q := make(chan struct{})
+	l.QuitChan <- q
+	<-q
+}
+
+func (l *LegitChainValidator) HandleAndCheckChain(block *types.Block) *types.Block{
+	c := make(chan *types.Block)
+	c <- block
+	return <- c
+}
+
+func NewLegitChainValidator() *LegitChainValidator {
+	l := &LegitChainValidator{
+		Blocks: make([]*types.Block,1000),
+		BlockChannel: make(chan *types.Block),
+		QuitChan: make(chan chan struct{}),
+	}
+	return l
+}
 
 func checkFor51Attack(blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
@@ -1224,15 +1263,16 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
-		if len(chain) > 61 && chain != nil {
+		if  chain != nil {
 			errDelay := checkFor51Attack(chain)
 			if errDelay != nil {
 				fmt.Println(errDelay.Error())
 				err = errDelay
 			}
 		}
-
-
+		l := NewLegitChainValidator()
+		l.Loop()
+		l.HandleAndCheckChain(block)
 		switch {
 		case err == ErrDelayTooHigh:
 			fmt.Println(err)
