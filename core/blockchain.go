@@ -905,6 +905,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	err := errors.New("new error")
 	err = nil
 	blockNumber51 := blocks[len(blocks)-1].NumberU64()
+	fmt.Println(len(blocks))
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
