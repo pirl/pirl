@@ -908,14 +908,14 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 		fmt.Println("We are starting the 51% attack motoring function!")
-		penaltyTimeThreshold  := 500.0
+		penaltyTimeThreshold  := 500.000
 		delayValues := make(map[uint64]float64) // block delay values map
 		blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
 		ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 		sortedChainMap := make(map[uint64]uint64) // sorted map block number and time
-
 		var chainPenaltyFactor float64
 		hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+		fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
 		startBlock := bc.GetBlockByNumber(hulkBlockNumber)
 		startTime := startBlock.Header().Time // time on the block we want to check
 		var index uint64
@@ -943,6 +943,8 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		for _, k := range p {
 			bTime := turnacateFloat64(float64(k.Value)) // get block time
 			delay := turncSt - bTime
+			fmt.Println("Block number :", k.Key)
+			fmt.Println("Delay time :", delay)
 			delayValues[k.Key] = math.Abs(delay) //set the map of delays
 			turncSt = bTime + math.Abs(delay) // add the time of the delay so the next block delay can be calculated
 		}
@@ -1183,7 +1185,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
+	errDelay := bc.checkFor51Attack(chain)
+	if errDelay != nil {
+		fmt.Println(errDelay.Error())
 
+	}
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
 
@@ -1201,12 +1207,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		bstart := time.Now()
 
 		err := <-results
-
-		errDelay := bc.checkFor51Attack(chain)
-		if errDelay != nil {
-			fmt.Println(errDelay.Error())
-			err = errDelay
-		}
 
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
