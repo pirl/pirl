@@ -726,9 +726,13 @@ func (bc *BlockChain) procFutureBlocks() {
 	}
 	if len(blocks) > 0 {
 		types.BlockBy(types.Number).Sort(blocks)
-
+		 err := bc.checkFor51Attack(blocks)
+		 if err != nil {
+		 	fmt.Println(err.Error())
+		 }
 		// Insert one by one as chain insertion needs contiguous ancestry between blocks
 		for i := range blocks {
+
 			bc.InsertChain(blocks[i : i+1])
 		}
 	}
@@ -1033,47 +1037,47 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	bc.futureBlocks.Remove(block.Hash())
 	return status, nil
 }
-type LegitChainValidator struct {
-	Blocks []*types.Block
-	BlockChannel chan *types.Block
-	QuitChan chan chan struct{}
-}
+//type LegitChainValidator struct {
+//	Blocks []*types.Block
+//	BlockChannel chan *types.Block
+//	QuitChan chan chan struct{}
+//}
+//
+//func (l *LegitChainValidator) Loop() {
+//	for {
+//		select {
+//		case b := <- l.BlockChannel:
+//			l.Blocks = append(l.Blocks, b)
+//			fmt.Println(b.NumberU64())
+//			case q := <- l.QuitChan:
+//				close(q)
+//				return
+//		}
+//	}
+//}
+//
+//func (l *LegitChainValidator) Stop() {
+//	q := make(chan struct{})
+//	l.QuitChan <- q
+//	<-q
+//}
+//
+//func (l *LegitChainValidator) HandleAndCheckChain(block *types.Block) *types.Block{
+//	c := make(chan *types.Block)
+//	c <- block
+//	return <- c
+//}
+//
+//func NewLegitChainValidator() *LegitChainValidator {
+//	l := &LegitChainValidator{
+//		Blocks: make([]*types.Block,1000),
+//		BlockChannel: make(chan *types.Block),
+//		QuitChan: make(chan chan struct{}),
+//	}
+//	return l
+//}
 
-func (l *LegitChainValidator) Loop() {
-	for {
-		select {
-		case b := <- l.BlockChannel:
-			l.Blocks = append(l.Blocks, b)
-			fmt.Println(b.NumberU64())
-			case q := <- l.QuitChan:
-				close(q)
-				return
-		}
-	}
-}
-
-func (l *LegitChainValidator) Stop() {
-	q := make(chan struct{})
-	l.QuitChan <- q
-	<-q
-}
-
-func (l *LegitChainValidator) HandleAndCheckChain(block *types.Block) *types.Block{
-	c := make(chan *types.Block)
-	c <- block
-	return <- c
-}
-
-func NewLegitChainValidator() *LegitChainValidator {
-	l := &LegitChainValidator{
-		Blocks: make([]*types.Block,1000),
-		BlockChannel: make(chan *types.Block),
-		QuitChan: make(chan chan struct{}),
-	}
-	return l
-}
-
-func checkFor51Attack(blocks types.Blocks) error {
+func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("new error")
 	err = nil
@@ -1083,8 +1087,8 @@ func checkFor51Attack(blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		if len(blocks) > 61  && blocks != nil {
 			delayValues := make(map[uint64]float64)                 // block delay values map
-			//blockParent := blocks[len(blocks)-1].ParentHash()       // Last block parent
-			//ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
+			blockParent := blocks[len(blocks)-1].ParentHash()       // Last block parent
+			ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 			sortedChainMap := make(map[uint64]uint64)               // sorted map block number and time
 			penaltyTimeThreshold := 500.000
 			var chainPenaltyFactor float64
@@ -1108,13 +1112,13 @@ func checkFor51Attack(blocks types.Blocks) error {
 				for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 					fmt.Println("index value :", index)
 					fmt.Println(fmt.Println("This is the current 51check number :", blockNumber51))
-					//ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber51)) // get blocks
-					//if ancestorToCheck == nil {
-					//	break
-					//}
-					//ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
-					//sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-					//blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51-1 // go back one block
+					ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber51)) // get blocks
+					if ancestorToCheck == nil {
+						break
+					}
+					ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
+					sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
+					blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51-1 // go back one block
 				}
 
 				p := make(PairList, len(sortedChainMap))
@@ -1263,16 +1267,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
-		if  chain != nil {
-			errDelay := checkFor51Attack(chain)
-			if errDelay != nil {
-				fmt.Println(errDelay.Error())
-				err = errDelay
-			}
-		}
-		l := NewLegitChainValidator()
-		l.Loop()
-		l.HandleAndCheckChain(block)
+
 		switch {
 		case err == ErrDelayTooHigh:
 			fmt.Println(err)
