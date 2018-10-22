@@ -45,7 +45,6 @@ import (
 	"git.pirl.io/community/pirl/trie"
 	"github.com/hashicorp/golang-lru"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
-
 )
 
 var (
@@ -257,9 +256,6 @@ func (bc *BlockChain) loadLastState() error {
 
 	return nil
 }
-
-
-
 
 // SetHead rewinds the local chain to a new head. In the case of headers, everything
 // above the new head will be deleted and the new one set. In the case of blocks
@@ -656,10 +652,7 @@ func (bc *BlockChain) Stop() {
 	//  - HEAD:     So we don't need to reprocess any blocks in the general case
 	//  - HEAD-1:   So we don't do large reorgs if our HEAD becomes an uncle
 	//  - HEAD-127: So we have a hard limit on the number of blocks reexecuted
-	
-	
-	
-	
+
 	if !bc.cacheConfig.Disabled {
 		triedb := bc.stateCache.TrieDB()
 		for _, offset := range []uint64{0, 1, triesInMemory - 1} {
@@ -900,7 +893,7 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 var lastWrite uint64
 var sTime *big.Float
 
-func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
+func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("new error")
 	err = nil
@@ -909,11 +902,11 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 
 	if int64(blockNumber51) > params.Fork51Block {
 		if len(blocks) > 60 {
-			delayValues := make(map[uint64]float64) // block delay values map
-			blockParent := blocks[len(blocks)-1].ParentHash() // Last block parent
+			delayValues := make(map[uint64]float64)                 // block delay values map
+			blockParent := blocks[len(blocks)-1].ParentHash()       // Last block parent
 			ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
-			sortedChainMap := make(map[uint64]uint64) // sorted map block number and time
-			penaltyTimeThreshold  := 500.000
+			sortedChainMap := make(map[uint64]uint64)               // sorted map block number and time
+			penaltyTimeThreshold := 500.000
 			var chainPenaltyFactor float64
 
 			fmt.Println("Since we have passed Fork51Block we are in the new fork!")
@@ -922,6 +915,9 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 			hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 			fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
 			startBlock := bc.GetBlockByNumber(hulkBlockNumber)
+			if startBlock == nil {
+				time.Sleep(3)
+			}
 			fmt.Println("Start block value :", startBlock)
 			startTime := startBlock.Header().Time // time on the block we want to check
 			fmt.Println("Start time value :", startTime)
@@ -935,7 +931,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 				}
 				ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
 				sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-				blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51 - 1 // go back one block
+				blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51-1 // go back one block
 			}
 
 			p := make(PairList, len(sortedChainMap))
@@ -955,7 +951,7 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 				fmt.Println("Block number :", k.Key)
 				fmt.Println("Delay time :", delay)
 				delayValues[k.Key] = math.Abs(delay) //set the map of delays
-				turncSt = bTime + math.Abs(delay) // add the time of the delay so the next block delay can be calculated
+				turncSt = bTime + math.Abs(delay)    // add the time of the delay so the next block delay can be calculated
 			}
 
 			pF := new(big.Float).SetInt(penalty)
@@ -980,11 +976,11 @@ func (bc *BlockChain) checkFor51Attack (blocks types.Blocks) error {
 		}
 	}
 
-	return  err
+	return err
 }
 
-func turnacateFloat64(in float64 ) float64 {
-	return float64(math.Floor(in * 100)) / 100
+func turnacateFloat64(in float64) float64 {
+	return float64(math.Floor(in*100)) / 100
 }
 
 // A data structure to hold key/value pairs
@@ -1000,14 +996,12 @@ func (p PairList) Len() int           { return len(p) }
 func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PairList) Less(i, j int) bool { return p[i].Key < p[j].Key }
 
-
 // WriteBlockWithoutState writes only the block and its metadata to the database,
 // but does not write any state. This is used to construct competing side forks
 // up to the point where they exceed the canonical total difficulty.
 func (bc *BlockChain) WriteBlockWithoutState(block *types.Block, td *big.Int) (err error) {
 	bc.wg.Add(1)
 	defer bc.wg.Done()
-
 
 	if err := bc.hc.WriteTd(block.Hash(), block.NumberU64(), td); err != nil {
 		return err
@@ -1190,22 +1184,18 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	headers := make([]*types.Header, len(chain))
 	seals := make([]bool, len(chain))
 
-
-
 	for i, block := range chain {
 		headers[i] = block.Header()
 		seals[i] = true
 	}
 
+	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
+	defer close(abort)
+
 	errDelay := bc.checkFor51Attack(chain)
 	if errDelay != nil {
 		fmt.Println(errDelay.Error())
 	}
-
-	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
-	defer close(abort)
-
-
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
@@ -1228,8 +1218,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
-
-
 
 		switch {
 		case err == ErrDelayTooHigh:
@@ -1407,9 +1395,6 @@ func countTransactions(chain []*types.Block) (c int) {
 	return c
 }
 
-
-
-
 // reorgs takes two blocks, an old chain and a new chain and will reconstruct the blocks and inserts them
 // to be part of the new canonical chain and accumulates potential missing transactions and post an
 // event about them
@@ -1452,8 +1437,6 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 		}
 	}
 
-
-
 	if oldBlock == nil {
 		return fmt.Errorf("Invalid old chain")
 	}
@@ -1480,8 +1463,6 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 			return fmt.Errorf("Invalid new chain")
 		}
 	}
-
-
 
 	// Ensure the user sees large reorgs
 	if len(oldChain) > 0 && len(newChain) > 0 {
@@ -1627,8 +1608,6 @@ func (bc *BlockChain) InsertHeaderChain(chain []*types.Header, checkFreq int) (i
 	bc.wg.Add(1)
 	defer bc.wg.Done()
 
-
-
 	whFunc := func(header *types.Header) error {
 		bc.mu.Lock()
 		defer bc.mu.Unlock()
@@ -1639,9 +1618,6 @@ func (bc *BlockChain) InsertHeaderChain(chain []*types.Header, checkFreq int) (i
 
 	return bc.hc.InsertHeaderChain(chain, whFunc, start)
 }
-
-
-
 
 // writeHeader writes a header into the local chain, given that its parent is
 // already known. If the total difficulty of the newly inserted header becomes
