@@ -1036,17 +1036,19 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 }
 
 
-func checkFor51Attack(blocks types.Blocks) error {
+func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("new error")
 	err = nil
 	blockNumber51 := blocks[len(blocks)-1].NumberU64()
 	fmt.Println("lenght of the chain imported :", len(blocks))
 	if int64(blockNumber51) > params.Fork51Block {
+			// Check incoming chain
 			delayValues := make(map[uint64]float64)                 // block delay values map
 			ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
+
 			sortedChainMap := make(map[uint64]uint64)               // sorted map block number and time
-			penaltyTimeThreshold := 500.000
+			penaltyTimeThreshold := 250.000
 			var chainPenaltyFactor float64
 			fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 			fmt.Println("We are starting the 51% attack motoring function!")
@@ -1079,6 +1081,27 @@ func checkFor51Attack(blocks types.Blocks) error {
 					sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
 					blockNumber51 = blockNumber51-1 // go back one block
 				}
+				//Check chain in db for times
+				fmt.Println("Starting check on chain db for timings!")
+				var startBlockInDb *types.Block
+				startBlockInDb = bc.CurrentBlock()
+				var ancestorsInDb = make(map[common.Hash]*types.Header)
+				var ancestorInDb *types.Block
+				index51 := params.HulkEnforcementBlockThreshold
+				for q := 0; q < int(params.HulkEnforcementBlockThreshold); q++ {
+						ancestorInDb = bc.GetBlockByNumber(startBlockInDb.NumberU64() - index51)
+						if ancestorInDb == nil {
+							break
+						}
+						ancestorsInDb[ancestorInDb.Hash()] = ancestorInDb.Header()
+						index51 = index51-1
+				}
+
+				for f, g := range ancestorsInDb {
+					fmt.Println("Extra print for sanity F :", f)
+					fmt.Println("Extra print for sanity G :", g)
+				}
+
 				p := make(PairList, len(sortedChainMap))
 				i := 0
 				for k, v := range sortedChainMap {
