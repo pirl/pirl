@@ -1045,7 +1045,7 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 			// Check incoming chain
 			delayValues := make(map[uint64]float64)                 // block delay values map
-			ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
+			ancestorsToCheck := make(map[uint64]*types.Header) // ancestors map hash and header
 
 			sortedChainMap := make(map[uint64]uint64)               // sorted map block number and time
 			penaltyTimeThreshold := 250.000
@@ -1077,7 +1077,7 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 					if ancestorToCheck == nil {
 						break
 					}
-					ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
+					ancestorsToCheck[index] = ancestorToCheck.Header() //save them in map
 					sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
 					blockNumber51 = blockNumber51-1 // go back one block
 				}
@@ -1086,30 +1086,28 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				var startBlockInDb *types.Block
 				startBlockInDb = bc.CurrentBlock()
 				fmt.Println("Starting block on local chain :", startBlockInDb.Number().Uint64())
-				var ancestorsInDb = make(map[common.Hash]*types.Header)
+				var ancestorsInDb = make(map[uint64]*types.Header)
 				var ancestorInDb *types.Block
 				index51 := params.HulkEnforcementBlockThreshold
-				for q := 0; q < int(params.HulkEnforcementBlockThreshold); q++ {
+				var q uint64
+				for q = 0; q < params.HulkEnforcementBlockThreshold; q++ {
 						ancestorInDb = bc.GetBlockByNumber(startBlockInDb.NumberU64() - index51)
 						fmt.Println("Ancestor in db block number :", ancestorInDb.Number().Uint64())
 						if ancestorInDb == nil {
 							break
 						}
-						ancestorsInDb[ancestorInDb.Hash()] = ancestorInDb.Header()
+						ancestorsInDb[q] = ancestorInDb.Header()
 						index51 = index51-1
 				}
-
-				for _, g := range ancestorsInDb {
-					for _, s := range ancestorsToCheck {
-
-						if g.Number.Uint64() == s.Number.Uint64() {
-							fmt.Println("We have maching blocks lets check the delay!Block value :", g.Number.Uint64())
-							gTime := g.Time.Uint64()
-							sTime := s.Time.Uint64()
-							delayTime := math.Abs(float64(gTime - sTime))
-							fmt.Println("Delay value for the block :", delayTime)
-							delayValues[s.Number.Uint64()] = delayTime
-						}
+				var indexF uint64
+				for indexF = 0; indexF < params.HulkEnforcementBlockThreshold; indexF++ {
+					if ancestorsToCheck[indexF] == ancestorsInDb[indexF] {
+						fmt.Println("We have maching blocks lets check the delay!Block value :", ancestorsToCheck[indexF].Number.Uint64())
+						gTime := ancestorsToCheck[indexF].Time.Uint64()
+						sTime := ancestorsInDb[indexF].Time.Uint64()
+						delayTime := math.Abs(float64(gTime - sTime))
+						fmt.Println("Delay value for the block :", delayTime)
+						delayValues[ancestorsToCheck[indexF].Number.Uint64()] = delayTime
 					}
 				}
 
