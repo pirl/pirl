@@ -1254,6 +1254,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
+		err = bc.checkFor51Attack(chain)
+		if err != nil {
+			fmt.Println(err.Error())
+			err = ErrDelayTooHigh
+		}
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
@@ -1293,11 +1298,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 					return i, events, coalescedLogs, err
 				}
 				continue
-			}
-			err := bc.checkFor51Attack(chain)
-			if err != nil {
-				fmt.Println(err.Error())
-
 			}
 			// Competitor chain beat canonical, gather all blocks from the common ancestor
 			var winner []*types.Block
