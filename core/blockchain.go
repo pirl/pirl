@@ -1042,19 +1042,14 @@ func checkFor51Attack(blocks types.Blocks) error {
 	err = nil
 	blockNumber51 := blocks[len(blocks)-1].NumberU64()
 	fmt.Println("lenght of the chain imported :", len(blocks))
-
 	if int64(blockNumber51) > params.Fork51Block {
-		if len(blocks) > 61  && blocks != nil {
 			delayValues := make(map[uint64]float64)                 // block delay values map
-
 			ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 			sortedChainMap := make(map[uint64]uint64)               // sorted map block number and time
 			penaltyTimeThreshold := 500.000
 			var chainPenaltyFactor float64
-
 			fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 			fmt.Println("We are starting the 51% attack motoring function!")
-
 			hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 			fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
 			var startBlock *types.Block
@@ -1063,7 +1058,7 @@ func checkFor51Attack(blocks types.Blocks) error {
 					startBlock = b
 				}
 			}
-			fmt.Println("Start block value :", startBlock)
+			fmt.Println("Start block value :", startBlock.NumberU64())
 			if startBlock != nil {
 				startTime := startBlock.Header().Time // time on the block we want to check
 				fmt.Println("Start time value :", startTime)
@@ -1084,7 +1079,6 @@ func checkFor51Attack(blocks types.Blocks) error {
 					sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
 					blockNumber51 = blockNumber51-1 // go back one block
 				}
-
 				p := make(PairList, len(sortedChainMap))
 				i := 0
 				for k, v := range sortedChainMap {
@@ -1092,7 +1086,6 @@ func checkFor51Attack(blocks types.Blocks) error {
 					i++
 				}
 				sort.Sort(p)
-
 				sTime = new(big.Float).SetInt(startTime) // set init time sTime as startTime
 				sT, _ := sTime.Float64()
 				turncSt := turnacateFloat64(sT)
@@ -1104,7 +1097,6 @@ func checkFor51Attack(blocks types.Blocks) error {
 					delayValues[k.Key] = math.Abs(delay) //set the map of delays
 					turncSt = bTime + math.Abs(delay)    // add the time of the delay so the next block delay can be calculated
 				}
-
 				pF := new(big.Float).SetInt(penalty)
 				pFlt, _ := pF.Float64()
 				turncPF := turnacateFloat64(pFlt)
@@ -1127,7 +1119,6 @@ func checkFor51Attack(blocks types.Blocks) error {
 			}
 		} else {
 			fmt.Println("Not enough blocks :", len(blocks))
-		}
 	}
 	return err
 }
