@@ -1084,7 +1084,7 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				//Check chain in db for times
 				fmt.Println("Starting check on chain db for timings!")
 				var startBlockInDb *types.Block
-				startBlockInDb = bc.CurrentBlock()
+				startBlockInDb = startBlock
 				fmt.Println("Starting block on local chain :", startBlockInDb.Number().Uint64())
 				var ancestorsInDb = make(map[common.Hash]*types.Header)
 				var ancestorInDb *types.Block
@@ -1098,10 +1098,10 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 						ancestorsInDb[ancestorInDb.Hash()] = ancestorInDb.Header()
 						index51 = index51-1
 				}
+
 				for _, g := range ancestorsInDb {
 					for _, s := range ancestorsToCheck {
-						fmt.Println("Block numbers in incoming chain :", g.Number.Uint64())
-						fmt.Println("Block numbers in local chain :", s.Number.Uint64())
+
 						if g.Number.Uint64() == s.Number.Uint64() {
 							fmt.Println("We have maching blocks lets check the delay!Block value :", g.Number.Uint64())
 							gTime := g.Time.Uint64()
