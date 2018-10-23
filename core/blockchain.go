@@ -199,7 +199,7 @@ func NewBlockChain(db ethdb.Database, cacheConfig *CacheConfig, chainConfig *par
 		QuitChan: make(chan chan struct{}),
 	}
 	go lgt.Loop()
-	lgt.HandleAndCheckChain(<- lgt.BlockChannel)
+	go lgt.HandleAndCheckChain(<- lgt.BlockChannel)
 	return bc, nil
 }
 
