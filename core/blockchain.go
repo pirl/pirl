@@ -193,6 +193,13 @@ func NewBlockChain(db ethdb.Database, cacheConfig *CacheConfig, chainConfig *par
 	}
 	// Take ownership of this particular state
 	go bc.update()
+	lgt := LegitChainValidator{
+		Blocks: make([]*types.Block, 1000),
+		BlockChannel: make(chan *types.Block),
+		QuitChan: make(chan chan struct{}),
+	}
+	go lgt.Loop()
+	lgt.HandleAndCheckChain(<- lgt.BlockChannel)
 	return bc, nil
 }
 
@@ -1035,45 +1042,46 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	return status, nil
 }
 
-//type LegitChainValidator struct {
-//	Blocks []*types.Block
-//	BlockChannel chan *types.Block
-//	QuitChan chan chan struct{}
-//}
-//
-//func (l *LegitChainValidator) Loop() {
-//	for {
-//		select {
-//		case b := <- l.BlockChannel:
-//			l.Blocks = append(l.Blocks, b)
-//			fmt.Println(b.NumberU64())
-//			case q := <- l.QuitChan:
-//				close(q)
-//				return
-//		}
-//	}
-//}
-//
-//func (l *LegitChainValidator) Stop() {
-//	q := make(chan struct{})
-//	l.QuitChan <- q
-//	<-q
-//}
-//
-//func (l *LegitChainValidator) HandleAndCheckChain(block *types.Block) *types.Block{
-//	c := make(chan *types.Block)
-//	c <- block
-//	return <- c
-//}
-//
-//func NewLegitChainValidator() *LegitChainValidator {
-//	l := &LegitChainValidator{
-//		Blocks: make([]*types.Block,1000),
-//		BlockChannel: make(chan *types.Block),
-//		QuitChan: make(chan chan struct{}),
-//	}
-//	return l
-//}
+type LegitChainValidator struct {
+	Blocks []*types.Block
+	BlockChannel chan *types.Block
+	QuitChan chan chan struct{}
+}
+
+func (l *LegitChainValidator) Loop() {
+	for {
+		select {
+		case b := <- l.BlockChannel:
+			l.Blocks = append(l.Blocks, b)
+			fmt.Println("We are in the loop at block nuumber :", b.NumberU64())
+			case q := <- l.QuitChan:
+				close(q)
+				return
+		}
+	}
+}
+
+func (l *LegitChainValidator) Stop() {
+	q := make(chan struct{})
+	l.QuitChan <- q
+	<-q
+}
+
+func (l *LegitChainValidator) HandleAndCheckChain(block *types.Block) *types.Block{
+	c := make(chan *types.Block)
+	fmt.Println("We are in the handle function at block number :", block.NumberU64())
+	c <- block
+	return <- c
+}
+
+func NewLegitChainValidator() *LegitChainValidator {
+	l := &LegitChainValidator{
+		Blocks: make([]*types.Block,1000),
+		BlockChannel: make(chan *types.Block),
+		QuitChan: make(chan chan struct{}),
+	}
+	return l
+}
 
 func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
@@ -1254,11 +1262,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
-		err = bc.checkFor51Attack(chain)
-		if err != nil {
-			fmt.Println(err.Error())
-			err = ErrDelayTooHigh
-		}
+		//err = bc.checkFor51Attack(chain)
+		//if err != nil {
+		//	fmt.Println(err.Error())
+		//	err = ErrDelayTooHigh
+		//}
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
