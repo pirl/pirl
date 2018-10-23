@@ -1036,7 +1036,7 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 }
 
 
-func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
+func checkFor51Attack(blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
 	err := errors.New("new error")
 	err = nil
@@ -1204,9 +1204,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-	if chain != nil && len(chain) > 63 {
+	if chain != nil && len(chain) > int(params.HulkEnforcementBlockThreshold) {
 		fmt.Println("We have enough blocks to check!Block number is :", len(chain))
-		err := bc.checkFor51Attack(chain)
+		err := checkFor51Attack(chain)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
