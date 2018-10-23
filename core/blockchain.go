@@ -1063,11 +1063,11 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 			fmt.Println("Start block value :", startBlock.NumberU64())
 			if startBlock != nil {
 				startTime := startBlock.Header().Time // time on the block we want to check
-				fmt.Println("Start time value :", startTime)
+				//fmt.Println("Start time value :", startTime)
 				var index uint64
 				for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
-					fmt.Println("index value :", index)
-					fmt.Println(fmt.Println("This is the current 51check number :", blockNumber51))
+					//fmt.Println("index value :", index)
+					//fmt.Println(fmt.Println("This is the current 51check number :", blockNumber51))
 					var ancestorToCheck *types.Block
 					for _, gb := range blocks {
 						if gb.NumberU64() == uint64(blockNumber51) {
@@ -1085,11 +1085,13 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				fmt.Println("Starting check on chain db for timings!")
 				var startBlockInDb *types.Block
 				startBlockInDb = bc.CurrentBlock()
+				fmt.Println("Starting block on local chain :", startBlockInDb.Number().Uint64())
 				var ancestorsInDb = make(map[common.Hash]*types.Header)
 				var ancestorInDb *types.Block
 				index51 := params.HulkEnforcementBlockThreshold
 				for q := 0; q < int(params.HulkEnforcementBlockThreshold); q++ {
 						ancestorInDb = bc.GetBlockByNumber(startBlockInDb.NumberU64() - index51)
+						fmt.Println("Ancestor in db block number :", ancestorInDb.Number().Uint64())
 						if ancestorInDb == nil {
 							break
 						}
@@ -1098,12 +1100,15 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				}
 				for _, g := range ancestorsInDb {
 					for _, s := range ancestorsToCheck {
+						fmt.Println("Block numbers in incoming chain :", g.Number.Uint64())
+						fmt.Println("Block numbers in local chain :", s.Number.Uint64())
 						if g.Number.Uint64() == s.Number.Uint64() {
 							fmt.Println("We have maching blocks lets check the delay!Block value :", g.Number.Uint64())
 							gTime := g.Time.Uint64()
 							sTime := s.Time.Uint64()
 							delayTime := math.Abs(float64(gTime - sTime))
-							fmt.Println(delayTime)
+							fmt.Println("Delay value for the block :", delayTime)
+							delayValues[s.Number.Uint64()] = delayTime
 						}
 					}
 				}
