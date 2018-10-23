@@ -1099,18 +1099,31 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 						ancestorsInDb[q] = ancestorInDb.Header()
 						index51 = index51-1
 				}
-				var indexF uint64
-				for indexF = 0; indexF < params.HulkEnforcementBlockThreshold; indexF++ {
-					fmt.Println("Printing ancestors in incoming chain :", ancestorsToCheck[indexF], "Printing ancestors in local db :",  ancestorsInDb[indexF])
-					if ancestorsToCheck[indexF].Number.Uint64() == ancestorsInDb[indexF].Number.Uint64() {
-						fmt.Println("We have maching blocks lets check the delay!Block value :", ancestorsToCheck[indexF].Number.Uint64())
-						gTime := ancestorsToCheck[indexF].Time.Uint64()
-						sTime := ancestorsInDb[indexF].Time.Uint64()
-						delayTime := math.Abs(float64(gTime - sTime))
-						fmt.Println("Delay value for the block :", delayTime)
-						delayValues[ancestorsToCheck[indexF].Number.Uint64()] = delayTime
+
+				for _, k := range ancestorsToCheck {
+					for _, l := range ancestorsInDb {
+						if k.Number.Uint64() == l.Number.Uint64() {
+							fmt.Println("We have maching blocks lets check the delay!Block value :", k.Number.Uint64())
+							gTime := l.Time.Uint64()
+							sTime := k.Time.Uint64()
+							delayTime := math.Abs(float64(gTime - sTime))
+							fmt.Println("Delay value for the block :", delayTime)
+							delayValues[k.Number.Uint64()] = delayTime
+						}
 					}
 				}
+				//var indexF uint64
+				//for indexF = 0; indexF < params.HulkEnforcementBlockThreshold; indexF++ {
+				//	fmt.Println("Printing ancestors in incoming chain :", ancestorsToCheck[indexF], "Printing ancestors in local db :",  ancestorsInDb[indexF])
+				//	if ancestorsToCheck[indexF].Number.Uint64() == ancestorsInDb[indexF].Number.Uint64() {
+				//		fmt.Println("We have maching blocks lets check the delay!Block value :", ancestorsToCheck[indexF].Number.Uint64())
+				//		gTime := ancestorsToCheck[indexF].Time.Uint64()
+				//		sTime := ancestorsInDb[indexF].Time.Uint64()
+				//		delayTime := math.Abs(float64(gTime - sTime))
+				//		fmt.Println("Delay value for the block :", delayTime)
+				//		delayValues[ancestorsToCheck[indexF].Number.Uint64()] = delayTime
+				//	}
+				//}
 
 				p := make(PairList, len(sortedChainMap))
 				i := 0
