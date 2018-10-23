@@ -1046,7 +1046,7 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 	if int64(blockNumber51) > params.Fork51Block {
 		if len(blocks) > 61  && blocks != nil {
 			delayValues := make(map[uint64]float64)                 // block delay values map
-			blockParent := blocks[len(blocks)-1].ParentHash()       // Last block parent
+
 			ancestorsToCheck := make(map[common.Hash]*types.Header) // ancestors map hash and header
 			sortedChainMap := make(map[uint64]uint64)               // sorted map block number and time
 			penaltyTimeThreshold := 500.000
@@ -1071,13 +1071,18 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
 					fmt.Println("index value :", index)
 					fmt.Println(fmt.Println("This is the current 51check number :", blockNumber51))
-					ancestorToCheck := bc.GetBlock(blockParent, uint64(blockNumber51)) // get blocks
+					var ancestorToCheck *types.Block
+					for _, gb := range blocks {
+						if gb.NumberU64() == uint64(blockNumber51) {
+							ancestorToCheck = gb
+						}
+					}
 					if ancestorToCheck == nil {
 						break
 					}
 					ancestorsToCheck[ancestorToCheck.Hash()] = ancestorToCheck.Header() //save them in map
 					sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-					blockParent, blockNumber51 = ancestorToCheck.ParentHash(), blockNumber51-1 // go back one block
+					blockNumber51 = blockNumber51-1 // go back one block
 				}
 
 				p := make(PairList, len(sortedChainMap))
