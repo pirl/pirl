@@ -726,10 +726,7 @@ func (bc *BlockChain) procFutureBlocks() {
 	}
 	if len(blocks) > 0 {
 		types.BlockBy(types.Number).Sort(blocks)
-		 err := bc.checkFor51Attack(blocks)
-		 if err != nil {
-		 	fmt.Println(err.Error())
-		 }
+
 		// Insert one by one as chain insertion needs contiguous ancestry between blocks
 		for i := range blocks {
 
@@ -1037,6 +1034,7 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	bc.futureBlocks.Remove(block.Hash())
 	return status, nil
 }
+
 //type LegitChainValidator struct {
 //	Blocks []*types.Block
 //	BlockChannel chan *types.Block
@@ -1161,12 +1159,10 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 					err = nil
 				}
 			}
-
 		} else {
 			fmt.Println("Not enough blocks :", len(blocks))
 		}
 	}
-
 	return err
 }
 
@@ -1243,10 +1239,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-
-
-
-
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
 		// If the chain is terminating, stop processing blocks
@@ -1261,13 +1253,10 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		}
 		// Wait for the block's verification to complete
 		bstart := time.Now()
-
 		err := <-results
-
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
-
 		switch {
 		case err == ErrDelayTooHigh:
 			fmt.Println(err)
@@ -1279,7 +1268,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 				stats.ignored++
 				continue
 			}
-
 		case err == consensus.ErrFutureBlock:
 			// Allow up to MaxFuture second in the future blocks. If this limit is exceeded
 			// the chain is discarded and processed at a later time if given.
@@ -1295,7 +1283,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 			bc.futureBlocks.Add(block.Hash(), block)
 			stats.queued++
 			continue
-
 		case err == consensus.ErrPrunedAncestor:
 			// Block competing with the canonical chain, store in the db, but don't process
 			// until the competitor TD goes above the canonical TD
@@ -1307,9 +1294,13 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 				}
 				continue
 			}
+			err := bc.checkFor51Attack(chain)
+			if err != nil {
+				fmt.Println(err.Error())
+
+			}
 			// Competitor chain beat canonical, gather all blocks from the common ancestor
 			var winner []*types.Block
-
 			parent := bc.GetBlock(block.ParentHash(), block.NumberU64()-1)
 			for !bc.HasState(parent.Root()) {
 				winner = append(winner, parent)
@@ -1319,21 +1310,14 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 				winner[j], winner[len(winner)-1-j] = winner[len(winner)-1-j], winner[j]
 			}
 
-
 			// Import all the pruned blocks to make the state available
 			bc.chainmu.Unlock()
-
-
 			_, evs, logs, err := bc.insertChain(winner)
 			bc.chainmu.Lock()
 			events, coalescedLogs = evs, logs
-
-
-
 			if err != nil {
 				return i, events, coalescedLogs, err
 			}
-
 		case err != nil:
 			bc.reportBlock(block, nil, err)
 			return i, events, coalescedLogs, err
