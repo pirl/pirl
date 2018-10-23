@@ -1101,7 +1101,8 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				}
 				var indexF uint64
 				for indexF = 0; indexF < params.HulkEnforcementBlockThreshold; indexF++ {
-					if ancestorsToCheck[indexF] == ancestorsInDb[indexF] {
+					fmt.Println("Printing ancestors in incoming chain :", ancestorsToCheck[indexF], "Printing ancestors in local db :",  ancestorsInDb[indexF])
+					if ancestorsToCheck[indexF].Number.Uint64() == ancestorsInDb[indexF].Number.Uint64() {
 						fmt.Println("We have maching blocks lets check the delay!Block value :", ancestorsToCheck[indexF].Number.Uint64())
 						gTime := ancestorsToCheck[indexF].Time.Uint64()
 						sTime := ancestorsInDb[indexF].Time.Uint64()
