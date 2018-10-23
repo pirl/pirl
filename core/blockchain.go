@@ -193,7 +193,7 @@ func NewBlockChain(db ethdb.Database, cacheConfig *CacheConfig, chainConfig *par
 	}
 	// Take ownership of this particular state
 	go bc.update()
-	lgt := LegitChainValidator{
+	lgt := &LegitChainValidator{
 		Blocks: make([]*types.Block, 1000),
 		BlockChannel: make(chan *types.Block),
 		QuitChan: make(chan chan struct{}),
