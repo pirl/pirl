@@ -1096,10 +1096,16 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 						ancestorsInDb[ancestorInDb.Hash()] = ancestorInDb.Header()
 						index51 = index51-1
 				}
-
-				for f, g := range ancestorsInDb {
-					fmt.Println("Extra print for sanity F :", f)
-					fmt.Println("Extra print for sanity G :", g)
+				for _, g := range ancestorsInDb {
+					for _, s := range ancestorsToCheck {
+						if g.Number.Uint64() == s.Number.Uint64() {
+							fmt.Println("We have maching blocks lets check the delay!Block value :", g.Number.Uint64())
+							gTime := g.Time.Uint64()
+							sTime := s.Time.Uint64()
+							delayTime := math.Abs(float64(gTime - sTime))
+							fmt.Println(delayTime)
+						}
+					}
 				}
 
 				p := make(PairList, len(sortedChainMap))
@@ -1115,8 +1121,8 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				for _, k := range p {
 					bTime := turnacateFloat64(float64(k.Value)) // get block time
 					delay := turncSt - bTime
-					fmt.Println("Block number :", k.Key)
-					fmt.Println("Delay time :", math.Abs(delay))
+					//fmt.Println("Block number :", k.Key)
+					//fmt.Println("Delay time :", math.Abs(delay))
 					delayValues[k.Key] = math.Abs(delay) //set the map of delays
 					turncSt = bTime + math.Abs(delay)    // add the time of the delay so the next block delay can be calculated
 				}
@@ -1125,8 +1131,8 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				turncPF := turnacateFloat64(pFlt)
 				for k := range sortedChainMap {
 					if delayValues[k] > penaltyTimeThreshold {
-						fmt.Println("We have delay times in the chain that exceed threshold! Block value :", k)
-						fmt.Println("We have delay times in the chain that exceed threshold! Delay value :", delayValues[k])
+						//fmt.Println("We have delay times in the chain that exceed threshold! Block value :", k)
+						//fmt.Println("We have delay times in the chain that exceed threshold! Delay value :", delayValues[k])
 						penaltyFinal := turncPF - 1
 						chainPenaltyFactor = penaltyFinal
 						turncPF = penaltyFinal
@@ -1241,11 +1247,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
-		//err = bc.checkFor51Attack(chain)
-		//if err != nil {
-		//	fmt.Println(err.Error())
-		//	err = ErrDelayTooHigh
-		//}
+
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
