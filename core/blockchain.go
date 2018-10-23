@@ -1093,7 +1093,7 @@ func checkFor51Attack(blocks types.Blocks) error {
 					bTime := turnacateFloat64(float64(k.Value)) // get block time
 					delay := turncSt - bTime
 					fmt.Println("Block number :", k.Key)
-					fmt.Println("Delay time :", delay)
+					fmt.Println("Delay time :", math.Abs(delay))
 					delayValues[k.Key] = math.Abs(delay) //set the map of delays
 					turncSt = bTime + math.Abs(delay)    // add the time of the delay so the next block delay can be calculated
 				}
