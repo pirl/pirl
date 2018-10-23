@@ -1220,7 +1220,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	defer close(abort)
 	if chain != nil && len(chain) > int(params.HulkEnforcementBlockThreshold) {
 		fmt.Println("We have enough blocks to check!Block number is :", len(chain))
-		err := checkFor51Attack(chain)
+		err := bc.checkFor51Attack(chain)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
