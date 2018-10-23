@@ -1199,20 +1199,16 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-	blocksToSave := make([]*types.Block, 0, bc.futureBlocks.Len())
-	for _, hash := range bc.futureBlocks.Keys() {
-		if block, exist := bc.futureBlocks.Peek(hash); exist {
-			blocksToSave = append(blocksToSave, block.(*types.Block))
-		}
-	}
-	if len(blocksToSave) > 0 {
-		types.BlockBy(types.Number).Sort(blocksToSave)
-		fmt.Println("blocks are safed and shorted")
-		fmt.Println("blocks stored :", len(blocksToSave))
-	}
+
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
-
+		if len(chain) > 200  && len(chain) > 300 {
+			fmt.Println("We have enough blocks to check!Block number is :", len(chain))
+			err := bc.checkFor51Attack(chain)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+		}
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Debug("Premature abort during blocks processing")
