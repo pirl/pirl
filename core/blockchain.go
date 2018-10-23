@@ -193,13 +193,6 @@ func NewBlockChain(db ethdb.Database, cacheConfig *CacheConfig, chainConfig *par
 	}
 	// Take ownership of this particular state
 	go bc.update()
-	lgt := &LegitChainValidator{
-		Blocks: make([]*types.Block, 1000),
-		BlockChannel: make(chan *types.Block),
-		QuitChan: make(chan chan struct{}),
-	}
-	go lgt.Loop()
-	go lgt.HandleAndCheckChain(<- lgt.BlockChannel)
 	return bc, nil
 }
 
@@ -1042,46 +1035,6 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	return status, nil
 }
 
-type LegitChainValidator struct {
-	Blocks []*types.Block
-	BlockChannel chan *types.Block
-	QuitChan chan chan struct{}
-}
-
-func (l *LegitChainValidator) Loop() {
-	for {
-		select {
-		case b := <- l.BlockChannel:
-			l.Blocks = append(l.Blocks, b)
-			fmt.Println("We are in the loop at block nuumber :", b.NumberU64())
-			case q := <- l.QuitChan:
-				close(q)
-				return
-		}
-	}
-}
-
-func (l *LegitChainValidator) Stop() {
-	q := make(chan struct{})
-	l.QuitChan <- q
-	<-q
-}
-
-func (l *LegitChainValidator) HandleAndCheckChain(block *types.Block) *types.Block{
-	c := make(chan *types.Block)
-	fmt.Println("We are in the handle function at block number :", block.NumberU64())
-	c <- block
-	return <- c
-}
-
-func NewLegitChainValidator() *LegitChainValidator {
-	l := &LegitChainValidator{
-		Blocks: make([]*types.Block,1000),
-		BlockChannel: make(chan *types.Block),
-		QuitChan: make(chan chan struct{}),
-	}
-	return l
-}
 
 func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
@@ -1246,9 +1199,20 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-
+	blocksToSave := make([]*types.Block, 0, bc.futureBlocks.Len())
+	for _, hash := range bc.futureBlocks.Keys() {
+		if block, exist := bc.futureBlocks.Peek(hash); exist {
+			blocksToSave = append(blocksToSave, block.(*types.Block))
+		}
+	}
+	if len(blocksToSave) > 0 {
+		types.BlockBy(types.Number).Sort(blocksToSave)
+		fmt.Println("blocks are safed and shorted")
+		fmt.Println("blocks stored :", len(blocksToSave))
+	}
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
+
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Debug("Premature abort during blocks processing")
