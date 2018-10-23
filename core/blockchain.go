@@ -1084,7 +1084,7 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 				//Check chain in db for times
 				fmt.Println("Starting check on chain db for timings!")
 				var startBlockInDb *types.Block
-				startBlockInDb = startBlock
+				startBlockInDb = bc.CurrentBlock()
 				fmt.Println("Starting block on local chain :", startBlockInDb.Number().Uint64())
 				var ancestorsInDb = make(map[common.Hash]*types.Header)
 				var ancestorInDb *types.Block
