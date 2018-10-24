@@ -1035,123 +1035,130 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 }
 
 func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
-	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2) //penalty value is n*(n + 1) / 2
 	err := errors.New("new error")                                                                                                // create new dummy error
-	err = nil                                                                                                                     //set it to nil
-	latestIncomingBlock := blocks[len(blocks)-1].NumberU64()                                                                      // last icoming block is the last block provided by the new chain
-	fmt.Println("lenght of the chain imported :", len(blocks))
-	if int64(latestIncomingBlock) > params.Fork51Block { // check if we are in the fork time
-		// Check incoming chain
-		delayValues := make(map[uint64]float64)            // block delay values map
-		ancestorsToCheck := make(map[uint64]*types.Header) // ancestors map hash and header
-		sortedChainMap := make(map[uint64]uint64)          // sorted map block number and time
-		penaltyTimeThreshold := 250.000                    // delay threshold in ms
-		var chainPenaltyFactor float64                     // chain penalty factor is the overall penalty of the incoming chain
-		fmt.Println("Since we have passed Fork51Block we are in the new fork!")
-		fmt.Println("We are starting the 51% attack motoring function!")
-		hulkBlockNumber := uint64(latestIncomingBlock) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-		fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
-		var startIncomingBlock *types.Block
-		for _, b := range blocks { // get proper block from the incoming blocks as start point
-			if b.NumberU64() == hulkBlockNumber {
-				startIncomingBlock = b
+	err = nil
+	if bc.currentBlock.NumberU64() != blocks[len(blocks)-1].NumberU64() {
+		fmt.Println("We are syncing")
+	} else {
+		fmt.Println("We have synced and now blocks presented are new blocks")
+		var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2) //penalty value is n*(n + 1) / 2
+		                                                                                                                   //set it to nil
+		latestIncomingBlock := blocks[len(blocks)-1].NumberU64()                                                                      // last icoming block is the last block provided by the new chain
+		fmt.Println("lenght of the chain imported :", len(blocks))
+		if int64(latestIncomingBlock) > params.Fork51Block { // check if we are in the fork time
+			// Check incoming chain
+			delayValues := make(map[uint64]float64)            // block delay values map
+			ancestorsToCheck := make(map[uint64]*types.Header) // ancestors map hash and header
+			sortedChainMap := make(map[uint64]uint64)          // sorted map block number and time
+			penaltyTimeThreshold := 250.000                    // delay threshold in ms
+			var chainPenaltyFactor float64                     // chain penalty factor is the overall penalty of the incoming chain
+			fmt.Println("Since we have passed Fork51Block we are in the new fork!")
+			fmt.Println("We are starting the 51% attack motoring function!")
+			hulkBlockNumber := uint64(latestIncomingBlock) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+			fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
+			var startIncomingBlock *types.Block
+			for _, b := range blocks { // get proper block from the incoming blocks as start point
+				if b.NumberU64() == hulkBlockNumber {
+					startIncomingBlock = b
+				}
 			}
-		}
-		fmt.Println("Start block value :", startIncomingBlock.NumberU64())
-		if startIncomingBlock != nil {
-			startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.HulkEnforcementBlockThreshold)
-			if startPointInDb != nil {
-				startTime := startPointInDb.Header().Time // time on the block we want to check
-				fmt.Println("Start time value :", startTime)
-				var index uint64
-				for index = 0; index < params.HulkEnforcementBlockThreshold; index++ { // gather all incoming blocks with in the range
-					var ancestorToCheck *types.Block
-					for _, gb := range blocks {
-						if gb.NumberU64() == latestIncomingBlock - params.HulkEnforcementBlockThreshold {
-							ancestorToCheck = gb
-							fmt.Println("Ancestor to check in incoming chain :", ancestorToCheck.Header().Number.Uint64())
+			fmt.Println("Start block value :", startIncomingBlock.NumberU64())
+			if startIncomingBlock != nil {
+				startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.HulkEnforcementBlockThreshold)
+				if startPointInDb != nil {
+					startTime := startPointInDb.Header().Time // time on the block we want to check
+					fmt.Println("Start time value :", startTime)
+					var index uint64
+					for index = 0; index < params.HulkEnforcementBlockThreshold; index++ { // gather all incoming blocks with in the range
+						var ancestorToCheck *types.Block
+						for _, gb := range blocks {
+							if gb.NumberU64() == latestIncomingBlock - params.HulkEnforcementBlockThreshold {
+								ancestorToCheck = gb
+								fmt.Println("Ancestor to check in incoming chain :", ancestorToCheck.Header().Number.Uint64())
+							}
+						}
+						if ancestorToCheck == nil {
+							break
+						}
+						ancestorsToCheck[index] = ancestorToCheck.Header() //save them in map
+						sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
+						latestIncomingBlock = latestIncomingBlock - 1 // go back one block
+					}
+					//Check chain in db for times
+					fmt.Println("Starting check on chain db for timings!")
+					var startBlockInDb *types.Block
+					startBlockInDb = bc.CurrentBlock()
+					fmt.Println("Starting block on local chain :", startBlockInDb.Number().Uint64())
+					var ancestorsInDb = make(map[uint64]*types.Header)
+					var ancestorInDb *types.Block
+					index51 := params.HulkEnforcementBlockThreshold
+					var q uint64
+					for q = 0; q < params.HulkEnforcementBlockThreshold; q++ {
+						ancestorInDb = bc.GetBlockByNumber(startBlockInDb.NumberU64() - index51)
+						fmt.Println("Ancestor in db block number :", ancestorInDb.Number().Uint64())
+						if ancestorInDb == nil {
+							break
+						}
+						ancestorsInDb[q] = ancestorInDb.Header()
+						index51 = index51 - 1
+					}
+
+					var indexF uint64
+					for indexF = 0; indexF < params.HulkEnforcementBlockThreshold; indexF++ {
+						//fmt.Println("Printing ancestors in incoming chain :", ancestorsToCheck[indexF], "Printing ancestors in local db :",  ancestorsInDb[indexF])
+						gTime := ancestorsToCheck[indexF].Time.Uint64()
+						sTime := ancestorsInDb[indexF].Time.Uint64()
+						delayTime := math.Abs(float64(gTime - sTime))
+						fmt.Println("Delay value for the block :", delayTime)
+						delayValues[ancestorsToCheck[indexF].Number.Uint64()] = delayTime
+					}
+
+					p := make(PairList, len(sortedChainMap))
+					i := 0
+					for k, v := range sortedChainMap {
+						p[i] = Pair{k, v}
+						i++
+					}
+					sort.Sort(p)
+					sTime = new(big.Float).SetInt(startTime) // set init time sTime as startTime
+					sT, _ := sTime.Float64()
+					turncSt := turnacateFloat64(sT)
+					for _, k := range p {
+						bTime := turnacateFloat64(float64(k.Value)) // get block time
+						delay := turncSt - bTime
+						//fmt.Println("Block number :", k.Key)
+						//fmt.Println("Delay time :", math.Abs(delay))
+						delayValues[k.Key] = math.Abs(delay) //set the map of delays
+						turncSt = bTime + math.Abs(delay)    // add the time of the delay so the next block delay can be calculated
+					}
+					pF := new(big.Float).SetInt(penalty)
+					pFlt, _ := pF.Float64()
+					turncPF := turnacateFloat64(pFlt)
+					for k := range sortedChainMap {
+						if delayValues[k] > penaltyTimeThreshold {
+							//fmt.Println("We have delay times in the chain that exceed threshold! Block value :", k)
+							//fmt.Println("We have delay times in the chain that exceed threshold! Delay value :", delayValues[k])
+							penaltyFinal := turncPF - 1
+							chainPenaltyFactor = penaltyFinal
+							turncPF = penaltyFinal
 						}
 					}
-					if ancestorToCheck == nil {
-						break
+					if chainPenaltyFactor > 0 {
+						fmt.Println("Chain penalty value is over the threshold we should reject this as malicious and move on")
+						err = ErrDelayTooHigh
+					} else {
+						fmt.Println("Chain has 0 penalty and its the legit one!Moving on!")
+						err = nil
 					}
-					ancestorsToCheck[index] = ancestorToCheck.Header() //save them in map
-					sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-					latestIncomingBlock = latestIncomingBlock - 1 // go back one block
-				}
-				//Check chain in db for times
-				fmt.Println("Starting check on chain db for timings!")
-				var startBlockInDb *types.Block
-				startBlockInDb = bc.CurrentBlock()
-				fmt.Println("Starting block on local chain :", startBlockInDb.Number().Uint64())
-				var ancestorsInDb = make(map[uint64]*types.Header)
-				var ancestorInDb *types.Block
-				index51 := params.HulkEnforcementBlockThreshold
-				var q uint64
-				for q = 0; q < params.HulkEnforcementBlockThreshold; q++ {
-					ancestorInDb = bc.GetBlockByNumber(startBlockInDb.NumberU64() - index51)
-					fmt.Println("Ancestor in db block number :", ancestorInDb.Number().Uint64())
-					if ancestorInDb == nil {
-						break
-					}
-					ancestorsInDb[q] = ancestorInDb.Header()
-					index51 = index51 - 1
-				}
-
-				var indexF uint64
-				for indexF = 0; indexF < params.HulkEnforcementBlockThreshold; indexF++ {
-					//fmt.Println("Printing ancestors in incoming chain :", ancestorsToCheck[indexF], "Printing ancestors in local db :",  ancestorsInDb[indexF])
-					gTime := ancestorsToCheck[indexF].Time.Uint64()
-					sTime := ancestorsInDb[indexF].Time.Uint64()
-					delayTime := math.Abs(float64(gTime - sTime))
-					fmt.Println("Delay value for the block :", delayTime)
-					delayValues[ancestorsToCheck[indexF].Number.Uint64()] = delayTime
-				}
-
-				p := make(PairList, len(sortedChainMap))
-				i := 0
-				for k, v := range sortedChainMap {
-					p[i] = Pair{k, v}
-					i++
-				}
-				sort.Sort(p)
-				sTime = new(big.Float).SetInt(startTime) // set init time sTime as startTime
-				sT, _ := sTime.Float64()
-				turncSt := turnacateFloat64(sT)
-				for _, k := range p {
-					bTime := turnacateFloat64(float64(k.Value)) // get block time
-					delay := turncSt - bTime
-					//fmt.Println("Block number :", k.Key)
-					//fmt.Println("Delay time :", math.Abs(delay))
-					delayValues[k.Key] = math.Abs(delay) //set the map of delays
-					turncSt = bTime + math.Abs(delay)    // add the time of the delay so the next block delay can be calculated
-				}
-				pF := new(big.Float).SetInt(penalty)
-				pFlt, _ := pF.Float64()
-				turncPF := turnacateFloat64(pFlt)
-				for k := range sortedChainMap {
-					if delayValues[k] > penaltyTimeThreshold {
-						//fmt.Println("We have delay times in the chain that exceed threshold! Block value :", k)
-						//fmt.Println("We have delay times in the chain that exceed threshold! Delay value :", delayValues[k])
-						penaltyFinal := turncPF - 1
-						chainPenaltyFactor = penaltyFinal
-						turncPF = penaltyFinal
-					}
-				}
-				if chainPenaltyFactor > 0 {
-					fmt.Println("Chain penalty value is over the threshold we should reject this as malicious and move on")
-					err = ErrDelayTooHigh
 				} else {
-					fmt.Println("Chain has 0 penalty and its the legit one!Moving on!")
-					err = nil
+					fmt.Println("We dont have enough blocks in db to check!Waiting...")
 				}
-			} else {
-				fmt.Println("We dont have enough blocks in db to check!Waiting...")
 			}
+		} else {
+			fmt.Println("Not enough blocks :", len(blocks))
 		}
-	} else {
-		fmt.Println("Not enough blocks :", len(blocks))
 	}
+
 	return err
 }
 
