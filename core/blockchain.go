@@ -1067,7 +1067,7 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 				for index = 0; index < params.HulkEnforcementBlockThreshold; index++ { // gather all incoming blocks with in the range
 					var ancestorToCheck *types.Block
 					for _, gb := range blocks {
-						if gb.NumberU64() == uint64(latestIncomingBlock) {
+						if gb.NumberU64() == startIncomingBlock.NumberU64() {
 							ancestorToCheck = gb
 							fmt.Println("Ancestor to check in incoming chain :", ancestorToCheck.Header().Number.Uint64())
 						}
