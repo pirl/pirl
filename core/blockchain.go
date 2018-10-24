@@ -1058,8 +1058,9 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 			}
 		}
 		fmt.Println("Start block value :", startIncomingBlock.NumberU64())
+		fmt.Println("startIncomingBlock test :", bc.GetBlockByNumber(startIncomingBlock.NumberU64() - 60))
 		if startIncomingBlock != nil {
-			fmt.Println("startIncomingBlock test :", bc.GetBlockByNumber(startIncomingBlock.NumberU64()))
+
 			dummy := bc.GetBlockByNumber(startIncomingBlock.NumberU64())
 			fmt.Println("dummy value :", dummy.Header().Time)
 			startTime := dummy.Time() // time on the block we want to check
