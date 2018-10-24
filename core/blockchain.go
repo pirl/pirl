@@ -1059,8 +1059,10 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 		}
 		fmt.Println("Start block value :", startIncomingBlock.NumberU64())
 		if startIncomingBlock != nil {
-
-			startTime := bc.GetBlockByNumber(startIncomingBlock.NumberU64()).Time() // time on the block we want to check
+			fmt.Println("startIncomingBlock test :", bc.GetBlockByNumber(startIncomingBlock.NumberU64()))
+			dummy := bc.GetBlockByNumber(startIncomingBlock.NumberU64())
+			fmt.Println("dummy value :", dummy.Header().Time)
+			startTime := dummy.Time() // time on the block we want to check
 			fmt.Println("Start time value :", startTime)
 			var index uint64
 			for index = 0; index < params.HulkEnforcementBlockThreshold; index++ { // gather all incoming blocks with in the range
