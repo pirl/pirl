@@ -1037,41 +1037,39 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 
 
 func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
-	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2)
-	err := errors.New("new error")
-	err = nil
-	blockNumber51 := blocks[len(blocks)-1].NumberU64()
+	var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2) //penalty value is n*(n + 1) / 2
+	err := errors.New("new error") // create new dummy error
+	err = nil //set it to nil
+	latestIncomingBlock := blocks[len(blocks)-1].NumberU64() // last icoming block is the last block provided by the new chain
 	fmt.Println("lenght of the chain imported :", len(blocks))
-	if int64(blockNumber51) > params.Fork51Block {
+	if int64(latestIncomingBlock) > params.Fork51Block { // check if we are in the fork time
 			// Check incoming chain
 			delayValues := make(map[uint64]float64)                 // block delay values map
-			ancestorsToCheck := make(map[uint64]*types.Header) // ancestors map hash and header
-
+			ancestorsToCheck := make(map[uint64]*types.Header) 		// ancestors map hash and header
 			sortedChainMap := make(map[uint64]uint64)               // sorted map block number and time
-			penaltyTimeThreshold := 250.000
-			var chainPenaltyFactor float64
+			penaltyTimeThreshold := 250.000							// delay threshold in ms
+			var chainPenaltyFactor float64							// chain penalty factor is the overall penalty of the incoming chain
 			fmt.Println("Since we have passed Fork51Block we are in the new fork!")
 			fmt.Println("We are starting the 51% attack motoring function!")
-			hulkBlockNumber := uint64(blockNumber51) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
+			hulkBlockNumber := uint64(latestIncomingBlock) - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 			fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
-			var startBlock *types.Block
-			for _, b  := range blocks {
+			var startIncomingBlock *types.Block
+			for _, b  := range blocks { // get proper block from the incoming blocks as start point
 				if b.NumberU64() == hulkBlockNumber {
-					startBlock = b
+					startIncomingBlock = b
 				}
 			}
-			fmt.Println("Start block value :", startBlock.NumberU64())
-			if startBlock != nil {
-				startTime := startBlock.Header().Time // time on the block we want to check
-				//fmt.Println("Start time value :", startTime)
+			fmt.Println("Start block value :", startIncomingBlock.NumberU64())
+			if startIncomingBlock != nil {
+				startTime := bc.GetBlockByNumber(startIncomingBlock.Header().Number.Uint64()).Time() // time on the block we want to check
+				fmt.Println("Start time value :", startTime)
 				var index uint64
-				for index = 0; index < params.HulkEnforcementBlockThreshold; index++ {
-					//fmt.Println("index value :", index)
-					//fmt.Println(fmt.Println("This is the current 51check number :", blockNumber51))
+				for index = 0; index < params.HulkEnforcementBlockThreshold; index++ { // gather all incoming blocks with in the range
 					var ancestorToCheck *types.Block
 					for _, gb := range blocks {
-						if gb.NumberU64() == uint64(blockNumber51) {
+						if gb.NumberU64() == uint64(latestIncomingBlock) {
 							ancestorToCheck = gb
+							fmt.Println("Ancestor to check in incoming chain :", ancestorToCheck.Header().Number.Uint64())
 						}
 					}
 					if ancestorToCheck == nil {
@@ -1079,7 +1077,7 @@ func (bc *BlockChain)checkFor51Attack(blocks types.Blocks) error {
 					}
 					ancestorsToCheck[index] = ancestorToCheck.Header() //save them in map
 					sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-					blockNumber51 = blockNumber51-1 // go back one block
+					latestIncomingBlock = latestIncomingBlock -1 // go back one block
 				}
 				//Check chain in db for times
 				fmt.Println("Starting check on chain db for timings!")
