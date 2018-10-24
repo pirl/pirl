@@ -1041,6 +1041,8 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 	if bc.currentBlock.NumberU64() != blocks[len(blocks) -1].NumberU64() {
 		fmt.Println("We are still syncing the chain!")
 		syncBool = false
+	} else {
+		syncBool = true
 	}
 	if syncBool {
 		fmt.Println("We are synced now and we are getting new blocks to check!")
