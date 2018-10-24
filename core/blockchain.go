@@ -1034,7 +1034,17 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	return status, nil
 }
 
+func (bc *BlockChain) checkChainBlockByBlock(blocks types.Blocks) {
+	if len(blocks) > 0 {
+		for _, b := range blocks {
+			fmt.Println("Current block number :", bc.currentBlock.NumberU64())
+			fmt.Println("Incoming block number :", b.NumberU64())
+		}
+	}
+}
+
 func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
+
 	err := errors.New("new error")                                                                                                // create new dummy error
 	err = nil
 	fmt.Println("We are synced now and we are getting new blocks to check!")
@@ -1234,13 +1244,14 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-	if chain != nil && len(chain) > int(params.HulkEnforcementBlockThreshold) {
-		fmt.Println("We have enough blocks to check!Block number is :", len(chain))
-		err := bc.checkFor51Attack(chain)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-	}
+
+		fmt.Println("We have enough blocks to check!Chain segment loading length is :", len(chain))
+		//err := bc.checkFor51Attack(chain)
+		//if err != nil {
+		//	fmt.Println(err.Error())
+		//}
+		bc.checkChainBlockByBlock(chain)
+
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
 
