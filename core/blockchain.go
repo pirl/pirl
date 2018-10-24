@@ -1060,10 +1060,7 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 		fmt.Println("Start block value :", startIncomingBlock.NumberU64())
 		if startIncomingBlock != nil {
 			startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.HulkEnforcementBlockThreshold)
-			if startPointInDb != startIncomingBlock {
-				fmt.Println("we are still syncing here!")
-			} else {
-				fmt.Println("We are dont with the sync lets check the new blocks")
+			if startPointInDb != nil {
 				startTime := startPointInDb.Header().Time // time on the block we want to check
 				fmt.Println("Start time value :", startTime)
 				var index uint64
@@ -1148,8 +1145,9 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 					fmt.Println("Chain has 0 penalty and its the legit one!Moving on!")
 					err = nil
 				}
+			} else {
+				fmt.Println("We dont have enough blocks in db to check!Waiting...")
 			}
-
 		}
 	} else {
 		fmt.Println("Not enough blocks :", len(blocks))
