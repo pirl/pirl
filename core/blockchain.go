@@ -1037,10 +1037,13 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 	err := errors.New("new error")                                                                                                // create new dummy error
 	err = nil
-	if bc.currentBlock.NumberU64() != blocks[len(blocks)-1].NumberU64() {
-		fmt.Println("We are syncing")
-	} else {
-		fmt.Println("We have synced and now blocks presented are new blocks")
+	syncBool := true
+	for bc.currentBlock.NumberU64() != blocks[len(blocks) -1].NumberU64() {
+		fmt.Println("We are still syncing the chain!")
+		syncBool = false
+	}
+	if syncBool {
+		fmt.Println("We are synced now and we are getting new blocks to check!")
 		var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2) //penalty value is n*(n + 1) / 2
 		                                                                                                                   //set it to nil
 		latestIncomingBlock := blocks[len(blocks)-1].NumberU64()                                                                      // last icoming block is the last block provided by the new chain
