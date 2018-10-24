@@ -1038,7 +1038,7 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 	err := errors.New("new error")                                                                                                // create new dummy error
 	err = nil
 	syncBool := true
-	for bc.currentBlock.NumberU64() != blocks[len(blocks) -1].NumberU64() {
+	if bc.currentBlock.NumberU64() != blocks[len(blocks) -1].NumberU64() {
 		fmt.Println("We are still syncing the chain!")
 		syncBool = false
 	}
