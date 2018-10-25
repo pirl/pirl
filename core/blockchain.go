@@ -1050,7 +1050,7 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 			delayValues := make(map[uint64]float64)            // block delay values map
 			ancestorsToCheck := make(map[uint64]*types.Header) // ancestors map hash and header
 			sortedChainMap := make(map[uint64]uint64)          // sorted map block number and time
-			penaltyTimeThreshold := 250.000                    // delay threshold in ms
+			penaltyTimeThreshold := 5.0                    // delay threshold in ms
 			var chainPenaltyFactor float64                     // chain penalty factor is the overall penalty of the incoming chain
 			hulkBlockNumber := latestIncomingBlock.NumberU64() - params.HulkEnforcementBlockThreshold // the number of block to start the checking
 			fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
