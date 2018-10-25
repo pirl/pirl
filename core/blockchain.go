@@ -1209,9 +1209,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	defer close(abort)
 
 
-	err := bc.checkFor51Attack(chain)
-	if err != nil {
-		fmt.Println(err.Error())
+	errN := bc.checkFor51Attack(chain)
+	if errN != nil {
+		fmt.Println(errN.Error())
 	}
 
 
@@ -1231,7 +1231,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
-
+		err = errN
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
