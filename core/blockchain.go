@@ -1048,6 +1048,9 @@ func (bc *BlockChain) checkChain(incomingBlocks types.Blocks) error {
 			if bc.blockCache.Len() > 0 {
 				fmt.Println("Block cache keys :", bc.blockCache.Keys())
 			}
+			if bc.futureBlocks.Len() > 0 {
+				fmt.Println("Future blocks keys :", bc.futureBlocks.Keys())
+			}
 		}
 	}
 	return err
