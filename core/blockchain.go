@@ -1061,11 +1061,11 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 					startIncomingBlock = b
 				}
 			}
-			fmt.Println("Start block value :", startIncomingBlock.NumberU64())
-			fmt.Println("Latest block on the chain :", blocks[len(blocks)-1].NumberU64())
-			fmt.Println("Blockchain cache length atm :", bc.blockCache.Len())
-			fmt.Println("Blockchain future blocks atm", bc.futureBlocks.Len())
 			if startIncomingBlock != nil {
+				fmt.Println("Start block value :", startIncomingBlock.NumberU64())
+				fmt.Println("Latest block on the chain :", blocks[len(blocks)-1].NumberU64())
+				fmt.Println("Blockchain cache length atm :", bc.blockCache.Len())
+				fmt.Println("Blockchain future blocks atm", bc.futureBlocks.Len())
 				startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.HulkEnforcementBlockThreshold)
 				if startPointInDb != nil {
 					startTime := startPointInDb.Header().Time // time on the block we want to check
