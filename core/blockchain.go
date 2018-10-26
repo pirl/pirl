@@ -1192,9 +1192,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 
 	errN := bc.timeCapsule(chain)
-	if errN != nil {
-		fmt.Println(errN.Error())
-	}
+
 
 
 	// Iterate over the blocks and insert when the verifier permits
