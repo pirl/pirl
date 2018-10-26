@@ -1049,6 +1049,7 @@ func GetBytes(key interface{}) ([]byte, error) {
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("new error")
 	err = nil
+	fmt.Println(bc.stateCache.TrieDB().Size())
 
 	if blocks != nil && len(blocks) > 0 {
 		for _, v := range bc.blockCache.Keys() {
@@ -1056,7 +1057,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 			if errGb != nil {
 				fmt.Println(errGb)
 			}
-			synced, syncErr := bc.db.Has(b)
+			synced, syncErr := bc.stateCache.TrieDB().DiskDB().Has(b)
 			if syncErr != nil {
 				fmt.Println(syncErr.Error())
 			}
