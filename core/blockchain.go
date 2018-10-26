@@ -1050,22 +1050,10 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("new error")
 	err = nil
 	if blocks != nil && len(blocks) > 0 {
-		for k, v := range bc.blockCache.Keys() {
-			b, errGb := GetBytes(k)
-			if errGb != nil {
-				fmt.Println(errGb)
-			}
-			fmt.Println(k, v)
-			fmt.Println(b)
-			synced, syncErr := bc.stateCache.TrieDB().DiskDB().Has(b)
-			if syncErr != nil {
-				fmt.Println(syncErr.Error())
-			}
-			if synced {
-				fmt.Println("We have synced!")
-			}
+		if bc.currentBlock.NumberU64() == blocks[0].NumberU64() {
+			fmt.Println("We have synced here :", bc.currentBlock.NumberU64(), blocks[0].NumberU64())
 		}
-
+		fmt.Println("This is the checkpoint value :", bc.checkpoint)
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
