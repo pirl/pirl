@@ -18,6 +18,8 @@
 package core
 
 import (
+	"bytes"
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"io"
@@ -1034,6 +1036,15 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	return status, nil
 }
 
+func GetBytes(key interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(key)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
 
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("new error")
@@ -1041,7 +1052,15 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	if blocks != nil && len(blocks) > 0 {
 		fmt.Println(len(blocks))
 		fmt.Println(bc.blockCache.Len())
-		fmt.Println(bc.futureBlocks.Len())
+		for _, v := range bc.blockCache.Keys() {
+			b, _ := GetBytes(v)
+			synced, syncErr := bc.db.Has(b)
+			if syncErr != nil {
+				fmt.Println(syncErr.Error())
+			}
+			fmt.Println(synced)
+		}
+
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
