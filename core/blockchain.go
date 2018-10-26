@@ -1038,7 +1038,7 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("new error")
 	err = nil
-	if blocks != nil && len(blocks) > 0 {
+	if blocks != nil && len(blocks) > 60 {
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
@@ -1190,10 +1190,10 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-
 	errN := bc.timeCapsule(chain)
-
-
+	if errN != nil {
+		fmt.Println(errN.Error())
+	}
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
@@ -1211,16 +1211,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
-		if errN != nil {
-			err = errN
-		}
-		if err == nil {
+
+		if err == nil  && errN == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
 		switch {
-		case err == ErrDelayTooHigh:
-			fmt.Println(err)
-			continue
 		case err == ErrKnownBlock:
 			// Block and state both already known. However if the current block is below
 			// this number we did a rollback and we should reimport it nonetheless.
