@@ -80,11 +80,11 @@ const (
 )
 
 var (
-	DifficultyBoundDivisor = big.NewInt(2048)          // The bound divisor of the difficulty, used in the update calculations.
-	GenesisDifficulty      = big.NewInt(131072)        // Difficulty of the Genesis block.
-	MinimumDifficulty             = big.NewInt(131072) // The minimum that the difficulty may ever be.
-	DurationLimit                 = big.NewInt(13)     // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	DurationLimitHulk             = big.NewInt(8)      // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	Fork51Block                   = int64(2300000)     // block we will fork for the 51
-	HulkEnforcementBlockThreshold = uint64(60)         // Threshold of blocks that can be delayed and the value is in Blocks
+	DifficultyBoundDivisor = big.NewInt(2048)   // The bound divisor of the difficulty, used in the update calculations.
+	GenesisDifficulty      = big.NewInt(131072) // Difficulty of the Genesis block.
+	MinimumDifficulty = big.NewInt(131072)      // The minimum that the difficulty may ever be.
+	DurationLimit     = big.NewInt(13)          // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	DurationLimitHulk = big.NewInt(8)           // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	Fork51Block       = int64(2300000)          // block we will fork for the 51
+	TimeCapsuleLength = uint64(60)              // Threshold of blocks that can be delayed and the value is in Blocks
 )

@@ -1035,60 +1035,49 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 }
 
 
-func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
-	err := errors.New("new error")                                                                                                // create new dummy error
+func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
+	err := errors.New("new error")
 	err = nil
 	if blocks != nil && len(blocks) > 0 {
-		var penalty = new(big.Int).SetUint64((params.HulkEnforcementBlockThreshold * (params.HulkEnforcementBlockThreshold + 1)) / 2) //penalty value is n*(n + 1) / 2
+		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		firstIncomingBlock := blocks[0]
 		if int64(latestIncomingBlock.NumberU64()) > params.Fork51Block {
 			fmt.Println("Since we have passed Fork51Block we are in the new fork!")
-			fmt.Println("We are starting the 51% attack motoring function!")
-			fmt.Println("Last block number on chain atm :", latestIncomingBlock.NumberU64()) // last icoming block is the last block provided by the new chain
-			fmt.Println("lenght of the chain imported :", len(blocks))
-			delayValues := make(map[uint64]float64)            // block delay values map
-			ancestorsToCheck := make(map[uint64]*types.Header) // ancestors map hash and header
-			sortedChainMap := make(map[uint64]uint64)          // sorted map block number and time
-			penaltyTimeThreshold := 5.0                    // delay threshold in ms
-			var chainPenaltyFactor float64                     // chain penalty factor is the overall penalty of the incoming chain
-			hulkBlockNumber := latestIncomingBlock.NumberU64() - params.HulkEnforcementBlockThreshold // the number of block to start the checking
-			fmt.Println("Hulk block number for this chain :", hulkBlockNumber)
+			timeValues := make(map[uint64]float64)
+			ancestorsToCheck := make(map[uint64]*types.Header)
+			sortedChainMap := make(map[uint64]uint64)
+			timeCapsuleThreshold := 5.0
+			var chainTimeFactor float64
+			timeCapsuleBlockNumber := latestIncomingBlock.NumberU64() - params.TimeCapsuleLength
+			fmt.Println("Hulk block number for this chain :", timeCapsuleBlockNumber)
 			fmt.Println("First incoming block number :", firstIncomingBlock.NumberU64())
 			var startIncomingBlock *types.Block
-			for _, b := range blocks { // get proper block from the incoming blocks as start point
-				if b.NumberU64() == hulkBlockNumber {
+			for _, b := range blocks {
+				if b.NumberU64() == timeCapsuleBlockNumber {
 					startIncomingBlock = b
 				}
 			}
 			if startIncomingBlock != nil {
-				fmt.Println("Start block value :", startIncomingBlock.NumberU64())
-				fmt.Println("Latest block on the chain :", blocks[len(blocks)-1].NumberU64())
-				fmt.Println("Blockchain cache length atm :", bc.blockCache.Len())
-				fmt.Println("Blockchain future blocks atm", bc.futureBlocks.Len())
-				startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.HulkEnforcementBlockThreshold)
+				startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.TimeCapsuleLength)
 				if startPointInDb != nil {
-					startTime := startPointInDb.Header().Time // time on the block we want to check
-					fmt.Println("Start time value :", startTime)
+					startTime := startPointInDb.Header().Time
 					var index uint64
 					ltsIncBlkNmbr := latestIncomingBlock.NumberU64()
-					for index = 0; index < params.HulkEnforcementBlockThreshold; index++ { // gather all incoming blocks with in the range
+					for index = 0; index < params.TimeCapsuleLength; index++ {
 						var ancestorToCheck *types.Block
 						for _, gb := range blocks {
-							if gb.NumberU64() == ltsIncBlkNmbr - params.HulkEnforcementBlockThreshold {
+							if gb.NumberU64() == ltsIncBlkNmbr - params.TimeCapsuleLength {
 								ancestorToCheck = gb
-								fmt.Println("Ancestor to check in incoming chain :", ancestorToCheck.Header().Number.Uint64())
 							}
 						}
 						if ancestorToCheck == nil {
 							break
 						}
-						ancestorsToCheck[index] = ancestorToCheck.Header() //save them in map
+						ancestorsToCheck[index] = ancestorToCheck.Header()
 						sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-						ltsIncBlkNmbr = ltsIncBlkNmbr - 1 // go back one block
+						ltsIncBlkNmbr = ltsIncBlkNmbr - 1
 					}
-
-
 					p := make(PairList, len(sortedChainMap))
 					i := 0
 					for k, v := range sortedChainMap {
@@ -1096,33 +1085,31 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 						i++
 					}
 					sort.Sort(p)
-					sTime = new(big.Float).SetInt(startTime) // set init time sTime as startTime
+					sTime = new(big.Float).SetInt(startTime)
 					sT, _ := sTime.Float64()
 					turncSt := turnacateFloat64(sT)
 					for _, k := range p {
-						bTime := turnacateFloat64(float64(k.Value)) // get block time
+						bTime := turnacateFloat64(float64(k.Value))
 						delay := turncSt - bTime
-						fmt.Println("Block number :", k.Key)
-						fmt.Println("Delay time :", math.Abs(delay))
-						delayValues[k.Key] = math.Abs(delay) //set the map of delays
-						turncSt = bTime + math.Abs(delay)    // add the time of the delay so the next block delay can be calculated
+						timeValues[k.Key] = math.Abs(delay)
+						turncSt = bTime + math.Abs(delay)
 					}
 					pF := new(big.Float).SetInt(penalty)
 					pFlt, _ := pF.Float64()
 					turncPF := turnacateFloat64(pFlt)
 					for k := range sortedChainMap {
-						if delayValues[k] > penaltyTimeThreshold {
-							penaltyFinal := turncPF - 1
-							chainPenaltyFactor = penaltyFinal
-							turncPF = penaltyFinal
-							fmt.Println("Final penalty for the chain :", penaltyFinal)
+						if timeValues[k] > timeCapsuleThreshold {
+							timeV := turncPF - 1
+							chainTimeFactor = timeV
+							turncPF = timeV
+							fmt.Println("Final time for the chain :", timeV)
 						}
 					}
-					if chainPenaltyFactor > 0 {
-						fmt.Println("Chain penalty value is over the threshold we should reject this as malicious and move on")
+					if chainTimeFactor > 0 {
+						fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
 						err = ErrDelayTooHigh
 					} else {
-						fmt.Println("Chain has 0 penalty and its the legit one!Moving on!")
+						fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
 						err = nil
 					}
 				} else {
@@ -1131,7 +1118,6 @@ func (bc *BlockChain) checkFor51Attack(blocks types.Blocks) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -1209,7 +1195,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	defer close(abort)
 
 
-	errN := bc.checkFor51Attack(chain)
+	errN := bc.timeCapsule(chain)
 	if errN != nil {
 		fmt.Println(errN.Error())
 	}
