@@ -1050,8 +1050,6 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 			timeCapsuleThreshold := 5.0
 			var chainTimeFactor float64
 			timeCapsuleBlockNumber := latestIncomingBlock.NumberU64() - params.TimeCapsuleLength
-			fmt.Println("Time block number for this chain :", timeCapsuleBlockNumber)
-			fmt.Println("First incoming block number :", firstIncomingBlock.NumberU64())
 			var startIncomingBlock *types.Block
 			for _, b := range blocks {
 				if b.NumberU64() == timeCapsuleBlockNumber {
@@ -1102,7 +1100,6 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 							timeV := turncPF - 1
 							chainTimeFactor = timeV
 							turncPF = timeV
-							fmt.Println("Final time for the chain :", timeV)
 						}
 					}
 					if chainTimeFactor > 0 {
@@ -1217,7 +1214,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
-		err = errN
+		if errN != nil {
+			err = errN
+		}
 		if err == nil {
 			err = bc.Validator().ValidateBody(block)
 		}
