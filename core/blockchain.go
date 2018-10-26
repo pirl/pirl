@@ -1051,6 +1051,8 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err = nil
 
 	if blocks != nil && len(blocks) > 0 {
+		fmt.Println(bc.currentBlock.NumberU64())
+		fmt.Println(blocks[0].NumberU64())
 		b, _ := GetBytes(blocks[0].Hash())
 		synced, syncErr := bc.db.Get(b)
 		if syncErr != nil {
