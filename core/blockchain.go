@@ -1038,7 +1038,10 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("new error")
 	err = nil
-	if blocks != nil && len(blocks) > 60 {
+	if blocks != nil && len(blocks) > 0 {
+		fmt.Println(len(blocks))
+		fmt.Println(bc.blockCache.Len())
+		fmt.Println(bc.futureBlocks.Len())
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
