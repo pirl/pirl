@@ -1052,9 +1052,9 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 
 	if blocks != nil && len(blocks) > 0 {
 		fmt.Println(bc.currentBlock.NumberU64())
+		fmt.Println("Hash on chain", bc.currentBlock.Header().Root.String())
 		fmt.Println(blocks[0].NumberU64())
-		fmt.Println(bc.currentBlock.Header().Root)
-		fmt.Println(blocks[0].Header().Root)
+		fmt.Println("Hash of first incoming block", blocks[0].Header().Root.String())
 
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
