@@ -1047,20 +1047,18 @@ func GetBytes(key interface{}) ([]byte, error) {
 }
 
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
-
 	err := errors.New("new error")
 	err = nil
 	if blocks != nil && len(blocks) > 0 {
-		fmt.Println("Blocks length :", len(blocks))
-		fmt.Println("Block cache length", bc.blockCache.Len())
-
-		for _, v := range bc.blockCache.Keys() {
+		for _, v := range blocks {
 			b, _ := GetBytes(v)
 			synced, syncErr := bc.hc.chainDb.Has(b)
 			if syncErr != nil {
 				fmt.Println(syncErr.Error())
 			}
-			fmt.Println(synced)
+			if synced {
+				fmt.Println("We have synced!")
+			}
 		}
 
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
