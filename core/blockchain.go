@@ -1051,17 +1051,12 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err = nil
 
 	if blocks != nil && len(blocks) > 0 {
-		for _, v := range bc.blockCache.Keys() {
-			b, errGb := GetBytes(v)
-			if errGb != nil {
-				fmt.Println(errGb)
-			}
-			synced, syncErr :=  bc.db.Get(b)
-			if syncErr != nil {
-				fmt.Println(syncErr.Error())
-			}
-			fmt.Println(synced)
+		b, _ := GetBytes(blocks[0].Hash())
+		synced, syncErr := bc.db.Get(b)
+		if syncErr != nil {
+			fmt.Println(syncErr.Error())
 		}
+		fmt.Println(synced)
 
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
