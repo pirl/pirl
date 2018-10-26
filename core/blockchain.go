@@ -1049,14 +1049,14 @@ func GetBytes(key interface{}) ([]byte, error) {
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("new error")
 	err = nil
-	fmt.Println(bc.stateCache.TrieDB().Size())
-
 	if blocks != nil && len(blocks) > 0 {
-		for _, v := range bc.blockCache.Keys() {
-			b, errGb := GetBytes(v)
+		for k, v := range bc.blockCache.Keys() {
+			b, errGb := GetBytes(k)
 			if errGb != nil {
 				fmt.Println(errGb)
 			}
+			fmt.Println(k, v)
+			fmt.Println(b)
 			synced, syncErr := bc.stateCache.TrieDB().DiskDB().Has(b)
 			if syncErr != nil {
 				fmt.Println(syncErr.Error())
