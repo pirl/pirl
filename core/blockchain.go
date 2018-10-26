@@ -1053,12 +1053,8 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	if blocks != nil && len(blocks) > 0 {
 		fmt.Println(bc.currentBlock.NumberU64())
 		fmt.Println(blocks[0].NumberU64())
-		b, _ := GetBytes(blocks[0].Hash())
-		synced, syncErr := bc.db.Get(b)
-		if syncErr != nil {
-			fmt.Println(syncErr.Error())
-		}
-		fmt.Println(synced)
+		fmt.Println(bc.currentBlock.Header().Root)
+		fmt.Println(blocks[0].Header().Root)
 
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
