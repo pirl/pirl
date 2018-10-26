@@ -1042,15 +1042,15 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		firstIncomingBlock := blocks[0]
-		if int64(latestIncomingBlock.NumberU64()) > params.Fork51Block {
-			fmt.Println("Since we have passed Fork51Block we are in the new fork!")
+		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
+			fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
 			timeValues := make(map[uint64]float64)
 			ancestorsToCheck := make(map[uint64]*types.Header)
 			sortedChainMap := make(map[uint64]uint64)
 			timeCapsuleThreshold := 5.0
 			var chainTimeFactor float64
 			timeCapsuleBlockNumber := latestIncomingBlock.NumberU64() - params.TimeCapsuleLength
-			fmt.Println("Hulk block number for this chain :", timeCapsuleBlockNumber)
+			fmt.Println("Time block number for this chain :", timeCapsuleBlockNumber)
 			fmt.Println("First incoming block number :", firstIncomingBlock.NumberU64())
 			var startIncomingBlock *types.Block
 			for _, b := range blocks {

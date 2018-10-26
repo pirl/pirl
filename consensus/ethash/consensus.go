@@ -678,10 +678,10 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
 	state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
 
-	// deleting 51 address after Fork51Block
-	//fmt.Print(params.Fork51Block)
-	//log.Print(params.Fork51Block)
-	//if header.Number.Int64() > params.Fork51Block {
+	// deleting 51 address after TimeCapsuleBlock
+	//fmt.Print(params.TimeCapsuleBlock)
+	//log.Print(params.TimeCapsuleBlock)
+	//if header.Number.Int64() > params.TimeCapsuleBlock {
 	//	endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
 	//	if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
 	//		the51one, err := CallTheContractEth()
