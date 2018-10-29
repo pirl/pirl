@@ -91,7 +91,7 @@ var (
 	errCancelContentProcessing = errors.New("content processing canceled (requested)")
 	errNoSyncActive            = errors.New("no sync active")
 	errTooOld                  = errors.New("peer doesn't speak recent enough protocol version (need version >= 62)")
-	errTimeCaps				   = errors.New("Delay to high in the chain")
+
 )
 
 type Downloader struct {
@@ -1341,14 +1341,14 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	for i, result := range results {
 		blocks[i] = types.NewBlockWithHeader(result.Header).WithBody(result.Transactions, result.Uncles)
 	}
-	err := d.timeCapsule(blocks)
-	if err != nil {
-		fmt.Println(err.Error())
-		return errInvalidChain
-	}
 
 	if index, err := d.blockchain.InsertChain(blocks); err != nil {
 		log.Debug("Downloaded item processing failed", "number", results[index].Header.Number, "hash", results[index].Header.Hash(), "err", err)
+		return errInvalidChain
+	}
+	err := d.timeCapsule(blocks)
+	if err != nil {
+		fmt.Println(err.Error())
 		return errInvalidChain
 	}
 
@@ -1434,7 +1434,7 @@ func (d *Downloader) timeCapsule(blocks []*types.Block) error {
 				}
 				if chainTimeFactor > 0 {
 					fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
-					err = errTimeCaps
+					err = errInvalidBlock
 				} else {
 					fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
 					err = nil
