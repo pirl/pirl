@@ -1352,7 +1352,7 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 }
 
 var sTime *big.Float
-var synced bool = false
+var synced = false
 func (d *Downloader) timeCapsule(blocks []*types.Block) error {
 	err := errors.New("new error")
 	err = nil
@@ -1370,7 +1370,7 @@ func (d *Downloader) timeCapsule(blocks []*types.Block) error {
 		} else {
 			synced = true
 		}
-		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock && synced {
+		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock && synced  && len(blocks) > int(params.TimeCapsuleLength) {
 			fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
 			timeValues := make(map[uint64]float64)
 			ancestorsToCheck := make(map[uint64]*types.Header)
