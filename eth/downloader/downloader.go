@@ -885,7 +885,6 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 func (d *Downloader) fillHeaderSkeleton(from uint64, skeleton []*types.Header) ([]*types.Header, int, error) {
 	log.Debug("Filling up skeleton", "from", from)
 	d.queue.ScheduleSkeleton(from, skeleton)
-
 	var (
 		deliver = func(packet dataPack) (int, error) {
 			pack := packet.(*headerPack)
