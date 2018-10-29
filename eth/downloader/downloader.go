@@ -1364,7 +1364,7 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 func (d *Downloader) timeCapsule(blocks []*types.Block) error {
 	err := errors.New("new error")
 	err = nil
-	if d.syncStatsChainHeight == blocks[0].NumberU64() {
+	if d.syncStatsChainHeight == blocks[0].NumberU64() - 1 {
 		fmt.Println("We are synced here!")
 	} else {
 		fmt.Println("Still syncing!")
