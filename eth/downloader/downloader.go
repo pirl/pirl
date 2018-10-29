@@ -1345,6 +1345,11 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 
 	fmt.Println("First block to import :", blocks[0].NumberU64())
 	fmt.Println("Downloader current sync status :", d.Synchronising())
+	fmt.Println("SyncStatsChainHeight :", d.syncStatsChainHeight)
+	fmt.Println("SyncStatsChainOrigin", d.syncStatsChainOrigin)
+	fmt.Println("Sync :", d.synchronising)
+	fmt.Println("Pending :", d.syncStatsState.pending)
+	fmt.Println("Queue Pending blocks", d.queue.PendingBlocks())
 	fmt.Println("Downloader highest block number :", d.Progress().HighestBlock)
 	fmt.Println("Downloader current block number :", d.Progress().CurrentBlock)
 	fmt.Println("Downloader starting block number :", d.Progress().StartingBlock)
