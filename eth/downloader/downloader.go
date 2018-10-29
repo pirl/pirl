@@ -1342,6 +1342,12 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 		log.Debug("Downloaded item processing failed", "number", results[index].Header.Number, "hash", results[index].Header.Hash(), "err", err)
 		return errInvalidChain
 	}
+
+	fmt.Println("First block to import :", blocks[0].NumberU64())
+	fmt.Println("Downloader current sync status :", d.Synchronising())
+	fmt.Println("Downloader highest block number :", d.Progress().HighestBlock)
+	fmt.Println("Downloader current block number :", d.Progress().CurrentBlock)
+	fmt.Println("Downloader starting block number :", d.Progress().StartingBlock)
 	return nil
 }
 

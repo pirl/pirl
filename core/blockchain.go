@@ -22,7 +22,6 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
-	"git.pirl.io/community/pirl/eth/downloader"
 	"io"
 	"math"
 	"math/big"
@@ -1052,13 +1051,13 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err = nil
 
 	if blocks != nil && len(blocks) > 0 {
-		dl := &downloader.Downloader{}
+		//dl := &downloader.Downloader{}
 		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
-		fmt.Println("First block to import :", blocks[0].NumberU64())
-		fmt.Println("Downloader current sync status :", dl.Synchronising())
-		fmt.Println("Downloader highest block number :", dl.Progress().HighestBlock )
-		fmt.Println("Downloader current block number :", dl.Progress().CurrentBlock )
-		fmt.Println("Downloader starting block number :", dl.Progress().StartingBlock )
+		//fmt.Println("First block to import :", blocks[0].NumberU64())
+		//fmt.Println("Downloader current sync status :", dl.Synchronising())
+		//fmt.Println("Downloader highest block number :", dl.Progress().HighestBlock)
+		//fmt.Println("Downloader current block number :", dl.Progress().CurrentBlock)
+		//fmt.Println("Downloader starting block number :", dl.Progress().StartingBlock)
 		//for f := 0; f < len(blocks); f++ {
 		//	if bc.currentBlock.Header().Root.String() == blocks[f].Header().Hash().String() {
 		//		fmt.Println("We have chain match at :", blocks[f].Header().Number.Uint64())
