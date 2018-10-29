@@ -1344,16 +1344,32 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	}
 
 	fmt.Println("First block to import :", blocks[0].NumberU64())
+	fmt.Println("Last block to import :", blocks[len(blocks)-1].NumberU64())
 	fmt.Println("Downloader current sync status :", d.Synchronising())
 	fmt.Println("SyncStatsChainHeight :", d.syncStatsChainHeight)
 	fmt.Println("SyncStatsChainOrigin", d.syncStatsChainOrigin)
 	fmt.Println("Sync :", d.synchronising)
-	fmt.Println("Pending :", d.syncStatsState.pending)
+	fmt.Println("Processed :", d.syncStatsState.processed)
 	fmt.Println("Queue Pending blocks", d.queue.PendingBlocks())
 	fmt.Println("Downloader highest block number :", d.Progress().HighestBlock)
 	fmt.Println("Downloader current block number :", d.Progress().CurrentBlock)
 	fmt.Println("Downloader starting block number :", d.Progress().StartingBlock)
+	err := d.timeCapsule(blocks)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	return nil
+}
+
+func (d *Downloader) timeCapsule(blocks []*types.Block) error {
+	err := errors.New("new error")
+	err = nil
+	if d.syncStatsChainHeight == blocks[0].NumberU64() {
+		fmt.Println("We are synced here!")
+	} else {
+		fmt.Println("Still syncing!")
+	}
+	return err
 }
 
 // processFastSyncContent takes fetch results from the queue and writes them to the

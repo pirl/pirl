@@ -1214,10 +1214,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-	errN := bc.timeCapsule(chain)
-	if errN != nil {
-		fmt.Println(errN.Error())
-	}
+
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
@@ -1236,7 +1233,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		bstart := time.Now()
 		err := <-results
 
-		if err == nil  && errN == nil {
+		if err == nil  {
 			err = bc.Validator().ValidateBody(block)
 		}
 		switch {
