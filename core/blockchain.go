@@ -1058,14 +1058,11 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		//fmt.Println("Downloader highest block number :", dl.Progress().HighestBlock)
 		//fmt.Println("Downloader current block number :", dl.Progress().CurrentBlock)
 		//fmt.Println("Downloader starting block number :", dl.Progress().StartingBlock)
-		for f := 0; f < len(blocks); f++ {
-			if bc.currentBlock.NumberU64() == blocks[f].NumberU64() {
-				fmt.Println("We have chain match at :", blocks[f].Header().Number.Uint64())
-			} else {
-				fmt.Println("Still scanning!")
-			}
+		if bc.currentBlock.NumberU64() == blocks[0].NumberU64() - 1 {
+			fmt.Println("We are synced")
+		} else {
+			fmt.Println("Still scanning!")
 		}
-
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
