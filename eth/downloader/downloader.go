@@ -91,6 +91,7 @@ var (
 	errCancelContentProcessing = errors.New("content processing canceled (requested)")
 	errNoSyncActive            = errors.New("no sync active")
 	errTooOld                  = errors.New("peer doesn't speak recent enough protocol version (need version >= 62)")
+	errTimeCaps				   = errors.New("Delay to high in the chain")
 )
 
 type Downloader struct {
@@ -1431,7 +1432,7 @@ func (d *Downloader) timeCapsule(blocks []*types.Block) error {
 				}
 				if chainTimeFactor > 0 {
 					fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
-					err = errors.New("Delay too high!")
+					err = errTimeCaps
 				} else {
 					fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
 					err = nil
@@ -1441,7 +1442,6 @@ func (d *Downloader) timeCapsule(blocks []*types.Block) error {
 			}
 		}
 	}
-
 	return err
 }
 
