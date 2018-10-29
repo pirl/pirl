@@ -1055,6 +1055,8 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		fmt.Println("Hash on chain", bc.currentBlock.Header().Root.String())
 		fmt.Println(blocks[0].NumberU64())
 		fmt.Println("Hash of first incoming block", blocks[0].Header().Root.String())
+		fmt.Println("Current block uncle hash", bc.currentBlock.UncleHash())
+		fmt.Println("Current block parent hash", bc.currentBlock.ParentHash())
 		for f := 0; f < len(blocks); f++ {
 			if bc.currentBlock.Header().Root.String() == blocks[f].Header().Root.String() {
 				fmt.Println("We have chain match at :", blocks[f].Header().Number.Uint64())
