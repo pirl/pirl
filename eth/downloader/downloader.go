@@ -1347,6 +1347,7 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	err := d.timeCapsule(blocks)
 	if err != nil {
 		fmt.Println(err.Error())
+		return err
 	}
 	return nil
 }
