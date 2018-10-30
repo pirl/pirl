@@ -1050,28 +1050,25 @@ func GetBytes(key interface{}) ([]byte, error) {
 var sTime *big.Float
 var synced = false
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
-	err := errors.New("new error")
+	err := errors.New("New error!")
 	err = nil
-	if blocks != nil && len(blocks) > 0 {
+	if blocks != nil && len(blocks) > 1 {
 		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
 		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
-		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() )
-		if len(blocks) > 1 {
-			fmt.Println("Testing sync")
-			fmt.Println("Minus 2", blocks[len(blocks)-2].NumberU64())
-			if bc.currentBlock.NumberU64()  == blocks[len(blocks)-1].NumberU64() - 1 {
-				fmt.Println("We are synced")
-				synced = true
-			} else {
-				fmt.Println("Still scanning!")
-				synced = false
-			}
+		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() - 1)
+		if bc.currentBlock.NumberU64()  == blocks[len(blocks)-1].NumberU64() - 1 {
+			fmt.Println("We are synced")
+			synced = true
+		} else {
+			fmt.Println("Still syncing!")
+			synced = false
 		}
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
+			fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
 			if synced {
-				fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
+				fmt.Println("We are synced and we are testing the blocks for delays!")
 				timeValues := make(map[uint64]float64)
 				ancestorsToCheck := make(map[uint64]*types.Header)
 				sortedChainMap := make(map[uint64]uint64)
@@ -1144,6 +1141,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 			}
 		}
 	}
+	synced = false
 	return err
 }
 
@@ -1163,6 +1161,7 @@ type PairList []Pair
 func (p PairList) Len() int           { return len(p) }
 func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PairList) Less(i, j int) bool { return p[i].Key < p[j].Key }
+
 
 // InsertChain attempts to insert the given batch of blocks in to the canonical
 // chain or, otherwise, create a fork. If an error is returned it will return
@@ -1217,15 +1216,13 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		seals[i] = true
 	}
 
-	err := bc.timeCapsule(chain)
-	if err != nil {
-		fmt.Println(err.Error())
-		return 0, nil, nil, err
-	}
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-
+	errChain := bc.timeCapsule(chain)
+	if errChain != nil {
+		fmt.Println(errChain.Error())
+	}
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
@@ -1243,7 +1240,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
-
+		err = errChain
 		if err == nil  {
 			err = bc.Validator().ValidateBody(block)
 		}
