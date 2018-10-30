@@ -1057,7 +1057,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
 		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() )
 		if len(blocks) > 1 {
-			if bc.currentBlock.NumberU64() == blocks[len(blocks)-1].NumberU64() -1 {
+			if bc.currentBlock.NumberU64() == blocks[len(blocks)-2].NumberU64()  {
 				fmt.Println("We are synced")
 				synced = true
 			} else {
