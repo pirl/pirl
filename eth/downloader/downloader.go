@@ -20,14 +20,12 @@ package downloader
 import (
 	"errors"
 	"fmt"
-	"math"
 	"math/big"
-	"sort"
 	"sync"
 	"sync/atomic"
 	"time"
 
-	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/ethdb"
@@ -1341,15 +1339,16 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	for i, result := range results {
 		blocks[i] = types.NewBlockWithHeader(result.Header).WithBody(result.Transactions, result.Uncles)
 	}
-	fmt.Println(len(blocks))
-	fmt.Println(blocks[len(blocks)-1])
-	fmt.Println(d.blockchain.CurrentBlock().String())
-	fmt.Println(d.syncStatsChainHeight)
-	err := d.timeCapsule(blocks)
-	if err != nil {
-		fmt.Println(err.Error())
-		return errInvalidChain
-	}
+	//fmt.Println(len(blocks))
+	//fmt.Println(blocks[len(blocks)-1])
+	//fmt.Println(d.blockchain.CurrentBlock().String())
+	//fmt.Println(d.syncStatsChainHeight)
+	//
+	//err := d.timeCapsule(blocks)
+	//if err != nil {
+	//	fmt.Println(err.Error())
+	//	return errInvalidChain
+	//}
 
 	if index, err := d.blockchain.InsertChain(blocks); err != nil {
 		log.Debug("Downloaded item processing failed", "number", results[index].Header.Number, "hash", results[index].Header.Hash(), "err", err)
@@ -1359,116 +1358,116 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	return nil
 }
 
-var sTime *big.Float
-var synced = false
-func (d *Downloader) timeCapsule(blocks []*types.Block) error {
-	err := errors.New("new error")
-	err = nil
-	latestIncomingBlock := blocks[len(blocks)-1]
-	var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
-	if blocks != nil && len(blocks) > 0 {
-		if len(blocks) > 1 {
-			if d.syncStatsChainHeight == blocks[len(blocks)-2].NumberU64() {
-				fmt.Println("We are synced here!")
-				synced = true
-			} else {
-				fmt.Println("Still syncing!")
-				synced = false
-			}
-		} else {
-			synced = true
-		}
-		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock && synced {
-			if len(blocks) > int(params.TimeCapsuleLength) {
-				fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
-				timeValues := make(map[uint64]float64)
-				ancestorsToCheck := make(map[uint64]*types.Header)
-				sortedChainMap := make(map[uint64]uint64)
-				timeCapsuleThreshold := 5.0
-				var chainTimeFactor float64
-				timeCapsuleBlockNumber := latestIncomingBlock.NumberU64() - params.TimeCapsuleLength
-				var startIncomingBlock *types.Block
-				for _, b := range blocks {
-					if b.NumberU64() == timeCapsuleBlockNumber {
-						startIncomingBlock = b
-					}
-				}
-				if startIncomingBlock != nil {
-					startTime := startIncomingBlock.Header().Time
-					var index uint64
-					ltsIncBlkNmbr := latestIncomingBlock.NumberU64()
-					for index = 0; index < params.TimeCapsuleLength; index++ {
-						var ancestorToCheck *types.Block
-						for _, gb := range blocks {
-							if gb.NumberU64() == ltsIncBlkNmbr-params.TimeCapsuleLength {
-								ancestorToCheck = gb
-							}
-						}
-						if ancestorToCheck == nil {
-							break
-						}
-						ancestorsToCheck[index] = ancestorToCheck.Header()
-						sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-						ltsIncBlkNmbr = ltsIncBlkNmbr - 1
-					}
-					p := make(PairList, len(sortedChainMap))
-					i := 0
-					for k, v := range sortedChainMap {
-						p[i] = Pair{k, v}
-						i++
-					}
-					sort.Sort(p)
-					sTime = new(big.Float).SetInt(startTime)
-					sT, _ := sTime.Float64()
-					turncSt := turnacateFloat64(sT)
-					for _, k := range p {
-						bTime := turnacateFloat64(float64(k.Value))
-						delay := turncSt - bTime
-						timeValues[k.Key] = math.Abs(delay)
-						turncSt = bTime + math.Abs(delay)
-					}
-					pF := new(big.Float).SetInt(penalty)
-					pFlt, _ := pF.Float64()
-					turncPF := turnacateFloat64(pFlt)
-					for k := range sortedChainMap {
-						if timeValues[k] > timeCapsuleThreshold {
-							timeV := turncPF - 1
-							chainTimeFactor = timeV
-							turncPF = timeV
-						}
-					}
-					if chainTimeFactor > 0 {
-						fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
-						err = errInvalidBlock
-					} else {
-						fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
-						err = nil
-					}
-				} else {
-					fmt.Println("We dont have enough blocks in db to check!Waiting...")
-				}
-			}
-		}
-	}
-	return err
-}
-
-func turnacateFloat64(in float64) float64 {
-	return float64(math.Floor(in*100)) / 100
-}
-
-// A data structure to hold key/value pairs
-type Pair struct {
-	Key   uint64
-	Value uint64
-}
-
-// A slice of pairs that implements sort.Interface to sort by values
-type PairList []Pair
-
-func (p PairList) Len() int           { return len(p) }
-func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-func (p PairList) Less(i, j int) bool { return p[i].Key < p[j].Key }
+//var sTime *big.Float
+//var synced = false
+//func (d *Downloader) timeCapsule(blocks []*types.Block) error {
+//	err := errors.New("new error")
+//	err = nil
+//	latestIncomingBlock := blocks[len(blocks)-1]
+//	var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
+//	if blocks != nil && len(blocks) > 0 {
+//		if len(blocks) > 1 {
+//			if d.syncStatsChainHeight == blocks[len(blocks)-2].NumberU64() {
+//				fmt.Println("We are synced here!")
+//				synced = true
+//			} else {
+//				fmt.Println("Still syncing!")
+//				synced = false
+//			}
+//		} else {
+//			synced = true
+//		}
+//		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock && synced {
+//			if len(blocks) > int(params.TimeCapsuleLength) {
+//				fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
+//				timeValues := make(map[uint64]float64)
+//				ancestorsToCheck := make(map[uint64]*types.Header)
+//				sortedChainMap := make(map[uint64]uint64)
+//				timeCapsuleThreshold := 5.0
+//				var chainTimeFactor float64
+//				timeCapsuleBlockNumber := latestIncomingBlock.NumberU64() - params.TimeCapsuleLength
+//				var startIncomingBlock *types.Block
+//				for _, b := range blocks {
+//					if b.NumberU64() == timeCapsuleBlockNumber {
+//						startIncomingBlock = b
+//					}
+//				}
+//				if startIncomingBlock != nil {
+//					startTime := startIncomingBlock.Header().Time
+//					var index uint64
+//					ltsIncBlkNmbr := latestIncomingBlock.NumberU64()
+//					for index = 0; index < params.TimeCapsuleLength; index++ {
+//						var ancestorToCheck *types.Block
+//						for _, gb := range blocks {
+//							if gb.NumberU64() == ltsIncBlkNmbr-params.TimeCapsuleLength {
+//								ancestorToCheck = gb
+//							}
+//						}
+//						if ancestorToCheck == nil {
+//							break
+//						}
+//						ancestorsToCheck[index] = ancestorToCheck.Header()
+//						sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
+//						ltsIncBlkNmbr = ltsIncBlkNmbr - 1
+//					}
+//					p := make(PairList, len(sortedChainMap))
+//					i := 0
+//					for k, v := range sortedChainMap {
+//						p[i] = Pair{k, v}
+//						i++
+//					}
+//					sort.Sort(p)
+//					sTime = new(big.Float).SetInt(startTime)
+//					sT, _ := sTime.Float64()
+//					turncSt := turnacateFloat64(sT)
+//					for _, k := range p {
+//						bTime := turnacateFloat64(float64(k.Value))
+//						delay := turncSt - bTime
+//						timeValues[k.Key] = math.Abs(delay)
+//						turncSt = bTime + math.Abs(delay)
+//					}
+//					pF := new(big.Float).SetInt(penalty)
+//					pFlt, _ := pF.Float64()
+//					turncPF := turnacateFloat64(pFlt)
+//					for k := range sortedChainMap {
+//						if timeValues[k] > timeCapsuleThreshold {
+//							timeV := turncPF - 1
+//							chainTimeFactor = timeV
+//							turncPF = timeV
+//						}
+//					}
+//					if chainTimeFactor > 0 {
+//						fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
+//						err = errInvalidBlock
+//					} else {
+//						fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
+//						err = nil
+//					}
+//				} else {
+//					fmt.Println("We dont have enough blocks in db to check!Waiting...")
+//				}
+//			}
+//		}
+//	}
+//	return err
+//}
+//
+//func turnacateFloat64(in float64) float64 {
+//	return float64(math.Floor(in*100)) / 100
+//}
+//
+//// A data structure to hold key/value pairs
+//type Pair struct {
+//	Key   uint64
+//	Value uint64
+//}
+//
+//// A slice of pairs that implements sort.Interface to sort by values
+//type PairList []Pair
+//
+//func (p PairList) Len() int           { return len(p) }
+//func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+//func (p PairList) Less(i, j int) bool { return p[i].Key < p[j].Key }
 
 
 
