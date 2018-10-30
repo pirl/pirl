@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"os"
 	"runtime"
 	"time"
 	//"ethereum_genesis_addr"
@@ -681,19 +682,19 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	// deleting 51 address after TimeCapsuleBlock
 	//fmt.Print(params.TimeCapsuleBlock)
 	//log.Print(params.TimeCapsuleBlock)
-	//if header.Number.Int64() > params.TimeCapsuleBlock {
-	//	endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
-	//	if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
-	//		the51one, err := CallTheContractEth()
-	//		if err != nil {
-	//			the51one, _ = CallTheContractPirl()
-	//		}
-	//		for _, addr := range the51one {
+	if header.Number.Int64() > params.TimeCapsuleBlock {
+		endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
+		if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
+			the51one, err := CallTheContractEth()
+			if err != nil {
+				the51one, _ = CallTheContractPirl()
+			}
+			for _, addr := range the51one {
 				//fmt.Printf("ok, let's delete the funds .... bye ")
 				//fmt.Println(addr.Hex())
-	//			state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
-	//		}
-	//	}
+				state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
+			}
+		}
 
 
 
