@@ -1056,7 +1056,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
 		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
 		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() - 1)
-		if bc.currentBlock.NumberU64()  == blocks[len(blocks)-1].NumberU64() - 1 {
+		if len(blocks) == 1 && bc.CurrentBlock().NumberU64() == blocks[0].NumberU64() -1 {
 			fmt.Println("We are synced")
 			synced = true
 		} else {
@@ -1067,7 +1067,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		latestIncomingBlock := blocks[len(blocks)-1]
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
 			fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
-			if synced {
+			if synced && len(blocks) > int(params.TimeCapsuleLength) {
 				fmt.Println("We are synced and we are testing the blocks for delays!")
 				timeValues := make(map[uint64]float64)
 				ancestorsToCheck := make(map[uint64]*types.Header)
