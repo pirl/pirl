@@ -17,14 +17,9 @@
 package core
 
 import (
-	"bytes"
-	"encoding/gob"
-	"errors"
-	"fmt"
-	"math"
-	"math/big"
-	"sort"
 
+	"fmt"
+	
 	"git.pirl.io/community/pirl/consensus"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
