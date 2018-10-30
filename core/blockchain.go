@@ -1059,7 +1059,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		if len(blocks) > 1 {
 			fmt.Println("Testing sync")
 			fmt.Println("Minus 2", blocks[len(blocks)-2].NumberU64())
-			if bc.currentBlock.NumberU64() -1 == blocks[len(blocks)-2].NumberU64()  {
+			if bc.currentBlock.NumberU64()  == blocks[len(blocks)-1].NumberU64() - 1 {
 				fmt.Println("We are synced")
 				synced = true
 			} else {
