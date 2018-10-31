@@ -1056,7 +1056,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
 		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
 		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() - 1)
-		if len(blocks) == 1 && bc.CurrentBlock().NumberU64() == blocks[0].NumberU64() -1 {
+		if !synced && len(blocks) == 1 && bc.CurrentBlock().NumberU64() == blocks[0].NumberU64() -1 {
 			fmt.Println("We are synced")
 			synced = true
 		} else {
@@ -1116,6 +1116,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 							delay := turncSt - bTime
 							timeValues[k.Key] = math.Abs(delay)
 							turncSt = bTime + math.Abs(delay)
+							fmt.Println("Delay time for block :", math.Abs(delay))
 						}
 						pF := new(big.Float).SetInt(penalty)
 						pFlt, _ := pF.Float64()
