@@ -1048,7 +1048,7 @@ func GetBytes(key interface{}) ([]byte, error) {
 
 
 var sTime *big.Float
-var synced = false
+var synced bool
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("New error!")
 	err = nil
