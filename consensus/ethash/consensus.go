@@ -698,7 +698,7 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 
 
-	//}
+	}
 
 	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {
 		err := json.Unmarshal(b, &f)
