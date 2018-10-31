@@ -1052,7 +1052,7 @@ var synced = false
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("New error!")
 	err = nil
-	if blocks != nil && len(blocks) > 1 {
+	if blocks != nil && len(blocks) > 0 {
 		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
 		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
 		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() - 1)
@@ -1141,7 +1141,6 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 			}
 		}
 	}
-	synced = false
 	return err
 }
 
