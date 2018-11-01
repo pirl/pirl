@@ -1058,12 +1058,14 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
 		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
 		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() - 1)
-		if !synced && len(blocks) == 1 && bc.CurrentBlock().NumberU64() == blocks[0].NumberU64() -1 {
-			fmt.Println("We are synced")
-			synced = true
-		} else {
-			fmt.Println("Still syncing!")
-			synced = false
+		if !synced  {
+			if len(blocks) == 1 && bc.CurrentBlock().NumberU64() == blocks[0].NumberU64() -1 {
+				fmt.Println("We are synced")
+				synced = true
+			} else {
+				fmt.Println("Still syncing!")
+				synced = false
+			}
 		}
 		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
 		latestIncomingBlock := blocks[len(blocks)-1]
