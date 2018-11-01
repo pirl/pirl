@@ -1070,7 +1070,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
 			fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
 			if synced && len(blocks) > int(params.TimeCapsuleLength) {
-				fmt.Println("We are synced and we are testing the blocks for delays!")
+				fmt.Println("We are synced and we are testing the incoming blocks for delays!")
 				timeValues := make(map[uint64]float64)
 				ancestorsToCheck := make(map[uint64]*types.Header)
 				sortedChainMap := make(map[uint64]uint64)
@@ -1083,8 +1083,10 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 						startIncomingBlock = b
 					}
 				}
+				fmt.Println("Start block to make the check in the incoming chain :", startIncomingBlock)
 				if startIncomingBlock != nil {
 					startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.TimeCapsuleLength)
+					fmt.Println("Start block to make the check in the database :", startPointInDb)
 					if startPointInDb != nil {
 						startTime := startPointInDb.Header().Time
 						var index uint64
@@ -1094,6 +1096,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 							for _, gb := range blocks {
 								if gb.NumberU64() == ltsIncBlkNmbr-params.TimeCapsuleLength {
 									ancestorToCheck = gb
+									fmt.Println("Ancestors number :", ancestorToCheck.NumberU64())
 								}
 							}
 							if ancestorToCheck == nil {
@@ -1144,6 +1147,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 			}
 		}
 	}
+	fmt.Println("Synced status :", synced)
 	return err
 }
 
