@@ -1052,6 +1052,8 @@ var synced bool
 func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 	err := errors.New("New error!")
 	err = nil
+	fmt.Println("blocks remaining :", len(blocks))
+	fmt.Println("synced value", synced)
 	if blocks != nil && len(blocks) > 0 {
 		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
 		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
