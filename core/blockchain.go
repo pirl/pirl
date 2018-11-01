@@ -1132,7 +1132,7 @@ func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
 						}
 						if chainTimeFactor > 0 {
 							fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
-							err = ErrDelayTooHigh
+							err = consensus.ErrUnknownAncestor
 						} else {
 							fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
 							err = nil
