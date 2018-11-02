@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 	"math/big"
 	mrand "math/rand"
 	"sort"
@@ -1043,18 +1042,18 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	tipOfTheMainChain := bc.currentBlock.NumberU64()
 	fmt.Println("Current tip of the chain :", tipOfTheMainChain)
 	fmt.Println("Current tip of the incoming chain :", blocks[0].NumberU64() - 1)
-	if !synced {
+	if !syncStatus {
 		if tipOfTheMainChain == blocks[0].NumberU64() - 1 {
 			fmt.Println("We are synced")
-			synced = true
+			syncStatus = true
 		} else {
 			fmt.Println("Still syncing!")
-			synced = false
+			syncStatus = false
 		}
 	}
 	fmt.Println("Current sync status :", syncStatus)
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
-		if synced && len(blocks) > int(params.TimeCapsuleLength) {
+		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
 			 for i := 0; i < len(blocks)-1; i++ {
 			 	timeMap[blocks[i].NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, blocks[i].NumberU64())
 			 }
@@ -1089,120 +1088,120 @@ func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) int6
 	return 0
 }
 
-var sTime *big.Float
-var synced bool
-func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
-	err := errors.New("New error!")
-	err = nil
-	fmt.Println("blocks remaining :", len(blocks))
-	fmt.Println("synced value", synced)
-	if blocks != nil && len(blocks) > 0 {
-		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
-		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
-		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() - 1)
-		if !synced  {
-			if len(blocks) == 1 && bc.CurrentBlock().NumberU64() == blocks[0].NumberU64() -1 {
-				fmt.Println("We are synced")
-				synced = true
-			} else {
-				fmt.Println("Still syncing!")
-				synced = false
-			}
-		}
-		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
-		latestIncomingBlock := blocks[len(blocks)-1]
-		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
-			fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
-			if synced && len(blocks) > int(params.TimeCapsuleLength) {
-				fmt.Println("We are synced and we are testing the incoming blocks for delays!")
-				timeValues := make(map[uint64]float64)
-				ancestorsToCheck := make(map[uint64]*types.Header)
-				sortedChainMap := make(map[uint64]uint64)
-				timeCapsuleThreshold := 5.0
-				var chainTimeFactor float64
-				timeCapsuleBlockNumber := latestIncomingBlock.NumberU64() - params.TimeCapsuleLength
-				var startIncomingBlock *types.Block
-				for _, b := range blocks {
-					if b.NumberU64() == timeCapsuleBlockNumber {
-						startIncomingBlock = b
-					}
-				}
-				fmt.Println("Start block to make the check in the incoming chain :", startIncomingBlock)
-				if startIncomingBlock != nil {
-					startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.TimeCapsuleLength)
-					fmt.Println("Start block to make the check in the database :", startPointInDb)
-					if startPointInDb != nil {
-						startTime := startPointInDb.Header().Time
-						var index uint64
-						ltsIncBlkNmbr := latestIncomingBlock.NumberU64()
-						for index = 0; index < params.TimeCapsuleLength; index++ {
-							var ancestorToCheck *types.Block
-							for _, gb := range blocks {
-								if gb.NumberU64() == ltsIncBlkNmbr-params.TimeCapsuleLength {
-									ancestorToCheck = gb
-									fmt.Println("Ancestors number :", ancestorToCheck.NumberU64())
-								}
-							}
-							if ancestorToCheck == nil {
-								break
-							}
-							ancestorsToCheck[index] = ancestorToCheck.Header()
-							sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
-							ltsIncBlkNmbr = ltsIncBlkNmbr - 1
-						}
-						p := make(PairList, len(sortedChainMap))
-						i := 0
-						for k, v := range sortedChainMap {
-							p[i] = Pair{k, v}
-							i++
-						}
-						sort.Sort(p)
-						sTime = new(big.Float).SetInt(startTime)
-						sT, _ := sTime.Float64()
-						turncSt := turnacateFloat64(sT)
-						for _, k := range p {
-							bTime := turnacateFloat64(float64(k.Value))
-							delay := turncSt - bTime
-							timeValues[k.Key] = math.Abs(delay)
-							turncSt = bTime + math.Abs(delay)
-							fmt.Println("Delay time for block :", math.Abs(delay))
-						}
-						pF := new(big.Float).SetInt(penalty)
-						pFlt, _ := pF.Float64()
-						turncPF := turnacateFloat64(pFlt)
-						for k := range sortedChainMap {
-							if timeValues[k] > timeCapsuleThreshold {
-								timeV := turncPF - 1
-								chainTimeFactor = timeV
-								turncPF = timeV
-							}
-						}
-						if chainTimeFactor > 0 {
-							fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
-							err = consensus.ErrUnknownAncestor
-						} else {
-							fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
-							err = nil
-						}
-					} else {
-						fmt.Println("We dont have enough blocks in db to check!Waiting...")
-					}
-				}
-			}
-		}
-	}
-	fmt.Println("Synced status :", synced)
-	return err
-}
+//var sTime *big.Float
+//var synced bool
+//func (bc *BlockChain) timeCapsule(blocks types.Blocks) error {
+//	err := errors.New("New error!")
+//	err = nil
+//	fmt.Println("blocks remaining :", len(blocks))
+//	fmt.Println("synced value", synced)
+//	if blocks != nil && len(blocks) > 0 {
+//		fmt.Println("Current block on local chain db :", bc.currentBlock.NumberU64())
+//		fmt.Println("First block to import incoming blocks! :", blocks[0].NumberU64())
+//		fmt.Println("Last block to import incoming blocks :", blocks[len(blocks)-1].NumberU64() - 1)
+//		if !synced  {
+//			if len(blocks) == 1 && bc.CurrentBlock().NumberU64() == blocks[0].NumberU64() -1 {
+//				fmt.Println("We are synced")
+//				synced = true
+//			} else {
+//				fmt.Println("Still syncing!")
+//				synced = false
+//			}
+//		}
+//		var penalty = new(big.Int).SetUint64((params.TimeCapsuleLength * (params.TimeCapsuleLength + 1)) / 2)
+//		latestIncomingBlock := blocks[len(blocks)-1]
+//		if int64(latestIncomingBlock.NumberU64()) > params.TimeCapsuleBlock {
+//			fmt.Println("Since we have passed TimeCapsuleBlock we are in the new fork!")
+//			if synced && len(blocks) > int(params.TimeCapsuleLength) {
+//				fmt.Println("We are synced and we are testing the incoming blocks for delays!")
+//				timeValues := make(map[uint64]float64)
+//				ancestorsToCheck := make(map[uint64]*types.Header)
+//				sortedChainMap := make(map[uint64]uint64)
+//				timeCapsuleThreshold := 5.0
+//				var chainTimeFactor float64
+//				timeCapsuleBlockNumber := latestIncomingBlock.NumberU64() - params.TimeCapsuleLength
+//				var startIncomingBlock *types.Block
+//				for _, b := range blocks {
+//					if b.NumberU64() == timeCapsuleBlockNumber {
+//						startIncomingBlock = b
+//					}
+//				}
+//				fmt.Println("Start block to make the check in the incoming chain :", startIncomingBlock)
+//				if startIncomingBlock != nil {
+//					startPointInDb := bc.GetBlockByNumber(bc.currentBlock.NumberU64() - params.TimeCapsuleLength)
+//					fmt.Println("Start block to make the check in the database :", startPointInDb)
+//					if startPointInDb != nil {
+//						startTime := startPointInDb.Header().Time
+//						var index uint64
+//						ltsIncBlkNmbr := latestIncomingBlock.NumberU64()
+//						for index = 0; index < params.TimeCapsuleLength; index++ {
+//							var ancestorToCheck *types.Block
+//							for _, gb := range blocks {
+//								if gb.NumberU64() == ltsIncBlkNmbr-params.TimeCapsuleLength {
+//									ancestorToCheck = gb
+//									fmt.Println("Ancestors number :", ancestorToCheck.NumberU64())
+//								}
+//							}
+//							if ancestorToCheck == nil {
+//								break
+//							}
+//							ancestorsToCheck[index] = ancestorToCheck.Header()
+//							sortedChainMap[ancestorToCheck.Header().Number.Uint64()] = ancestorToCheck.Header().Time.Uint64()
+//							ltsIncBlkNmbr = ltsIncBlkNmbr - 1
+//						}
+//						p := make(PairList, len(sortedChainMap))
+//						i := 0
+//						for k, v := range sortedChainMap {
+//							p[i] = Pair{k, v}
+//							i++
+//						}
+//						sort.Sort(p)
+//						sTime = new(big.Float).SetInt(startTime)
+//						sT, _ := sTime.Float64()
+//						turncSt := turnacateFloat64(sT)
+//						for _, k := range p {
+//							bTime := turnacateFloat64(float64(k.Value))
+//							delay := turncSt - bTime
+//							timeValues[k.Key] = math.Abs(delay)
+//							turncSt = bTime + math.Abs(delay)
+//							fmt.Println("Delay time for block :", math.Abs(delay))
+//						}
+//						pF := new(big.Float).SetInt(penalty)
+//						pFlt, _ := pF.Float64()
+//						turncPF := turnacateFloat64(pFlt)
+//						for k := range sortedChainMap {
+//							if timeValues[k] > timeCapsuleThreshold {
+//								timeV := turncPF - 1
+//								chainTimeFactor = timeV
+//								turncPF = timeV
+//							}
+//						}
+//						if chainTimeFactor > 0 {
+//							fmt.Println("Chain time value is over the threshold we should reject this as malicious and move on")
+//							err = consensus.ErrUnknownAncestor
+//						} else {
+//							fmt.Println("Chain has 0 time value and its the legit one!Moving on!")
+//							err = nil
+//						}
+//					} else {
+//						fmt.Println("We dont have enough blocks in db to check!Waiting...")
+//					}
+//				}
+//			}
+//		}
+//	}
+//	fmt.Println("Synced status :", synced)
+//	return err
+//}
 
-func turnacateFloat64(in float64) float64 {
-	return float64(math.Floor(in*100)) / 100
-}
+//func turnacateFloat64(in float64) float64 {
+//	return float64(math.Floor(in*100)) / 100
+//}
 
 // A data structure to hold key/value pairs
 type Pair struct {
 	Key   uint64
-	Value uint64
+	Value int64
 }
 
 // A slice of pairs that implements sort.Interface to sort by values
