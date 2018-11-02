@@ -1039,6 +1039,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	err := errors.New("")
 	err = nil
 	timeMap := make(map[uint64]uint64)
+	fmt.Println("Current sync status :", syncStatus)
 	tipOfTheMainChain := bc.currentBlock.NumberU64()
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
 		fmt.Println("We are in the new fork after block :", params.TimeCapsuleBlock)
