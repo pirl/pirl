@@ -1068,8 +1068,6 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	sort.Sort(p)
 	var penalty int64
 	for _, v := range p {
-		fmt.Println("Block number :", v.Key)
-		fmt.Println("Penalty values :", v.Value)
 		penalty += v.Value
 	}
 	fmt.Println("Penalty value for the chain :", penalty)
