@@ -1055,12 +1055,19 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	fmt.Println("Current sync status :", syncStatus)
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if synced && len(blocks) > int(params.TimeCapsuleLength) {
-			 for _, b := range blocks {
-			 	timeMap[b.NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, b.NumberU64())
+			 for i := 0; i < len(blocks)-1; i++ {
+			 	timeMap[blocks[i].NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, blocks[i].NumberU64())
 			 }
 		}
 	}
+	p := make(PairList, len(timeMap))
+	index := 0
 	for k, v := range timeMap {
+		p[index] = Pair {k, v}
+		index++
+	}
+	sort.Sort(p)
+	for k, v := range p {
 		fmt.Println("Block number :", k)
 		fmt.Println("Penalty values :", v)
 	}
