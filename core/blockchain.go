@@ -1034,7 +1034,49 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	return status, nil
 }
 
+var syncStatus bool
+func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
+	err := errors.New("")
+	err = nil
+	timeMap := make(map[uint64]uint64)
+	tipOfTheMainChain := bc.currentBlock.NumberU64()
+	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
+		fmt.Println("We are in the new fork after block :", params.TimeCapsuleBlock)
+		if !synced {
+			if len(blocks) == 1 && tipOfTheMainChain == blocks[0].NumberU64() - 1 {
+				fmt.Println("We are synced")
+				synced = true
+			} else {
+				fmt.Println("Still syncing!")
+				synced = false
+			}
+		}
+		if synced && len(blocks) > int(params.TimeCapsuleLength) {
+			 for _, b := range blocks {
+			 	timeMap[b.NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, b.NumberU64())
+			 }
+		}
+	}
+	for k, v := range timeMap {
+		fmt.Println(k, v)
+	}
+	return err
+}
 
+func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) uint64 {
+	if incomingBlock < tipOfTheMainChain {
+		fmt.Println("Values that are presented with delay and should be penalized positive (tip - first incoming block) :", incomingBlock)
+		return tipOfTheMainChain - incomingBlock
+	}
+	if incomingBlock == tipOfTheMainChain {
+		return 0
+	}
+	if incomingBlock > tipOfTheMainChain {
+		return -1
+		fmt.Println("Values that are presented with delay and should be penalized negative (by -1) :", incomingBlock)
+	}
+	return 0
+}
 
 var sTime *big.Float
 var synced bool
@@ -1216,7 +1258,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-	errChain := bc.timeCapsule(chain)
+	errChain := bc.checkChainForAttack(chain)
 	if errChain != nil {
 		fmt.Println(errChain.Error())
 	}
