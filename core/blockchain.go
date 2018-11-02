@@ -1041,6 +1041,8 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	timeMap := make(map[uint64]int64)
 	fmt.Println("Current sync status :", syncStatus)
 	tipOfTheMainChain := bc.currentBlock.NumberU64()
+	fmt.Println("Current tip of the chain :", tipOfTheMainChain)
+	fmt.Println("Current tip of the incoming chain :", blocks[0].NumberU64() - 1)
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
 		fmt.Println("We are in the new fork after block :", params.TimeCapsuleBlock)
 		if !synced {
@@ -1049,7 +1051,6 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 				synced = true
 			} else {
 				fmt.Println("Still syncing!")
-				synced = false
 			}
 		}
 		if synced && len(blocks) > int(params.TimeCapsuleLength) {
@@ -1059,7 +1060,8 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		}
 	}
 	for k, v := range timeMap {
-		fmt.Println(k, v)
+		fmt.Println("Block number :", k)
+		fmt.Println("Penalty values :", v)
 	}
 	return err
 }

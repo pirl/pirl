@@ -14,7 +14,7 @@ func CallTheContractEth() ([]common.Address, error) {
 
 	endPoint := "https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269"
 	conn, err := ethclient.Dial(endPoint)
-	log.Printf("Connected to the Eth client")
+	//log.Printf("Connected to the Eth client")
 	if err != nil {
 		log.Printf("Failed to connect to the Eth client: %v", err)
 		return nil, err
