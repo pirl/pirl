@@ -1075,7 +1075,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	fmt.Println("Penalty value for the chain :", penalty)
 	if penalty > 0 {
 		fmt.Println("Chain is a malicious and we should reject it")
-		err = ErrKnownBlock
+		err = ErrDelayTooHigh
 	}
 	if penalty == 0 {
 		fmt.Println("Chain has 0 pentaly and its the legit one!Moving on")
