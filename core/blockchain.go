@@ -1070,6 +1070,8 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	for _, v := range p {
 		penalty += v.Value
 	}
+	multi := calculateMulti(bc.CurrentBlock().Difficulty().Uint64())
+	penalty = penalty * int64(multi)
 	fmt.Println("Penalty value for the chain :", penalty)
 	if penalty > 0 {
 		fmt.Println("Chain is a malicious and we should reject it")
@@ -1095,6 +1097,25 @@ func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) int6
 	return 0
 }
 
+func calculateMulti(diff uint64) uint64 {
+	var multi uint64
+	if diff > 500000 {
+		multi = 5
+	}
+	if diff > 500000 && diff < 2000000 {
+		multi = 4
+	}
+	if diff > 2000000 && diff < 3000000 {
+		multi = 3
+	}
+	if diff > 3000000 && diff < 5000000 {
+		multi = 2
+	}
+	if diff > 5000000 {
+		multi = 1
+	}
+	return multi
+}
 
 // A data structure to hold key/value pairs
 type Pair struct {
