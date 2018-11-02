@@ -1078,7 +1078,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		err = ErrDelayTooHigh
 	}
 	if penalty == 0 {
-		fmt.Println("Chain has 0 pentaly and its the legit one!Moving on")
+		fmt.Println("Chain has 0 penalty and its the legit one!Moving on")
 		err = nil
 	}
 	return err
@@ -1086,14 +1086,12 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 
 func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) int64 {
 	if incomingBlock < tipOfTheMainChain {
-		fmt.Println("Values that are presented with delay and should be penalized positive (tip - first incoming block) :", incomingBlock)
 		return int64(tipOfTheMainChain - incomingBlock)
 	}
 	if incomingBlock == tipOfTheMainChain {
 		return 0
 	}
 	if incomingBlock > tipOfTheMainChain {
-		fmt.Println("Values that are presented with delay and should be penalized negative (by -1) :", incomingBlock)
 		return -1
 	}
 	return 0
