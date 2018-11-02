@@ -1038,7 +1038,7 @@ var syncStatus bool
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	err := errors.New("")
 	err = nil
-	timeMap := make(map[uint64]uint64)
+	timeMap := make(map[uint64]int64)
 	fmt.Println("Current sync status :", syncStatus)
 	tipOfTheMainChain := bc.currentBlock.NumberU64()
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
@@ -1064,10 +1064,10 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	return err
 }
 
-func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) uint64 {
+func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) int64 {
 	if incomingBlock < tipOfTheMainChain {
 		fmt.Println("Values that are presented with delay and should be penalized positive (tip - first incoming block) :", incomingBlock)
-		return tipOfTheMainChain - incomingBlock
+		return int64(tipOfTheMainChain - incomingBlock)
 	}
 	if incomingBlock == tipOfTheMainChain {
 		return 0
