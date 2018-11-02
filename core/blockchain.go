@@ -1043,16 +1043,17 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	tipOfTheMainChain := bc.currentBlock.NumberU64()
 	fmt.Println("Current tip of the chain :", tipOfTheMainChain)
 	fmt.Println("Current tip of the incoming chain :", blocks[0].NumberU64() - 1)
-	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
-		fmt.Println("We are in the new fork after block :", params.TimeCapsuleBlock)
-		if !synced {
-			if len(blocks) == 1 && tipOfTheMainChain == blocks[0].NumberU64() - 1 {
-				fmt.Println("We are synced")
-				synced = true
-			} else {
-				fmt.Println("Still syncing!")
-			}
+	if !synced {
+		if tipOfTheMainChain == blocks[0].NumberU64() - 1 {
+			fmt.Println("We are synced")
+			synced = true
+		} else {
+			fmt.Println("Still syncing!")
+			synced = false
 		}
+	}
+	fmt.Println("Current sync status :", syncStatus)
+	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if synced && len(blocks) > int(params.TimeCapsuleLength) {
 			 for _, b := range blocks {
 			 	timeMap[b.NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, b.NumberU64())
