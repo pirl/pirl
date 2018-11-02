@@ -1054,8 +1054,8 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	fmt.Println("Current sync status :", syncStatus)
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
-			 for i := 0; i < len(blocks)-1; i++ {
-			 	timeMap[blocks[i].NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, blocks[i].NumberU64())
+			 for _, b := range blocks {
+			 	timeMap[b.NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, b.NumberU64())
 			 }
 		}
 	}
@@ -1066,9 +1066,20 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		index++
 	}
 	sort.Sort(p)
-	for k, v := range p {
-		fmt.Println("Block number :", k)
-		fmt.Println("Penalty values :", v)
+	var penalty int64
+	for _, v := range p {
+		fmt.Println("Block number :", v.Key)
+		fmt.Println("Penalty values :", v.Value)
+		penalty += v.Value
+	}
+	fmt.Println("Penalty value for the chain :", penalty)
+	if penalty > 0 {
+		fmt.Println("Chain is a malicious and we should reject it")
+		err = consensus.ErrFutureBlock
+	}
+	if penalty == 0 {
+		fmt.Println("Chain has 0 pentaly and its the legit one!Moving on")
+		err = nil
 	}
 	return err
 }
