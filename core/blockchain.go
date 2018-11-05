@@ -1071,7 +1071,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		penalty += v.Value
 	}
 	multi := calculateMulti(bc.CurrentBlock().Difficulty().Uint64())
-	penalty = penalty * int64(multi)
+	penalty = penalty * int64(multi) + int64(params.TimeCapsuleLength) + 1
 	if penalty < 0 {
 		penalty = 0
 	}
