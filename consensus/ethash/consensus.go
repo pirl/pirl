@@ -317,11 +317,24 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time
 // given the parent block's time and difficulty.
+
+// DurationLimitHulkv2BlockFork
+
+
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
 	case isForked(big.NewInt(2000001), next):
-		return calcDifficultyPirl(time, parent)
+		if parent.Number.Int64() > params.TimeCapsuleBlock {
+			if parent.Number.Int64() > params.DurationLimitHulkv2BlockFork {
+				return calcDifficultyHomestead(time, parent)
+			} else {
+				return calcDifficultyHulk(time, parent)
+			}
+
+		} else {
+			return calcDifficultyPirl(time, parent)
+		}
 	case config.IsByzantium(next):
 		return calcDifficultyByzantium(time, parent)
 	case config.IsHomestead(next):
@@ -336,6 +349,7 @@ func isForked(s, head *big.Int) bool {
 	}
 	return s.Cmp(head) <= 0
 }
+
 
 // Some weird constants to avoid constant memory allocs for them.
 var (
@@ -370,6 +384,25 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	return diff
 }
 
+func calcDifficultyHulk(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, big10)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimitHulk) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+	if diff.Cmp(params.MinimumDifficulty) < 0 {
+		diff.Set(params.MinimumDifficulty)
+	}
+	//fmt.Println(diff)
+	return diff
+}
 // calcDifficultyByzantium is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
 // parent block's time and difficulty. The calculation uses the Byzantium rules.
