@@ -1033,20 +1033,6 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	return status, nil
 }
 
-var movedAmountTreshold uint64 // we need to set one
-var monitoredBlocks types.Blocks
-func (bc *BlockChain) checkForBigMoves(blocks types.Blocks) {
-	for i := 0; i < len(blocks); i++ {
-		for _, b := range blocks[i].Transactions() {
-			if b.Value().Uint64() > movedAmountTreshold {
-				fmt.Println("Big transaction detected with value :", b.Value().Uint64())
-				fmt.Println("Block number for detected move: ", blocks[i].NumberU64())
-				monitoredBlocks = append(monitoredBlocks, blocks[i])
-			}
-		}
-	}
-}
-
 
 var syncStatus bool
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
