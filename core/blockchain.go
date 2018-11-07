@@ -1103,19 +1103,19 @@ func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) int6
 
 func calculateMulti(diff uint64) uint64 {
 	var multi uint64
-	if diff > 500000 {
+	if diff > 500000000 {
 		multi = 5
 	}
-	if diff > 500000 && diff < 2000000 {
+	if diff > 500000000 && diff < 20000000000 {
 		multi = 4
 	}
-	if diff > 2000000 && diff < 3000000 {
+	if diff > 20000000000 && diff < 30000000000 {
 		multi = 3
 	}
-	if diff > 3000000 && diff < 5000000 {
+	if diff > 30000000000 && diff < 50000000000 {
 		multi = 2
 	}
-	if diff > 5000000 {
+	if diff > 50000000000 {
 		multi = 1
 	}
 	return multi
