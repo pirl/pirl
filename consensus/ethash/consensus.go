@@ -34,6 +34,7 @@ import (
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/params"
 	"gopkg.in/fatih/set.v0"
+	"log"
 )
 
 // Ethash proof-of-work protocol constants.
@@ -326,7 +327,12 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	switch {
 	case isForked(big.NewInt(2000001), next):
 		if parent.Number.Int64() > params.TimeCapsuleBlock {
-			return calcDifficultyByzantium(time, parent)
+
+			if parent.Number.Int64() > params.TimeCapsuleBlockHulk {
+				return calcDifficultyByzantiumHulk(time, parent)
+			} else {
+				return calcDifficultyHulk(time, parent)
+			}
 		} else {
 			return calcDifficultyPirl(time, parent)
 		}
@@ -356,6 +362,9 @@ var (
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
+	big9hulk          = big.NewInt(4)
+	bigMinus99hulk   = big.NewInt(-99)
+	big2999999hulk    = big.NewInt(29999999)
 )
 
 //DurationLimitCorrected
@@ -379,6 +388,69 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	//fmt.Println(diff)
 	return diff
 }
+
+func calcDifficultyHulk(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, big10)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimithulk) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+	if diff.Cmp(params.MinimumDifficulty) < 0 {
+		diff.Set(params.MinimumDifficulty)
+	}
+	//fmt.Println(diff)
+	return diff
+}
+
+// New hulk diff
+
+func calcDifficultyByzantiumHulk(time uint64, parent *types.Header) *big.Int {
+	// https://github.com/ethereum/EIPs/issues/100.
+	// algorithm:
+	// diff = (parent_diff +
+	//         (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
+	//        ) + 2^(periodCount - 2)
+	log.Printf("############### Hulk diff start ##########")
+	bigTime := new(big.Int).SetUint64(time)
+	bigParentTime := new(big.Int).Set(parent.Time)
+
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
+
+	// (2 if len(parent_uncles) else 1) - (block_timestamp - parent_timestamp) // 9
+	x.Sub(bigTime, bigParentTime)
+	x.Div(x, big9hulk)
+	if parent.UncleHash == types.EmptyUncleHash {
+		x.Sub(big1, x)
+	} else {
+		x.Sub(big2, x)
+	}
+	// max((2 if len(parent_uncles) else 1) - (block_timestamp - parent_timestamp) // 9, -99)
+	if x.Cmp(bigMinus99hulk) < 0 {
+		x.Set(bigMinus99hulk)
+	}
+	// parent_diff + (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
+	y.Div(parent.Difficulty, params.DifficultyBoundDivisorhulk)
+	x.Mul(y, x)
+	x.Add(parent.Difficulty, x)
+
+	// minimum difficulty can ever be (before exponential factor)
+	if x.Cmp(params.MinimumDifficulty) < 0 {
+		x.Set(params.MinimumDifficulty)
+	}
+	log.Print(x)
+	log.Printf("############### Hulk diff end ##########")
+	return x
+}
+
 
 // calcDifficultyByzantium is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
@@ -571,9 +643,9 @@ func (ethash *Ethash) VerifySeal(chain consensus.ChainReader, header *types.Head
 // Prepare implements consensus.Engine, initializing the difficulty field of a
 // header to conform to the ethash protocol. The changes are done inline.
 func (ethash *Ethash) Prepare(chain consensus.ChainReader, header *types.Header) error {
-	if header.Number.Int64() > params.TimeCapsuleBlock {
-		chain.Config().Clique = params.MainnetChainConfigCorrected.Clique
-	}
+	//if header.Number.Int64() > params.TimeCapsuleBlock {
+	//	chain.Config().Clique = params.MainnetChainConfigCorrected.Clique
+	//}
 	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor

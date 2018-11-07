@@ -1033,7 +1033,6 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	return status, nil
 }
 
-
 var syncStatus bool
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	err := errors.New("")
