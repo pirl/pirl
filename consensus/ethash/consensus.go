@@ -327,17 +327,10 @@ func CalcDifficulty(chain consensus.ChainReader, config *params.ChainConfig, tim
 	switch {
 	case isForked(big.NewInt(2000001), next):
 		if parent.Number.Int64() > params.TimeCapsuleBlock {
-
-		//	if parent.Number.Int64() > params.TimeCapsuleBlockHulk {
 				return calcDifficultyByzantiumHulk(chain, time, parent)
-		//	} else {
-		//		return calcDifficultyHulk(time, parent)
-		//	}
-			//} else {
-		}else{
+		} else {
 			return calcDifficultyPirl(time, parent)
 		}
-
 	case config.IsByzantium(next):
 		return calcDifficultyByzantium(time, parent)
 	case config.IsHomestead(next):
@@ -468,14 +461,10 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 		if i < 31 {
 			timeDiffRangelower.Add(timeDiffRangelower, timeDiffRangeTemp)
 		}
-
 		if i < 11 {
 			timeDiffRange.Add(timeDiffRange, timeDiffRangeTemp)
 		}
-
 	}
-	//log.Print("total time timeDiffRange: " , timeDiffRange )
-	//log.Print("total time timeDiffRangelower: " , timeDiffRange )
 	timeDiffRange.Div(timeDiffRange, big.NewInt(10))
 	timeDiffRangelower.Div(timeDiffRangelower, big.NewInt(30))
 	timeDiffRange100.Div(timeDiffRange100, big.NewInt(100))
@@ -515,13 +504,7 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 					log.Print(x)
 				}
 			}
-
-
-
-
 		}
-
-
 	}
 	if timeDiffRange.Cmp(wantedTimeLower) == 1 { // check if the time diff between block is bigger than wantedTimeLower ( 11 )
 
@@ -532,7 +515,6 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 				log.Print(x)
 			} else {
 				if timeDiffRange.Cmp(big.NewInt(30)) == 1 {
-
 					z := x.Int64()
 					log.Print("x before multipli by 0,8 : ", z)
 					w := int64(float64(0.8) * float64(z))
@@ -541,7 +523,6 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 					log.Print(x)
 				} else {
 					if timeDiffRange.Cmp(big.NewInt(20)) == 1 {
-
 						z := x.Int64()
 						log.Print("x before multipli by 0,9 : ", z)
 						w := int64(float64(0.9) * float64(z))
@@ -551,39 +532,32 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 					}
 				}
 		}
-		}
+	}
 	if timeDiffRange100.Cmp(big.NewInt(13)) == -1 { // check if the time diff between block is inferior than 13
 		if diff_between_block.Cmp(big.NewInt(11)) == -1 {
 			// just be sure last block is less than 9 secondes
 			log.Printf("less than 9 secondes in timeDiffRange100 add diff : ")
-
 			z := x.Int64()
 			log.Print("timeDiffRange100 add diff x before multipli by 1.02 : ", z)
 			w := int64(float64(1.02) * float64(z))
 			x = big.NewInt(w)
 			log.Print("timeDiffRange100 add diff x after multipli by 1.02 : ", x)
 			log.Print(x)
-
 		}
 	}
 
 	if timeDiffRange100.Cmp(big.NewInt(13)) == 1 { // check if the time diff between block is inferior than 13
 		if diff_between_block.Cmp(big.NewInt(14)) == 1 {
 			// just be sure last block is less than 9 secondes
-			log.Printf("less than 9 secondes in timeDiffRange100 add diff : ")
-
+			log.Printf("more than 13 secondes in timeDiffRange100 remove diff : ")
 			z := x.Int64()
-			log.Print("timeDiffRange100 add diff x before multipli by 0.98 : ", z)
+			log.Print("timeDiffRange100 remove diff x before multipli by 0.98 : ", z)
 			w := int64(float64(0.98) * float64(z))
 			x = big.NewInt(w)
-			log.Print("timeDiffRange100 add diff x after multipli by 0.98 : ", x)
+			log.Print("timeDiffRange100 remove diff x after multipli by 0.98 : ", x)
 			log.Print(x)
-
 		}
 	}
-
-
-	//}
 	log.Printf("############### Hulk diff end ##########")
 	return x
 }
@@ -781,9 +755,7 @@ func (ethash *Ethash) VerifySeal(chain consensus.ChainReader, header *types.Head
 // Prepare implements consensus.Engine, initializing the difficulty field of a
 // header to conform to the ethash protocol. The changes are done inline.
 func (ethash *Ethash) Prepare(chain consensus.ChainReader, header *types.Header) error {
-	//if header.Number.Int64() > params.TimeCapsuleBlock {
-	//	chain.Config().Clique = params.MainnetChainConfigCorrected.Clique
-	//}
+
 	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
@@ -794,14 +766,6 @@ func (ethash *Ethash) Prepare(chain consensus.ChainReader, header *types.Header)
 }
 
 
-//func (ethash *Ethash) Prepare(chain consensus.ChainReader, header *types.Header) error {
-//	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
-//	if parent == nil {
-//		return consensus.ErrUnknownAncestor
-//	}
-//	header.Difficulty = ethash.CalcDifficulty(chain, header.Time.Uint64(), parent)
-//	return nil
-//}
 
 // Finalize implements consensus.Engine, accumulating the block and uncle rewards,
 // setting the final state and assembling the block.
