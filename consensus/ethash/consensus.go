@@ -310,7 +310,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 // given the parent block's time and difficulty.
 
 func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
-	return CalcDifficulty(chain.Config(), time, parent)
+	return CalcDifficulty(chain, chain.Config(), time, parent)
 	// difficulty for the new block during dev to be static
 	//return big.NewInt(1000000)
 }
@@ -322,18 +322,19 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 // DurationLimitHulkv2BlockFork
 
 
-func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
+func CalcDifficulty(chain consensus.ChainReader, config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
 	case isForked(big.NewInt(2000001), next):
 		if parent.Number.Int64() > params.TimeCapsuleBlock {
 
-			if parent.Number.Int64() > params.TimeCapsuleBlockHulk {
-				return calcDifficultyByzantiumHulk(time, parent)
-			} else {
-				return calcDifficultyHulk(time, parent)
-			}
-		} else {
+		//	if parent.Number.Int64() > params.TimeCapsuleBlockHulk {
+				return calcDifficultyByzantiumHulk(chain, time, parent)
+		//	} else {
+		//		return calcDifficultyHulk(time, parent)
+		//	}
+			//} else {
+		}else{
 			return calcDifficultyPirl(time, parent)
 		}
 
@@ -362,7 +363,7 @@ var (
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
-	big9hulk          = big.NewInt(4)
+	big9hulk          = big.NewInt(8) // previous is 6
 	bigMinus99hulk   = big.NewInt(-99)
 	big2999999hulk    = big.NewInt(29999999)
 )
@@ -411,7 +412,9 @@ func calcDifficultyHulk(time uint64, parent *types.Header) *big.Int {
 
 // New hulk diff
 
-func calcDifficultyByzantiumHulk(time uint64, parent *types.Header) *big.Int {
+
+
+func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
 	// https://github.com/ethereum/EIPs/issues/100.
 	// algorithm:
 	// diff = (parent_diff +
@@ -420,7 +423,10 @@ func calcDifficultyByzantiumHulk(time uint64, parent *types.Header) *big.Int {
 	log.Printf("############### Hulk diff start ##########")
 	bigTime := new(big.Int).SetUint64(time)
 	bigParentTime := new(big.Int).Set(parent.Time)
-
+	diff_between_block := new(big.Int)
+	diff_between_block = diff_between_block.Sub(bigTime, bigParentTime)
+	log.Printf("time diff_between_block  ", diff_between_block)
+	log.Printf("block: ", parent.Number.Int64() )
 	// holds intermediate values to make the algo easier to read & audit
 	x := new(big.Int)
 	y := new(big.Int)
@@ -438,7 +444,7 @@ func calcDifficultyByzantiumHulk(time uint64, parent *types.Header) *big.Int {
 		x.Set(bigMinus99hulk)
 	}
 	// parent_diff + (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
-	y.Div(parent.Difficulty, params.DifficultyBoundDivisorhulk)
+	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
 	x.Mul(y, x)
 	x.Add(parent.Difficulty, x)
 
@@ -446,7 +452,138 @@ func calcDifficultyByzantiumHulk(time uint64, parent *types.Header) *big.Int {
 	if x.Cmp(params.MinimumDifficulty) < 0 {
 		x.Set(params.MinimumDifficulty)
 	}
-	log.Print(x)
+	// check if really big changes in the block time and try to adjust to 13
+
+	previous := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(1) )
+	log.Print("current : ", parent.Number.Uint64() )
+	log.Print("previous: " , previous.Number.Uint64())
+	timeDiffRange := big.NewInt(0)
+	timeDiffRangelower := big.NewInt(0)
+	timeDiffRange100 := big.NewInt(0)
+	for i := 1; i <= 100; i++ {
+		pastBlock := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(i) )
+		pastBlockMinusOne := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(i - 1 ) )
+		timeDiffRangeTemp := diff_between_block.Sub(pastBlockMinusOne.Time, pastBlock.Time)
+		timeDiffRange100.Add(timeDiffRange100, timeDiffRangeTemp)
+		if i < 31 {
+			timeDiffRangelower.Add(timeDiffRangelower, timeDiffRangeTemp)
+		}
+
+		if i < 11 {
+			timeDiffRange.Add(timeDiffRange, timeDiffRangeTemp)
+		}
+
+	}
+	//log.Print("total time timeDiffRange: " , timeDiffRange )
+	//log.Print("total time timeDiffRangelower: " , timeDiffRange )
+	timeDiffRange.Div(timeDiffRange, big.NewInt(10))
+	timeDiffRangelower.Div(timeDiffRangelower, big.NewInt(30))
+	timeDiffRange100.Div(timeDiffRange100, big.NewInt(100))
+	log.Print("timeDiffRange time high: " , timeDiffRange )
+	log.Print("timeDiffRangelower low: " , timeDiffRangelower )
+	log.Print("timeDiffRange100 low: " , timeDiffRange100 )
+
+	log.Print("diff untouched :  ", x)
+	//log.Printf("multiplication try : ")
+	wantedTimeLower := big.NewInt(11)
+	wantedTimeHigher := big.NewInt(13)
+
+	//switch {
+	wantedTimeBis := big.NewInt(3)
+	if timeDiffRangelower.Cmp(wantedTimeHigher) == -1 { // check if the time diff between block is inferior than 11
+		if diff_between_block.Cmp(wantedTimeBis) == -1 {
+			// just be sure last block is less than 2 secondes
+			if timeDiffRangelower.Cmp(big.NewInt(1)) == -1 {
+				log.Printf("less than 3 add diff : ")
+
+				z := x.Int64()
+				log.Print("add diff x before multipli by 1.3 : ", z)
+				w := int64(float64(1.3) * float64(z))
+				x = big.NewInt(w)
+				log.Print("add diff x after multipli by 1.3 : ", x)
+				log.Print(x)
+			} else {
+				if timeDiffRangelower.Cmp(big.NewInt(5)) == -1 {
+					log.Printf("less than 6 diff : ")
+
+
+					z := x.Int64()
+					log.Print("add diff x before multipli by 1.1 : ", z)
+					w := int64(float64(1.05) * float64(z))
+					x = big.NewInt(w)
+					log.Print("add diff x after multipli by 1.1 : ", x)
+					log.Print(x)
+				}
+			}
+
+
+
+
+		}
+
+
+	}
+	if timeDiffRange.Cmp(wantedTimeLower) == 1 { // check if the time diff between block is bigger than wantedTimeLower ( 11 )
+
+			if timeDiffRange.Cmp(big.NewInt(40)) == 1 {
+
+				x.Div(x, big.NewInt(2))
+				log.Printf("more than 40 diff : ")
+				log.Print(x)
+			} else {
+				if timeDiffRange.Cmp(big.NewInt(30)) == 1 {
+
+					z := x.Int64()
+					log.Print("x before multipli by 0,8 : ", z)
+					w := int64(float64(0.8) * float64(z))
+					x = big.NewInt(w)
+					log.Print("x after multipli by 0,8 : ", x)
+					log.Print(x)
+				} else {
+					if timeDiffRange.Cmp(big.NewInt(20)) == 1 {
+
+						z := x.Int64()
+						log.Print("x before multipli by 0,9 : ", z)
+						w := int64(float64(0.9) * float64(z))
+						x = big.NewInt(w)
+						log.Print("x after multipli by 0,9 : ", x)
+						log.Print(x)
+					}
+				}
+		}
+		}
+	if timeDiffRange100.Cmp(big.NewInt(13)) == -1 { // check if the time diff between block is inferior than 13
+		if diff_between_block.Cmp(big.NewInt(11)) == -1 {
+			// just be sure last block is less than 9 secondes
+			log.Printf("less than 9 secondes in timeDiffRange100 add diff : ")
+
+			z := x.Int64()
+			log.Print("timeDiffRange100 add diff x before multipli by 1.02 : ", z)
+			w := int64(float64(1.02) * float64(z))
+			x = big.NewInt(w)
+			log.Print("timeDiffRange100 add diff x after multipli by 1.02 : ", x)
+			log.Print(x)
+
+		}
+	}
+
+	if timeDiffRange100.Cmp(big.NewInt(13)) == 1 { // check if the time diff between block is inferior than 13
+		if diff_between_block.Cmp(big.NewInt(14)) == 1 {
+			// just be sure last block is less than 9 secondes
+			log.Printf("less than 9 secondes in timeDiffRange100 add diff : ")
+
+			z := x.Int64()
+			log.Print("timeDiffRange100 add diff x before multipli by 0.98 : ", z)
+			w := int64(float64(0.98) * float64(z))
+			x = big.NewInt(w)
+			log.Print("timeDiffRange100 add diff x after multipli by 0.98 : ", x)
+			log.Print(x)
+
+		}
+	}
+
+
+	//}
 	log.Printf("############### Hulk diff end ##########")
 	return x
 }
@@ -464,7 +601,8 @@ func calcDifficultyByzantium(time uint64, parent *types.Header) *big.Int {
 
 	bigTime := new(big.Int).SetUint64(time)
 	bigParentTime := new(big.Int).Set(parent.Time)
-
+	u := bigTime.Cmp(bigParentTime)
+	log.Print(u)
 	// holds intermediate values to make the algo easier to read & audit
 	x := new(big.Int)
 	y := new(big.Int)
@@ -652,6 +790,7 @@ func (ethash *Ethash) Prepare(chain consensus.ChainReader, header *types.Header)
 	}
 	header.Difficulty = ethash.CalcDifficulty(chain, header.Time.Uint64(), parent)
 	return nil
+
 }
 
 
