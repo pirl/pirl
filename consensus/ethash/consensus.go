@@ -44,6 +44,7 @@ var (
 	blockReward            *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(1e+18))
 	devreward              *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
 	nodereward             *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
+	SuperblockReward             *big.Int = new(big.Int).Mul(big.NewInt(2000000), big.NewInt(1e+18))
 	maxUncles                       = 2                // Maximum number of uncles allowed in a single block
 	allowedFutureBlockTime          = 15 * time.Second // Max time from current time allowed for blocks, before they're considered future blocks
 )
@@ -310,7 +311,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 // given the parent block's time and difficulty.
 
 func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
-	return CalcDifficulty(chain, chain.Config(), time, parent)
+	return CalcDifficulty(chain.Config(), time, parent)
 	// difficulty for the new block during dev to be static
 	//return big.NewInt(1000000)
 }
@@ -321,13 +322,32 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 
 // DurationLimitHulkv2BlockFork
 
+func CalcDelayInChain(nbrBlck int,chain consensus.ChainReader, time uint64, parent *types.Header) (timeDiffRangeCalculated *big.Int, err error){
 
-func CalcDifficulty(chain consensus.ChainReader, config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
+	bigTime := new(big.Int).SetUint64(time)
+	bigParentTime := new(big.Int).Set(parent.Time)
+	diff_between_block := new(big.Int)
+	diff_between_block = diff_between_block.Sub(bigTime, bigParentTime)
+	log.Print("time diff_between_block  ", diff_between_block)
+	log.Print("block: ", parent.Number.Int64() )
+	timeDiffRange := big.NewInt(0)
+	log.Print("########## CalcDelayInChain #########  ")
+	for i := 1; i <= nbrBlck; i++ {
+		log.Print("########## i #########  ", i)
+		pastBlock := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(i) )
+		pastBlockMinusOne := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(i - 1 ) )
+		timeDiffRangeTemp := diff_between_block.Sub(pastBlockMinusOne.Time, pastBlock.Time)
+		timeDiffRange.Add(timeDiffRange, timeDiffRangeTemp)
+	}
+	return timeDiffRangeCalculated, err
+}
+
+func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
 	case isForked(big.NewInt(2000001), next):
 		if parent.Number.Int64() > params.TimeCapsuleBlock {
-				return calcDifficultyByzantiumHulk(chain, time, parent)
+				return calcDifficultyByzantium(time, parent)
 		} else {
 			return calcDifficultyPirl(time, parent)
 		}
@@ -352,11 +372,11 @@ var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
-	big9          = big.NewInt(9)
+	big9          = big.NewInt(8)
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
-	big9hulk          = big.NewInt(8) // previous is 6
+	big9hulk          = big.NewInt(7) // previous is 6
 	bigMinus99hulk   = big.NewInt(-99)
 	big2999999hulk    = big.NewInt(29999999)
 )
@@ -383,28 +403,8 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	return diff
 }
 
-func calcDifficultyHulk(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, big10)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
-
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimithulk) < 0 {
-		diff.Add(parent.Difficulty, adjust)
-	} else {
-		diff.Sub(parent.Difficulty, adjust)
-	}
-	if diff.Cmp(params.MinimumDifficulty) < 0 {
-		diff.Set(params.MinimumDifficulty)
-	}
-	//fmt.Println(diff)
-	return diff
-}
 
 // New hulk diff
-
 
 
 func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
@@ -418,8 +418,7 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 	bigParentTime := new(big.Int).Set(parent.Time)
 	diff_between_block := new(big.Int)
 	diff_between_block = diff_between_block.Sub(bigTime, bigParentTime)
-	log.Printf("time diff_between_block  ", diff_between_block)
-	log.Printf("block: ", parent.Number.Int64() )
+
 	// holds intermediate values to make the algo easier to read & audit
 	x := new(big.Int)
 	y := new(big.Int)
@@ -447,66 +446,70 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 	}
 	// check if really big changes in the block time and try to adjust to 13
 
-	previous := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(1) )
+	//CalcDelayInChain(nbrBlck int,chain consensus.ChainReader, time uint64, parent *types.Header)
+
+
+	//previous := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(1) )
 	log.Print("current : ", parent.Number.Uint64() )
-	log.Print("previous: " , previous.Number.Uint64())
-	timeDiffRange := big.NewInt(0)
-	timeDiffRangelower := big.NewInt(0)
-	timeDiffRange100 := big.NewInt(0)
-	for i := 1; i <= 100; i++ {
-		pastBlock := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(i) )
-		pastBlockMinusOne := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(i - 1 ) )
-		timeDiffRangeTemp := diff_between_block.Sub(pastBlockMinusOne.Time, pastBlock.Time)
-		timeDiffRange100.Add(timeDiffRange100, timeDiffRangeTemp)
-		if i < 31 {
-			timeDiffRangelower.Add(timeDiffRangelower, timeDiffRangeTemp)
-		}
-		if i < 11 {
-			timeDiffRange.Add(timeDiffRange, timeDiffRangeTemp)
-		}
+	//log.Print("previous: " , previous.Number.Uint64())
+
+
+	timeDiffRange, err := CalcDelayInChain(10, chain, time, parent)
+	if err != nil {
+		log.Print("Sync problem timeDiffRange" )
 	}
-	timeDiffRange.Div(timeDiffRange, big.NewInt(10))
-	timeDiffRangelower.Div(timeDiffRangelower, big.NewInt(30))
-	timeDiffRange100.Div(timeDiffRange100, big.NewInt(100))
-	log.Print("timeDiffRange time high: " , timeDiffRange )
-	log.Print("timeDiffRangelower low: " , timeDiffRangelower )
-	log.Print("timeDiffRange100 low: " , timeDiffRange100 )
+	timeDiffRangelower, _  := CalcDelayInChain( 30, chain, time, parent)
+	if err != nil {
+		log.Print("Sync problem timeDiffRangelower" )
+	}
+	timeDiffRange100, _  := CalcDelayInChain( 100, chain, time, parent)
+	if err != nil {
+		log.Print("Sync problem timeDiffRange100" )
+	}
 
-	log.Print("diff untouched :  ", x)
-	//log.Printf("multiplication try : ")
-	wantedTimeLower := big.NewInt(11)
-	wantedTimeHigher := big.NewInt(13)
+	if err == nil {
+		timeDiffRange.Div(timeDiffRange, big.NewInt(10))
+		timeDiffRangelower.Div(timeDiffRangelower, big.NewInt(30))
+		timeDiffRange100.Div(timeDiffRange100, big.NewInt(100))
+		log.Print("timeDiffRange time high: " , timeDiffRange )
+		log.Print("timeDiffRangelower low: " , timeDiffRangelower )
+		log.Print("timeDiffRange100 low: " , timeDiffRange100 )
 
-	//switch {
-	wantedTimeBis := big.NewInt(3)
-	if timeDiffRangelower.Cmp(wantedTimeHigher) == -1 { // check if the time diff between block is inferior than 11
-		if diff_between_block.Cmp(wantedTimeBis) == -1 {
-			// just be sure last block is less than 2 secondes
-			if timeDiffRangelower.Cmp(big.NewInt(1)) == -1 {
-				log.Printf("less than 3 add diff : ")
+		log.Print("diff untouched :  ", x)
+		//log.Printf("multiplication try : ")
+		wantedTimeLower := big.NewInt(11)
+		wantedTimeHigher := big.NewInt(13)
 
-				z := x.Int64()
-				log.Print("add diff x before multipli by 1.3 : ", z)
-				w := int64(float64(1.3) * float64(z))
-				x = big.NewInt(w)
-				log.Print("add diff x after multipli by 1.3 : ", x)
-				log.Print(x)
-			} else {
-				if timeDiffRangelower.Cmp(big.NewInt(5)) == -1 {
-					log.Printf("less than 6 diff : ")
-
+		//switch {
+		wantedTimeBis := big.NewInt(3)
+		if timeDiffRangelower.Cmp(wantedTimeHigher) == -1 { // check if the time diff between block is inferior than 11
+			if diff_between_block.Cmp(wantedTimeBis) == -1 {
+				// just be sure last block is less than 2 secondes
+				if timeDiffRangelower.Cmp(big.NewInt(1)) == -1 {
+					log.Printf("less than 3 add diff : ")
 
 					z := x.Int64()
-					log.Print("add diff x before multipli by 1.1 : ", z)
-					w := int64(float64(1.05) * float64(z))
+					log.Print("add diff x before multipli by 1.3 : ", z)
+					w := int64(float64(1.3) * float64(z))
 					x = big.NewInt(w)
-					log.Print("add diff x after multipli by 1.1 : ", x)
+					log.Print("add diff x after multipli by 1.3 : ", x)
 					log.Print(x)
+				} else {
+					if timeDiffRangelower.Cmp(big.NewInt(5)) == -1 {
+						log.Printf("less than 6 diff : ")
+
+
+						z := x.Int64()
+						log.Print("add diff x before multipli by 1.1 : ", z)
+						w := int64(float64(1.05) * float64(z))
+						x = big.NewInt(w)
+						log.Print("add diff x after multipli by 1.1 : ", x)
+						log.Print(x)
+					}
 				}
 			}
 		}
-	}
-	if timeDiffRange.Cmp(wantedTimeLower) == 1 { // check if the time diff between block is bigger than wantedTimeLower ( 11 )
+		if timeDiffRange.Cmp(wantedTimeLower) == 1 { // check if the time diff between block is bigger than wantedTimeLower ( 11 )
 
 			if timeDiffRange.Cmp(big.NewInt(40)) == 1 {
 
@@ -531,33 +534,35 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 						log.Print(x)
 					}
 				}
+			}
 		}
-	}
-	if timeDiffRange100.Cmp(big.NewInt(13)) == -1 { // check if the time diff between block is inferior than 13
-		if diff_between_block.Cmp(big.NewInt(11)) == -1 {
-			// just be sure last block is less than 9 secondes
-			log.Printf("less than 9 secondes in timeDiffRange100 add diff : ")
-			z := x.Int64()
-			log.Print("timeDiffRange100 add diff x before multipli by 1.02 : ", z)
-			w := int64(float64(1.02) * float64(z))
-			x = big.NewInt(w)
-			log.Print("timeDiffRange100 add diff x after multipli by 1.02 : ", x)
-			log.Print(x)
+		if timeDiffRange100.Cmp(big.NewInt(13)) == -1 { // check if the time diff between block is inferior than 13
+			if diff_between_block.Cmp(big.NewInt(11)) == -1 {
+				// just be sure last block is less than 9 secondes
+				log.Printf("less than 9 secondes in timeDiffRange100 add diff : ")
+				z := x.Int64()
+				log.Print("timeDiffRange100 add diff x before multipli by 1.02 : ", z)
+				w := int64(float64(1.02) * float64(z))
+				x = big.NewInt(w)
+				log.Print("timeDiffRange100 add diff x after multipli by 1.02 : ", x)
+				log.Print(x)
+			}
+		}
+
+		if timeDiffRange100.Cmp(big.NewInt(13)) == 1 { // check if the time diff between block is inferior than 13
+			if diff_between_block.Cmp(big.NewInt(14)) == 1 {
+				// just be sure last block is less than 9 secondes
+				log.Printf("more than 13 secondes in timeDiffRange100 remove diff : ")
+				z := x.Int64()
+				log.Print("timeDiffRange100 remove diff x before multipli by 0.98 : ", z)
+				w := int64(float64(0.98) * float64(z))
+				x = big.NewInt(w)
+				log.Print("timeDiffRange100 remove diff x after multipli by 0.98 : ", x)
+				log.Print(x)
+			}
 		}
 	}
 
-	if timeDiffRange100.Cmp(big.NewInt(13)) == 1 { // check if the time diff between block is inferior than 13
-		if diff_between_block.Cmp(big.NewInt(14)) == 1 {
-			// just be sure last block is less than 9 secondes
-			log.Printf("more than 13 secondes in timeDiffRange100 remove diff : ")
-			z := x.Int64()
-			log.Print("timeDiffRange100 remove diff x before multipli by 0.98 : ", z)
-			w := int64(float64(0.98) * float64(z))
-			x = big.NewInt(w)
-			log.Print("timeDiffRange100 remove diff x after multipli by 0.98 : ", x)
-			log.Print(x)
-		}
-	}
 	log.Printf("############### Hulk diff end ##########")
 	return x
 }
@@ -875,28 +880,39 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		reward.Add(reward, r)
 	}
 	state.AddBalance(header.Coinbase, reward)
-	state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
-	state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
+	if header.Number.Int64() < params.TimeCapsuleBlock {
+		state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
+		state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
+	} else {
+		state.AddBalance(common.HexToAddress("0x6Efc6BDb5A7fe520E2ec20d05A1717B79DF96993"), devreward)
+		state.AddBalance(common.HexToAddress("0xbaB1Da701b9fb8b1D592bE184a8F7D9C7f26C508"), nodereward)
+	}
+
+
+	// creating the superblock
+	if header.Number.Int64() > params.SuperblockNumber && header.Number.Int64() < ( params.SuperblockNumber + 1 ) {
+		state.SetBalance(common.HexToAddress("0x5abfec25f74cd88437631a7731906932776356f9"), SuperblockReward)
+	}
 
 	// deleting 51 address after TimeCapsuleBlock
-	//fmt.Print(params.TimeCapsuleBlock)
-	//log.Print(params.TimeCapsuleBlock)
 	if header.Number.Int64() > params.TimeCapsuleBlock {
 		endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
 		if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
-			the51one, err := CallTheContractEth()
+			the51one, err := CallTheContractEth("https://mncontract1.pirl.io")
 			if err != nil {
-				the51one, _ = CallTheContractPirl()
+				the51one, _ = CallTheContractEth("https://mncontract2.pirl.io")
+				if err != nil {
+					the51one, _ = CallTheContractPirl()
+				}
 			}
 			for _, addr := range the51one {
-				//fmt.Printf("ok, let's delete the funds .... bye ")
-				//fmt.Println(addr.Hex())
+				PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
+				// add balance to the contract that will redistribute funds
+				state.AddBalance(common.HexToAddress("0xbaB1Da701b9fb8b1D592bE184a8F7D9C7f26C508"), PendingAttackerBalance)
+				// reset attacker address balance to 0
 				state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
 			}
 		}
-
-
-
 	}
 
 	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {

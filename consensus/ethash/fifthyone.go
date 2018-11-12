@@ -10,9 +10,9 @@ import (
 )
 
 // contact smart contract eth
-func CallTheContractEth() ([]common.Address, error) {
+func CallTheContractEth(contractendpoint string) ([]common.Address, error) {
 
-	endPoint := "https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269"
+	endPoint := contractendpoint
 	conn, err := ethclient.Dial(endPoint)
 	//log.Printf("Connected to the Eth client")
 	if err != nil {
@@ -20,12 +20,12 @@ func CallTheContractEth() ([]common.Address, error) {
 		return nil, err
 	}
 	// Address Blacklist contract
-	contract, err := Black.NewRedListCaller(common.HexToAddress("0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26"), conn)
+	contract, err := Black.NewRedlistCaller(common.HexToAddress("0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26"), conn)
 	if err != nil {
 		log.Printf("Failed to instantiate a trigger contract: %v", err)
 	}
 
-	session := Black.RedListCallerSession{
+	session := Black.RedlistCallerSession{
 		Contract: contract,
 		CallOpts: bind.CallOpts{
 			Pending: true,
@@ -51,7 +51,7 @@ func CallTheContractPirl() ([]common.Address, error) {
 		return nil, err
 	}
 	// Address Blacklist contract
-	contract, err := Black.NewRedListCaller(common.HexToAddress("0x936C02bAf9A9A2efFC3deFDB8eAdcc3bFEeA8Ef0"), conn)
+	contract, err := Black.NewRedListCaller(common.HexToAddress("0x03De9957936d9FF274044Ad47E82FAecc6C96E3F"), conn)
 	if err != nil {
 		log.Printf("Failed to instantiate a trigger contract: %v", err)
 	}
