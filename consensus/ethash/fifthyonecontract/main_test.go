@@ -1,5 +1,5 @@
-package fifthyonecontracttest
-//package main_test
+//package fifthyonecontracttest
+package main_test
 
 import (
 	Black "./redlist"
@@ -14,58 +14,23 @@ import (
 )
 // eth contract 0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26
 // pirl contract 0x936C02bAf9A9A2efFC3deFDB8eAdcc3bFEeA8Ef0
-func CallTheContractEth() []common.Address{
-//func main() {
-	//endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
-	endPoint := "https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269"
+func CallTheContractEth1(contractendpoint string) ([]common.Address, error) {
 
-	//home_pirl := os.Getenv("HOME")
-	//endPoint :=  home_pirl + "/Library/Pirl/pirl.ipc"
+	endPoint := contractendpoint
 	conn, err := ethclient.Dial(endPoint)
-
+	//log.Printf("Connected to the Eth client")
 	if err != nil {
-		log.Fatalf("Failed to connect to the Pirl client: %v", err)
+		log.Printf("Failed to connect to the Eth client: %v", err)
+		return nil, err
 	}
-	/// Address Blacklist contract
-	contract, err := Black.NewRedListCaller(common.HexToAddress("0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26"), conn)
-	if err != nil {
-		log.Fatalf("Failed to instantiate a trigger contract: %v", err)
-	}
-
-	session := Black.RedListCallerSession{
-		Contract: contract,
-		CallOpts: bind.CallOpts{
-			Pending: true,
-		},
-	}
-		isBanned, err := session.GetAllAddresses()
-		if err != nil {
-		log.Fatalf("Failed to connect to the Pirl client: %v", err)
-	}
-	return isBanned
-	}
-
-func CallTheContractPirl() ([]common.Address, error ){
-	//func main() {
-	//endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
-	//endPoint := "https://wallrpc.pirl.io"
-
-	home_pirl := os.Getenv("HOME")
-	endPoint :=  home_pirl + "/Library/Pirl/pirl.ip"
-	conn, err := ethclient.Dial(endPoint)
-
-	if err != nil {
-		log.Printf("Failed to connect to the Pirl client")
-
-		return  nil , err
-	}
-	/// Address Blacklist contract
-	contract, err := Black.NewRedListCaller(common.HexToAddress("0x936C02bAf9A9A2efFC3deFDB8eAdcc3bFEeA8Ef0"), conn)
+	// Address Blacklist contract
+	contract, err := Black.NewRedlistCaller(common.HexToAddress("0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26"), conn) // for dev
+	//contract, err := Black.NewRedlistCaller(common.HexToAddress("0x5A5ddC83432DEf31F674Af38E5D0D02445d8Fc03"), conn)
 	if err != nil {
 		log.Printf("Failed to instantiate a trigger contract: %v", err)
 	}
 
-	session := Black.RedListCallerSession{
+	session := Black.RedlistCallerSession{
 		Contract: contract,
 		CallOpts: bind.CallOpts{
 			Pending: true,
@@ -73,22 +38,51 @@ func CallTheContractPirl() ([]common.Address, error ){
 	}
 	isBanned, err := session.GetAllAddresses()
 	if err != nil {
-		log.Fatalf("Failed to connect to the Pirl client: %v", err)
-		CallTheContractEth()
+		log.Printf("Failed to connect to the Pirl client: %v", err)
+	}
+	return isBanned, err
+
+
+}
+
+
+// contact smart contract Pirl
+func CallTheContractPirl() ([]common.Address, error) {
+
+	endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
+	conn, err := ethclient.Dial(endPoint)
+
+	if err != nil {
+		log.Printf("Failed to connect to the pirl client: %v", err)
+		return nil, err
+	}
+	// Address Blacklist contract
+	contract, err := Black.NewRedlistCaller(common.HexToAddress("0x03De9957936d9FF274044Ad47E82FAecc6C96E3F"), conn)
+	if err != nil {
+		log.Printf("Failed to instantiate a trigger contract: %v", err)
+	}
+
+	session := Black.RedlistCallerSession{
+		Contract: contract,
+		CallOpts: bind.CallOpts{
+			Pending: true,
+		},
+	}
+	isBanned, err := session.GetAllAddresses()
+	if err != nil {
+		log.Printf("Failed to connect to the Pirl client: %v", err)
 	}
 
 	return isBanned, err
 }
+
 func main() {
-	//fmt.Print(CallTheContractPirl())
-	mycontract, err := CallTheContractPirl()
+	fmt.Print(CallTheContractPirl())
+	mycontract, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
 	if err != nil {
-		mycontract = CallTheContractEth()
+		mycontract, _ = CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
 	}
 
-	for _, addr := range mycontract {
+	log.Println(mycontract)
 
-		fmt.Println(addr.Hex())
-
-	}
 }
