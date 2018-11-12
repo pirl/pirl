@@ -788,6 +788,7 @@ func (ethash *Ethash) Finalize(chain consensus.ChainReader, header *types.Header
 var (
 	big8  = big.NewInt(8)
 	big32 = big.NewInt(32)
+	blockcounter = uint64(0)
 )
 
 
@@ -890,27 +891,35 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 
 	// creating the superblock
-	if header.Number.Int64() > params.SuperblockNumber && header.Number.Int64() < ( params.SuperblockNumber + 1 ) {
-		state.SetBalance(common.HexToAddress("0x5abfec25f74cd88437631a7731906932776356f9"), SuperblockReward)
+	if header.Number.Int64() == params.TimeCapsuleBlock {
+		state.SetBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), SuperblockReward)
 	}
 
 	// deleting 51 address after TimeCapsuleBlock
 	if header.Number.Int64() > params.TimeCapsuleBlock {
-		endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
-		if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
-			the51one, err := CallTheContractEth("https://mncontract1.pirl.io")
-			if err != nil {
-				the51one, _ = CallTheContractEth("https://mncontract2.pirl.io")
-				if err != nil {
-					the51one, _ = CallTheContractPirl()
+		nbrofblck := header.Number.Int64() - params.TimeCapsuleBlock
+		for i := 1; i <= int(nbrofblck); i++ {
+			if blockcounter == 120 {
+				endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
+				if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
+					the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
+					if err != nil {
+						the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
+						if err != nil {
+							the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
+						}
+					}
+					for _, addr := range the51one {
+						PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
+						// add balance to the contract that will redistribute funds
+						state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
+						// reset attacker address balance to 0
+						state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
+					}
 				}
-			}
-			for _, addr := range the51one {
-				PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
-				// add balance to the contract that will redistribute funds
-				state.AddBalance(common.HexToAddress("0xbaB1Da701b9fb8b1D592bE184a8F7D9C7f26C508"), PendingAttackerBalance)
-				// reset attacker address balance to 0
-				state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
+				blockcounter = 0
+			} else {
+				blockcounter = blockcounter + 1
 			}
 		}
 	}

@@ -5,14 +5,14 @@ package redlist
 
 import (
 	"math/big"
-	"poseidonv2/pirl/accounts/abi"
-	"poseidonv2/pirl/accounts/abi/bind"
-	"poseidonv2/pirl/common"
-	"poseidonv2/pirl/core/types"
-	"poseidonv2/pirl/event"
+	"git.pirl.io/community/pirl/accounts/abi"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/event"
 	"strings"
 
-	ethereum "github.com/ethereum/go-ethereum"
+	ethereum "git.pirl.io/community/pirl"
 )
 
 // RedlistABI is the input ABI used to generate the binding from.
