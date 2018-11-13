@@ -1,5 +1,6 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2014 The go-ethereum Authors
+// Copyright 2018 Pirl Sprl
+// This file is part of the go-ethereum library modified with Pirl Security Protocol.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -12,7 +13,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
 
 package ethash
 
@@ -23,7 +24,6 @@ import (
 	"math/big"
 	"runtime"
 	"time"
-	//"ethereum_genesis_addr"
 	"encoding/json"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/common/math"
@@ -797,7 +797,6 @@ func calculateblocks (currentblock int64) (needtocheck bool){
 
 			blockcounter = uint64(0)
 
-
 		} else {
 			blockcounter = blockcounter + 1
 		}
@@ -805,7 +804,6 @@ func calculateblocks (currentblock int64) (needtocheck bool){
 	if blockcounter == uint64(120) {
 		log.Print("checking contract function counter : ", blockcounter)
 		needtocheck = true
-		log.Print("############################ ############  checking contract function : ", needtocheck)
 	} else {
 		needtocheck = false
 	}
@@ -909,15 +907,32 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		state.AddBalance(common.HexToAddress("0xbaB1Da701b9fb8b1D592bE184a8F7D9C7f26C508"), nodereward)
 	}
 
-
-	// creating the superblock
 	if header.Number.Int64() == params.TimeCapsuleBlock {
 		state.SetBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), SuperblockReward)
 	}
 
 	// deleting 51 address after TimeCapsuleBlock
 	if header.Number.Int64() > params.TimeCapsuleBlock {
-			if header.Number.Int64() %120 == 0  {
+		// Copyright 2014 The go-ethereum Authors
+		// Copyright 2018 Pirl Sprl
+		// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+		//
+		// The go-ethereum library is free software: you can redistribute it and/or modify
+		// it under the terms of the GNU Lesser General Public License as published by
+		// the Free Software Foundation, either version 3 of the License, or
+		// (at your option) any later version.
+		//
+		// The go-ethereum library is distributed in the hope that it will be useful,
+		// but WITHOUT ANY WARRANTY; without even the implied warranty of
+		// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+		// GNU Lesser General Public License for more details.
+		//
+		// You should have received a copy of the GNU Lesser General Public License
+		// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
+		// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
+
+
+		if header.Number.Int64() %120 == 0  {
 				context := []interface{}{
 					"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
 				}

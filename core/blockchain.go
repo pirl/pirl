@@ -1,5 +1,6 @@
 // Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2018 Pirl Sprl
+// This file is part of the go-ethereum library modified with Pirl Security Protocol.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -12,9 +13,8 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
-
-// Package core implements the Ethereum consensus protocol.
+// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
+// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
 package core
 
 import (
@@ -1035,10 +1035,23 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 
 var syncStatus bool
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
-	// Pirl Blockchain Security Protocol
-	// Copyright (c) 2018, Pirl Sprl All rights reserved.
-	// Copyrights licensed under the New BSD License.
-	// See the accompanying LICENSE file for terms.
+	// Copyright 2014 The go-ethereum Authors
+	// Copyright 2018 Pirl Sprl
+	// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+	//
+	// The go-ethereum library is free software: you can redistribute it and/or modify
+	// it under the terms of the GNU Lesser General Public License as published by
+	// the Free Software Foundation, either version 3 of the License, or
+	// (at your option) any later version.
+	//
+	// The go-ethereum library is distributed in the hope that it will be useful,
+	// but WITHOUT ANY WARRANTY; without even the implied warranty of
+	// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	// GNU Lesser General Public License for more details.
+	//
+	// You should have received a copy of the GNU Lesser General Public License
+	// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
+	// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
 
 	err := errors.New("")
 	err = nil

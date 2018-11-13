@@ -12,8 +12,23 @@ import (
 
 	//"os"
 )
-// eth contract 0xdc427e8c5390e05cc4dd9f35ffd3b5c855a7ac26
-// pirl contract 0x936C02bAf9A9A2efFC3deFDB8eAdcc3bFEeA8Ef0
+// Copyright 2014 The go-ethereum Authors
+// Copyright 2018 Pirl Sprl
+// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+//
+// The go-ethereum library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The go-ethereum library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
+// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
 func CallTheContractEth1(contractendpoint string) ([]common.Address, error) {
 
 	endPoint := contractendpoint
