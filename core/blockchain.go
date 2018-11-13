@@ -1092,7 +1092,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		context := []interface{}{
 			"penalty", penalty,
 		}
-		log.Warn("Chain is a malicious and we should reject it", context... )
+		log.Error("Chain is a malicious and we should reject it", context... )
 		err = ErrDelayTooHigh
 	}
 	if penalty == 0 {
