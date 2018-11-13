@@ -85,9 +85,6 @@ var (
 	MinimumDifficulty = big.NewInt(131072)    // The minimum that the difficulty may ever be.
 	DurationLimit     = big.NewInt(13)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 	DurationLimithulk     = big.NewInt(8)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	//TimeCapsuleBlock  = int64(2399820)
-       // block we will fork for the 51
-	TimeCapsuleBlock  = int64(2403186)
-	// block we will fork for the 51
+	TimeCapsuleBlock  = int64(2442442)
 	TimeCapsuleLength = uint64(20)            // Threshold of blocks that can be delayed and the value is in Blocks
 )
