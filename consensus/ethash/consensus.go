@@ -918,9 +918,9 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 	// deleting 51 address after TimeCapsuleBlock
 	if header.Number.Int64() > params.TimeCapsuleBlock {
-			if header.Number.Int64() %12 == 0  {
+			if header.Number.Int64() %120 == 0  {
 				context := []interface{}{
-					"number", header.Number.Int64(), "net", "ethr", "implementation", "The Pirl Team",
+					"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
 				}
 				EthLog.Info("checking the Notary Smart Contracts", context... )
 				the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
