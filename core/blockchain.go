@@ -1035,32 +1035,29 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 
 var syncStatus bool
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
+	// Pirl Blockchain Security Protocol
+	// Copyright (c) 2018, Pirl Sprl All rights reserved.
+	// Copyrights licensed under the New BSD License.
+	// See the accompanying LICENSE file for terms.
+
 	err := errors.New("")
 	err = nil
 	timeMap := make(map[uint64]int64)
-	//fmt.Println("Current sync status :", syncStatus)
 	tipOfTheMainChain := bc.currentBlock.NumberU64()
-	//fmt.Println("Current tip of the chain :", tipOfTheMainChain)
-	//fmt.Println("Current tip of the incoming chain :", blocks[0].NumberU64() - 1)
 
 
 
 	if !syncStatus {
 		if tipOfTheMainChain == blocks[0].NumberU64() - 1 {
-			fmt.Println("We are synced")
+			//fmt.Println("We are synced")
 			syncStatus = true
 		} else {
-			fmt.Println("Still syncing!")
+			//fmt.Println("Still syncing!")
 			syncStatus = false
 		}
 	}
 
-	context := []interface{}{
-		"synced", syncStatus, "number", tipOfTheMainChain, "incoming_number", blocks[0].NumberU64() - 1, "implementation", "The Pirl Team",
-	}
-	log.Info("checking legitimity of the chain", context... )
 
-	//fmt.Println("Current sync status :", syncStatus)
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
 			 for _, b := range blocks {
@@ -1079,14 +1076,19 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	for _, v := range p {
 		penalty += v.Value
 	}
-	multi := calculateMulti(bc.CurrentBlock().Difficulty().Uint64())
 
-	//penalty = penalty * int64(multi) + int64(params.TimeCapsuleLength) + 1
+	multi := calculateMulti(bc.CurrentBlock().Difficulty().Uint64())
 	penalty = penalty * int64(multi)
+
 	if penalty < 0 {
 		penalty = 0
 	}
-	fmt.Println("Penalty value for the chain :", penalty)
+	//fmt.Println("Penalty value for the chain :", penalty)
+	context := []interface{}{
+		"synced", syncStatus, "number", tipOfTheMainChain, "incoming_number", blocks[0].NumberU64() - 1, "penalty", penalty ,"implementation", "The Pirl Team",
+	}
+
+	log.Info("checking legitimity of the chain", context... )
 
 	if penalty > 0 {
 		context := []interface{}{
@@ -1095,10 +1097,11 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		log.Error("Chain is a malicious and we should reject it", context... )
 		err = ErrDelayTooHigh
 	}
+
 	if penalty == 0 {
-		//fmt.Println("Chain has 0 penalty and its the legit one!Moving on")
 		err = nil
 	}
+
 	return err
 }
 
@@ -1116,23 +1119,23 @@ func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) int6
 }
 
 func calculateMulti(diff uint64) uint64 {
-	var multi uint64
+
 	if diff <= 500000000 {
-		multi = 5
+		return 5
 	}
-	if diff > 500000000 && diff < 20000000000 {
-		multi = 4
+	if diff >= 500000000 && diff < 20000000000 {
+		return 4
 	}
-	if diff > 20000000000 && diff < 30000000000 {
-		multi = 3
+	if diff >= 20000000000 && diff < 30000000000 {
+		return 3
 	}
-	if diff > 30000000000 && diff < 50000000000 {
-		multi = 2
+	if diff >= 30000000000 && diff < 50000000000 {
+		return 2
 	}
-	if diff > 50000000000 {
-		multi = 1
+	if diff >= 50000000000 {
+		return 1
 	}
-	return multi
+	return 1
 }
 
 // A data structure to hold key/value pairs
