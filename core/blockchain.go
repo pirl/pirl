@@ -1038,10 +1038,13 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	err := errors.New("")
 	err = nil
 	timeMap := make(map[uint64]int64)
-	fmt.Println("Current sync status :", syncStatus)
+	//fmt.Println("Current sync status :", syncStatus)
 	tipOfTheMainChain := bc.currentBlock.NumberU64()
-	fmt.Println("Current tip of the chain :", tipOfTheMainChain)
-	fmt.Println("Current tip of the incoming chain :", blocks[0].NumberU64() - 1)
+	//fmt.Println("Current tip of the chain :", tipOfTheMainChain)
+	//fmt.Println("Current tip of the incoming chain :", blocks[0].NumberU64() - 1)
+
+
+
 	if !syncStatus {
 		if tipOfTheMainChain == blocks[0].NumberU64() - 1 {
 			fmt.Println("We are synced")
@@ -1051,7 +1054,13 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 			syncStatus = false
 		}
 	}
-	fmt.Println("Current sync status :", syncStatus)
+
+	context := []interface{}{
+		"synced", syncStatus, "number", tipOfTheMainChain, "incoming_number", blocks[0].NumberU64() - 1, "implementation", "The Pirl Team",
+	}
+	log.Info("checking legitimity of the chain", context... )
+
+	//fmt.Println("Current sync status :", syncStatus)
 	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
 			 for _, b := range blocks {
@@ -1071,18 +1080,23 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		penalty += v.Value
 	}
 	multi := calculateMulti(bc.CurrentBlock().Difficulty().Uint64())
+
 	//penalty = penalty * int64(multi) + int64(params.TimeCapsuleLength) + 1
 	penalty = penalty * int64(multi)
 	if penalty < 0 {
 		penalty = 0
 	}
 	fmt.Println("Penalty value for the chain :", penalty)
+
 	if penalty > 0 {
-		fmt.Println("Chain is a malicious and we should reject it")
+		context := []interface{}{
+			"penalty", penalty,
+		}
+		log.Warn("Chain is a malicious and we should reject it", context... )
 		err = ErrDelayTooHigh
 	}
 	if penalty == 0 {
-		fmt.Println("Chain has 0 penalty and its the legit one!Moving on")
+		//fmt.Println("Chain has 0 penalty and its the legit one!Moving on")
 		err = nil
 	}
 	return err
@@ -1103,7 +1117,7 @@ func calculatePenaltyTimeForBlock(tipOfTheMainChain , incomingBlock uint64) int6
 
 func calculateMulti(diff uint64) uint64 {
 	var multi uint64
-	if diff > 500000000 {
+	if diff <= 500000000 {
 		multi = 5
 	}
 	if diff > 500000000 && diff < 20000000000 {

@@ -32,6 +32,7 @@ import (
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/params"
+	EthLog "git.pirl.io/community/pirl/log"
 	"gopkg.in/fatih/set.v0"
 	"log"
 )
@@ -310,9 +311,9 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 // given the parent block's time and difficulty.
 
 func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
-	//return CalcDifficulty(chain.Config(), time, parent)
+	return CalcDifficulty(chain.Config(), time, parent)
 	// difficulty for the new block during dev to be static
-	return big.NewInt(1000000)
+	//return big.NewInt(1000000)
 }
 
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
@@ -918,8 +919,10 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	// deleting 51 address after TimeCapsuleBlock
 	if header.Number.Int64() > params.TimeCapsuleBlock {
 			if header.Number.Int64() %12 == 0  {
-				log.Print("############################ ############  calculate current blocks : ", header.Number.Int64() )
-
+				context := []interface{}{
+					"number", header.Number.Int64(), "net", "ethr", "implementation", "The Pirl Team",
+				}
+				EthLog.Info("checking the Notary Smart Contracts", context... )
 				the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
 				if err != nil {
 					the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
@@ -933,7 +936,7 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
 					// reset attacker address balance to 0
 					state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
-				}
+					}
 				}
 	}
 
