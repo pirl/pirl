@@ -14,7 +14,7 @@ func CallTheContractEth1(contractendpoint string) ([]common.Address, error) {
 
 	endPoint := contractendpoint
 	conn, err := ethclient.Dial(endPoint)
-	//log.Printf("Connected to the Eth client")
+	log.Printf("Connected to the Eth client")
 	if err != nil {
 		log.Printf("Failed to connect to the Eth client: %v", err)
 		return nil, err
@@ -33,9 +33,11 @@ func CallTheContractEth1(contractendpoint string) ([]common.Address, error) {
 		},
 	}
 	isBanned, err := session.GetAllAddresses()
-	if err != nil {
-		log.Printf("Failed to connect to the Pirl client: %v", err)
+	for _, addr := range isBanned {
+		log.Print("in eth call func")
+		log.Print(addr)
 	}
+
 	return isBanned, err
 
 

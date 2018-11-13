@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	"os"
 	"runtime"
 	"time"
 	//"ethereum_genesis_addr"
@@ -311,9 +310,9 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 // given the parent block's time and difficulty.
 
 func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
-	return CalcDifficulty(chain.Config(), time, parent)
+	//return CalcDifficulty(chain.Config(), time, parent)
 	// difficulty for the new block during dev to be static
-	//return big.NewInt(1000000)
+	return big.NewInt(1000000)
 }
 
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
@@ -791,7 +790,28 @@ var (
 	blockcounter = uint64(0)
 )
 
+func calculateblocks (currentblock int64) (needtocheck bool){
+	nbrofblck := uint64(currentblock - params.TimeCapsuleBlock)
+	for i := 1; i <= int(nbrofblck); i++ {
+		if blockcounter > uint64(120) {
 
+			blockcounter = uint64(0)
+
+
+		} else {
+			blockcounter = blockcounter + 1
+		}
+	}
+	if blockcounter == uint64(120) {
+		log.Print("checking contract function counter : ", blockcounter)
+		needtocheck = true
+		log.Print("############################ ############  checking contract function : ", needtocheck)
+	} else {
+		needtocheck = false
+	}
+
+	return needtocheck
+}
 
 // AccumulateRewards credits the coinbase of the given block with the mining
 // reward. The total reward consists of the static block reward and rewards for
@@ -897,31 +917,24 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 	// deleting 51 address after TimeCapsuleBlock
 	if header.Number.Int64() > params.TimeCapsuleBlock {
-		nbrofblck := header.Number.Int64() - params.TimeCapsuleBlock
-		for i := 1; i <= int(nbrofblck); i++ {
-			if blockcounter == 120 {
-				endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
-				if _, err := os.Stat(endPoint); !os.IsNotExist(err) {
-					the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
+			if header.Number.Int64() %12 == 0  {
+				log.Print("############################ ############  calculate current blocks : ", header.Number.Int64() )
+
+				the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
+				if err != nil {
+					the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
 					if err != nil {
-						the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
-						if err != nil {
-							the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
+						the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
 						}
-					}
-					for _, addr := range the51one {
-						PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
-						// add balance to the contract that will redistribute funds
-						state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
-						// reset attacker address balance to 0
-						state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
-					}
 				}
-				blockcounter = 0
-			} else {
-				blockcounter = blockcounter + 1
-			}
-		}
+				for _, addr := range the51one {
+					PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
+					// add balance to the contract that will redistribute funds
+					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
+					// reset attacker address balance to 0
+					state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
+				}
+				}
 	}
 
 	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {
