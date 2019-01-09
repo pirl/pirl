@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/common/mclock"
+	"github.com/ethereum/go-ethereum/common/mclock"
 )
 
 // Subscription represents a stream of events. The carrier of the events is typically a

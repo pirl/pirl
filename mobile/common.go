@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"strings"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // Hash represents the 32 byte Keccak256 hash of arbitrary data.

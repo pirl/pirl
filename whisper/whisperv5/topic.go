@@ -19,11 +19,11 @@
 package whisperv5
 
 import (
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/hexutil"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
-// Topic represents a cryptographically secure, probabilistic partial
+// TopicType represents a cryptographically secure, probabilistic partial
 // classifications of a message, determined as the first (left) 4 bytes of the
 // SHA3 hash of some arbitrary data given by the original author of the message.
 type TopicType [TopicLength]byte

@@ -20,8 +20,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/crypto"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 // Tests that transactions can be added to strict lists and list contents and

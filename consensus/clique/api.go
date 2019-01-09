@@ -17,10 +17,10 @@
 package clique
 
 import (
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/consensus"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/rpc"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/consensus"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/rpc"
 )
 
 // API is a user facing RPC API to allow controlling the signer and voting
@@ -75,7 +75,7 @@ func (api *API) GetSigners(number *rpc.BlockNumber) ([]common.Address, error) {
 	return snap.signers(), nil
 }
 
-// GetSignersAtHash retrieves the state snapshot at a given block.
+// GetSignersAtHash retrieves the list of authorized signers at the specified block.
 func (api *API) GetSignersAtHash(hash common.Hash) ([]common.Address, error) {
 	header := api.chain.GetHeaderByHash(hash)
 	if header == nil {

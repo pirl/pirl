@@ -19,8 +19,8 @@ package les
 import (
 	"sync"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type ltrInfo struct {

@@ -2,19 +2,19 @@
 # with Go source code. If you know what GOPATH is then you probably
 # don't need to bother with make.
 
-.PHONY: pirl android ios pirl-cross swarm evm all test clean
-.PHONY: pirl-linux pirl-linux-386 pirl-linux-amd64 pirl-linux-mips64 pirl-linux-mips64le
-.PHONY: pirl-linux-arm pirl-linux-arm-5 pirl-linux-arm-6 pirl-linux-arm-7 pirl-linux-arm64
-.PHONY: pirl-darwin pirl-darwin-386 pirl-darwin-amd64
-.PHONY: pirl-windows pirl-windows-386 pirl-windows-amd64
-##export GOPATH=$(pwd)
+.PHONY: geth android ios geth-cross swarm evm all test clean
+.PHONY: geth-linux geth-linux-386 geth-linux-amd64 geth-linux-mips64 geth-linux-mips64le
+.PHONY: geth-linux-arm geth-linux-arm-5 geth-linux-arm-6 geth-linux-arm-7 geth-linux-arm64
+.PHONY: geth-darwin geth-darwin-386 geth-darwin-amd64
+.PHONY: geth-windows geth-windows-386 geth-windows-amd64
+
 GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
-pirl:
-	build/env.sh go run build/ci.go install ./cmd/pirl
+geth:
+	build/env.sh go run build/ci.go install ./cmd/geth
 	@echo "Done building."
-	@echo "Run \"$(GOBIN)/pirl\" to launch pirl."
+	@echo "Run \"$(GOBIN)/geth\" to launch geth."
 
 swarm:
 	build/env.sh go run build/ci.go install ./cmd/swarm
@@ -27,17 +27,21 @@ all:
 android:
 	build/env.sh go run build/ci.go aar --local
 	@echo "Done building."
-	@echo "Import \"$(GOBIN)/pirl.aar\" to use the library."
+	@echo "Import \"$(GOBIN)/geth.aar\" to use the library."
 
 ios:
 	build/env.sh go run build/ci.go xcode --local
 	@echo "Done building."
-	@echo "Import \"$(GOBIN)/pirl.framework\" to use the library."
+	@echo "Import \"$(GOBIN)/Geth.framework\" to use the library."
 
 test: all
 	build/env.sh go run build/ci.go test
 
+lint: ## Run linters.
+	build/env.sh go run build/ci.go lint
+
 clean:
+	./build/clean_go_build_cache.sh
 	rm -fr build/_workspace/pkg/ $(GOBIN)/*
 
 # The devtools target installs tools required for 'go generate'.
@@ -53,94 +57,97 @@ devtools:
 	@type "solc" 2> /dev/null || echo 'Please install solc'
 	@type "protoc" 2> /dev/null || echo 'Please install protoc'
 
+swarm-devtools:
+	env GOBIN= go install ./cmd/swarm/mimegen
+
 # Cross Compilation Targets (xgo)
 
-pirl-cross: pirl-linux pirl-darwin pirl-windows pirl-android pirl-ios
+geth-cross: geth-linux geth-darwin geth-windows geth-android geth-ios
 	@echo "Full cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-*
+	@ls -ld $(GOBIN)/geth-*
 
-pirl-linux: pirl-linux-386 pirl-linux-amd64 pirl-linux-arm pirl-linux-mips64 pirl-linux-mips64le
+geth-linux: geth-linux-386 geth-linux-amd64 geth-linux-arm geth-linux-mips64 geth-linux-mips64le
 	@echo "Linux cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-*
+	@ls -ld $(GOBIN)/geth-linux-*
 
-pirl-linux-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/386 -v ./cmd/pirl
+geth-linux-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/386 -v ./cmd/geth
 	@echo "Linux 386 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep 386
+	@ls -ld $(GOBIN)/geth-linux-* | grep 386
 
-pirl-linux-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/amd64 -v ./cmd/pirl
+geth-linux-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/amd64 -v ./cmd/geth
 	@echo "Linux amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep amd64
+	@ls -ld $(GOBIN)/geth-linux-* | grep amd64
 
-pirl-linux-arm: pirl-linux-arm-5 pirl-linux-arm-6 pirl-linux-arm-7 pirl-linux-arm64
+geth-linux-arm: geth-linux-arm-5 geth-linux-arm-6 geth-linux-arm-7 geth-linux-arm64
 	@echo "Linux ARM cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep arm
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm
 
-pirl-linux-arm-5:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-5 -v ./cmd/pirl
+geth-linux-arm-5:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-5 -v ./cmd/geth
 	@echo "Linux ARMv5 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep arm-5
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm-5
 
-pirl-linux-arm-6:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-6 -v ./cmd/pirl
+geth-linux-arm-6:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-6 -v ./cmd/geth
 	@echo "Linux ARMv6 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep arm-6
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm-6
 
-pirl-linux-arm-7:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-7 -v ./cmd/pirl
+geth-linux-arm-7:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-7 -v ./cmd/geth
 	@echo "Linux ARMv7 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep arm-7
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm-7
 
-pirl-linux-arm64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm64 -v ./cmd/pirl
+geth-linux-arm64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm64 -v ./cmd/geth
 	@echo "Linux ARM64 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep arm64
+	@ls -ld $(GOBIN)/geth-linux-* | grep arm64
 
-pirl-linux-mips:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips --ldflags '-extldflags "-static"' -v ./cmd/pirl
+geth-linux-mips:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPS cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep mips
+	@ls -ld $(GOBIN)/geth-linux-* | grep mips
 
-pirl-linux-mipsle:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mipsle --ldflags '-extldflags "-static"' -v ./cmd/pirl
+geth-linux-mipsle:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mipsle --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPSle cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep mipsle
+	@ls -ld $(GOBIN)/geth-linux-* | grep mipsle
 
-pirl-linux-mips64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64 --ldflags '-extldflags "-static"' -v ./cmd/pirl
+geth-linux-mips64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64 --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPS64 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep mips64
+	@ls -ld $(GOBIN)/geth-linux-* | grep mips64
 
-pirl-linux-mips64le:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64le --ldflags '-extldflags "-static"' -v ./cmd/pirl
+geth-linux-mips64le:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64le --ldflags '-extldflags "-static"' -v ./cmd/geth
 	@echo "Linux MIPS64le cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-linux-* | grep mips64le
+	@ls -ld $(GOBIN)/geth-linux-* | grep mips64le
 
-pirl-darwin: pirl-darwin-386 pirl-darwin-amd64
+geth-darwin: geth-darwin-386 geth-darwin-amd64
 	@echo "Darwin cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-darwin-*
+	@ls -ld $(GOBIN)/geth-darwin-*
 
-pirl-darwin-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/386 -v ./cmd/pirl
+geth-darwin-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/386 -v ./cmd/geth
 	@echo "Darwin 386 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-darwin-* | grep 386
+	@ls -ld $(GOBIN)/geth-darwin-* | grep 386
 
-pirl-darwin-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/amd64 -v ./cmd/pirl
+geth-darwin-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/amd64 -v ./cmd/geth
 	@echo "Darwin amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-darwin-* | grep amd64
+	@ls -ld $(GOBIN)/geth-darwin-* | grep amd64
 
-pirl-windows: pirl-windows-386 pirl-windows-amd64
+geth-windows: geth-windows-386 geth-windows-amd64
 	@echo "Windows cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-windows-*
+	@ls -ld $(GOBIN)/geth-windows-*
 
-pirl-windows-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/386 -v ./cmd/pirl
+geth-windows-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/386 -v ./cmd/geth
 	@echo "Windows 386 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-windows-* | grep 386
+	@ls -ld $(GOBIN)/geth-windows-* | grep 386
 
-pirl-windows-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/pirl
+geth-windows-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/geth
 	@echo "Windows amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/pirl-windows-* | grep amd64
+	@ls -ld $(GOBIN)/geth-windows-* | grep amd64

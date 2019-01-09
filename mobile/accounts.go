@@ -23,10 +23,10 @@ import (
 	"errors"
 	"time"
 
-	"git.pirl.io/community/pirl/accounts"
-	"git.pirl.io/community/pirl/accounts/keystore"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/crypto"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 const (

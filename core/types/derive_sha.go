@@ -19,9 +19,9 @@ package types
 import (
 	"bytes"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/rlp"
-	"git.pirl.io/community/pirl/trie"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/trie"
 )
 
 type DerivableList interface {

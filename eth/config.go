@@ -24,13 +24,13 @@ import (
 	"runtime"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/hexutil"
-	"git.pirl.io/community/pirl/consensus/ethash"
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/eth/downloader"
-	"git.pirl.io/community/pirl/eth/gasprice"
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/consensus/ethash"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/eth/downloader"
+	"github.com/ethereum/go-ethereum/eth/gasprice"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 // DefaultConfig contains default settings for use on the Ethereum main net.
@@ -43,12 +43,16 @@ var DefaultConfig = Config{
 		DatasetsInMem:  1,
 		DatasetsOnDisk: 2,
 	},
-	NetworkId:     3125659152,
-	LightPeers:    100,
-	DatabaseCache: 768,
-	TrieCache:     256,
-	TrieTimeout:   5 * time.Minute,
-	GasPrice:      big.NewInt(1 * params.Shannon),
+	NetworkId:      1,
+	LightPeers:     100,
+	DatabaseCache:  512,
+	TrieCleanCache: 256,
+	TrieDirtyCache: 256,
+	TrieTimeout:    60 * time.Minute,
+	MinerGasFloor:  8000000,
+	MinerGasCeil:   8000000,
+	MinerGasPrice:  big.NewInt(params.GWei),
+	MinerRecommit:  3 * time.Second,
 
 	TxPool: core.DefaultTxPoolConfig,
 	GPO: gasprice.Config{
@@ -65,9 +69,9 @@ func init() {
 		}
 	}
 	if runtime.GOOS == "windows" {
-		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, "AppData", "Pirl")
+		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, "AppData", "Ethash")
 	} else {
-		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, ".pirl")
+		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, ".ethash")
 	}
 }
 
@@ -83,6 +87,9 @@ type Config struct {
 	SyncMode  downloader.SyncMode
 	NoPruning bool
 
+	// Whitelist of required block number -> hash values to accept
+	Whitelist map[uint64]common.Hash `toml:"-"`
+
 	// Light client options
 	LightServ  int `toml:",omitempty"` // Maximum percentage of time allowed for serving LES requests
 	LightPeers int `toml:",omitempty"` // Maximum number of LES client peers
@@ -91,14 +98,19 @@ type Config struct {
 	SkipBcVersionCheck bool `toml:"-"`
 	DatabaseHandles    int  `toml:"-"`
 	DatabaseCache      int
-	TrieCache          int
+	TrieCleanCache     int
+	TrieDirtyCache     int
 	TrieTimeout        time.Duration
 
 	// Mining-related options
-	Etherbase    common.Address `toml:",omitempty"`
-	MinerThreads int            `toml:",omitempty"`
-	ExtraData    []byte         `toml:",omitempty"`
-	GasPrice     *big.Int
+	Etherbase      common.Address `toml:",omitempty"`
+	MinerNotify    []string       `toml:",omitempty"`
+	MinerExtraData []byte         `toml:",omitempty"`
+	MinerGasFloor  uint64
+	MinerGasCeil   uint64
+	MinerGasPrice  *big.Int
+	MinerRecommit  time.Duration
+	MinerNoverify  bool
 
 	// Ethash options
 	Ethash ethash.Config
@@ -114,8 +126,17 @@ type Config struct {
 
 	// Miscellaneous options
 	DocRoot string `toml:"-"`
+
+	// Type of the EWASM interpreter ("" for default)
+	EWASMInterpreter string
+
+	// Type of the EVM interpreter ("" for default)
+	EVMInterpreter string
+
+	// Constantinople block override (TODO: remove after the fork)
+	ConstantinopleOverride *big.Int
 }
 
 type configMarshaling struct {
-	ExtraData hexutil.Bytes
+	MinerExtraData hexutil.Bytes
 }

@@ -22,12 +22,12 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/eth/downloader"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/eth/downloader"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 func init() {
@@ -116,7 +116,7 @@ func testRecvTransactions(t *testing.T, protocol int) {
 			t.Errorf("added wrong tx hash: got %v, want %v", added[0].Hash(), tx.Hash())
 		}
 	case <-time.After(2 * time.Second):
-		t.Errorf("no TxPreEvent received within 2 seconds")
+		t.Errorf("no NewTxsEvent received within 2 seconds")
 	}
 }
 

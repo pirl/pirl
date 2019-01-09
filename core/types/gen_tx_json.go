@@ -7,8 +7,8 @@ import (
 	"errors"
 	"math/big"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/hexutil"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 var _ = (*txdataMarshaling)(nil)

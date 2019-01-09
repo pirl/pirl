@@ -22,7 +22,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"git.pirl.io/community/pirl/core/asm"
+	"github.com/ethereum/go-ethereum/core/asm"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -44,7 +44,7 @@ func disasmCmd(ctx *cli.Context) error {
 		return err
 	}
 
-	code := strings.TrimSpace(string(in[:]))
+	code := strings.TrimSpace(string(in))
 	fmt.Printf("%v\n", code)
 	return asm.PrintDisassembled(code)
 }

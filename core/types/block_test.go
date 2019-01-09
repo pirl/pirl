@@ -23,8 +23,8 @@ import (
 	"reflect"
 	"testing"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 // from bcValidBlockTest.json, "SimpleTx"

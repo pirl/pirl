@@ -21,12 +21,12 @@ import (
 	"errors"
 	"fmt"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/state"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/trie"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/trie"
 )
 
 func NewState(ctx context.Context, head *types.Header, odr OdrBackend) *state.StateDB {
@@ -108,7 +108,7 @@ func (t *odrTrie) TryGet(key []byte) ([]byte, error) {
 func (t *odrTrie) TryUpdate(key, value []byte) error {
 	key = crypto.Keccak256(key)
 	return t.do(key, func() error {
-		return t.trie.TryDelete(key)
+		return t.trie.TryUpdate(key, value)
 	})
 }
 

@@ -7,8 +7,8 @@ import (
 	"errors"
 	"math/big"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/math"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/math"
 )
 
 var _ = (*stEnvMarshaling)(nil)

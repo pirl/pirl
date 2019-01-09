@@ -24,17 +24,17 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/consensus/ethash"
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/consensus/ethash"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 var (
-	testdb, _    = ethdb.NewMemDatabase()
+	testdb       = ethdb.NewMemDatabase()
 	testKey, _   = crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")
 	testAddress  = crypto.PubkeyToAddress(testKey.PublicKey)
 	genesis      = core.GenesisBlockForTesting(testdb, testAddress, big.NewInt(1000000000))
@@ -198,7 +198,7 @@ func (f *fetcherTester) makeBodyFetcher(peer string, blocks map[common.Hash]*typ
 	}
 }
 
-// verifyFetchingEvent verifies that one single event arrive on an fetching channel.
+// verifyFetchingEvent verifies that one single event arrive on a fetching channel.
 func verifyFetchingEvent(t *testing.T, fetching chan []common.Hash, arrive bool) {
 	if arrive {
 		select {

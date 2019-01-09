@@ -19,7 +19,7 @@ package event_test
 import (
 	"fmt"
 
-	"git.pirl.io/community/pirl/event"
+	"github.com/ethereum/go-ethereum/event"
 )
 
 func ExampleNewSubscription() {

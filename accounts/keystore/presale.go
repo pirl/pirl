@@ -25,8 +25,8 @@ import (
 	"errors"
 	"fmt"
 
-	"git.pirl.io/community/pirl/accounts"
-	"git.pirl.io/community/pirl/crypto"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pborman/uuid"
 	"golang.org/x/crypto/pbkdf2"
 )
@@ -38,7 +38,13 @@ func importPreSaleKey(keyStore keyStore, keyJSON []byte, password string) (accou
 		return accounts.Account{}, nil, err
 	}
 	key.Id = uuid.NewRandom()
-	a := accounts.Account{Address: key.Address, URL: accounts.URL{Scheme: KeyStoreScheme, Path: keyStore.JoinPath(keyFileName(key.Address))}}
+	a := accounts.Account{
+		Address: key.Address,
+		URL: accounts.URL{
+			Scheme: KeyStoreScheme,
+			Path:   keyStore.JoinPath(keyFileName(key.Address)),
+		},
+	}
 	err = keyStore.StoreKey(a.URL.Path, key, password)
 	return a, key, err
 }

@@ -17,8 +17,8 @@
 package les
 
 import (
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/p2p"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/p2p"
 )
 
 var (
@@ -58,10 +58,10 @@ var (
 		reqReceiptInTrafficMeter  = metrics.NewMeter("eth/req/receipts/in/traffic")
 		reqReceiptOutPacketsMeter = metrics.NewMeter("eth/req/receipts/out/packets")
 		reqReceiptOutTrafficMeter = metrics.NewMeter("eth/req/receipts/out/traffic")*/
-	miscInPacketsMeter  = metrics.NewMeter("les/misc/in/packets")
-	miscInTrafficMeter  = metrics.NewMeter("les/misc/in/traffic")
-	miscOutPacketsMeter = metrics.NewMeter("les/misc/out/packets")
-	miscOutTrafficMeter = metrics.NewMeter("les/misc/out/traffic")
+	miscInPacketsMeter  = metrics.NewRegisteredMeter("les/misc/in/packets", nil)
+	miscInTrafficMeter  = metrics.NewRegisteredMeter("les/misc/in/traffic", nil)
+	miscOutPacketsMeter = metrics.NewRegisteredMeter("les/misc/out/packets", nil)
+	miscOutTrafficMeter = metrics.NewRegisteredMeter("les/misc/out/traffic", nil)
 )
 
 // meteredMsgReadWriter is a wrapper around a p2p.MsgReadWriter, capable of

@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"os"
 
-	"git.pirl.io/community/pirl/cmd/utils"
+	"github.com/ethereum/go-ethereum/cmd/utils"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -86,10 +86,6 @@ var (
 		Name:  "create",
 		Usage: "indicates the action should be create rather than call",
 	}
-	DisableGasMeteringFlag = cli.BoolFlag{
-		Name:  "nogasmetering",
-		Usage: "disable gas metering",
-	}
 	GenesisFlag = cli.StringFlag{
 		Name:  "prestate",
 		Usage: "JSON file with prestate (genesis) config",
@@ -128,7 +124,6 @@ func init() {
 		ValueFlag,
 		DumpFlag,
 		InputFlag,
-		DisableGasMeteringFlag,
 		MemProfileFlag,
 		CPUProfileFlag,
 		StatDumpFlag,

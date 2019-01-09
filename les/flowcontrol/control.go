@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/common/mclock"
+	"github.com/ethereum/go-ethereum/common/mclock"
 )
 
 const fcTimeConst = time.Millisecond
@@ -82,7 +82,6 @@ func (peer *ClientNode) RequestProcessed(cost uint64) (bv, realCost uint64) {
 	time := mclock.Now()
 	peer.recalcBV(time)
 	peer.bufValue -= cost
-	peer.recalcBV(time)
 	rcValue, rcost := peer.cm.processed(peer.cmNode, time)
 	if rcValue < peer.params.BufLimit {
 		bv := peer.params.BufLimit - rcValue

@@ -30,8 +30,8 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/accounts/keystore"
-	"git.pirl.io/community/pirl/core/types"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // Tests that the account management snippets work correctly.

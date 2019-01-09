@@ -22,7 +22,7 @@ import (
 	"testing"
 
 	"github.com/docker/docker/pkg/reexec"
-	"git.pirl.io/community/pirl/internal/cmdtest"
+	"github.com/ethereum/go-ethereum/internal/cmdtest"
 )
 
 type testEthkey struct {

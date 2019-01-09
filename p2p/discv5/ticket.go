@@ -25,10 +25,10 @@ import (
 	"sort"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/mclock"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/mclock"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 const (
@@ -304,8 +304,8 @@ func (s ticketRefByWaitTime) Len() int {
 	return len(s)
 }
 
-func (r ticketRef) waitTime() mclock.AbsTime {
-	return r.t.regTime[r.idx] - r.t.issueTime
+func (ref ticketRef) waitTime() mclock.AbsTime {
+	return ref.t.regTime[ref.idx] - ref.t.issueTime
 }
 
 // Less reports whether the element with

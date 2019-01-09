@@ -22,10 +22,10 @@ import (
 	"math/big"
 	"strings"
 
-	"git.pirl.io/community/pirl/accounts/abi"
-	"git.pirl.io/community/pirl/accounts/abi/bind"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // Signer is an interaface defining the callback when a contract requires a
@@ -154,12 +154,20 @@ func (c *BoundContract) GetDeployer() *Transaction {
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result.
 func (c *BoundContract) Call(opts *CallOpts, out *Interfaces, method string, args *Interfaces) error {
-	results := make([]interface{}, len(out.objects))
-	copy(results, out.objects)
-	if err := c.contract.Call(&opts.opts, &results, method, args.objects...); err != nil {
-		return err
+	if len(out.objects) == 1 {
+		result := out.objects[0]
+		if err := c.contract.Call(&opts.opts, result, method, args.objects...); err != nil {
+			return err
+		}
+		out.objects[0] = result
+	} else {
+		results := make([]interface{}, len(out.objects))
+		copy(results, out.objects)
+		if err := c.contract.Call(&opts.opts, &results, method, args.objects...); err != nil {
+			return err
+		}
+		copy(out.objects, results)
 	}
-	copy(out.objects, results)
 	return nil
 }
 

@@ -21,7 +21,7 @@ import (
 	"sort"
 	"sync"
 
-	"git.pirl.io/community/pirl/event"
+	"github.com/ethereum/go-ethereum/event"
 )
 
 // Manager is an overarching account manager that can communicate with various

@@ -18,19 +18,18 @@
 package les
 
 import (
-	"bytes"
 	"crypto/ecdsa"
-	"crypto/elliptic"
 	"errors"
 	"fmt"
 	"io"
 	"math/big"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/crypto/secp256k1"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/rawdb"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 // Constants to match up protocol versions and messages
@@ -147,22 +146,20 @@ func (a *announceData) sign(privKey *ecdsa.PrivateKey) {
 }
 
 // checkSignature verifies if the block announcement has a valid signature by the given pubKey
-func (a *announceData) checkSignature(pubKey *ecdsa.PublicKey) error {
+func (a *announceData) checkSignature(id enode.ID) error {
 	var sig []byte
 	if err := a.Update.decode().get("sign", &sig); err != nil {
 		return err
 	}
 	rlp, _ := rlp.EncodeToBytes(announceBlock{a.Hash, a.Number, a.Td})
-	recPubkey, err := secp256k1.RecoverPubkey(crypto.Keccak256(rlp), sig)
+	recPubkey, err := crypto.SigToPub(crypto.Keccak256(rlp), sig)
 	if err != nil {
 		return err
 	}
-	pbytes := elliptic.Marshal(pubKey.Curve, pubKey.X, pubKey.Y)
-	if bytes.Equal(pbytes, recPubkey) {
+	if id == enode.PubkeyToIDV4(recPubkey) {
 		return nil
-	} else {
-		return errors.New("Wrong signature")
 	}
+	return errors.New("wrong signature")
 }
 
 type blockInfo struct {
@@ -224,6 +221,6 @@ type proofsData [][]rlp.RawValue
 
 type txStatus struct {
 	Status core.TxStatus
-	Lookup *core.TxLookupEntry `rlp:"nil"`
+	Lookup *rawdb.TxLookupEntry `rlp:"nil"`
 	Error  string
 }

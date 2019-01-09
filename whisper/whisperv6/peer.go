@@ -19,13 +19,14 @@ package whisperv6
 import (
 	"fmt"
 	"math"
+	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/rlp"
-	set "gopkg.in/fatih/set.v0"
+	mapset "github.com/deckarep/golang-set"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 // Peer represents a whisper protocol peer connection.
@@ -36,10 +37,11 @@ type Peer struct {
 
 	trusted        bool
 	powRequirement float64
+	bloomMu        sync.Mutex
 	bloomFilter    []byte
 	fullNode       bool
 
-	known *set.Set // Messages already known by the peer to avoid wasting bandwidth
+	known mapset.Set // Messages already known by the peer to avoid wasting bandwidth
 
 	quit chan struct{}
 }
@@ -52,9 +54,9 @@ func newPeer(host *Whisper, remote *p2p.Peer, rw p2p.MsgReadWriter) *Peer {
 		ws:             rw,
 		trusted:        false,
 		powRequirement: 0.0,
-		known:          set.New(),
+		known:          mapset.NewSet(),
 		quit:           make(chan struct{}),
-		bloomFilter:    makeFullNodeBloom(),
+		bloomFilter:    MakeFullNodeBloom(),
 		fullNode:       true,
 	}
 }
@@ -77,11 +79,14 @@ func (peer *Peer) stop() {
 func (peer *Peer) handshake() error {
 	// Send the handshake status message asynchronously
 	errc := make(chan error, 1)
+	isLightNode := peer.host.LightClientMode()
+	isRestrictedLightNodeConnection := peer.host.LightClientModeConnectionRestricted()
 	go func() {
 		pow := peer.host.MinPow()
 		powConverted := math.Float64bits(pow)
 		bloom := peer.host.BloomFilter()
-		errc <- p2p.SendItems(peer.ws, statusCode, ProtocolVersion, powConverted, bloom)
+
+		errc <- p2p.SendItems(peer.ws, statusCode, ProtocolVersion, powConverted, bloom, isLightNode)
 	}()
 
 	// Fetch the remote status packet and verify protocol match
@@ -118,11 +123,16 @@ func (peer *Peer) handshake() error {
 		err = s.Decode(&bloom)
 		if err == nil {
 			sz := len(bloom)
-			if sz != bloomFilterSize && sz != 0 {
+			if sz != BloomFilterSize && sz != 0 {
 				return fmt.Errorf("peer [%x] sent bad status message: wrong bloom filter size %d", peer.ID(), sz)
 			}
 			peer.setBloomFilter(bloom)
 		}
+	}
+
+	isRemotePeerLightNode, err := s.Bool()
+	if isRemotePeerLightNode && isLightNode && isRestrictedLightNodeConnection {
+		return fmt.Errorf("peer [%x] is useless: two light client communication restricted", peer.ID())
 	}
 
 	if err := <-errc; err != nil {
@@ -163,7 +173,7 @@ func (peer *Peer) mark(envelope *Envelope) {
 
 // marked checks if an envelope is already known to the remote peer.
 func (peer *Peer) marked(envelope *Envelope) bool {
-	return peer.known.Has(envelope.Hash())
+	return peer.known.Contains(envelope.Hash())
 }
 
 // expire iterates over all the known envelopes in the host and removes all
@@ -225,20 +235,24 @@ func (peer *Peer) notifyAboutBloomFilterChange(bloom []byte) error {
 }
 
 func (peer *Peer) bloomMatch(env *Envelope) bool {
-	return peer.fullNode || bloomFilterMatch(peer.bloomFilter, env.Bloom())
+	peer.bloomMu.Lock()
+	defer peer.bloomMu.Unlock()
+	return peer.fullNode || BloomFilterMatch(peer.bloomFilter, env.Bloom())
 }
 
 func (peer *Peer) setBloomFilter(bloom []byte) {
+	peer.bloomMu.Lock()
+	defer peer.bloomMu.Unlock()
 	peer.bloomFilter = bloom
 	peer.fullNode = isFullNode(bloom)
 	if peer.fullNode && peer.bloomFilter == nil {
-		peer.bloomFilter = makeFullNodeBloom()
+		peer.bloomFilter = MakeFullNodeBloom()
 	}
 }
 
-func makeFullNodeBloom() []byte {
-	bloom := make([]byte, bloomFilterSize)
-	for i := 0; i < bloomFilterSize; i++ {
+func MakeFullNodeBloom() []byte {
+	bloom := make([]byte, BloomFilterSize)
+	for i := 0; i < BloomFilterSize; i++ {
 		bloom[i] = 0xFF
 	}
 	return bloom

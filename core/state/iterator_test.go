@@ -20,8 +20,8 @@ import (
 	"bytes"
 	"testing"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/ethdb"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethdb"
 )
 
 // Tests that the node iterator indeed walks over the entire database contents.

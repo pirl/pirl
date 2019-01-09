@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"log"
 
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/rpc"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rpc"
 )
 
 // SampleService is a trivial network service that can be attached to a node for

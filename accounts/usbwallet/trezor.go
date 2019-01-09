@@ -27,12 +27,12 @@ import (
 	"io"
 	"math/big"
 
-	"git.pirl.io/community/pirl/accounts"
-	"git.pirl.io/community/pirl/accounts/usbwallet/internal/trezor"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/hexutil"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/usbwallet/internal/trezor"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -221,7 +221,7 @@ func (w *trezorDriver) trezorSign(derivationPath []uint32, tx *types.Transaction
 		signer = new(types.HomesteadSigner)
 	} else {
 		signer = types.NewEIP155Signer(chainID)
-		signature[64] = signature[64] - byte(chainID.Uint64()*2+35)
+		signature[64] -= byte(chainID.Uint64()*2 + 35)
 	}
 	// Inject the final signature into the transaction and sanity check the sender
 	signed, err := tx.WithSignature(signer, signature)

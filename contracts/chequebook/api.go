@@ -20,7 +20,7 @@ import (
 	"errors"
 	"math/big"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 const Version = "1.0"

@@ -20,9 +20,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/rlp"
-	"git.pirl.io/community/pirl/trie"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/trie"
 )
 
 type DumpAccount struct {
@@ -53,7 +53,7 @@ func (self *StateDB) RawDump() Dump {
 			panic(err)
 		}
 
-		obj := newObject(nil, common.BytesToAddress(addr), data, nil)
+		obj := newObject(nil, common.BytesToAddress(addr), data)
 		account := DumpAccount{
 			Balance:  data.Balance.String(),
 			Nonce:    data.Nonce,

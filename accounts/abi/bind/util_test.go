@@ -22,12 +22,12 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/accounts/abi/bind"
-	"git.pirl.io/community/pirl/accounts/abi/bind/backends"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/crypto"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 var testKey, _ = crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")
@@ -53,9 +53,11 @@ var waitDeployedTests = map[string]struct {
 
 func TestWaitDeployed(t *testing.T) {
 	for name, test := range waitDeployedTests {
-		backend := backends.NewSimulatedBackend(core.GenesisAlloc{
-			crypto.PubkeyToAddress(testKey.PublicKey): {Balance: big.NewInt(10000000000)},
-		})
+		backend := backends.NewSimulatedBackend(
+			core.GenesisAlloc{
+				crypto.PubkeyToAddress(testKey.PublicKey): {Balance: big.NewInt(10000000000)},
+			}, 10000000,
+		)
 
 		// Create the transaction.
 		tx := types.NewContractCreation(0, big.NewInt(0), test.gas, big.NewInt(1), common.FromHex(test.code))
