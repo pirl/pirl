@@ -1222,9 +1222,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 	errChain := bc.checkChainForAttack(chain)
-	if errChain != nil {
-		fmt.Println(errChain.Error())
-	}
+	
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
