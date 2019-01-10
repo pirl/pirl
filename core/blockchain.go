@@ -1240,11 +1240,14 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		// Wait for the block's verification to complete
 		bstart := time.Now()
 		err := <-results
-		err = errChain
-		if err == nil  {
+		
+		if err == nil && errChain == nil  {
 			err = bc.Validator().ValidateBody(block)
 		}
 		switch {
+		case errChain == ErrDelayTooHigh:
+		    bc.reportBlock(block, nil, errChain)
+		    continue
 		case err == ErrKnownBlock:
 			// Block and state both already known. However if the current block is below
 			// this number we did a rollback and we should reimport it nonetheless.
