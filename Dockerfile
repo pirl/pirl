@@ -15,5 +15,5 @@ COPY --from=builder /pirl/build/bin/pirl /usr/local/bin/
 
 ADD start.sh /root/start.sh
 
-EXPOSE 8545 8546 30303 30303/udp 30304/udp
+EXPOSE 6588 6589 30303 30303/udp 30304/udp
 ENTRYPOINT /root/start.sh
