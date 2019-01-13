@@ -19,7 +19,7 @@ package tests
 import (
 	"testing"
 
-	"github.com/ethereum/go-ethereum/core/vm"
+	"git.pirl.io/community/pirl/core/vm"
 )
 
 func TestVM(t *testing.T) {

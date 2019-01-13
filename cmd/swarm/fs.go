@@ -23,10 +23,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm/fuse"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm/fuse"
 	"gopkg.in/urfave/cli.v1"
 )
 

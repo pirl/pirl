@@ -27,10 +27,10 @@ import (
 	"time"
 
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm"
-	"github.com/ethereum/go-ethereum/swarm/api"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm"
+	"git.pirl.io/community/pirl/swarm/api"
 )
 
 func TestConfigDump(t *testing.T) {

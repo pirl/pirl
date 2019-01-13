@@ -19,7 +19,7 @@
 package ethdb_test
 
 import (
-	"github.com/ethereum/go-ethereum/ethdb"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 var _ ethdb.Database = &ethdb.LDBDatabase{}

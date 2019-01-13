@@ -24,7 +24,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 const testDataSize = 0x0001000

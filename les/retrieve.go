@@ -26,8 +26,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/light"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/light"
 )
 
 var (

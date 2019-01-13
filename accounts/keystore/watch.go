@@ -21,7 +21,7 @@ package keystore
 import (
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/log"
 	"github.com/rjeczalik/notify"
 )
 

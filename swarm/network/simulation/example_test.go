@@ -19,8 +19,8 @@ package simulation_test
 import (
 	"context"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/network/simulation"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/network/simulation"
 )
 
 // Every node can have a Kademlia associated using the node bucket under

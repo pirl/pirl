@@ -20,7 +20,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/params"
 )
 
 func TestTransaction(t *testing.T) {

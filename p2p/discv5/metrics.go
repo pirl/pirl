@@ -1,6 +1,6 @@
 package discv5
 
-import "github.com/ethereum/go-ethereum/metrics"
+import "git.pirl.io/community/pirl/metrics"
 
 var (
 	ingressTrafficMeter = metrics.NewRegisteredMeter("discv5/InboundTraffic", nil)

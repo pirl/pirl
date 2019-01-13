@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 8.0.0), golang-1.10
 Standards-Version: 3.9.5
 Homepage: https://ethereum.org
 Vcs-Git: git://git.pirl.io/community/pirl.git
-Vcs-Browser: https://github.com/ethereum/go-ethereum
+Vcs-Browser: https://git.pirl.io/community/pirl
 
 Package: {{.Name}}
 Architecture: any

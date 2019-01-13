@@ -21,11 +21,11 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Constants to match up protocol versions and messages
