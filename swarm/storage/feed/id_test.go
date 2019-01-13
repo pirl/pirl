@@ -3,7 +3,7 @@ package feed
 import (
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm/storage/feed/lookup"
+	"git.pirl.io/community/pirl/swarm/storage/feed/lookup"
 )
 
 func getTestID() *ID {
