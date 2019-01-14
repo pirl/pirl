@@ -30,7 +30,6 @@ import (
 	"unicode"
 
 	"git.pirl.io/community/pirl/accounts/abi"
-
 )
 
 // Lang is a target programming language selector to generate bindings for.
