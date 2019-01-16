@@ -91,7 +91,7 @@ Specifying the `--testnet` flag however will reconfigure your Geth instance a bi
    itself one level deeper into a `testnet` subfolder (`~/.pirl/testnet` on Linux). Note, on OSX
    and Linux this also means that attaching to a running testnet node requires the use of a custom
    endpoint since `pirl attach` will try to attach to a production node endpoint by default. E.g.
-   `geth attach <datadir>/testnet/pirl.ipc`. Windows users are not affected by this.
+   `pirl attach <datadir>/testnet/pirl.ipc`. Windows users are not affected by this.
  * Instead of connecting the main Ethereum network, the client will connect to the test network,
    which uses different P2P bootnodes, different network IDs and genesis states.
    
