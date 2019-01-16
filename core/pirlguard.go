@@ -31,7 +31,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	err := errors.New("")
 	err = nil
 	timeMap := make(map[uint64]int64)
-	tipOfTheMainChain := bc.currentBlock.NumberU64()
+	tipOfTheMainChain := bc.CurrentBlock().NumberU64()
 
 
 
@@ -46,7 +46,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	}
 
 
-	if len(blocks) > 0 && bc.currentBlock.NumberU64() > uint64(params.TimeCapsuleBlock) {
+	if len(blocks) > 0 && bc.CurrentBlock().NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
 			for _, b := range blocks {
 				timeMap[b.NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, b.NumberU64())
@@ -138,4 +138,3 @@ type PairList []Pair
 func (p PairList) Len() int           { return len(p) }
 func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PairList) Less(i, j int) bool { return p[i].Key < p[j].Key }
-S
