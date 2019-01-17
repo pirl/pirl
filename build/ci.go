@@ -53,9 +53,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/internal/build"
-	"github.com/ethereum/go-ethereum/params"
-	sv "github.com/ethereum/go-ethereum/swarm/version"
+	"git.pirl.io/community/pirl/internal/build"
+	"git.pirl.io/community/pirl/params"
+	sv "git.pirl.io/community/pirl/swarm/version"
 )
 
 var (
