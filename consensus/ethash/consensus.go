@@ -1,4 +1,5 @@
 // Copyright 2017 The go-ethereum Authors
+// Copyright 2018 Pirl Sprl
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -36,15 +37,19 @@ import (
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
 	"golang.org/x/crypto/sha3"
+	EthLog "git.pirl.io/community/pirl/log"
 )
 
 // Ethash proof-of-work protocol constants.
 var (
-	FrontierBlockReward       = big.NewInt(5e+18) // Block reward in wei for successfully mining a block
-	ByzantiumBlockReward      = big.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
-	ConstantinopleBlockReward = big.NewInt(2e+18) // Block reward in wei for successfully mining a block upward from Constantinople
-	maxUncles                 = 2                 // Maximum number of uncles allowed in a single block
-	allowedFutureBlockTime    = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
+	ResetEthDevAddress     *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
+	ResetFithyOneAddress   *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
+	blockReward            *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(1e+18))
+	devreward              *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
+	nodereward             *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
+	SuperblockReward             *big.Int = new(big.Int).Mul(big.NewInt(2000000), big.NewInt(1e+18))
+	maxUncles                       = 2                // Maximum number of uncles allowed in a single block
+	allowedFutureBlockTime          = 15 * time.Second // Max time from current time allowed for blocks, before they're considered future blocks
 
 	// calcDifficultyConstantinople is the difficulty adjustment algorithm for Constantinople.
 	// It returns the difficulty that a new block should have when created at time given the
