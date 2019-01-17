@@ -41,7 +41,7 @@ ADD genesis.json /genesis.json
 {{end}}
 RUN \
   echo 'pirl --cache 512 init /genesis.json' > pirl.sh && \{{if .Unlock}}
-	echo 'mkdir -p /root/.ethereum/keystore/ && cp /signer.json /root/.ethereum/keystore/' >> pirl.sh && \{{end}}
+	echo 'mkdir -p /root/.pirl/keystore/ && cp /signer.json /root/.pirl/keystore/' >> pirl.sh && \{{end}}
 	echo $'exec pirl --networkid {{.NetworkID}} --cache 512 --port {{.Port}} --nat extip:{{.IP}} --maxpeers {{.Peers}} {{.LightFlag}} --ethstats \'{{.Ethstats}}\' {{if .Bootnodes}}--bootnodes {{.Bootnodes}}{{end}} {{if .Etherbase}}--miner.etherbase {{.Etherbase}} --mine --miner.threads 1{{end}} {{if .Unlock}}--unlock 0 --password /signer.pass --mine{{end}} --miner.gastarget {{.GasTarget}} --miner.gaslimit {{.GasLimit}} --miner.gasprice {{.GasPrice}}' >> pirl.sh
 
 ENTRYPOINT ["/bin/sh", "pirl.sh"]
