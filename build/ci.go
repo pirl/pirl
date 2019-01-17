@@ -18,11 +18,8 @@
 
 /*
 The ci command is called from Continuous Integration scripts.
-
 Usage: go run build/ci.go <command> <command flags/arguments>
-
 Available commands are:
-
    install    [ -arch architecture ] [ -cc compiler ] [ packages... ]                          -- builds packages and executables
    test       [ -coverage ] [ packages... ]                                                    -- runs the tests
    lint                                                                                        -- runs certain pre-selected linters
@@ -34,9 +31,7 @@ Available commands are:
    xcode      [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an iOS XCode framework
    xgo        [ -alltools ] [ options ]                                                        -- cross builds according to options
    purge      [ -store blobstore ] [ -days threshold ]                                         -- purges old archives from the blobstore
-
 For all commands, -n prevents execution of external programs (dry run mode).
-
 */
 package main
 
