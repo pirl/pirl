@@ -14,8 +14,8 @@ GO ?= latest
 
 pirl:
     build/env.sh go run build/ci.go install ./cmd/pirl
-	@echo "Done building."
-	@echo "Run \"$(GOBIN)/pirl\" to launch pirl."
+    	@echo "Done building."
+    	@echo "Run \"$(GOBIN)/pirl\" to launch pirl."
 
 swarm:
 	build/env.sh go run build/ci.go install ./cmd/swarm
