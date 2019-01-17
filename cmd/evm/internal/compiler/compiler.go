@@ -20,7 +20,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/core/asm"
+	"git.pirl.io/community/pirl/core/asm"
 )
 
 func Compile(fn string, src []byte, debug bool) (string, error) {
