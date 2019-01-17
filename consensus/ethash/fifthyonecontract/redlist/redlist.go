@@ -432,3 +432,4 @@ func (_Redlist *RedlistFilterer) WatchAddressAddedToRedlist(opts *bind.WatchOpts
 		}
 	}), nil
 }
+

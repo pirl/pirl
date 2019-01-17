@@ -1,21 +1,5 @@
 package core
-// Copyright 2014 The go-ethereum Authors
-// Copyright 2018 Pirl Sprl
-// This file is part of the go-ethereum library modified with Pirl Security Protocol.
-//
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
-// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
+
 import (
 	"errors"
 	"git.pirl.io/community/pirl/core/types"
@@ -26,7 +10,23 @@ import (
 
 var syncStatus bool
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
-
+	// Copyright 2014 The go-ethereum Authors
+	// Copyright 2018 Pirl Sprl
+	// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+	//
+	// The go-ethereum library is free software: you can redistribute it and/or modify
+	// it under the terms of the GNU Lesser General Public License as published by
+	// the Free Software Foundation, either version 3 of the License, or
+	// (at your option) any later version.
+	//
+	// The go-ethereum library is distributed in the hope that it will be useful,
+	// but WITHOUT ANY WARRANTY; without even the implied warranty of
+	// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	// GNU Lesser General Public License for more details.
+	//
+	// You should have received a copy of the GNU Lesser General Public License
+	// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
+	// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
 
 	err := errors.New("")
 	err = nil
@@ -44,6 +44,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 			syncStatus = false
 		}
 	}
+
 
 	if len(blocks) > 0 && bc.CurrentBlock().NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
@@ -137,3 +138,5 @@ type PairList []Pair
 func (p PairList) Len() int           { return len(p) }
 func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p PairList) Less(i, j int) bool { return p[i].Key < p[j].Key }
+
+

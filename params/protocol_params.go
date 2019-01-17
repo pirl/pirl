@@ -87,7 +87,6 @@ const (
 	Bn256PairingPerPointGas uint64 = 80000  // Per-point price for an elliptic curve pairing check
 )
 
-
 var (
 	DifficultyBoundDivisor = big.NewInt(2048) // The bound divisor of the difficulty, used in the update calculations.
 	GenesisDifficulty = big.NewInt(131072)    // Difficulty of the Genesis block.
@@ -96,4 +95,5 @@ var (
 	DurationLimithulk     = big.NewInt(8)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 	TimeCapsuleBlock  = int64(2442442)
 	TimeCapsuleLength = uint64(20)            // Threshold of blocks that can be delayed and the value is in Blocks
+
 )

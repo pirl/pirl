@@ -18,8 +18,11 @@
 
 /*
 The ci command is called from Continuous Integration scripts.
+
 Usage: go run build/ci.go <command> <command flags/arguments>
+
 Available commands are:
+
    install    [ -arch architecture ] [ -cc compiler ] [ packages... ]                          -- builds packages and executables
    test       [ -coverage ] [ packages... ]                                                    -- runs the tests
    lint                                                                                        -- runs certain pre-selected linters
@@ -31,7 +34,9 @@ Available commands are:
    xcode      [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an iOS XCode framework
    xgo        [ -alltools ] [ options ]                                                        -- cross builds according to options
    purge      [ -store blobstore ] [ -days threshold ]                                         -- purges old archives from the blobstore
+
 For all commands, -n prevents execution of external programs (dry run mode).
+
 */
 package main
 
@@ -62,7 +67,7 @@ var (
 	// Files that end up in the geth*.zip archive.
 	gethArchiveFiles = []string{
 		"COPYING",
-		executablePath("pirl"),
+		executablePath("geth"),
 	}
 
 	// Files that end up in the geth-alltools*.zip archive.
@@ -71,7 +76,7 @@ var (
 		executablePath("abigen"),
 		executablePath("bootnode"),
 		executablePath("evm"),
-		executablePath("pirl"),
+		executablePath("geth"),
 		executablePath("puppeth"),
 		executablePath("rlpdump"),
 		executablePath("wnode"),
@@ -87,19 +92,19 @@ var (
 	debExecutables = []debExecutable{
 		{
 			BinaryName:  "abigen",
-			Description: "Source code generator to convert Pirl contract definitions into easy to use, compile-time type-safe Go packages.",
+			Description: "Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages.",
 		},
 		{
 			BinaryName:  "bootnode",
-			Description: "Pirl bootnode.",
+			Description: "Ethereum bootnode.",
 		},
 		{
 			BinaryName:  "evm",
 			Description: "Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
 		},
 		{
-			BinaryName:  "pirl",
-			Description: "Pirl CLI client.",
+			BinaryName:  "geth",
+			Description: "Ethereum CLI client.",
 		},
 		{
 			BinaryName:  "puppeth",
@@ -125,13 +130,13 @@ var (
 	}
 
 	debEthereum = debPackage{
-		Name:        "pirl",
+		Name:        "ethereum",
 		Version:     params.Version,
 		Executables: debExecutables,
 	}
 
 	debSwarm = debPackage{
-		Name:        "pirl-swarm",
+		Name:        "ethereum-swarm",
 		Version:     sv.Version,
 		Executables: debSwarmExecutables,
 	}
@@ -217,7 +222,7 @@ func doInstall(cmdline []string) {
 
 		if minor < 9 {
 			log.Println("You have Go version", runtime.Version())
-			log.Println("pirl requires at least Go version 1.9 and cannot")
+			log.Println("go-ethereum requires at least Go version 1.9 and cannot")
 			log.Println("be compiled with an earlier version. Please upgrade your Go installation.")
 			os.Exit(1)
 		}
@@ -396,8 +401,8 @@ func doArchive(cmdline []string) {
 		env = build.Env()
 
 		basegeth = archiveBasename(*arch, params.ArchiveVersion(env.Commit))
-		geth     = "pirl-" + basegeth + ext
-		alltools = "pirl-alltools-" + basegeth + ext
+		geth     = "geth-" + basegeth + ext
+		alltools = "geth-alltools-" + basegeth + ext
 
 		baseswarm = archiveBasename(*arch, sv.ArchiveVersion(env.Commit))
 		swarm     = "swarm-" + baseswarm + ext
@@ -529,7 +534,7 @@ func makeWorkdir(wdflag string) string {
 	if wdflag != "" {
 		err = os.MkdirAll(wdflag, 0744)
 	} else {
-		wdflag, err = ioutil.TempDir("", "pirl-build-")
+		wdflag, err = ioutil.TempDir("", "geth-build-")
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -646,7 +651,7 @@ func (meta debMetadata) ExeConflicts(exe debExecutable) string {
 		// be preferred and the conflicting files should be handled via
 		// alternates. We might do this eventually but using a conflict is
 		// easier now.
-		return "pirl, " + exe.Package()
+		return "ethereum, " + exe.Package()
 	}
 	return ""
 }
@@ -704,7 +709,7 @@ func doWindowsInstaller(cmdline []string) {
 			continue
 		}
 		allTools = append(allTools, filepath.Base(file))
-		if filepath.Base(file) == "pirl.exe" {
+		if filepath.Base(file) == "geth.exe" {
 			gethTool = file
 		} else {
 			devTools = append(devTools, file)
@@ -718,7 +723,7 @@ func doWindowsInstaller(cmdline []string) {
 		"Geth":     gethTool,
 		"DevTools": devTools,
 	}
-	build.Render("build/nsis.pirl.nsi", filepath.Join(*workdir, "pirl.nsi"), 0644, nil)
+	build.Render("build/nsis.geth.nsi", filepath.Join(*workdir, "geth.nsi"), 0644, nil)
 	build.Render("build/nsis.install.nsh", filepath.Join(*workdir, "install.nsh"), 0644, templateData)
 	build.Render("build/nsis.uninstall.nsh", filepath.Join(*workdir, "uninstall.nsh"), 0644, allTools)
 	build.Render("build/nsis.pathupdate.nsh", filepath.Join(*workdir, "PathUpdate.nsh"), 0644, nil)
@@ -733,14 +738,14 @@ func doWindowsInstaller(cmdline []string) {
 	if env.Commit != "" {
 		version[2] += "-" + env.Commit[:8]
 	}
-	installer, _ := filepath.Abs("pirl-" + archiveBasename(*arch, params.ArchiveVersion(env.Commit)) + ".exe")
+	installer, _ := filepath.Abs("geth-" + archiveBasename(*arch, params.ArchiveVersion(env.Commit)) + ".exe")
 	build.MustRunCommand("makensis.exe",
 		"/DOUTPUTFILE="+installer,
 		"/DMAJORVERSION="+version[0],
 		"/DMINORVERSION="+version[1],
 		"/DBUILDVERSION="+version[2],
 		"/DARCH="+*arch,
-		filepath.Join(*workdir, "pirl.nsi"),
+		filepath.Join(*workdir, "geth.nsi"),
 	)
 
 	// Sign and publish installer.
@@ -771,11 +776,11 @@ func doAndroidArchive(cmdline []string) {
 	// Build the Android archive and Maven resources
 	build.MustRun(goTool("get", "golang.org/x/mobile/cmd/gomobile", "golang.org/x/mobile/cmd/gobind"))
 	build.MustRun(gomobileTool("init", "--ndk", os.Getenv("ANDROID_NDK")))
-	build.MustRun(gomobileTool("bind", "-ldflags", "-s -w", "--target", "android", "--javapkg", "org.ethereum", "-v", "github.com/ethereum/go-ethereum/mobile"))
+	build.MustRun(gomobileTool("bind", "-ldflags", "-s -w", "--target", "android", "--javapkg", "org.ethereum", "-v", "git.pirl.io/community/pirl/mobile"))
 
 	if *local {
 		// If we're building locally, copy bundle to build dir and skip Maven
-		os.Rename("pirl.aar", filepath.Join(GOBIN, "pirl.aar"))
+		os.Rename("geth.aar", filepath.Join(GOBIN, "geth.aar"))
 		return
 	}
 	meta := newMavenMetadata(env)
@@ -785,8 +790,8 @@ func doAndroidArchive(cmdline []string) {
 	maybeSkipArchive(env)
 
 	// Sign and upload the archive to Azure
-	archive := "pirl-" + archiveBasename("android", params.ArchiveVersion(env.Commit)) + ".aar"
-	os.Rename("pirl.aar", archive)
+	archive := "geth-" + archiveBasename("android", params.ArchiveVersion(env.Commit)) + ".aar"
+	os.Rename("geth.aar", archive)
 
 	if err := archiveUpload(archive, *upload, *signer); err != nil {
 		log.Fatal(err)
@@ -876,7 +881,7 @@ func newMavenMetadata(env build.Environment) mavenMetadata {
 	}
 	return mavenMetadata{
 		Version:      version,
-		Package:      "pirl-" + version,
+		Package:      "geth-" + version,
 		Develop:      isUnstableBuild(env),
 		Contributors: contribs,
 	}
@@ -897,7 +902,7 @@ func doXCodeFramework(cmdline []string) {
 	// Build the iOS XCode framework
 	build.MustRun(goTool("get", "golang.org/x/mobile/cmd/gomobile", "golang.org/x/mobile/cmd/gobind"))
 	build.MustRun(gomobileTool("init"))
-	bind := gomobileTool("bind", "-ldflags", "-s -w", "--target", "ios", "--tags", "ios", "-v", "github.com/ethereum/go-ethereum/mobile")
+	bind := gomobileTool("bind", "-ldflags", "-s -w", "--target", "ios", "--tags", "ios", "-v", "git.pirl.io/community/pirl/mobile")
 
 	if *local {
 		// If we're building locally, use the build folder and stop afterwards
@@ -905,7 +910,7 @@ func doXCodeFramework(cmdline []string) {
 		build.MustRun(bind)
 		return
 	}
-	archive := "pirl-" + archiveBasename("ios", params.ArchiveVersion(env.Commit))
+	archive := "geth-" + archiveBasename("ios", params.ArchiveVersion(env.Commit))
 	if err := os.Mkdir(archive, os.ModePerm); err != nil {
 		log.Fatal(err)
 	}
