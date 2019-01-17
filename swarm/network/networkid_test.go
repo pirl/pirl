@@ -76,7 +76,6 @@ func TestNetworkID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error setting up network: %v", err)
 	}
-
 	//let's sleep to ensure all nodes are connected
 	time.Sleep(1 * time.Second)
 	// shutdown the the network to avoid race conditions
@@ -92,7 +91,7 @@ func TestNetworkID(t *testing.T) {
 			if kademlias[node].addrs.Size() != len(netIDGroup)-1 {
 				t.Fatalf("Kademlia size has not expected peer size. Kademlia size: %d, expected size: %d", kademlias[node].addrs.Size(), len(netIDGroup)-1)
 			}
-			kademlias[node].EachAddr(nil, 0, func(addr *BzzAddr, _ int, _ bool) bool {
+			kademlias[node].EachAddr(nil, 0, func(addr *BzzAddr, _ int) bool {
 				found := false
 				for _, nd := range netIDGroup {
 					if bytes.Equal(kademlias[nd].BaseAddr(), addr.Address()) {
@@ -188,7 +187,7 @@ func newServices() adapters.Services {
 			return k
 		}
 		params := NewKadParams()
-		params.MinProxBinSize = 2
+		params.NeighbourhoodSize = 2
 		params.MaxBinSize = 3
 		params.MinBinSize = 1
 		params.MaxRetries = 1000

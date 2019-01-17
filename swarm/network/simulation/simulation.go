@@ -28,6 +28,7 @@ import (
 	"git.pirl.io/community/pirl/p2p/enode"
 	"git.pirl.io/community/pirl/p2p/simulations"
 	"git.pirl.io/community/pirl/p2p/simulations/adapters"
+	"git.pirl.io/community/pirl/swarm/network"
 )
 
 // Common errors that are returned by functions in this package.
@@ -42,13 +43,13 @@ type Simulation struct {
 	// of p2p/simulations.Network.
 	Net *simulations.Network
 
-	serviceNames []string
-	cleanupFuncs []func()
-	buckets      map[enode.ID]*sync.Map
-	pivotNodeID  *enode.ID
-	shutdownWG   sync.WaitGroup
-	done         chan struct{}
-	mu           sync.RWMutex
+	serviceNames      []string
+	cleanupFuncs      []func()
+	buckets           map[enode.ID]*sync.Map
+	shutdownWG        sync.WaitGroup
+	done              chan struct{}
+	mu                sync.RWMutex
+	neighbourhoodSize int
 
 	httpSrv *http.Server        //attach a HTTP server via SimulationOptions
 	handler *simulations.Server //HTTP handler for the server
@@ -72,8 +73,9 @@ type ServiceFunc func(ctx *adapters.ServiceContext, bucket *sync.Map) (s node.Se
 // which is used to start node.Service returned by ServiceFunc.
 func New(services map[string]ServiceFunc) (s *Simulation) {
 	s = &Simulation{
-		buckets: make(map[enode.ID]*sync.Map),
-		done:    make(chan struct{}),
+		buckets:           make(map[enode.ID]*sync.Map),
+		done:              make(chan struct{}),
+		neighbourhoodSize: network.NewKadParams().NeighbourhoodSize,
 	}
 
 	adapterServices := make(map[string]adapters.ServiceFunc, len(services))

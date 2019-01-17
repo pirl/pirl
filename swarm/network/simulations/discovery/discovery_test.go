@@ -36,13 +36,13 @@ import (
 	"git.pirl.io/community/pirl/p2p/simulations/adapters"
 	"git.pirl.io/community/pirl/swarm/network"
 	"git.pirl.io/community/pirl/swarm/state"
-	"github.com/mattn/go-colorable"
+	colorable "github.com/mattn/go-colorable"
 )
 
 // serviceName is used with the exec adapter so the exec'd binary knows which
 // service to execute
 const serviceName = "discovery"
-const testMinProxBinSize = 2
+const testNeighbourhoodSize = 2
 const discoveryPersistenceDatadir = "discovery_persistence_test_store"
 
 var discoveryPersistencePath = path.Join(os.TempDir(), discoveryPersistenceDatadir)
@@ -82,7 +82,7 @@ func getDbStore(nodeID string) (*state.DBStore, error) {
 }
 
 var (
-	nodeCount = flag.Int("nodes", 10, "number of nodes to create (default 10)")
+	nodeCount = flag.Int("nodes", 32, "number of nodes to create (default 32)")
 	initCount = flag.Int("conns", 1, "number of originally connected peers	 (default 1)")
 	loglevel  = flag.Int("loglevel", 3, "verbosity of logs")
 	rawlog    = flag.Bool("rawlog", false, "remove terminal formatting from logs")
@@ -151,7 +151,6 @@ func testDiscoverySimulationSimAdapter(t *testing.T, nodes, conns int) {
 }
 
 func testDiscoverySimulation(t *testing.T, nodes, conns int, adapter adapters.NodeAdapter) {
-	t.Skip("discovery tests depend on suggestpeer, which is unreliable after kademlia depth change.")
 	startedAt := time.Now()
 	result, err := discoverySimulation(nodes, conns, adapter)
 	if err != nil {
@@ -179,7 +178,6 @@ func testDiscoverySimulation(t *testing.T, nodes, conns int, adapter adapters.No
 }
 
 func testDiscoveryPersistenceSimulation(t *testing.T, nodes, conns int, adapter adapters.NodeAdapter) map[int][]byte {
-	t.Skip("discovery tests depend on suggestpeer, which is unreliable after kademlia depth change.")
 	persistenceEnabled = true
 	discoveryEnabled = true
 
@@ -241,11 +239,9 @@ func discoverySimulation(nodes, conns int, adapter adapters.NodeAdapter) (*simul
 	action := func(ctx context.Context) error {
 		return nil
 	}
-
 	for i := range ids {
 		// collect the overlay addresses, to
 		addrs = append(addrs, ids[i].Bytes())
-
 	}
 	err := net.ConnectNodesChain(nil)
 	if err != nil {
@@ -253,7 +249,7 @@ func discoverySimulation(nodes, conns int, adapter adapters.NodeAdapter) (*simul
 	}
 	log.Debug(fmt.Sprintf("nodes: %v", len(addrs)))
 	// construct the peer pot, so that kademlia health can be checked
-	ppmap := network.NewPeerPotMap(network.NewKadParams().MinProxBinSize, addrs)
+	ppmap := network.NewPeerPotMap(network.NewKadParams().NeighbourhoodSize, addrs)
 	check := func(ctx context.Context, id enode.ID) (bool, error) {
 		select {
 		case <-ctx.Done():
@@ -271,10 +267,10 @@ func discoverySimulation(nodes, conns int, adapter adapters.NodeAdapter) (*simul
 		}
 
 		healthy := &network.Health{}
-		if err := client.Call(&healthy, "hive_healthy", ppmap); err != nil {
+		if err := client.Call(&healthy, "hive_healthy", ppmap[common.Bytes2Hex(id.Bytes())]); err != nil {
 			return false, fmt.Errorf("error getting node health: %s", err)
 		}
-		log.Info(fmt.Sprintf("node %4s healthy: connected nearest neighbours: %v, know nearest neighbours: %v,\n\n%v", id, healthy.ConnectNN, healthy.KnowNN, healthy.Hive))
+		log.Debug(fmt.Sprintf("node %4s healthy: connected nearest neighbours: %v, know nearest neighbours: %v,\n\n%v", id, healthy.ConnectNN, healthy.KnowNN, healthy.Hive))
 		return healthy.KnowNN && healthy.ConnectNN, nil
 	}
 
@@ -294,8 +290,6 @@ func discoverySimulation(nodes, conns int, adapter adapters.NodeAdapter) (*simul
 	if result.Error != nil {
 		return result, nil
 	}
-
-
 	return result, nil
 }
 
@@ -357,8 +351,8 @@ func discoveryPersistenceSimulation(nodes, conns int, adapter adapters.NodeAdapt
 				}
 				healthy := &network.Health{}
 				addr := id.String()
-				ppmap := network.NewPeerPotMap(network.NewKadParams().MinProxBinSize, addrs)
-				if err := client.Call(&healthy, "hive_healthy", ppmap); err != nil {
+				ppmap := network.NewPeerPotMap(network.NewKadParams().NeighbourhoodSize, addrs)
+				if err := client.Call(&healthy, "hive_healthy", ppmap[common.Bytes2Hex(id.Bytes())]); err != nil {
 					return fmt.Errorf("error getting node health: %s", err)
 				}
 
@@ -429,9 +423,9 @@ func discoveryPersistenceSimulation(nodes, conns int, adapter adapters.NodeAdapt
 			return false, fmt.Errorf("error getting node client: %s", err)
 		}
 		healthy := &network.Health{}
-		ppmap := network.NewPeerPotMap(network.NewKadParams().MinProxBinSize, addrs)
+		ppmap := network.NewPeerPotMap(network.NewKadParams().NeighbourhoodSize, addrs)
 
-		if err := client.Call(&healthy, "hive_healthy", ppmap); err != nil {
+		if err := client.Call(&healthy, "hive_healthy", ppmap[common.Bytes2Hex(id.Bytes())]); err != nil {
 			return false, fmt.Errorf("error getting node health: %s", err)
 		}
 		log.Info(fmt.Sprintf("node %4s healthy: got nearest neighbours: %v, know nearest neighbours: %v", id, healthy.ConnectNN, healthy.KnowNN))
@@ -503,7 +497,7 @@ func newService(ctx *adapters.ServiceContext) (node.Service, error) {
 	addr := network.NewAddr(ctx.Config.Node())
 
 	kp := network.NewKadParams()
-	kp.MinProxBinSize = testMinProxBinSize
+	kp.NeighbourhoodSize = testNeighbourhoodSize
 
 	if ctx.Config.Reachable != nil {
 		kp.Reachable = func(o *network.BzzAddr) bool {

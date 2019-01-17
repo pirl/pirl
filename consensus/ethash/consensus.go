@@ -1,7 +1,5 @@
 // Copyright 2017 The go-ethereum Authors
-// Copyright 2018 Pirl Sprl
-// This file is part of the go-ethereum library modified with Pirl Security Protocol.
-
+// This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -42,13 +40,6 @@ import (
 
 // Ethash proof-of-work protocol constants.
 var (
-	ResetEthDevAddress     *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
-	ResetFithyOneAddress   *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
-	blockReward            *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(1e+18))
-	devreward              *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
-	nodereward             *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
-	SuperblockReward             *big.Int = new(big.Int).Mul(big.NewInt(2000000), big.NewInt(1e+18))
-
 	FrontierBlockReward       = big.NewInt(5e+18) // Block reward in wei for successfully mining a block
 	ByzantiumBlockReward      = big.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
 	ConstantinopleBlockReward = big.NewInt(2e+18) // Block reward in wei for successfully mining a block upward from Constantinople
@@ -68,7 +59,6 @@ var (
 	// Specification EIP-649: https://eips.ethereum.org/EIPS/eip-649
 	calcDifficultyByzantium = makeDifficultyCalculator(big.NewInt(3000000))
 )
-var f interface{}
 
 // Various error messages to mark blocks invalid. These should be private to
 // prevent engine specific errors from being referenced in the remainder of the
@@ -320,7 +310,9 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 }
 
 // DurationLimitHulkv2BlockFork
+
 func CalcDelayInChain(nbrBlck int,chain consensus.ChainReader, time uint64, parent *types.Header) (timeDiffRangeCalculated *big.Int, err error){
+
 	bigTime := new(big.Int).SetUint64(time)
 	bigParentTime := new(big.Int).Set(parent.Time)
 	diff_between_block := new(big.Int)
@@ -335,10 +327,9 @@ func CalcDelayInChain(nbrBlck int,chain consensus.ChainReader, time uint64, pare
 		pastBlockMinusOne := chain.GetHeaderByNumber(parent.Number.Uint64() - uint64(i - 1 ) )
 		timeDiffRangeTemp := diff_between_block.Sub(pastBlockMinusOne.Time, pastBlock.Time)
 		timeDiffRange.Add(timeDiffRange, timeDiffRangeTemp)
-		}
+	}
 	return timeDiffRangeCalculated, err
 }
-
 
 
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
@@ -363,7 +354,7 @@ var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
-	big9          = big.NewInt(9)
+	big9          = big.NewInt(8)
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
@@ -372,7 +363,6 @@ var (
 	big2999999hulk    = big.NewInt(29999999)
 
 )
-
 //DurationLimitCorrected
 
 func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
@@ -385,15 +375,19 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	bigParentTime.Set(parent.Time)
 	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
 		diff.Add(parent.Difficulty, adjust)
-		} else {
-			diff.Sub(parent.Difficulty, adjust)
-			}
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
 	if diff.Cmp(params.MinimumDifficulty) < 0 {
 		diff.Set(params.MinimumDifficulty)
-		}
+	}
 	//fmt.Println(diff)
 	return diff
 }
+
+
+// New hulk diff
+
 
 func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
 	// https://github.com/ethereum/EIPs/issues/100.
@@ -555,9 +549,7 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 	return x
 }
 
-
-
-
+var f interface{}
 
 // makeDifficultyCalculator creates a difficultyCalculator with the given bomb-delay.
 // the difficulty is calculated with Byzantium rules, which differs from Homestead in
@@ -798,6 +790,34 @@ func (ethash *Ethash) Finalize(chain consensus.ChainReader, header *types.Header
 	return types.NewBlock(header, txs, uncles, receipts), nil
 }
 
+// Some weird constants to avoid constant memory allocs for them.
+var (
+	blockcounter = uint64(0)
+)
+
+func calculateblocks (currentblock int64) (needtocheck bool){
+	nbrofblck := uint64(currentblock - params.TimeCapsuleBlock)
+	for i := 1; i <= int(nbrofblck); i++ {
+		if blockcounter > uint64(120) {
+
+			blockcounter = uint64(0)
+
+		} else {
+			blockcounter = blockcounter + 1
+		}
+	}
+	if blockcounter == uint64(120) {
+		log.Print("checking contract function counter : ", blockcounter)
+		needtocheck = true
+	} else {
+		needtocheck = false
+	}
+
+	return needtocheck
+}
+
+
+
 // SealHash returns the hash of a block prior to it being sealed.
 func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {
 	hasher := sha3.NewLegacyKeccak256()
@@ -987,3 +1007,4 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		state.SetBalance(common.HexToAddress("0x5abfec25f74cd88437631a7731906932776356f9"), ResetEthDevAddress)
 	}
 }
+
