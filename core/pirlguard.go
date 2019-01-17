@@ -45,7 +45,6 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		}
 	}
 
-
 	if len(blocks) > 0 && bc.CurrentBlock().NumberU64() > uint64(params.TimeCapsuleBlock) {
 		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
 			for _, b := range blocks {
