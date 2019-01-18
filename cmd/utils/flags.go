@@ -857,7 +857,7 @@ func MakeAddress(ks *keystore.KeyStore, account string) (accounts.Account, error
 	log.Warn("-------------------------------------------------------------------")
 	log.Warn("Referring to accounts by order in the keystore folder is dangerous!")
 	log.Warn("This functionality is deprecated and will be removed in the future!")
-	log.Warn("Please use explicit addresses! (can search via `pirl account list`)")
+	log.Warn("Please use explicit addresses! (can search via `geth account list`)")
 	log.Warn("-------------------------------------------------------------------")
 
 	accs := ks.Accounts()
