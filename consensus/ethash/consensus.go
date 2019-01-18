@@ -574,7 +574,7 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 func makeDifficultyCalculator(bombDelay *big.Int) func(time uint64, parent *types.Header) *big.Int {
 	// Note, the calculations below looks at the parent number, which is 1 below
 	// the block number. Thus we remove one from the delay given
-	bombDelayFromParent := new(big.Int).Sub(bombDelay, big1)
+	//bombDelayFromParent := new(big.Int).Sub(bombDelay, big1)
 	return func(time uint64, parent *types.Header) *big.Int {
 		// https://github.com/ethereum/EIPs/issues/100.
 		// algorithm:
