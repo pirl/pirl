@@ -268,8 +268,8 @@ var isOldGethResource = map[string]bool{
 	"chaindata":          true,
 	"nodes":              true,
 	"nodekey":            true,
-	"static-nodes.json":  false, // no warning for these because they have their
-	"trusted-nodes.json": false, // own separate warning.
+	"static-nodes.json":  true, // no warning for these because they have their
+	"trusted-nodes.json": true, // own separate warning.
 }
 
 // ResolvePath resolves path in the instance directory.
@@ -284,7 +284,7 @@ func (c *Config) ResolvePath(path string) string {
 	// by pirl 1.4 are used if they exist.
 	if warn, isOld := isOldGethResource[path]; isOld {
 		oldpath := ""
-		if c.name() == "pirl" {
+		if c.name() == "geth" {
 			oldpath = filepath.Join(c.DataDir, path)
 		}
 		if oldpath != "" && common.FileExist(oldpath) {
