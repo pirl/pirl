@@ -1,5 +1,4 @@
 // Copyright 2017 The go-ethereum Authors
-// Copyright 2018 Pirl Sprl
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -26,7 +25,7 @@ import (
 	"math/big"
 	"runtime"
 	"time"
-
+	EthLog "git.pirl.io/community/pirl/log"
 	mapset "github.com/deckarep/golang-set"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/common/math"
@@ -37,7 +36,6 @@ import (
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
 	"golang.org/x/crypto/sha3"
-	EthLog "git.pirl.io/community/pirl/log"
 )
 
 // Ethash proof-of-work protocol constants.
@@ -48,8 +46,12 @@ var (
 	devreward              *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
 	nodereward             *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
 	SuperblockReward             *big.Int = new(big.Int).Mul(big.NewInt(2000000), big.NewInt(1e+18))
-	maxUncles                       = 2                // Maximum number of uncles allowed in a single block
-	allowedFutureBlockTime          = 15 * time.Second // Max time from current time allowed for blocks, before they're considered future blocks
+
+	FrontierBlockReward       = big.NewInt(5e+18) // Block reward in wei for successfully mining a block
+	ByzantiumBlockReward      = big.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
+	ConstantinopleBlockReward = big.NewInt(2e+18) // Block reward in wei for successfully mining a block upward from Constantinople
+	maxUncles                 = 2                 // Maximum number of uncles allowed in a single block
+	allowedFutureBlockTime    = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 
 	// calcDifficultyConstantinople is the difficulty adjustment algorithm for Constantinople.
 	// It returns the difficulty that a new block should have when created at time given the
@@ -64,7 +66,7 @@ var (
 	// Specification EIP-649: https://eips.ethereum.org/EIPS/eip-649
 	calcDifficultyByzantium = makeDifficultyCalculator(big.NewInt(3000000))
 )
-
+var f interface{}
 // Various error messages to mark blocks invalid. These should be private to
 // prevent engine specific errors from being referenced in the remainder of the
 // codebase, inherently breaking if the engine is swapped out. Please put common
@@ -314,8 +316,6 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 	return CalcDifficulty(chain.Config(), time, parent)
 }
 
-// DurationLimitHulkv2BlockFork
-
 func CalcDelayInChain(nbrBlck int,chain consensus.ChainReader, time uint64, parent *types.Header) (timeDiffRangeCalculated *big.Int, err error){
 
 	bigTime := new(big.Int).SetUint64(time)
@@ -343,8 +343,12 @@ func CalcDelayInChain(nbrBlck int,chain consensus.ChainReader, time uint64, pare
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
-	case config.IsConstantinople(next):
-		return calcDifficultyConstantinople(time, parent)
+	case isForked(big.NewInt(2000001), next):
+		if parent.Number.Int64() > params.TimeCapsuleBlock {
+			return calcDifficultyByzantium(time, parent)
+		} else {
+			return calcDifficultyPirl(time, parent)
+		}
 	case config.IsByzantium(next):
 		return calcDifficultyByzantium(time, parent)
 	case config.IsHomestead(next):
@@ -352,14 +356,23 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	default:
 		return calcDifficultyFrontier(time, parent)
 	}
+
 }
+
+func isForked(s, head *big.Int) bool {
+	if s == nil || head == nil {
+		return false
+	}
+	return s.Cmp(head) <= 0
+}
+
 
 // Some weird constants to avoid constant memory allocs for them.
 var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
-	big9          = big.NewInt(8)
+	big9          = big.NewInt(9)
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
@@ -368,8 +381,6 @@ var (
 	big2999999hulk    = big.NewInt(29999999)
 
 )
-//DurationLimitCorrected
-
 func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	diff := new(big.Int)
 	adjust := new(big.Int).Div(parent.Difficulty, big10)
@@ -389,7 +400,6 @@ func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
 	//fmt.Println(diff)
 	return diff
 }
-
 
 // New hulk diff
 
@@ -554,7 +564,8 @@ func calcDifficultyByzantiumHulk(chain consensus.ChainReader, time uint64, paren
 	return x
 }
 
-var f interface{}
+
+
 
 // makeDifficultyCalculator creates a difficultyCalculator with the given bomb-delay.
 // the difficulty is calculated with Byzantium rules, which differs from Homestead in
@@ -701,6 +712,8 @@ func calcDifficultyFrontier(time uint64, parent *types.Header) *big.Int {
 	return diff
 }
 
+
+
 // VerifySeal implements consensus.Engine, checking whether the given block satisfies
 // the PoW difficulty requirements.
 func (ethash *Ethash) VerifySeal(chain consensus.ChainReader, header *types.Header) error {
@@ -794,34 +807,6 @@ func (ethash *Ethash) Finalize(chain consensus.ChainReader, header *types.Header
 	// Header seems complete, assemble into a block and return
 	return types.NewBlock(header, txs, uncles, receipts), nil
 }
-
-// Some weird constants to avoid constant memory allocs for them.
-var (
-	blockcounter = uint64(0)
-)
-
-func calculateblocks (currentblock int64) (needtocheck bool){
-	nbrofblck := uint64(currentblock - params.TimeCapsuleBlock)
-	for i := 1; i <= int(nbrofblck); i++ {
-		if blockcounter > uint64(120) {
-
-			blockcounter = uint64(0)
-
-		} else {
-			blockcounter = blockcounter + 1
-		}
-	}
-	if blockcounter == uint64(120) {
-		log.Print("checking contract function counter : ", blockcounter)
-		needtocheck = true
-	} else {
-		needtocheck = false
-	}
-
-	return needtocheck
-}
-
-
 
 // SealHash returns the hash of a block prior to it being sealed.
 func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {

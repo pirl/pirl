@@ -1,15 +1,13 @@
-## Go Pirl 1.8.2-hulk
+## Go Pirl 1.8.2-hulk 
 
 Official golang implementation of the Pirl protocol.
 
 [![API Reference](
 https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
-))](https://godoc.org/git.pirl.io/community/pirl)
-
+)](https://godoc.org/git.pirl.io/community/pirl)
 
 Automated builds are available for stable releases and the unstable master branch.
 Binary archives are published at https://git.pirl.io/community/pirl/tags
-
 
 ## Building the source
 
@@ -17,7 +15,7 @@ For prerequisites and detailed build instructions please read the
 [Installation Instructions](https://git.pirl.io/community/pirl/wiki/Building-Ethereum)
 on the wiki.
 
-Building geth requires both a Go (version 1.9 or later) and a C compiler.
+Building geth requires both a Go (version 1.7 or later) and a C compiler.
 You can install them using your favourite package manager.
 Once the dependencies are installed, run
 
@@ -65,7 +63,7 @@ This command will:
  * Start geth in fast sync mode (default, can be changed with the `--syncmode` flag), causing it to
    download more data in exchange for avoiding processing the entire history of the Ethereum network,
    which is very CPU intensive.
-* Start up Geth's built-in interactive [JavaScript console](https://git.pirl.io/community/pirl/wiki/JavaScript-Console),
+ * Start up Geth's built-in interactive [JavaScript console](https://git.pirl.io/community/pirl/wiki/JavaScript-Console),
    (via the trailing `console` subcommand) through which you can invoke all official [`web3` methods](https://github.com/ethereum/wiki/wiki/JavaScript-API)
    as well as Geth's own [management APIs](https://git.pirl.io/community/pirl/wiki/Management-APIs).
    This too is optional and if you leave it out you can always attach to an already running Geth instance
@@ -92,7 +90,7 @@ Specifying the `--testnet` flag however will reconfigure your Geth instance a bi
    and Linux this also means that attaching to a running testnet node requires the use of a custom
    endpoint since `pirl attach` will try to attach to a production node endpoint by default. E.g.
    `pirl attach <datadir>/testnet/pirl.ipc`. Windows users are not affected by this.
- * Instead of connecting the main Ethereum network, the client will connect to the test network,
+ * Instead of connecting the main Pirl network, the client will connect to the test network,
    which uses different P2P bootnodes, different network IDs and genesis states.
    
 *Note: Although there are some internal protective measures to prevent transactions from crossing
@@ -129,9 +127,9 @@ $ geth --your-favourite-flags dumpconfig
 One of the quickest ways to get Ethereum up and running on your machine is by using Docker:
 
 ```
-docker run -d --name ethereum-node -v /Users/alice/ethereum:/root \
+docker run -d --name pirl-node -v /Users/alice/pirl:/root \
            -p 8545:8545 -p 30303:30303 \
-           ethereum/client-go
+           pirl/client-go
 ```
 
 This will start geth in fast-sync mode with a DB memory allowance of 1GB just as the above command does.  It will also create a persistent volume in your home directory for saving your blockchain as well as map the default ports. There is also an `alpine` tag available for a slim version of the image.
@@ -141,7 +139,7 @@ Do not forget `--rpcaddr 0.0.0.0`, if you want to access RPC from other containe
 ### Programatically interfacing Geth nodes
 
 As a developer, sooner rather than later you'll want to start interacting with Geth and the Ethereum
-network via your own programs and not manually through the console. To aid this, Geth has built-in
+network via your own programs and not manually through the console. To aid this, Geth has built in
 support for a JSON-RPC based APIs ([standard APIs](https://github.com/ethereum/wiki/wiki/JSON-RPC) and
 [Geth specific APIs](https://git.pirl.io/community/pirl/wiki/Management-APIs)). These can be
 exposed via HTTP, WebSockets and IPC (unix sockets on unix based platforms, and named pipes on Windows).
@@ -167,7 +165,7 @@ HTTP based JSON-RPC API options:
   * `--ipcpath` Filename for IPC socket/pipe within the datadir (explicit paths escape it)
 
 You'll need to use your own programming environments' capabilities (libraries, tools, etc) to connect
-via HTTP, WS or IPC to a Geth node configured with the above flags and you'll need to speak [JSON-RPC](https://www.jsonrpc.org/specification)
+via HTTP, WS or IPC to a Geth node configured with the above flags and you'll need to speak [JSON-RPC](http://www.jsonrpc.org/specification)
 on all transports. You can reuse the same connection for multiple requests!
 
 **Note: Please understand the security implications of opening up an HTTP/WS based transport before
@@ -305,6 +303,6 @@ The go-pirl library (i.e. all code outside of the `cmd` directory) is licensed u
 [GNU Lesser General Public License v3.0](https://www.gnu.org/licenses/lgpl-3.0.en.html), also
 included in our repository in the `COPYING.LESSER` file.
 
-The go-pirl library (i.e. all code outside of the `cmd` directory) is licensed under the
+The go-pirl binaries (i.e. all code inside of the `cmd` directory) is licensed under the
 [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html), also included
 in our repository in the `COPYING` file.

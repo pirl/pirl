@@ -8,12 +8,11 @@
 .PHONY: pirl-darwin pirl-darwin-386 pirl-darwin-amd64
 .PHONY: pirl-windows pirl-windows-386 pirl-windows-amd64
 ##export GOPATH=$(pwd)
-
 GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
 pirl:
-    build/env.sh go run build/ci.go install ./cmd/pirl
+	build/env.sh go run build/ci.go install ./cmd/pirl
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/pirl\" to launch pirl."
 
@@ -38,11 +37,7 @@ ios:
 test: all
 	build/env.sh go run build/ci.go test
 
-lint: ## Run linters.
-	build/env.sh go run build/ci.go lint
-
 clean:
-	./build/clean_go_build_cache.sh
 	rm -fr build/_workspace/pkg/ $(GOBIN)/*
 
 # The devtools target installs tools required for 'go generate'.
@@ -57,9 +52,6 @@ devtools:
 	@type "npm" 2> /dev/null || echo 'Please install node.js and npm'
 	@type "solc" 2> /dev/null || echo 'Please install solc'
 	@type "protoc" 2> /dev/null || echo 'Please install protoc'
-
-swarm-devtools:
-	env GOBIN= go install ./cmd/swarm/mimegen
 
 # Cross Compilation Targets (xgo)
 

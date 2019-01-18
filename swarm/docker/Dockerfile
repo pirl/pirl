@@ -3,8 +3,8 @@ FROM golang:1.11-alpine as builder
 ARG VERSION
 
 RUN apk add --update git gcc g++ linux-headers
-RUN mkdir -p $GOPATH/src/github.com/ethereum && \
-    cd $GOPATH/src/github.com/ethereum && \
+RUN mkdir -p $GOPATH/src/git.pirl.io/community/pirl && \
+    cd $GOPATH/src/git.pirl.io/community/pirl && \
     git clone https://github.com/ethersphere/go-ethereum && \
     cd $GOPATH/src/git.pirl.io/community/pirl && \
     git checkout ${VERSION} && \

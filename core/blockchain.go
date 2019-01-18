@@ -644,6 +644,9 @@ func (bc *BlockChain) GetReceiptsByHash(hash common.Hash) types.Receipts {
 		return nil
 	}
 	receipts := rawdb.ReadReceipts(bc.db, hash, *number)
+	if receipts == nil {
+		return nil
+	}
 	bc.receiptsCache.Add(hash, receipts)
 	return receipts
 }
@@ -1142,6 +1145,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, errChain)
 		return it.index, events, coalescedLogs, errChain
+
 	// First block is pruned, insert as sidechain and reorg only if TD grows enough
 	case err == consensus.ErrPrunedAncestor:
 		return bc.insertSidechain(it)
