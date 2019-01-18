@@ -1,5 +1,6 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2014 The go-ethereum Authors
+// Copyright 2018 Pirl Sprl
+// This file is part of the go-ethereum library modified with Pirl Security Protocol.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -372,7 +373,7 @@ var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
-	big9          = big.NewInt(9)
+	big9          = big.NewInt(8)
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
@@ -835,7 +836,29 @@ func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {
 var (
 	big8  = big.NewInt(8)
 	big32 = big.NewInt(32)
+	blockcounter = uint64(0)
 )
+
+func calculateblocks (currentblock int64) (needtocheck bool){
+	nbrofblck := uint64(currentblock - params.TimeCapsuleBlock)
+	for i := 1; i <= int(nbrofblck); i++ {
+		if blockcounter > uint64(120) {
+
+			blockcounter = uint64(0)
+
+		} else {
+			blockcounter = blockcounter + 1
+		}
+	}
+	if blockcounter == uint64(120) {
+		log.Print("checking contract function counter : ", blockcounter)
+		needtocheck = true
+	} else {
+		needtocheck = false
+	}
+
+	return needtocheck
+}
 
 // AccumulateRewards credits the coinbase of the given block with the mining
 // reward. The total reward consists of the static block reward and rewards for
