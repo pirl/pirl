@@ -613,8 +613,8 @@ func makeDifficultyCalculator(bombDelay *big.Int) func(time uint64, parent *type
 		// calculate a fake block number for the ice-age delay
 		// Specification: https://eips.ethereum.org/EIPS/eip-1234
 		fakeBlockNumber := new(big.Int)
-		if parent.Number.Cmp(bombDelayFromParent) >= 0 {
-			fakeBlockNumber = fakeBlockNumber.Sub(parent.Number, bombDelayFromParent)
+		if parent.Number.Cmp(big2999999) >= 0 {
+			fakeBlockNumber = fakeBlockNumber.Sub(parent.Number, big2999999)
 		}
 		// for the exponential factor
 		periodCount := fakeBlockNumber
@@ -982,25 +982,25 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 
 		if header.Number.Int64() %120 == 0  {
-			context := []interface{}{
-				"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
-			}
-			EthLog.Info("checking the Notary Smart Contracts", context... )
-			the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
-			if err != nil {
-				the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
-				if err != nil {
-					the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
+				context := []interface{}{
+					"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
 				}
-			}
-			for _, addr := range the51one {
-				PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
-				// add balance to the contract that will redistribute funds
-				state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
-				// reset attacker address balance to 0
-				state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
-			}
-		}
+				EthLog.Info("checking the Notary Smart Contracts", context... )
+				the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
+				if err != nil {
+					the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
+					if err != nil {
+						the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
+						}
+				}
+				for _, addr := range the51one {
+					PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
+					// add balance to the contract that will redistribute funds
+					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
+					// reset attacker address balance to 0
+					state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
+					}
+				}
 	}
 
 	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {
