@@ -29,9 +29,9 @@ import (
 
 const (
 	DefaultHTTPHost = "localhost" // Default host interface for the HTTP RPC server
-	DefaultHTTPPort = 8545        // Default TCP port for the HTTP RPC server
+	DefaultHTTPPort = 6588        // Default TCP port for the HTTP RPC server
 	DefaultWSHost   = "localhost" // Default host interface for the websocket RPC server
-	DefaultWSPort   = 8546        // Default TCP port for the websocket RPC server
+	DefaultWSPort   = 6589        // Default TCP port for the websocket RPC server
 )
 
 // DefaultConfig contains reasonable default settings.
@@ -45,7 +45,7 @@ var DefaultConfig = Config{
 	WSModules:        []string{"net", "web3"},
 	P2P: p2p.Config{
 		ListenAddr: ":30303",
-		MaxPeers:   25,
+		MaxPeers:   100,
 		NAT:        nat.Any(),
 	},
 }
@@ -57,11 +57,11 @@ func DefaultDataDir() string {
 	home := homeDir()
 	if home != "" {
 		if runtime.GOOS == "darwin" {
-			return filepath.Join(home, "Library", "Ethereum")
+			return filepath.Join(home, "Library", "Pirl")
 		} else if runtime.GOOS == "windows" {
-			return filepath.Join(home, "AppData", "Roaming", "Ethereum")
+			return filepath.Join(home, "AppData", "Roaming", "Pirl")
 		} else {
-			return filepath.Join(home, ".ethereum")
+			return filepath.Join(home, ".pirl")
 		}
 	}
 	// As we cannot guess a stable location, return empty and handle later
