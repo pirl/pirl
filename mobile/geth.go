@@ -82,7 +82,7 @@ type NodeConfig struct {
 // or some fields are missing from the user's specified list.
 var defaultNodeConfig = &NodeConfig{
 	BootstrapNodes:        FoundationBootnodes(),
-	MaxPeers:              25,
+	MaxPeers:              100,
 	EthereumEnabled:       true,
 	EthereumNetworkID:     1,
 	EthereumDatabaseCache: 16,

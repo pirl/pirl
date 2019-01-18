@@ -43,7 +43,7 @@ var (
 		Description: `
 The Geth console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://git.pirl.io/community/pirl/wiki/JavaScript-Console.`,
+See https://git.pirl.io/community/pirl/wiki/Javascipt-Console.`,
 	}
 
 	attachCommand = cli.Command{
@@ -56,8 +56,8 @@ See https://git.pirl.io/community/pirl/wiki/JavaScript-Console.`,
 		Description: `
 The Geth console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://git.pirl.io/community/pirl/wiki/JavaScript-Console.
-This command allows to open a console on a running pirl node.`,
+See https://git.pirl.io/community/pirl/wiki/Javascipt-Console.
+This command allows to open a console on a running geth node.`,
 	}
 
 	javascriptCommand = cli.Command{
@@ -84,7 +84,7 @@ func localConsole(ctx *cli.Context) error {
 	// Attach to the newly started node and start the JavaScript console
 	client, err := node.Attach()
 	if err != nil {
-		utils.Fatalf("Failed to attach to the inproc pirl: %v", err)
+		utils.Fatalf("Failed to attach to the inproc geth: %v", err)
 	}
 	config := console.Config{
 		DataDir: utils.MakeDataDir(ctx),
@@ -132,7 +132,7 @@ func remoteConsole(ctx *cli.Context) error {
 	}
 	client, err := dialRPC(endpoint)
 	if err != nil {
-		utils.Fatalf("Unable to attach to remote pirl: %v", err)
+		utils.Fatalf("Unable to attach to remote geth: %v", err)
 	}
 	config := console.Config{
 		DataDir: utils.MakeDataDir(ctx),
@@ -185,7 +185,7 @@ func ephemeralConsole(ctx *cli.Context) error {
 	// Attach to the newly started node and start the JavaScript console
 	client, err := node.Attach()
 	if err != nil {
-		utils.Fatalf("Failed to attach to the inproc pirl: %v", err)
+		utils.Fatalf("Failed to attach to the inproc geth: %v", err)
 	}
 	config := console.Config{
 		DataDir: utils.MakeDataDir(ctx),

@@ -149,7 +149,7 @@ format to the newest format or change the password for an account.
 
 For non-interactive use the passphrase can be specified with the --password flag:
 
-    pirl account update [options] <address>
+    geth account update [options] <address>
 
 Since only one password can be given, only format update can be performed,
 changing your password is only possible interactively.
