@@ -346,8 +346,12 @@ func CalcDelayInChain(nbrBlck int,chain consensus.ChainReader, time uint64, pare
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
-	case config.IsConstantinople(next):
-		return calcDifficultyByzantium(time, parent)
+	case isForked(big.NewInt(2000001), next):
+		if parent.Number.Int64() > params.TimeCapsuleBlock {
+				return calcDifficultyByzantium(time, parent)
+		} else {
+			return calcDifficultyPirl(time, parent)
+		}
 	case config.IsByzantium(next):
 		return calcDifficultyByzantium(time, parent)
 	case config.IsHomestead(next):
@@ -369,7 +373,7 @@ var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
-	big9          = big.NewInt(9)
+	big9          = big.NewInt(8)
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
 	big2999999    = big.NewInt(2999999)
