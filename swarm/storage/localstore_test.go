@@ -23,7 +23,7 @@ import (
 	"testing"
 	"time"
 
-	ch "git.pirl.io/community/pirl/swarm/chunk"
+	ch "github.com/ethereum/go-ethereum/swarm/chunk"
 )
 
 var (

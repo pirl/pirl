@@ -19,9 +19,9 @@ package protocols
 import (
 	"testing"
 
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/simulations/adapters"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 //dummy Balance implementation

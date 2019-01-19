@@ -25,8 +25,8 @@ import (
 	"math/big"
 	"reflect"
 
-	"git.pirl.io/community/pirl/accounts/abi"
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func verify(t *testing.T, jsondata, calldata string, exp []interface{}) {

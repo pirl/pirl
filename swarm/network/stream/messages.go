@@ -21,11 +21,11 @@ import (
 	"fmt"
 	"time"
 
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/swarm/log"
-	bv "git.pirl.io/community/pirl/swarm/network/bitvector"
-	"git.pirl.io/community/pirl/swarm/spancontext"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/swarm/log"
+	bv "github.com/ethereum/go-ethereum/swarm/network/bitvector"
+	"github.com/ethereum/go-ethereum/swarm/spancontext"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 	"github.com/opentracing/opentracing-go"
 )
 

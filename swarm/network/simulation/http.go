@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/p2p/simulations"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p/simulations"
 )
 
 // Package defaults.

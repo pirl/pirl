@@ -23,9 +23,9 @@ import (
 	"errors"
 	"time"
 
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/protocols"
-	"git.pirl.io/community/pirl/swarm/log"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/protocols"
+	"github.com/ethereum/go-ethereum/swarm/log"
 )
 
 // Generic ping protocol implementation for

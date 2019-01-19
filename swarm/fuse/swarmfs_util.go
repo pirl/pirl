@@ -24,7 +24,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"git.pirl.io/community/pirl/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/log"
 )
 
 func externalUnmount(mountPoint string) error {

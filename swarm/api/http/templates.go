@@ -22,7 +22,7 @@ import (
 	"html/template"
 	"path"
 
-	"git.pirl.io/community/pirl/swarm/api"
+	"github.com/ethereum/go-ethereum/swarm/api"
 )
 
 type htmlListData struct {

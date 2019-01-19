@@ -28,14 +28,14 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/p2p/simulations/adapters"
-	"git.pirl.io/community/pirl/swarm/api"
-	"git.pirl.io/community/pirl/swarm/network/simulation"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
+	"github.com/ethereum/go-ethereum/swarm/api"
+	"github.com/ethereum/go-ethereum/swarm/network/simulation"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 	colorable "github.com/mattn/go-colorable"
 )
 

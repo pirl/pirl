@@ -25,9 +25,9 @@ import (
 	"fmt"
 	"io"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/swarm/bmt"
-	ch "git.pirl.io/community/pirl/swarm/chunk"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/swarm/bmt"
+	ch "github.com/ethereum/go-ethereum/swarm/chunk"
 	"golang.org/x/crypto/sha3"
 )
 

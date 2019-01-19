@@ -33,15 +33,15 @@ import (
 	"time"
 
 	"github.com/docker/docker/pkg/reexec"
-	"git.pirl.io/community/pirl/accounts"
-	"git.pirl.io/community/pirl/accounts/keystore"
-	"git.pirl.io/community/pirl/internal/cmdtest"
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/rpc"
-	"git.pirl.io/community/pirl/swarm"
-	"git.pirl.io/community/pirl/swarm/api"
-	swarmhttp "git.pirl.io/community/pirl/swarm/api/http"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/internal/cmdtest"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/ethereum/go-ethereum/swarm"
+	"github.com/ethereum/go-ethereum/swarm/api"
+	swarmhttp "github.com/ethereum/go-ethereum/swarm/api/http"
 )
 
 var loglevel = flag.Int("loglevel", 3, "verbosity of logs")

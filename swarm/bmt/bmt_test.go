@@ -26,7 +26,7 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/swarm/testutil"
+	"github.com/ethereum/go-ethereum/swarm/testutil"
 	"golang.org/x/crypto/sha3"
 )
 

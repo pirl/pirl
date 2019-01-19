@@ -22,12 +22,12 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/rawdb"
-	"git.pirl.io/community/pirl/core/state"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/trie"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/rawdb"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/trie"
 	"golang.org/x/crypto/sha3"
 )
 

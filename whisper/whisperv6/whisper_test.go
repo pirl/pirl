@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 	"golang.org/x/crypto/pbkdf2"
 )
 

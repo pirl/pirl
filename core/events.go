@@ -17,8 +17,8 @@
 package core
 
 import (
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // NewTxsEvent is posted when a batch of transactions enter the transaction pool.

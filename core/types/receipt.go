@@ -22,9 +22,9 @@ import (
 	"io"
 	"unsafe"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/hexutil"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 //go:generate gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go

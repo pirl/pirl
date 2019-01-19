@@ -24,12 +24,12 @@ import (
 	"net"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/p2p/nat"
-	"git.pirl.io/community/pirl/p2p/netutil"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p/nat"
+	"github.com/ethereum/go-ethereum/p2p/netutil"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 const Version = 4

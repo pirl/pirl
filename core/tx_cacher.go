@@ -19,7 +19,7 @@ package core
 import (
 	"runtime"
 
-	"git.pirl.io/community/pirl/core/types"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // senderCacher is a concurrent transaction sender recoverer and cacher.

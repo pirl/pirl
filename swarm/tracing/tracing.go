@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 	jaeger "github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 	cli "gopkg.in/urfave/cli.v1"

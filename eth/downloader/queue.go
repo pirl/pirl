@@ -25,11 +25,11 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/prque"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/prque"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
 )
 
 var (

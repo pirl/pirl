@@ -36,11 +36,11 @@ import (
 	"time"
 
 	"github.com/docker/docker/pkg/reexec"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/rpc"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/rpc"
 	"golang.org/x/net/websocket"
 )
 

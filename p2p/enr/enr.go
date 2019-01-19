@@ -40,7 +40,7 @@ import (
 	"io"
 	"sort"
 
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 const SizeLimit = 300 // maximum encoded size of a node record in bytes

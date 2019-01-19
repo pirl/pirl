@@ -21,9 +21,9 @@ import (
 	"strconv"
 	"time"
 
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/swarm/log"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 const (

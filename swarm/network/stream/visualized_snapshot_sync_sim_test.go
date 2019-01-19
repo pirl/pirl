@@ -29,18 +29,18 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/p2p/protocols"
-	"git.pirl.io/community/pirl/p2p/simulations"
-	"git.pirl.io/community/pirl/p2p/simulations/adapters"
-	"git.pirl.io/community/pirl/rlp"
-	"git.pirl.io/community/pirl/swarm/log"
-	"git.pirl.io/community/pirl/swarm/network"
-	"git.pirl.io/community/pirl/swarm/network/simulation"
-	"git.pirl.io/community/pirl/swarm/state"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/p2p/protocols"
+	"github.com/ethereum/go-ethereum/p2p/simulations"
+	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
+	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/network"
+	"github.com/ethereum/go-ethereum/swarm/network/simulation"
+	"github.com/ethereum/go-ethereum/swarm/state"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 /*
@@ -154,8 +154,6 @@ func sendSimTerminatedEvent(sim *simulation.Simulation) {
 //It also sends some custom events so that the frontend
 //can visualize messages like SendOfferedMsg, WantedHashesMsg, DeliveryMsg
 func TestSnapshotSyncWithServer(t *testing.T) {
-	//t.Skip("temporarily disabled as simulations.WaitTillHealthy cannot be trusted")
-
 	//define a wrapper object to be able to pass around data
 	wrapper := &netWrapper{}
 

@@ -19,8 +19,8 @@ package les
 import (
 	"time"
 
-	"git.pirl.io/community/pirl/common/bitutil"
-	"git.pirl.io/community/pirl/light"
+	"github.com/ethereum/go-ethereum/common/bitutil"
+	"github.com/ethereum/go-ethereum/light"
 )
 
 const (

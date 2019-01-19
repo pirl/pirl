@@ -26,13 +26,13 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/state"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/event"
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 // testTxPoolConfig is a transaction pool configuration without stateful disk

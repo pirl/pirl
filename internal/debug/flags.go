@@ -24,9 +24,9 @@ import (
 	"os"
 	"runtime"
 
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/metrics/exp"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/metrics/exp"
 	"github.com/fjl/memsize/memsizeui"
 	colorable "github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"

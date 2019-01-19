@@ -21,13 +21,13 @@ import (
 	"math/big"
 	"sync"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/consensus/ethash"
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/consensus/ethash"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 // Test chain parameters.

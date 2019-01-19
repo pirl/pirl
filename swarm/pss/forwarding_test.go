@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/p2p/protocols"
-	"git.pirl.io/community/pirl/swarm/network"
-	"git.pirl.io/community/pirl/swarm/pot"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/p2p/protocols"
+	"github.com/ethereum/go-ethereum/swarm/network"
+	"github.com/ethereum/go-ethereum/swarm/pot"
+	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
 )
 
 type testCase struct {

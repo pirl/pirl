@@ -28,35 +28,35 @@ import (
 	"strings"
 	"time"
 
-	"git.pirl.io/community/pirl/accounts"
-	"git.pirl.io/community/pirl/accounts/keystore"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/fdlimit"
-	"git.pirl.io/community/pirl/consensus"
-	"git.pirl.io/community/pirl/consensus/clique"
-	"git.pirl.io/community/pirl/consensus/ethash"
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/state"
-	"git.pirl.io/community/pirl/core/vm"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/dashboard"
-	"git.pirl.io/community/pirl/eth"
-	"git.pirl.io/community/pirl/eth/downloader"
-	"git.pirl.io/community/pirl/eth/gasprice"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/ethstats"
-	"git.pirl.io/community/pirl/les"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/metrics/influxdb"
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/discv5"
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/p2p/nat"
-	"git.pirl.io/community/pirl/p2p/netutil"
-	"git.pirl.io/community/pirl/params"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
+	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/fdlimit"
+	"github.com/ethereum/go-ethereum/consensus"
+	"github.com/ethereum/go-ethereum/consensus/clique"
+	"github.com/ethereum/go-ethereum/consensus/ethash"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/dashboard"
+	"github.com/ethereum/go-ethereum/eth"
+	"github.com/ethereum/go-ethereum/eth/downloader"
+	"github.com/ethereum/go-ethereum/eth/gasprice"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/ethstats"
+	"github.com/ethereum/go-ethereum/les"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/metrics/influxdb"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/discv5"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/p2p/nat"
+	"github.com/ethereum/go-ethereum/p2p/netutil"
+	"github.com/ethereum/go-ethereum/params"
+	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -65,7 +65,7 @@ var (
 {{if .cmd.Description}}{{.cmd.Description}}
 {{end}}{{if .cmd.Subcommands}}
 SUBCOMMANDS:
-	{{range .cmd.Subcommands}}{{.cmd.Name}}{{with .cmd.ShortName}}, {{.cmd}}{{end}}{{ "\t" }}{{.cmd.Usage}}
+	{{range .cmd.Subcommands}}{{.Name}}{{with .ShortName}}, {{.}}{{end}}{{ "\t" }}{{.Usage}}
 	{{end}}{{end}}{{if .categorizedFlags}}
 {{range $idx, $categorized := .categorizedFlags}}{{$categorized.Name}} OPTIONS:
 {{range $categorized.Flags}}{{"\t"}}{{.}}
@@ -602,7 +602,7 @@ var (
 	MetricsInfluxDBDatabaseFlag = cli.StringFlag{
 		Name:  "metrics.influxdb.database",
 		Usage: "InfluxDB database name to push reported metrics to",
-		Value: "pirl",
+		Value: "geth",
 	}
 	MetricsInfluxDBUsernameFlag = cli.StringFlag{
 		Name:  "metrics.influxdb.username",
@@ -1365,7 +1365,7 @@ func SetupMetrics(ctx *cli.Context) {
 
 		if enableExport {
 			log.Info("Enabling metrics export to InfluxDB")
-			go influxdb.InfluxDBWithTags(metrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "pirl.", map[string]string{
+			go influxdb.InfluxDBWithTags(metrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "geth.", map[string]string{
 				"host": hosttag,
 			})
 		}

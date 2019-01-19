@@ -28,10 +28,10 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	ch "git.pirl.io/community/pirl/swarm/chunk"
-	"git.pirl.io/community/pirl/swarm/log"
-	"git.pirl.io/community/pirl/swarm/storage/mock/mem"
+	"github.com/ethereum/go-ethereum/common"
+	ch "github.com/ethereum/go-ethereum/swarm/chunk"
+	"github.com/ethereum/go-ethereum/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/storage/mock/mem"
 	ldberrors "github.com/syndtr/goleveldb/leveldb/errors"
 )
 

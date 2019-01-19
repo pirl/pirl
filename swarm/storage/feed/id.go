@@ -21,10 +21,10 @@ import (
 	"hash"
 	"strconv"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/swarm/storage/feed/lookup"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/swarm/storage/feed/lookup"
 
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 // ID uniquely identifies an update on the network.

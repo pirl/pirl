@@ -29,7 +29,7 @@ import (
 	"net"
 	"sort"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 const (

@@ -20,8 +20,8 @@ import (
 	"sync"
 	"testing"
 
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p/simulations/adapters"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
 )
 
 // TestServiceBucket tests all bucket functionality using subtests.

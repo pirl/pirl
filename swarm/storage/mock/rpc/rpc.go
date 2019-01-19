@@ -26,10 +26,10 @@ package rpc
 import (
 	"fmt"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/rpc"
-	"git.pirl.io/community/pirl/swarm/log"
-	"git.pirl.io/community/pirl/swarm/storage/mock"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/ethereum/go-ethereum/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/storage/mock"
 )
 
 // GlobalStore is rpc.Client that connects to a centralized mock store.

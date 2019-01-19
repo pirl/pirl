@@ -21,8 +21,8 @@ import (
 	mrand "math/rand"
 	"testing"
 
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 func generateMessageParams() (*MessageParams, error) {

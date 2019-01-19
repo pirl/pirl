@@ -25,9 +25,9 @@ import (
 	"strings"
 	"time"
 
-	"git.pirl.io/community/pirl/cmd/utils"
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/rpc"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/gizak/termui"
 	"gopkg.in/urfave/cli.v1"
 )
@@ -158,7 +158,7 @@ func monitor(ctx *cli.Context) error {
 	return nil
 }
 
-// retrieveMetrics contacts the attached pirl node and retrieves the entire set
+// retrieveMetrics contacts the attached geth node and retrieves the entire set
 // of collected system metrics.
 func retrieveMetrics(client *rpc.Client) (map[string]interface{}, error) {
 	var metrics map[string]interface{}

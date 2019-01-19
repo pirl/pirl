@@ -22,9 +22,9 @@ import (
 	"os"
 	"strings"
 
-	"git.pirl.io/community/pirl/cmd/utils"
-	"git.pirl.io/community/pirl/swarm/api"
-	swarm "git.pirl.io/community/pirl/swarm/api/client"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/ethereum/go-ethereum/swarm/api"
+	swarm "github.com/ethereum/go-ethereum/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

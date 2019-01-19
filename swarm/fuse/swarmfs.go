@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/swarm/api"
+	"github.com/ethereum/go-ethereum/swarm/api"
 )
 
 const (

@@ -20,10 +20,10 @@ package accounts
 import (
 	"math/big"
 
-	ethereum "git.pirl.io/community/pirl"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/event"
+	ethereum "github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/event"
 )
 
 // Account represents an Ethereum account located at a specific location defined

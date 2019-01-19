@@ -16,7 +16,7 @@
 
 package bind
 
-import "git.pirl.io/community/pirl/accounts/abi"
+import "github.com/ethereum/go-ethereum/accounts/abi"
 
 // tmplData is the data structure required to fill the binding template.
 type tmplData struct {
@@ -68,12 +68,12 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "git.pirl.io/community/pirl"
-	"git.pirl.io/community/pirl/accounts/abi"
-	"git.pirl.io/community/pirl/accounts/abi/bind"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/event"
+	ethereum "github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/event"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -451,8 +451,8 @@ const tmplSourceJava = `
 
 package {{.Package}};
 
-import org.ethereum.pirl.*;
-import org.ethereum.pirl.internal.*;
+import org.ethereum.geth.*;
+import org.ethereum.geth.internal.*;
 
 {{range $contract := .Contracts}}
 	public class {{.Type}} {

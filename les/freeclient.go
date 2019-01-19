@@ -23,11 +23,11 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/common/mclock"
-	"git.pirl.io/community/pirl/common/prque"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/common/mclock"
+	"github.com/ethereum/go-ethereum/common/prque"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 // freeClientPool implements a client database that limits the connection time

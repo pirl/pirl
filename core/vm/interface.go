@@ -19,8 +19,8 @@ package vm
 import (
 	"math/big"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // StateDB is an EVM database for full state querying.

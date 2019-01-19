@@ -23,7 +23,7 @@ import (
 	"os"
 	"testing"
 
-	"git.pirl.io/community/pirl/swarm/storage/mock/test"
+	"github.com/ethereum/go-ethereum/swarm/storage/mock/test"
 )
 
 // TestDBStore is running a test.MockStore tests

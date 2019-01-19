@@ -23,8 +23,8 @@ import (
 	"reflect"
 	"testing"
 
-	"git.pirl.io/community/pirl/cmd/utils"
-	"git.pirl.io/community/pirl/core/vm"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/ethereum/go-ethereum/core/vm"
 )
 
 func TestState(t *testing.T) {

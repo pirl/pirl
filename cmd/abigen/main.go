@@ -24,8 +24,8 @@ import (
 	"os"
 	"strings"
 
-	"git.pirl.io/community/pirl/accounts/abi/bind"
-	"git.pirl.io/community/pirl/common/compiler"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common/compiler"
 )
 
 var (

@@ -22,8 +22,8 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"git.pirl.io/community/pirl/accounts/abi"
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
 
 	"bytes"
 	"os"

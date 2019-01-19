@@ -20,7 +20,7 @@ import (
 	"errors"
 	"sync"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 /*

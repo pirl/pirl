@@ -26,8 +26,8 @@ import (
 	"math/rand"
 	"time"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/internal/jsre/deps"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/internal/jsre/deps"
 	"github.com/robertkrimen/otto"
 )
 

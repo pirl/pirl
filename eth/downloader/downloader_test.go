@@ -26,12 +26,12 @@ import (
 	"testing"
 	"time"
 
-	ethereum "git.pirl.io/community/pirl"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/event"
-	"git.pirl.io/community/pirl/trie"
+	ethereum "github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/trie"
 )
 
 // Reduce some of the parameters to make the tester faster.

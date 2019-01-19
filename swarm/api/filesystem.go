@@ -26,9 +26,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/swarm/log"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 const maxParallelFiles = 5

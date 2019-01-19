@@ -23,10 +23,10 @@ import (
 	"net"
 	"time"
 
-	"git.pirl.io/community/pirl/common/math"
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/crypto/secp256k1"
-	"git.pirl.io/community/pirl/p2p/enode"
+	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	"github.com/ethereum/go-ethereum/p2p/enode"
 )
 
 // node represents a host on the network.

@@ -30,7 +30,7 @@ import (
 	"strings"
 	"testing"
 
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 var (

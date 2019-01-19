@@ -20,14 +20,14 @@ import (
 	"fmt"
 	"math/big"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/consensus"
-	"git.pirl.io/community/pirl/consensus/misc"
-	"git.pirl.io/community/pirl/core/state"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/core/vm"
-	"git.pirl.io/community/pirl/ethdb"
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/consensus"
+	"github.com/ethereum/go-ethereum/consensus/misc"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 // BlockGen creates blocks for testing.

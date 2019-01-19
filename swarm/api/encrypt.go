@@ -20,7 +20,7 @@ import (
 	"encoding/binary"
 	"errors"
 
-	"git.pirl.io/community/pirl/swarm/storage/encryption"
+	"github.com/ethereum/go-ethereum/swarm/storage/encryption"
 	"golang.org/x/crypto/sha3"
 )
 

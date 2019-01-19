@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"strings"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 var (

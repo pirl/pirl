@@ -24,8 +24,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/swarm/log"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/swarm/log"
 	lru "github.com/hashicorp/golang-lru"
 )
 

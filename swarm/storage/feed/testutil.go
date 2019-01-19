@@ -22,8 +22,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 const (

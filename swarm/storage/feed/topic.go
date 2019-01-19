@@ -21,9 +21,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"git.pirl.io/community/pirl/common/bitutil"
-	"git.pirl.io/community/pirl/common/hexutil"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/common/bitutil"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 // TopicLength establishes the max length of a topic string

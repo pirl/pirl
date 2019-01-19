@@ -26,9 +26,9 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/p2p/simulations"
-	"git.pirl.io/community/pirl/swarm/log"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/p2p/simulations"
+	"github.com/ethereum/go-ethereum/swarm/log"
 )
 
 var (
@@ -43,7 +43,6 @@ var (
 //It also provides a documentation on the steps needed by frontends
 //to use the simulations
 func TestOverlaySim(t *testing.T) {
-	t.Skip("Test is flaky, see: https://github.com/ethersphere/go-ethereum/issues/592")
 	//start the simulation
 	log.Info("Start simulation backend")
 	//get the simulation networ; needed to subscribe for up events

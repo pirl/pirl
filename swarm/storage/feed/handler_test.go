@@ -26,11 +26,11 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/swarm/chunk"
-	"git.pirl.io/community/pirl/swarm/storage"
-	"git.pirl.io/community/pirl/swarm/storage/feed/lookup"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/swarm/chunk"
+	"github.com/ethereum/go-ethereum/swarm/storage"
+	"github.com/ethereum/go-ethereum/swarm/storage/feed/lookup"
 )
 
 var (

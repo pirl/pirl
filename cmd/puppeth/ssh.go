@@ -28,7 +28,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 )

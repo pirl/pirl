@@ -21,9 +21,9 @@ import (
 	"hash"
 	"sync/atomic"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/math"
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 // Config are the configuration options for the Interpreter

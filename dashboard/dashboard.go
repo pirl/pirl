@@ -35,11 +35,11 @@ import (
 	"io"
 
 	"github.com/elastic/gosigar"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/params"
-	"git.pirl.io/community/pirl/rpc"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/params"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/mohae/deepcopy"
 	"golang.org/x/net/websocket"
 )

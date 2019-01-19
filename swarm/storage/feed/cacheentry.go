@@ -21,7 +21,7 @@ import (
 	"context"
 	"time"
 
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 const (

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // manageServers displays a list of servers the user can disconnect from, and an

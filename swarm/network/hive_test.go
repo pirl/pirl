@@ -22,8 +22,8 @@ import (
 	"os"
 	"testing"
 
-	p2ptest "git.pirl.io/community/pirl/p2p/testing"
-	"git.pirl.io/community/pirl/swarm/state"
+	p2ptest "github.com/ethereum/go-ethereum/p2p/testing"
+	"github.com/ethereum/go-ethereum/swarm/state"
 )
 
 func newHiveTester(t *testing.T, params *HiveParams, n int, store state.Store) (*bzzTester, *Hive) {

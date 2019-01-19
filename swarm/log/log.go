@@ -1,8 +1,8 @@
 package log
 
 import (
-	l "git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
+	l "github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
 )
 
 const (

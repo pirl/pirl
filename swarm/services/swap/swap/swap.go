@@ -22,7 +22,7 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/log"
 )
 
 // SwAP Swarm Accounting Protocol with

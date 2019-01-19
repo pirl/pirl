@@ -22,8 +22,8 @@ import (
 	"regexp"
 	"strings"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 //matches hex swarm hashes

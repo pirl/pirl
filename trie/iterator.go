@@ -21,8 +21,8 @@ import (
 	"container/heap"
 	"errors"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 // Iterator is a key-value trie iterator that traverses a Trie.

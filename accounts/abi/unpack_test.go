@@ -26,7 +26,7 @@ import (
 	"strings"
 	"testing"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
 

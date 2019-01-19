@@ -19,7 +19,7 @@ package rpc
 import (
 	"net"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // StartHTTPEndpoint starts the HTTP RPC endpoint, configured with cors/vhosts/modules

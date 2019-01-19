@@ -26,22 +26,22 @@ import (
 	"runtime"
 	"strings"
 
-	"git.pirl.io/community/pirl/cmd/internal/browser"
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/cmd/internal/browser"
+	"github.com/ethereum/go-ethereum/params"
 
-	"git.pirl.io/community/pirl/cmd/utils"
+	"github.com/ethereum/go-ethereum/cmd/utils"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
 var bugCommand = cli.Command{
 	Action:    utils.MigrateFlags(reportBug),
 	Name:      "bug",
-	Usage:     "opens a window to report a bug on the pirl repo",
+	Usage:     "opens a window to report a bug on the geth repo",
 	ArgsUsage: " ",
 	Category:  "MISCELLANEOUS COMMANDS",
 }
 
-const issueURL = "https://git.pirl.io/community/pirl/issues/new"
+const issueURL = "https://github.com/ethereum/go-ethereum/issues/new"
 
 // reportBug reports a bug by opening a new URL to the go-ethereum GH issue
 // tracker and setting default values as the issue body.

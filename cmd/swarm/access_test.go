@@ -31,12 +31,12 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/crypto"
-	"git.pirl.io/community/pirl/crypto/ecies"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/swarm/api"
-	swarmapi "git.pirl.io/community/pirl/swarm/api/client"
-	"git.pirl.io/community/pirl/swarm/testutil"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/swarm/api"
+	swarmapi "github.com/ethereum/go-ethereum/swarm/api/client"
+	"github.com/ethereum/go-ethereum/swarm/testutil"
 	"golang.org/x/crypto/sha3"
 )
 

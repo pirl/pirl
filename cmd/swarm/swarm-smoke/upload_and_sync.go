@@ -32,12 +32,12 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/swarm/api"
-	"git.pirl.io/community/pirl/swarm/api/client"
-	"git.pirl.io/community/pirl/swarm/spancontext"
-	"git.pirl.io/community/pirl/swarm/testutil"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/swarm/api"
+	"github.com/ethereum/go-ethereum/swarm/api/client"
+	"github.com/ethereum/go-ethereum/swarm/spancontext"
+	"github.com/ethereum/go-ethereum/swarm/testutil"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pborman/uuid"
 
@@ -86,9 +86,8 @@ func cliUploadAndSync(c *cli.Context) error {
 func uploadAndSync(c *cli.Context) error {
 	defer func(now time.Time) {
 		totalTime := time.Since(now)
-
 		log.Info("total time", "time", totalTime, "kb", filesize)
-		metrics.GetOrRegisterCounter("upload-and-sync.total-time", nil).Inc(int64(totalTime))
+		metrics.GetOrRegisterResettingTimer("upload-and-sync.total-time", nil).Update(totalTime)
 	}(time.Now())
 
 	generateEndpoints(scheme, cluster, appName, from, to)
@@ -103,7 +102,7 @@ func uploadAndSync(c *cli.Context) error {
 		log.Error(err.Error())
 		return err
 	}
-	metrics.GetOrRegisterCounter("upload-and-sync.upload-time", nil).Inc(int64(time.Since(t1)))
+	metrics.GetOrRegisterResettingTimer("upload-and-sync.upload-time", nil).UpdateSince(t1)
 
 	fhash, err := digest(bytes.NewReader(randomBytes))
 	if err != nil {
@@ -125,30 +124,28 @@ func uploadAndSync(c *cli.Context) error {
 			for {
 				start := time.Now()
 				err := fetch(hash, endpoint, fhash, ruid)
-				fetchTime := time.Since(start)
 				if err != nil {
 					continue
 				}
 
-				metrics.GetOrRegisterMeter("upload-and-sync.single.fetch-time", nil).Mark(int64(fetchTime))
+				metrics.GetOrRegisterResettingTimer("upload-and-sync.single.fetch-time", nil).UpdateSince(start)
 				wg.Done()
 				return
 			}
 		}(endpoints[randIndex], ruid)
 	} else {
-		for _, endpoint := range endpoints {
+		for _, endpoint := range endpoints[1:] {
 			ruid := uuid.New()[:8]
 			wg.Add(1)
 			go func(endpoint string, ruid string) {
 				for {
 					start := time.Now()
 					err := fetch(hash, endpoint, fhash, ruid)
-					fetchTime := time.Since(start)
 					if err != nil {
 						continue
 					}
 
-					metrics.GetOrRegisterMeter("upload-and-sync.each.fetch-time", nil).Mark(int64(fetchTime))
+					metrics.GetOrRegisterResettingTimer("upload-and-sync.each.fetch-time", nil).UpdateSince(start)
 					wg.Done()
 					return
 				}
@@ -166,8 +163,6 @@ func fetch(hash string, endpoint string, original []byte, ruid string) error {
 	ctx, sp := spancontext.StartSpan(context.Background(), "upload-and-sync.fetch")
 	defer sp.Finish()
 
-	log.Trace("sleeping", "ruid", ruid)
-	time.Sleep(3 * time.Second)
 	log.Trace("http get request", "ruid", ruid, "api", endpoint, "hash", hash)
 
 	var tn time.Time

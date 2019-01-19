@@ -5,10 +5,10 @@ import (
 	"math/big"
 	"testing"
 
-	ethereum "git.pirl.io/community/pirl"
-	"git.pirl.io/community/pirl/accounts/abi"
-	"git.pirl.io/community/pirl/accounts/abi/bind"
-	"git.pirl.io/community/pirl/common"
+	ethereum "github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type mockCaller struct {

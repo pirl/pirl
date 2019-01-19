@@ -19,8 +19,8 @@ package main
 import (
 	"os"
 
-	"git.pirl.io/community/pirl/cmd/utils"
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/ethereum/go-ethereum/log"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

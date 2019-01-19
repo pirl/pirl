@@ -26,7 +26,7 @@ import (
 	"strings"
 	"sync"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // makeWizard creates and returns a new puppeth wizard.

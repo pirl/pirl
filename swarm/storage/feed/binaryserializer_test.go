@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"testing"
 
-	"git.pirl.io/community/pirl/common/hexutil"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 // KV mocks a key value store

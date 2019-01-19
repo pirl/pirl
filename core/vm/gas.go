@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 // Gas costs

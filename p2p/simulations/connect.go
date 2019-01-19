@@ -20,7 +20,7 @@ import (
 	"errors"
 	"strings"
 
-	"git.pirl.io/community/pirl/p2p/enode"
+	"github.com/ethereum/go-ethereum/p2p/enode"
 )
 
 var (

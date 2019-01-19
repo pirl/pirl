@@ -19,7 +19,7 @@
 package downloader
 
 import (
-	"git.pirl.io/community/pirl/metrics"
+	"github.com/ethereum/go-ethereum/metrics"
 )
 
 var (

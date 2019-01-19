@@ -23,7 +23,7 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 //TestReporter tests that the metrics being collected for p2p accounting

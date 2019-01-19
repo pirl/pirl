@@ -26,8 +26,8 @@ import (
 	"os"
 	"time"
 
-	"git.pirl.io/community/pirl/swarm/shed"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/swarm/shed"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 

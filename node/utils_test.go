@@ -22,8 +22,8 @@ package node
 import (
 	"reflect"
 
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/rpc"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rpc"
 )
 
 // NoopService is a trivial implementation of the Service interface.

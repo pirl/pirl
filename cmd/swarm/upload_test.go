@@ -30,9 +30,9 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
-	swarmapi "git.pirl.io/community/pirl/swarm/api/client"
-	"git.pirl.io/community/pirl/swarm/testutil"
+	"github.com/ethereum/go-ethereum/log"
+	swarmapi "github.com/ethereum/go-ethereum/swarm/api/client"
+	"github.com/ethereum/go-ethereum/swarm/testutil"
 	"github.com/mattn/go-colorable"
 )
 

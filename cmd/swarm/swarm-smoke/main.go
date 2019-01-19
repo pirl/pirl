@@ -21,13 +21,13 @@ import (
 	"os"
 	"sort"
 
-	"git.pirl.io/community/pirl/cmd/utils"
-	gethmetrics "git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/metrics/influxdb"
-	swarmmetrics "git.pirl.io/community/pirl/swarm/metrics"
-	"git.pirl.io/community/pirl/swarm/tracing"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	gethmetrics "github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/metrics/influxdb"
+	swarmmetrics "github.com/ethereum/go-ethereum/swarm/metrics"
+	"github.com/ethereum/go-ethereum/swarm/tracing"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 
 	cli "gopkg.in/urfave/cli.v1"
 )

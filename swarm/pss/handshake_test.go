@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/log"
 )
 
 // asymmetrical key exchange between two directly connected peers

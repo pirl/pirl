@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 // Forks table defines supported forks and their chain config.

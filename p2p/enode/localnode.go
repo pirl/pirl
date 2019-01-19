@@ -26,9 +26,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/p2p/enr"
-	"git.pirl.io/community/pirl/p2p/netutil"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p/enr"
+	"github.com/ethereum/go-ethereum/p2p/netutil"
 )
 
 const (

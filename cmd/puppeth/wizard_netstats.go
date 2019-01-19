@@ -23,8 +23,8 @@ import (
 	"strings"
 	"sync"
 
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/olekukonko/tablewriter"
 )
 

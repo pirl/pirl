@@ -25,8 +25,8 @@ import (
 	"sync"
 	"time"
 
-	ch "git.pirl.io/community/pirl/swarm/chunk"
-	"git.pirl.io/community/pirl/swarm/log"
+	ch "github.com/ethereum/go-ethereum/swarm/chunk"
+	"github.com/ethereum/go-ethereum/swarm/log"
 )
 
 /*

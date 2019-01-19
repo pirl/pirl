@@ -28,11 +28,11 @@
 //  	"context"
 //  	"fmt"
 //  	"os"
-//  	pss "git.pirl.io/community/pirl/swarm/pss/client"
-//  	"git.pirl.io/community/pirl/p2p/protocols"
-//  	"git.pirl.io/community/pirl/p2p"
-//  	"git.pirl.io/community/pirl/swarm/pot"
-//  	"git.pirl.io/community/pirl/swarm/log"
+//  	pss "github.com/ethereum/go-ethereum/swarm/pss/client"
+//  	"github.com/ethereum/go-ethereum/p2p/protocols"
+//  	"github.com/ethereum/go-ethereum/p2p"
+//  	"github.com/ethereum/go-ethereum/swarm/pot"
+//  	"github.com/ethereum/go-ethereum/swarm/log"
 //  )
 //
 //  type FooMsg struct {

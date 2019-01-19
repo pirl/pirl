@@ -25,8 +25,8 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/iterator"

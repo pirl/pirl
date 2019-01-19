@@ -37,11 +37,11 @@ import (
 	"strings"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/swarm/api"
-	"git.pirl.io/community/pirl/swarm/spancontext"
-	"git.pirl.io/community/pirl/swarm/storage/feed"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/swarm/api"
+	"github.com/ethereum/go-ethereum/swarm/spancontext"
+	"github.com/ethereum/go-ethereum/swarm/storage/feed"
 	"github.com/pborman/uuid"
 )
 

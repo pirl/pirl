@@ -25,9 +25,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"git.pirl.io/community/pirl/event"
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/rlp"
+	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 // Msg defines the structure of a p2p message.

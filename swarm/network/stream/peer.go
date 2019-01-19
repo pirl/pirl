@@ -23,14 +23,14 @@ import (
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/p2p/protocols"
-	"git.pirl.io/community/pirl/swarm/log"
-	pq "git.pirl.io/community/pirl/swarm/network/priorityqueue"
-	"git.pirl.io/community/pirl/swarm/network/stream/intervals"
-	"git.pirl.io/community/pirl/swarm/spancontext"
-	"git.pirl.io/community/pirl/swarm/state"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/p2p/protocols"
+	"github.com/ethereum/go-ethereum/swarm/log"
+	pq "github.com/ethereum/go-ethereum/swarm/network/priorityqueue"
+	"github.com/ethereum/go-ethereum/swarm/network/stream/intervals"
+	"github.com/ethereum/go-ethereum/swarm/spancontext"
+	"github.com/ethereum/go-ethereum/swarm/state"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 	opentracing "github.com/opentracing/opentracing-go"
 )
 

@@ -23,11 +23,11 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/p2p/protocols"
-	p2ptest "git.pirl.io/community/pirl/p2p/testing"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+	"github.com/ethereum/go-ethereum/p2p/protocols"
+	p2ptest "github.com/ethereum/go-ethereum/p2p/testing"
 )
 
 const (

@@ -22,7 +22,7 @@ import (
 	mrand "math/rand"
 	"testing"
 
-	"git.pirl.io/community/pirl/crypto"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 func TestEnvelopeOpenAcceptsOnlyOneKeyTypeInFilter(t *testing.T) {

@@ -28,11 +28,11 @@ import (
 	"os"
 	"testing"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/swarm/sctx"
-	"git.pirl.io/community/pirl/swarm/storage"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/swarm/sctx"
+	"github.com/ethereum/go-ethereum/swarm/storage"
 )
 
 func init() {

@@ -19,7 +19,7 @@ package mem
 import (
 	"testing"
 
-	"git.pirl.io/community/pirl/swarm/storage/mock/test"
+	"github.com/ethereum/go-ethereum/swarm/storage/mock/test"
 )
 
 // TestGlobalStore is running test for a GlobalStore

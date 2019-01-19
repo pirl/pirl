@@ -19,7 +19,7 @@ package vm
 import (
 	"fmt"
 
-	"git.pirl.io/community/pirl/params"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 func makeStackFunc(pop, push int) stackValidationFunc {

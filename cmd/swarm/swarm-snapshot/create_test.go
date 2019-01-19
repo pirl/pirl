@@ -21,18 +21,23 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
 	"testing"
 
-	"git.pirl.io/community/pirl/p2p/simulations"
+	"github.com/ethereum/go-ethereum/p2p/simulations"
 )
 
 // TestSnapshotCreate is a high level e2e test that tests for snapshot generation.
 // It runs a few "create" commands with different flag values and loads generated
 // snapshot files to validate their content.
 func TestSnapshotCreate(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip()
+	}
+
 	for _, v := range []struct {
 		name     string
 		nodes    int

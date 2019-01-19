@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"git.pirl.io/community/pirl/common/math"
+	"github.com/ethereum/go-ethereum/common/math"
 )
 
 func TestBlockNumberJSONUnmarshal(t *testing.T) {

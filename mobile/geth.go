@@ -24,18 +24,18 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/eth"
-	"git.pirl.io/community/pirl/eth/downloader"
-	"git.pirl.io/community/pirl/ethclient"
-	"git.pirl.io/community/pirl/ethstats"
-	"git.pirl.io/community/pirl/internal/debug"
-	"git.pirl.io/community/pirl/les"
-	"git.pirl.io/community/pirl/node"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/nat"
-	"git.pirl.io/community/pirl/params"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/eth"
+	"github.com/ethereum/go-ethereum/eth/downloader"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/ethstats"
+	"github.com/ethereum/go-ethereum/internal/debug"
+	"github.com/ethereum/go-ethereum/les"
+	"github.com/ethereum/go-ethereum/node"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/p2p/nat"
+	"github.com/ethereum/go-ethereum/params"
+	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the Geth
@@ -82,7 +82,7 @@ type NodeConfig struct {
 // or some fields are missing from the user's specified list.
 var defaultNodeConfig = &NodeConfig{
 	BootstrapNodes:        FoundationBootnodes(),
-	MaxPeers:              100,
+	MaxPeers:              25,
 	EthereumEnabled:       true,
 	EthereumNetworkID:     1,
 	EthereumDatabaseCache: 16,

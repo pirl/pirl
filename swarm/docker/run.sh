@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 
 PASSWORD=${PASSWORD:-}
-DATADIR=${DATADIR:-/root/.pirl/}
+DATADIR=${DATADIR:-/root/.ethereum/}
 
 if [ "$PASSWORD" == "" ]; then echo "Password must be set, in order to use swarm non-interactively." && exit 1; fi
 

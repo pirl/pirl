@@ -29,8 +29,8 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/cmd/utils"
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/cmd/utils"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 type testFile struct {

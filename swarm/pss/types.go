@@ -21,12 +21,12 @@ import (
 	"fmt"
 	"sync"
 
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/hexutil"
-	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/rlp"
-	"git.pirl.io/community/pirl/swarm/storage"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/p2p"
+	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/swarm/storage"
+	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
 )
 
 const (

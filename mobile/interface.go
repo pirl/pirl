@@ -22,7 +22,7 @@ import (
 	"errors"
 	"math/big"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // Interface represents a wrapped version of Go's interface{}, with the capacity

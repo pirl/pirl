@@ -21,7 +21,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"git.pirl.io/community/pirl/core/vm"
+	"github.com/ethereum/go-ethereum/core/vm"
 )
 
 // Iterator for disassembled EVM instructions

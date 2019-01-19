@@ -3,7 +3,7 @@ package feed
 import (
 	"testing"
 
-	"git.pirl.io/community/pirl/common/hexutil"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 func TestTopic(t *testing.T) {

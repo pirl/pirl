@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"git.pirl.io/community/pirl/log"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 // Enabled is checked by the constructor functions for all of the

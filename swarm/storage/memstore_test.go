@@ -20,7 +20,7 @@ import (
 	"context"
 	"testing"
 
-	"git.pirl.io/community/pirl/swarm/log"
+	"github.com/ethereum/go-ethereum/swarm/log"
 )
 
 func newTestMemStore() *MemStore {

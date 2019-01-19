@@ -19,7 +19,7 @@ package state
 import (
 	"sync"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type account struct {

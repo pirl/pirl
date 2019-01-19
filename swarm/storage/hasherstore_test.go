@@ -21,9 +21,9 @@ import (
 	"context"
 	"testing"
 
-	"git.pirl.io/community/pirl/swarm/storage/encryption"
+	"github.com/ethereum/go-ethereum/swarm/storage/encryption"
 
-	"git.pirl.io/community/pirl/common"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func TestHasherStore(t *testing.T) {
