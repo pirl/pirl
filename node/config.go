@@ -288,9 +288,7 @@ func (c *Config) ResolvePath(path string) string {
 			oldpath = filepath.Join(c.DataDir, path)
 		}
 		if oldpath != "" && common.FileExist(oldpath) {
-			if warn {
-				c.warnOnce(&c.oldGethResourceWarning, "Using deprecated resource file %s, please move this file to the 'pirl' subdirectory of datadir.", oldpath)
-			}
+			// TODO: print warning
 			return oldpath
 		}
 	}
