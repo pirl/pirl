@@ -17,9 +17,9 @@
 package runtime
 
 import (
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/vm"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/vm"
 )
 
 func NewEnv(cfg *Config) *vm.EVM {

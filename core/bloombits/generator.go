@@ -19,7 +19,7 @@ package bloombits
 import (
 	"errors"
 
-	"github.com/ethereum/go-ethereum/core/types"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 var (

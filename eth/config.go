@@ -24,13 +24,13 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/gasprice"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/eth/gasprice"
+	"git.pirl.io/community/pirl/params"
 )
 
 // DefaultConfig contains default settings for use on the Ethereum main net.
@@ -43,12 +43,12 @@ var DefaultConfig = Config{
 		DatasetsInMem:  1,
 		DatasetsOnDisk: 2,
 	},
-	NetworkId:      1,
+	NetworkId:      3125659152,
 	LightPeers:     100,
-	DatabaseCache:  512,
+	DatabaseCache:  768,
 	TrieCleanCache: 256,
 	TrieDirtyCache: 256,
-	TrieTimeout:    60 * time.Minute,
+	TrieTimeout:    5 * time.Minute,
 	MinerGasFloor:  8000000,
 	MinerGasCeil:   8000000,
 	MinerGasPrice:  big.NewInt(params.GWei),
@@ -69,9 +69,9 @@ func init() {
 		}
 	}
 	if runtime.GOOS == "windows" {
-		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, "AppData", "Ethash")
+		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, "AppData", "Pirl")
 	} else {
-		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, ".ethash")
+		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, ".pirl")
 	}
 }
 

@@ -25,11 +25,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/enode"
 
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/metrics"
 )
 
 const (

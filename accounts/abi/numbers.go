@@ -20,8 +20,8 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
 )
 
 var (

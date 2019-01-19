@@ -20,9 +20,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/light"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/light"
 )
 
 // syncer is responsible for periodically synchronising with the network, both

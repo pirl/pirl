@@ -21,7 +21,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm/state"
+	"git.pirl.io/community/pirl/swarm/state"
 )
 
 // TestDBStore tests basic functionality of DBStore.

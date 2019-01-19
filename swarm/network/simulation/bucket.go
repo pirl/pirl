@@ -16,7 +16,7 @@
 
 package simulation
 
-import "github.com/ethereum/go-ethereum/p2p/enode"
+import "git.pirl.io/community/pirl/p2p/enode"
 
 // BucketKey is the type that should be used for keys in simulation buckets.
 type BucketKey string

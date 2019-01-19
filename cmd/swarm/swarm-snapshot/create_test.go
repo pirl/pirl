@@ -27,7 +27,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/p2p/simulations"
+	"git.pirl.io/community/pirl/p2p/simulations"
 )
 
 // TestSnapshotCreate is a high level e2e test that tests for snapshot generation.

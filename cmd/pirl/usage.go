@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
-// Contains the geth command usage template and generator.
+// Contains the pirl command usage template and generator.
 
 package main
 
@@ -24,8 +24,8 @@ import (
 
 	"strings"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/internal/debug"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/internal/debug"
 	"gopkg.in/urfave/cli.v1"
 )
 

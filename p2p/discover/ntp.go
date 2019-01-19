@@ -25,7 +25,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 const (

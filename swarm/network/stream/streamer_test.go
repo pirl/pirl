@@ -25,11 +25,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	p2ptest "github.com/ethereum/go-ethereum/p2p/testing"
-	"github.com/ethereum/go-ethereum/swarm/network"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p/enode"
+	p2ptest "git.pirl.io/community/pirl/p2p/testing"
+	"git.pirl.io/community/pirl/swarm/network"
 	"golang.org/x/crypto/sha3"
 )
 

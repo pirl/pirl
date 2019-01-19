@@ -27,8 +27,8 @@ import (
 	"io/ioutil"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/storage/mock"
 )
 
 // GlobalStore stores all chunk data and also keys and node addresses relations.
