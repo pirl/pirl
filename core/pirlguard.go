@@ -84,6 +84,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 		}
 		log.Error("Chain is a malicious and we should reject it", context... )
 		err = ErrDelayTooHigh
+
 	}
 
 	if penalty == 0 {
