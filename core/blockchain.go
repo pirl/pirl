@@ -1144,7 +1144,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 	block, err := it.next()
 	switch {
 	case errChain == ErrDelayTooHigh:
-		//stats.ignored += len(it.chain)
+		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, errChain)
 		return it.index, events, coalescedLogs, errChain
 
