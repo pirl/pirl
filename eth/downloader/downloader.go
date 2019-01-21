@@ -25,7 +25,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
