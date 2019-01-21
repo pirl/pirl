@@ -1137,7 +1137,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 	defer close(abort)
 
 	errChain := bc.checkChainForAttack(chain)
-	
 
 	// Peek the error for the first block to decide the directing import logic
 	it := newInsertIterator(chain, results, bc.Validator())
@@ -1199,34 +1198,8 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 			bc.reportBlock(block, nil, ErrBlacklistedHash)
 			return it.index, events, coalescedLogs, ErrBlacklistedHash
 		}
-		// Wait for the block's verification to complete
-		bstart := time.Now()
-		err := <-results
-		
-		if err == nil && errChain == nil  {
-			err = bc.Validator().ValidateBody(block)
-		}
-		switch {
-		case errChain == ErrDelayTooHigh:
-		    bc.reportBlock(block, nil, errChain)
-		    continue
-		case err == ErrKnownBlock:
-			// Block and state both already known. However if the current block is below
-			// this number we did a rollback and we should reimport it nonetheless.
-			if bc.CurrentBlock().NumberU64() >= block.NumberU64() {
-				stats.ignored++
-				continue
-			}
-		case err == consensus.ErrFutureBlock:
-			// Allow up to MaxFuture second in the future blocks. If this limit is exceeded
-			// the chain is discarded and processed at a later time if given.
-			max := big.NewInt(time.Now().Unix() + maxTimeFutureBlocks)
-			if block.Time().Cmp(max) > 0 {
-				return i, events, coalescedLogs, fmt.Errorf("future block: %v > %v", block.Time(), max)
-			}
-			bc.futureBlocks.Add(block.Hash(), block)
-			stats.queued++
-			continue
+		// Retrieve the parent block and it's state to execute on top
+		start := time.Now()
 
 		parent := it.previous()
 		if parent == nil {
