@@ -21,17 +21,20 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	mrand "math/rand"
-	"net"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
+
+	"net"
 
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/common/hexutil"
 	"git.pirl.io/community/pirl/crypto"
 	"git.pirl.io/community/pirl/p2p"
-	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/enode"
 	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 var keys = []string{
@@ -71,7 +74,7 @@ var keys = []string{
 }
 
 type TestData struct {
-	started int
+	started int64
 	counter [NumNodes]int
 	mutex   sync.RWMutex
 }
@@ -151,7 +154,7 @@ func resetParams(t *testing.T) {
 }
 
 func initBloom(t *testing.T) {
-	masterBloomFilter = make([]byte, bloomFilterSize)
+	masterBloomFilter = make([]byte, BloomFilterSize)
 	_, err := mrand.Read(masterBloomFilter)
 	if err != nil {
 		t.Fatalf("rand failed: %s.", err)
@@ -163,7 +166,7 @@ func initBloom(t *testing.T) {
 		masterBloomFilter[i] = 0xFF
 	}
 
-	if !bloomFilterMatch(masterBloomFilter, msgBloom) {
+	if !BloomFilterMatch(masterBloomFilter, msgBloom) {
 		t.Fatalf("bloom mismatch on initBloom.")
 	}
 }
@@ -172,12 +175,10 @@ func initialize(t *testing.T) {
 	initBloom(t)
 
 	var err error
-	ip := net.IPv4(127, 0, 0, 1)
-	port0 := 30303
 
 	for i := 0; i < NumNodes; i++ {
 		var node TestNode
-		b := make([]byte, bloomFilterSize)
+		b := make([]byte, BloomFilterSize)
 		copy(b, masterBloomFilter)
 		node.shh = New(&DefaultConfig)
 		node.shh.SetMinimumPoW(masterPow)
@@ -198,51 +199,43 @@ func initialize(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed convert the key: %s.", keys[i])
 		}
-		port := port0 + i
-		addr := fmt.Sprintf(":%d", port) // e.g. ":30303"
 		name := common.MakeName("whisper-go", "2.0")
-		var peers []*discover.Node
-		if i > 0 {
-			peerNodeID := nodes[i-1].id
-			peerPort := uint16(port - 1)
-			peerNode := discover.PubkeyID(&peerNodeID.PublicKey)
-			peer := discover.NewNode(peerNode, ip, peerPort, peerPort)
-			peers = append(peers, peer)
-		}
 
 		node.server = &p2p.Server{
 			Config: p2p.Config{
-				PrivateKey:     node.id,
-				MaxPeers:       NumNodes/2 + 1,
-				Name:           name,
-				Protocols:      node.shh.Protocols(),
-				ListenAddr:     addr,
-				NAT:            nat.Any(),
-				BootstrapNodes: peers,
-				StaticNodes:    peers,
-				TrustedNodes:   peers,
+				PrivateKey: node.id,
+				MaxPeers:   NumNodes/2 + 1,
+				Name:       name,
+				Protocols:  node.shh.Protocols(),
+				ListenAddr: "127.0.0.1:0",
+				NAT:        nat.Any(),
 			},
 		}
+
+		go startServer(t, node.server)
 
 		nodes[i] = &node
 	}
 
-	for i := 0; i < NumNodes; i++ {
-		go startServer(t, nodes[i].server)
-	}
-
 	waitForServersToStart(t)
+
+	for i := 0; i < NumNodes; i++ {
+		for j := 0; j < i; j++ {
+			peerNodeId := nodes[j].id
+			address, _ := net.ResolveTCPAddr("tcp", nodes[j].server.ListenAddr)
+			peer := enode.NewV4(&peerNodeId.PublicKey, address.IP, address.Port, address.Port)
+			nodes[i].server.AddPeer(peer)
+		}
+	}
 }
 
 func startServer(t *testing.T, s *p2p.Server) {
 	err := s.Start()
 	if err != nil {
-		t.Fatalf("failed to start the fisrt server.")
+		t.Fatalf("failed to start the first server. err: %v", err)
 	}
 
-	result.mutex.Lock()
-	defer result.mutex.Unlock()
-	result.started++
+	atomic.AddInt64(&result.started, 1)
 }
 
 func stopServers() {
@@ -438,7 +431,7 @@ func checkPowExchangeForNodeZeroOnce(t *testing.T, mustPass bool) bool {
 	cnt := 0
 	for i, node := range nodes {
 		for peer := range node.shh.peers {
-			if peer.peer.ID() == discover.PubkeyID(&nodes[0].id.PublicKey) {
+			if peer.peer.ID() == nodes[0].server.Self().ID() {
 				cnt++
 				if peer.powRequirement != masterPow {
 					if mustPass {
@@ -459,7 +452,7 @@ func checkPowExchangeForNodeZeroOnce(t *testing.T, mustPass bool) bool {
 func checkPowExchange(t *testing.T) {
 	for i, node := range nodes {
 		for peer := range node.shh.peers {
-			if peer.peer.ID() != discover.PubkeyID(&nodes[0].id.PublicKey) {
+			if peer.peer.ID() != nodes[0].server.Self().ID() {
 				if peer.powRequirement != masterPow {
 					t.Fatalf("node %d: failed to exchange pow requirement in round %d; expected %f, got %f",
 						i, round, masterPow, peer.powRequirement)
@@ -472,7 +465,10 @@ func checkPowExchange(t *testing.T) {
 func checkBloomFilterExchangeOnce(t *testing.T, mustPass bool) bool {
 	for i, node := range nodes {
 		for peer := range node.shh.peers {
-			if !bytes.Equal(peer.bloomFilter, masterBloomFilter) {
+			peer.bloomMu.Lock()
+			equals := bytes.Equal(peer.bloomFilter, masterBloomFilter)
+			peer.bloomMu.Unlock()
+			if !equals {
 				if mustPass {
 					t.Fatalf("node %d: failed to exchange bloom filter requirement in round %d. \n%x expected \n%x got",
 						i, round, masterBloomFilter, peer.bloomFilter)
@@ -500,11 +496,73 @@ func checkBloomFilterExchange(t *testing.T) {
 
 func waitForServersToStart(t *testing.T) {
 	const iterations = 200
+	var started int64
 	for j := 0; j < iterations; j++ {
 		time.Sleep(50 * time.Millisecond)
-		if result.started == NumNodes {
+		started = atomic.LoadInt64(&result.started)
+		if started == NumNodes {
 			return
 		}
 	}
-	t.Fatalf("Failed to start all the servers, running: %d", result.started)
+	t.Fatalf("Failed to start all the servers, running: %d", started)
+}
+
+//two generic whisper node handshake
+func TestPeerHandshakeWithTwoFullNode(t *testing.T) {
+	w1 := Whisper{}
+	p1 := newPeer(&w1, p2p.NewPeer(enode.ID{}, "test", []p2p.Cap{}), &rwStub{[]interface{}{ProtocolVersion, uint64(123), make([]byte, BloomFilterSize), false}})
+	err := p1.handshake()
+	if err != nil {
+		t.Fatal()
+	}
+}
+
+//two generic whisper node handshake. one don't send light flag
+func TestHandshakeWithOldVersionWithoutLightModeFlag(t *testing.T) {
+	w1 := Whisper{}
+	p1 := newPeer(&w1, p2p.NewPeer(enode.ID{}, "test", []p2p.Cap{}), &rwStub{[]interface{}{ProtocolVersion, uint64(123), make([]byte, BloomFilterSize)}})
+	err := p1.handshake()
+	if err != nil {
+		t.Fatal()
+	}
+}
+
+//two light nodes handshake. restriction disabled
+func TestTwoLightPeerHandshakeRestrictionOff(t *testing.T) {
+	w1 := Whisper{}
+	w1.settings.Store(restrictConnectionBetweenLightClientsIdx, false)
+	w1.SetLightClientMode(true)
+	p1 := newPeer(&w1, p2p.NewPeer(enode.ID{}, "test", []p2p.Cap{}), &rwStub{[]interface{}{ProtocolVersion, uint64(123), make([]byte, BloomFilterSize), true}})
+	err := p1.handshake()
+	if err != nil {
+		t.FailNow()
+	}
+}
+
+//two light nodes handshake. restriction enabled
+func TestTwoLightPeerHandshakeError(t *testing.T) {
+	w1 := Whisper{}
+	w1.settings.Store(restrictConnectionBetweenLightClientsIdx, true)
+	w1.SetLightClientMode(true)
+	p1 := newPeer(&w1, p2p.NewPeer(enode.ID{}, "test", []p2p.Cap{}), &rwStub{[]interface{}{ProtocolVersion, uint64(123), make([]byte, BloomFilterSize), true}})
+	err := p1.handshake()
+	if err == nil {
+		t.FailNow()
+	}
+}
+
+type rwStub struct {
+	payload []interface{}
+}
+
+func (stub *rwStub) ReadMsg() (p2p.Msg, error) {
+	size, r, err := rlp.EncodeToReader(stub.payload)
+	if err != nil {
+		return p2p.Msg{}, err
+	}
+	return p2p.Msg{Code: statusCode, Size: uint32(size), Payload: r}, nil
+}
+
+func (stub *rwStub) WriteMsg(m p2p.Msg) error {
+	return nil
 }

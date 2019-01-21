@@ -27,6 +27,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"syscall"
 	"testing"
 	"text/template"
 	"time"
@@ -50,10 +51,12 @@ type TestCmd struct {
 	stdout *bufio.Reader
 	stdin  io.WriteCloser
 	stderr *testlogger
+	// Err will contain the process exit error or interrupt signal error
+	Err error
 }
 
 // Run exec's the current binary using name as argv[0] which will trigger the
-// reexec init function for that name (e.g. "geth-test" in cmd/geth/run_test.go)
+// reexec init function for that name (e.g. "pirl-test" in cmd/pirl/run_test.go)
 func (tt *TestCmd) Run(name string, args ...string) {
 	tt.stderr = &testlogger{t: tt.T}
 	tt.cmd = &exec.Cmd{
@@ -77,7 +80,7 @@ func (tt *TestCmd) Run(name string, args ...string) {
 // InputLine writes the given text to the childs stdin.
 // This method can also be called from an expect template, e.g.:
 //
-//     geth.expect(`Passphrase: {{.InputLine "password"}}`)
+//     pirl.expect(`Passphrase: {{.InputLine "password"}}`)
 func (tt *TestCmd) InputLine(s string) string {
 	io.WriteString(tt.stdin, s+"\n")
 	return ""
@@ -182,11 +185,25 @@ func (tt *TestCmd) ExpectExit() {
 }
 
 func (tt *TestCmd) WaitExit() {
-	tt.cmd.Wait()
+	tt.Err = tt.cmd.Wait()
 }
 
 func (tt *TestCmd) Interrupt() {
-	tt.cmd.Process.Signal(os.Interrupt)
+	tt.Err = tt.cmd.Process.Signal(os.Interrupt)
+}
+
+// ExitStatus exposes the process' OS exit code
+// It will only return a valid value after the process has finished.
+func (tt *TestCmd) ExitStatus() int {
+	if tt.Err != nil {
+		exitErr := tt.Err.(*exec.ExitError)
+		if exitErr != nil {
+			if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+				return status.ExitStatus()
+			}
+		}
+	}
+	return 0
 }
 
 // StderrText returns any stderr output written so far.

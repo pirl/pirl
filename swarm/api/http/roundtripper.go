@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/log"
 )
 
 /*
