@@ -133,7 +133,7 @@ func listMounts(cliContext *cli.Context) {
 	} else {
 		fmt.Printf("Found %d swarmfs mount(s):\n", len(mf))
 		for i, mountInfo := range mf {
-			//fmt.Printf("%d:\n", i)
+			fmt.Printf("%d:\n", i)
 			fmt.Printf("\tMount point: %s\n", mountInfo.MountPoint)
 			fmt.Printf("\tLatest Manifest: %s\n", mountInfo.LatestManifest)
 			fmt.Printf("\tStart Manifest: %s\n", mountInfo.StartManifest)
