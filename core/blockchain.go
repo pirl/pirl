@@ -1143,10 +1143,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 
 	block, err := it.next()
 	switch {
-	case errChain == ErrDelayTooHigh:
-		stats.ignored += len(it.chain)
-		bc.reportBlock(block, nil, errChain)
-		return it.index, events, coalescedLogs, errChain
+
 
 	// First block is pruned, insert as sidechain and reorg only if TD grows enough
 	case err == consensus.ErrPrunedAncestor:
@@ -1181,6 +1178,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		// Falls through to the block import
 
 	// Some other error occurred, abort
+	//Pirlguard check
+	case errChain == ErrDelayTooHigh:
+		stats.ignored += len(it.chain)
+		bc.reportBlock(block, nil, errChain)
+		return it.index, events, coalescedLogs, errChain
 	case err != nil:
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, err)
