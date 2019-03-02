@@ -19,7 +19,7 @@ package vm
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/params"
 )
 
 func makeStackFunc(pop, push int) stackValidationFunc {

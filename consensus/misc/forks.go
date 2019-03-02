@@ -19,9 +19,9 @@ package misc
 import (
 	"fmt"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/params"
 )
 
 // VerifyForkHashes verifies that blocks conforming to network hard-forks do have

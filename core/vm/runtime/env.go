@@ -17,9 +17,9 @@
 package runtime
 
 import (
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/vm"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/vm"
 )
 
 func NewEnv(cfg *Config) *vm.EVM {

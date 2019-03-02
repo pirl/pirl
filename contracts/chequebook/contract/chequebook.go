@@ -7,12 +7,12 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "github.com/pirl/pirl"
-	"github.com/pirl/pirl/accounts/abi"
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/event"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/accounts/abi"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/event"
 )
 
 // ChequebookABI is the input ABI used to generate the binding from.

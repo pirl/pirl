@@ -22,12 +22,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 func init() {
@@ -116,7 +116,7 @@ func testRecvTransactions(t *testing.T, protocol int) {
 			t.Errorf("added wrong tx hash: got %v, want %v", added[0].Hash(), tx.Hash())
 		}
 	case <-time.After(2 * time.Second):
-		t.Errorf("no TxPreEvent received within 2 seconds")
+		t.Errorf("no NewTxsEvent received within 2 seconds")
 	}
 }
 

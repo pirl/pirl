@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Hash represents the 32 byte Keccak256 hash of arbitrary data.

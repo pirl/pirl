@@ -18,13 +18,23 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
 )
+
+var hashCommand = cli.Command{
+	Action:             hash,
+	CustomHelpTemplate: helpTemplate,
+	Name:               "hash",
+	Usage:              "print the swarm hash of a file or directory",
+	ArgsUsage:          "<file>",
+	Description:        "Prints the swarm hash of file or directory",
+}
 
 func hash(ctx *cli.Context) {
 	args := ctx.Args()
@@ -38,11 +48,11 @@ func hash(ctx *cli.Context) {
 	defer f.Close()
 
 	stat, _ := f.Stat()
-	chunker := storage.NewTreeChunker(storage.NewChunkerParams())
-	key, err := chunker.Split(f, stat.Size(), nil, nil, nil)
+	fileStore := storage.NewFileStore(&storage.FakeChunkStore{}, storage.NewFileStoreParams())
+	addr, _, err := fileStore.Store(context.TODO(), f, stat.Size(), false)
 	if err != nil {
 		utils.Fatalf("%v\n", err)
 	} else {
-		fmt.Printf("%v\n", key)
+		fmt.Printf("%v\n", addr)
 	}
 }

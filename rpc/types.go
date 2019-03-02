@@ -23,8 +23,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pirl/pirl/common/hexutil"
-	"gopkg.in/fatih/set.v0"
+	mapset "github.com/deckarep/golang-set"
+	"git.pirl.io/community/pirl/common/hexutil"
 )
 
 // API describes the set of methods offered over the RPC interface
@@ -73,7 +73,7 @@ type Server struct {
 
 	run      int32
 	codecsMu sync.Mutex
-	codecs   *set.Set
+	codecs   mapset.Set
 }
 
 // rpcRequest represents a raw incoming RPC request

@@ -23,14 +23,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/bitutil"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/core/bloombits"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/event"
-	"github.com/pirl/pirl/node"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/bitutil"
+	"git.pirl.io/community/pirl/core/bloombits"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/node"
 )
 
 func BenchmarkBloomBits512(b *testing.B) {
@@ -64,27 +64,27 @@ func BenchmarkBloomBits32k(b *testing.B) {
 const benchFilterCnt = 2000
 
 func benchmarkBloomBits(b *testing.B, sectionSize uint64) {
-	benchDataDir := node.DefaultDataDir() + "/geth/chaindata"
+	benchDataDir := node.DefaultDataDir() + "/pirl/chaindata"
 	fmt.Println("Running bloombits benchmark   section size:", sectionSize)
 
 	db, err := ethdb.NewLDBDatabase(benchDataDir, 128, 1024)
 	if err != nil {
 		b.Fatalf("error opening database at %v: %v", benchDataDir, err)
 	}
-	head := core.GetHeadBlockHash(db)
+	head := rawdb.ReadHeadBlockHash(db)
 	if head == (common.Hash{}) {
 		b.Fatalf("chain data not found at %v", benchDataDir)
 	}
 
 	clearBloomBits(db)
 	fmt.Println("Generating bloombits data...")
-	headNum := core.GetBlockNumber(db, head)
-	if headNum < sectionSize+512 {
+	headNum := rawdb.ReadHeaderNumber(db, head)
+	if headNum == nil || *headNum < sectionSize+512 {
 		b.Fatalf("not enough blocks for running a benchmark")
 	}
 
 	start := time.Now()
-	cnt := (headNum - 512) / sectionSize
+	cnt := (*headNum - 512) / sectionSize
 	var dataSize, compSize uint64
 	for sectionIdx := uint64(0); sectionIdx < cnt; sectionIdx++ {
 		bc, err := bloombits.NewGenerator(uint(sectionSize))
@@ -93,14 +93,14 @@ func benchmarkBloomBits(b *testing.B, sectionSize uint64) {
 		}
 		var header *types.Header
 		for i := sectionIdx * sectionSize; i < (sectionIdx+1)*sectionSize; i++ {
-			hash := core.GetCanonicalHash(db, i)
-			header = core.GetHeader(db, hash, i)
+			hash := rawdb.ReadCanonicalHash(db, i)
+			header = rawdb.ReadHeader(db, hash, i)
 			if header == nil {
 				b.Fatalf("Error creating bloomBits data")
 			}
 			bc.AddBloom(uint(i-sectionIdx*sectionSize), header.Bloom)
 		}
-		sectionHead := core.GetCanonicalHash(db, (sectionIdx+1)*sectionSize-1)
+		sectionHead := rawdb.ReadCanonicalHash(db, (sectionIdx+1)*sectionSize-1)
 		for i := 0; i < types.BloomBitLength; i++ {
 			data, err := bc.Bitset(uint(i))
 			if err != nil {
@@ -109,7 +109,7 @@ func benchmarkBloomBits(b *testing.B, sectionSize uint64) {
 			comp := bitutil.CompressBytes(data)
 			dataSize += uint64(len(data))
 			compSize += uint64(len(comp))
-			core.WriteBloomBits(db, uint(i), sectionIdx, sectionHead, comp)
+			rawdb.WriteBloomBits(db, uint(i), sectionIdx, sectionHead, comp)
 		}
 		//if sectionIdx%50 == 0 {
 		//	fmt.Println(" section", sectionIdx, "/", cnt)
@@ -135,7 +135,7 @@ func benchmarkBloomBits(b *testing.B, sectionSize uint64) {
 		var addr common.Address
 		addr[0] = byte(i)
 		addr[1] = byte(i / 256)
-		filter := New(backend, 0, int64(cnt*sectionSize-1), []common.Address{addr}, nil)
+		filter := NewRangeFilter(backend, 0, int64(cnt*sectionSize-1), []common.Address{addr}, nil)
 		if _, err := filter.Logs(context.Background()); err != nil {
 			b.Error("filter.Find error:", err)
 		}
@@ -174,17 +174,17 @@ func clearBloomBits(db ethdb.Database) {
 }
 
 func BenchmarkNoBloomBits(b *testing.B) {
-	benchDataDir := node.DefaultDataDir() + "/geth/chaindata"
+	benchDataDir := node.DefaultDataDir() + "/pirl/chaindata"
 	fmt.Println("Running benchmark without bloombits")
 	db, err := ethdb.NewLDBDatabase(benchDataDir, 128, 1024)
 	if err != nil {
 		b.Fatalf("error opening database at %v: %v", benchDataDir, err)
 	}
-	head := core.GetHeadBlockHash(db)
+	head := rawdb.ReadHeadBlockHash(db)
 	if head == (common.Hash{}) {
 		b.Fatalf("chain data not found at %v", benchDataDir)
 	}
-	headNum := core.GetBlockNumber(db, head)
+	headNum := rawdb.ReadHeaderNumber(db, head)
 
 	clearBloomBits(db)
 
@@ -192,10 +192,10 @@ func BenchmarkNoBloomBits(b *testing.B) {
 	start := time.Now()
 	mux := new(event.TypeMux)
 	backend := &testBackend{mux, db, 0, new(event.Feed), new(event.Feed), new(event.Feed), new(event.Feed)}
-	filter := New(backend, 0, int64(headNum), []common.Address{{}}, nil)
+	filter := NewRangeFilter(backend, 0, int64(*headNum), []common.Address{{}}, nil)
 	filter.Logs(context.Background())
 	d := time.Since(start)
 	fmt.Println("Finished running filter benchmarks")
-	fmt.Println(" ", d, "total  ", d*time.Duration(1000000)/time.Duration(headNum+1), "per million blocks")
+	fmt.Println(" ", d, "total  ", d*time.Duration(1000000)/time.Duration(*headNum+1), "per million blocks")
 	db.Close()
 }

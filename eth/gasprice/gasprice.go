@@ -22,14 +22,14 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/internal/ethapi"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/internal/ethapi"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rpc"
 )
 
-var maxPrice = big.NewInt(500 * params.Shannon)
+var maxPrice = big.NewInt(500 * params.GWei)
 
 type Config struct {
 	Blocks     int

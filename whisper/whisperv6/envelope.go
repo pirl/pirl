@@ -26,11 +26,11 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/crypto/ecies"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/ecies"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Envelope represents a clear-text data packet to transmit through the Whisper
@@ -208,6 +208,10 @@ func (e *Envelope) OpenSymmetric(key []byte) (msg *ReceivedMessage, err error) {
 
 // Open tries to decrypt an envelope, and populates the message fields in case of success.
 func (e *Envelope) Open(watcher *Filter) (msg *ReceivedMessage) {
+	if watcher == nil {
+		return nil
+	}
+
 	// The API interface forbids filters doing both symmetric and asymmetric encryption.
 	if watcher.expectsAsymmetricEncryption() && watcher.expectsSymmetricEncryption() {
 		return nil
@@ -249,7 +253,7 @@ func (e *Envelope) Bloom() []byte {
 
 // TopicToBloom converts the topic (4 bytes) to the bloom filter (64 bytes)
 func TopicToBloom(topic TopicType) []byte {
-	b := make([]byte, bloomFilterSize)
+	b := make([]byte, BloomFilterSize)
 	var index [3]int
 	for j := 0; j < 3; j++ {
 		index[j] = int(topic[j])
@@ -264,4 +268,12 @@ func TopicToBloom(topic TopicType) []byte {
 		b[byteIndex] = (1 << uint(bitIndex))
 	}
 	return b
+}
+
+// GetEnvelope retrieves an envelope from the message queue by its hash.
+// It returns nil if the envelope can not be found.
+func (w *Whisper) GetEnvelope(hash common.Hash) *Envelope {
+	w.poolMu.RLock()
+	defer w.poolMu.RUnlock()
+	return w.envelopes[hash]
 }

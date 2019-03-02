@@ -19,9 +19,10 @@ package vm
 import (
 	"math/big"
 
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/params"
 )
 
+// Gas costs
 const (
 	GasQuickStep   uint64 = 2
 	GasFastestStep uint64 = 3

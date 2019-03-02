@@ -19,8 +19,8 @@ package les
 import (
 	"sync"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 type ltrInfo struct {

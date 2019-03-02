@@ -25,9 +25,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/gizak/termui"
 	"gopkg.in/urfave/cli.v1"
 )
@@ -76,7 +76,7 @@ func monitor(ctx *cli.Context) error {
 	// Attach to an Ethereum node over IPC or RPC
 	endpoint := ctx.String(monitorCommandAttachFlag.Name)
 	if client, err = dialRPC(endpoint); err != nil {
-		utils.Fatalf("Unable to attach to geth node: %v", err)
+		utils.Fatalf("Unable to attach to pirl node: %v", err)
 	}
 	defer client.Close()
 
@@ -93,7 +93,7 @@ func monitor(ctx *cli.Context) error {
 		if len(list) > 0 {
 			utils.Fatalf("No metrics specified.\n\nAvailable:\n - %s", strings.Join(list, "\n - "))
 		} else {
-			utils.Fatalf("No metrics collected by geth (--%s).\n", utils.MetricsEnabledFlag.Name)
+			utils.Fatalf("No metrics collected by pirl (--%s).\n", utils.MetricsEnabledFlag.Name)
 		}
 	}
 	sort.Strings(monitored)
@@ -158,7 +158,7 @@ func monitor(ctx *cli.Context) error {
 	return nil
 }
 
-// retrieveMetrics contacts the attached geth node and retrieves the entire set
+// retrieveMetrics contacts the attached pirl node and retrieves the entire set
 // of collected system metrics.
 func retrieveMetrics(client *rpc.Client) (map[string]interface{}, error) {
 	var metrics map[string]interface{}
@@ -185,12 +185,12 @@ func resolveMetric(metrics map[string]interface{}, pattern string, path string) 
 	parts := strings.SplitN(pattern, "/", 2)
 	if len(parts) > 1 {
 		for _, variation := range strings.Split(parts[0], ",") {
-			if submetrics, ok := metrics[variation].(map[string]interface{}); !ok {
+			submetrics, ok := metrics[variation].(map[string]interface{})
+			if !ok {
 				utils.Fatalf("Failed to retrieve system metrics: %s", path+variation)
 				return nil
-			} else {
-				results = append(results, resolveMetric(submetrics, parts[1], path+variation+"/")...)
 			}
+			results = append(results, resolveMetric(submetrics, parts[1], path+variation+"/")...)
 		}
 		return results
 	}

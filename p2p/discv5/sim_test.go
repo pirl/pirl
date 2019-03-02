@@ -28,7 +28,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // In this test, nodes try to randomly resolve each other.

@@ -21,15 +21,18 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/contracts/ens"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/swarm/network"
-	"github.com/pirl/pirl/swarm/services/swap"
-	"github.com/pirl/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/ens"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/network"
+	"git.pirl.io/community/pirl/swarm/pss"
+	"git.pirl.io/community/pirl/swarm/services/swap"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 const (
@@ -41,47 +44,58 @@ const (
 // allow several bzz nodes running in parallel
 type Config struct {
 	// serialised/persisted fields
-	*storage.StoreParams
-	*storage.ChunkerParams
+	*storage.FileStoreParams
+	*storage.LocalStoreParams
 	*network.HiveParams
-	Swap *swap.SwapParams
-	*network.SyncParams
-	Contract    common.Address
-	EnsRoot     common.Address
-	EnsApi      string
-	Path        string
-	ListenAddr  string
-	Port        string
-	PublicKey   string
-	BzzKey      string
-	NetworkId   uint64
-	SwapEnabled bool
-	SyncEnabled bool
-	SwapApi     string
-	Cors        string
-	BzzAccount  string
-	BootNodes   string
+	Swap *swap.LocalProfile
+	Pss  *pss.PssParams
+	//*network.SyncParams
+	Contract             common.Address
+	EnsRoot              common.Address
+	EnsAPIs              []string
+	Path                 string
+	ListenAddr           string
+	Port                 string
+	PublicKey            string
+	BzzKey               string
+	NodeID               string
+	NetworkID            uint64
+	SwapEnabled          bool
+	SyncEnabled          bool
+	SyncingSkipCheck     bool
+	DeliverySkipCheck    bool
+	MaxStreamPeerServers int
+	LightNodeEnabled     bool
+	SyncUpdateDelay      time.Duration
+	SwapAPI              string
+	Cors                 string
+	BzzAccount           string
+	privateKey           *ecdsa.PrivateKey
 }
 
 //create a default config with all parameters to set to defaults
-func NewDefaultConfig() (self *Config) {
+func NewConfig() (c *Config) {
 
-	self = &Config{
-		StoreParams:   storage.NewDefaultStoreParams(),
-		ChunkerParams: storage.NewChunkerParams(),
-		HiveParams:    network.NewDefaultHiveParams(),
-		SyncParams:    network.NewDefaultSyncParams(),
-		Swap:          swap.NewDefaultSwapParams(),
-		ListenAddr:    DefaultHTTPListenAddr,
-		Port:          DefaultHTTPPort,
-		Path:          node.DefaultDataDir(),
-		EnsApi:        node.DefaultIPCEndpoint("geth"),
-		EnsRoot:       ens.TestNetAddress,
-		NetworkId:     network.NetworkId,
-		SwapEnabled:   false,
-		SyncEnabled:   true,
-		SwapApi:       "",
-		BootNodes:     "",
+	c = &Config{
+		LocalStoreParams: storage.NewDefaultLocalStoreParams(),
+		FileStoreParams:  storage.NewFileStoreParams(),
+		HiveParams:       network.NewHiveParams(),
+		//SyncParams:    network.NewDefaultSyncParams(),
+		Swap:                 swap.NewDefaultSwapParams(),
+		Pss:                  pss.NewPssParams(),
+		ListenAddr:           DefaultHTTPListenAddr,
+		Port:                 DefaultHTTPPort,
+		Path:                 node.DefaultDataDir(),
+		EnsAPIs:              nil,
+		EnsRoot:              ens.TestNetAddress,
+		NetworkID:            network.DefaultNetworkID,
+		SwapEnabled:          false,
+		SyncEnabled:          true,
+		SyncingSkipCheck:     false,
+		MaxStreamPeerServers: 10000,
+		DeliverySkipCheck:    true,
+		SyncUpdateDelay:      15 * time.Second,
+		SwapAPI:              "",
 	}
 
 	return
@@ -89,11 +103,11 @@ func NewDefaultConfig() (self *Config) {
 
 //some config params need to be initialized after the complete
 //config building phase is completed (e.g. due to overriding flags)
-func (self *Config) Init(prvKey *ecdsa.PrivateKey) {
+func (c *Config) Init(prvKey *ecdsa.PrivateKey) {
 
 	address := crypto.PubkeyToAddress(prvKey.PublicKey)
-	self.Path = filepath.Join(self.Path, "bzz-"+common.Bytes2Hex(address.Bytes()))
-	err := os.MkdirAll(self.Path, os.ModePerm)
+	c.Path = filepath.Join(c.Path, "bzz-"+common.Bytes2Hex(address.Bytes()))
+	err := os.MkdirAll(c.Path, os.ModePerm)
 	if err != nil {
 		log.Error(fmt.Sprintf("Error creating root swarm data directory: %v", err))
 		return
@@ -103,11 +117,25 @@ func (self *Config) Init(prvKey *ecdsa.PrivateKey) {
 	pubkeyhex := common.ToHex(pubkey)
 	keyhex := crypto.Keccak256Hash(pubkey).Hex()
 
-	self.PublicKey = pubkeyhex
-	self.BzzKey = keyhex
+	c.PublicKey = pubkeyhex
+	c.BzzKey = keyhex
+	c.NodeID = enode.PubkeyToIDV4(&prvKey.PublicKey).String()
 
-	self.Swap.Init(self.Contract, prvKey)
-	self.SyncParams.Init(self.Path)
-	self.HiveParams.Init(self.Path)
-	self.StoreParams.Init(self.Path)
+	if c.SwapEnabled {
+		c.Swap.Init(c.Contract, prvKey)
+	}
+
+	c.privateKey = prvKey
+	c.LocalStoreParams.Init(c.Path)
+	c.LocalStoreParams.BaseKey = common.FromHex(keyhex)
+
+	c.Pss = c.Pss.WithPrivateKey(c.privateKey)
+}
+
+func (c *Config) ShiftPrivateKey() (privKey *ecdsa.PrivateKey) {
+	if c.privateKey != nil {
+		privKey = c.privateKey
+		c.privateKey = nil
+	}
+	return privKey
 }

@@ -22,12 +22,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/common/hexutil"
-	"github.com/pirl/pirl/common/math"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/params"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // TransactionTest checks RLP decoding and sender derivation of transactions.
@@ -72,9 +72,8 @@ func (tt *TransactionTest) Run(config *params.ChainConfig) error {
 	if err := rlp.DecodeBytes(tt.json.RLP, tx); err != nil {
 		if tt.json.Transaction == nil {
 			return nil
-		} else {
-			return fmt.Errorf("RLP decoding failed: %v", err)
 		}
+		return fmt.Errorf("RLP decoding failed: %v", err)
 	}
 	// Check sender derivation.
 	signer := types.MakeSigner(config, new(big.Int).SetUint64(uint64(tt.json.BlockNumber)))

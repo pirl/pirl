@@ -19,7 +19,7 @@ package params
 import (
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // DAOForkBlockExtra is the block header extra-data field to set for the DAO fork

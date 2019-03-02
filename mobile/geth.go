@@ -24,17 +24,18 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/eth/downloader"
-	"github.com/pirl/pirl/ethclient"
-	"github.com/pirl/pirl/ethstats"
-	"github.com/pirl/pirl/les"
-	"github.com/pirl/pirl/node"
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
-	"github.com/pirl/pirl/params"
-	whisper "github.com/pirl/pirl/whisper/whisperv5"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/ethclient"
+	"git.pirl.io/community/pirl/ethstats"
+	"git.pirl.io/community/pirl/internal/debug"
+	"git.pirl.io/community/pirl/les"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/params"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the Geth
@@ -72,13 +73,16 @@ type NodeConfig struct {
 
 	// WhisperEnabled specifies whether the node should run the Whisper protocol.
 	WhisperEnabled bool
+
+	// Listening address of pprof server.
+	PprofAddress string
 }
 
 // defaultNodeConfig contains the default node configuration values to use if all
 // or some fields are missing from the user's specified list.
 var defaultNodeConfig = &NodeConfig{
 	BootstrapNodes:        FoundationBootnodes(),
-	MaxPeers:              100,
+	MaxPeers:              25,
 	EthereumEnabled:       true,
 	EthereumNetworkID:     1,
 	EthereumDatabaseCache: 16,
@@ -107,10 +111,15 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	if config.BootstrapNodes == nil || config.BootstrapNodes.Size() == 0 {
 		config.BootstrapNodes = defaultNodeConfig.BootstrapNodes
 	}
+
+	if config.PprofAddress != "" {
+		debug.StartPProf(config.PprofAddress)
+	}
+
 	// Create the empty networking stack
 	nodeConf := &node.Config{
 		Name:        clientIdentifier,
-		Version:     params.Version,
+		Version:     params.VersionWithMeta,
 		DataDir:     datadir,
 		KeyStoreDir: filepath.Join(datadir, "keystore"), // Mobile should never use internal keystores!
 		P2P: p2p.Config{
@@ -126,6 +135,8 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	if err != nil {
 		return nil, err
 	}
+
+	debug.Memsize.Add("node", rawStack)
 
 	var genesis *core.Genesis
 	if config.EthereumGenesis != "" {
@@ -182,7 +193,7 @@ func (n *Node) Start() error {
 	return n.node.Start()
 }
 
-// Stop terminates a running node along with all it's services. In the node was
+// Stop terminates a running node along with all it's services. If the node was
 // not started, an error is returned.
 func (n *Node) Stop() error {
 	return n.node.Stop()

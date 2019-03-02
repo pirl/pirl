@@ -25,11 +25,11 @@ import (
 	"sync"
 	"time"
 
-	ethereum "github.com/pirl/pirl"
-	"github.com/pirl/pirl/accounts"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/log"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/log"
 	"github.com/karalabe/hid"
 )
 
@@ -99,7 +99,7 @@ type wallet struct {
 	//
 	// As such, a hardware wallet needs two locks to function correctly. A state
 	// lock can be used to protect the wallet's software-side internal state, which
-	// must not be held exlusively during hardware communication. A communication
+	// must not be held exclusively during hardware communication. A communication
 	// lock can be used to achieve exclusive access to the device itself, this one
 	// however should allow "skipping" waiting for operations that might want to
 	// use the device, but can live without too (e.g. account self-derivation).

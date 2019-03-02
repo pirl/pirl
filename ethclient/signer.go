@@ -20,8 +20,8 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core/types"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 // senderFromServer is a types.Signer that remembers the sender address returned by the RPC

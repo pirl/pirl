@@ -5,7 +5,7 @@ package whisperv5
 import (
 	"encoding/json"
 
-	"github.com/pirl/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/hexutil"
 )
 
 var _ = (*newMessageOverride)(nil)

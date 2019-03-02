@@ -34,8 +34,8 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 type allocItem struct{ Addr, Balance *big.Int }

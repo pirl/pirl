@@ -24,12 +24,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/accounts/abi/bind"
-	"github.com/pirl/pirl/accounts/abi/bind/backends"
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/contracts/chequebook/contract"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/accounts/abi/bind/backends"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/chequebook/contract"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 var (
@@ -46,7 +46,7 @@ func newTestBackend() *backends.SimulatedBackend {
 		addr0: {Balance: big.NewInt(1000000000)},
 		addr1: {Balance: big.NewInt(1000000000)},
 		addr2: {Balance: big.NewInt(1000000000)},
-	})
+	}, 10000000)
 }
 
 func deploy(prvKey *ecdsa.PrivateKey, amount *big.Int, backend *backends.SimulatedBackend) (common.Address, error) {
@@ -281,8 +281,8 @@ func TestDeposit(t *testing.T) {
 		t.Fatalf("expected balance %v, got %v", exp, chbook.Balance())
 	}
 
-	// autodeposit every 30ms if new cheque issued
-	interval := 30 * time.Millisecond
+	// autodeposit every 200ms if new cheque issued
+	interval := 200 * time.Millisecond
 	chbook.AutoDeposit(interval, common.Big1, balance)
 	_, err = chbook.Issue(addr1, amount)
 	if err != nil {

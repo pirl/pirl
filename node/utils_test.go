@@ -22,8 +22,8 @@ package node
 import (
 	"reflect"
 
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/rpc"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // NoopService is a trivial implementation of the Service interface.
@@ -121,12 +121,12 @@ func InstrumentedServiceMakerC(base ServiceConstructor) ServiceConstructor {
 	return InstrumentingWrapperMaker(base, reflect.TypeOf(InstrumentedServiceC{}))
 }
 
-// OneMethodApi is a single-method API handler to be returned by test services.
-type OneMethodApi struct {
+// OneMethodAPI is a single-method API handler to be returned by test services.
+type OneMethodAPI struct {
 	fun func()
 }
 
-func (api *OneMethodApi) TheOneMethod() {
+func (api *OneMethodAPI) TheOneMethod() {
 	if api.fun != nil {
 		api.fun()
 	}

@@ -18,11 +18,10 @@ package core
 
 import (
 	"container/list"
-	"fmt"
 
-	"github.com/pirl/pirl/core/types"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/event"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
 )
 
 // Implement our EthTest Manager
@@ -77,18 +76,11 @@ func (tm *TestManager) Db() ethdb.Database {
 }
 
 func NewTestManager() *TestManager {
-	db, err := ethdb.NewMemDatabase()
-	if err != nil {
-		fmt.Println("Could not create mem-db, failing")
-		return nil
-	}
-
 	testManager := &TestManager{}
 	testManager.eventMux = new(event.TypeMux)
-	testManager.db = db
+	testManager.db = ethdb.NewMemDatabase()
 	// testManager.txPool = NewTxPool(testManager)
 	// testManager.blockChain = NewBlockChain(testManager)
 	// testManager.stateManager = NewStateManager(testManager)
-
 	return testManager
 }

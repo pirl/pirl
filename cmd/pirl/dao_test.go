@@ -23,10 +23,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/ethdb"
-	"github.com/pirl/pirl/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/params"
 )
 
 // Genesis block for nodes which don't care about the DAO fork (i.e. not configured)
@@ -120,7 +120,7 @@ func testDAOForkBlockNewChain(t *testing.T, test int, genesis string, expectBloc
 		geth.WaitExit()
 	}
 	// Retrieve the DAO config flag from the database
-	path := filepath.Join(datadir, "geth", "chaindata")
+	path := filepath.Join(datadir, "pirl", "chaindata")
 	db, err := ethdb.NewLDBDatabase(path, 0, 0)
 	if err != nil {
 		t.Fatalf("test %d: failed to open test database: %v", test, err)
@@ -131,8 +131,8 @@ func testDAOForkBlockNewChain(t *testing.T, test int, genesis string, expectBloc
 	if genesis != "" {
 		genesisHash = daoGenesisHash
 	}
-	config, err := core.GetChainConfig(db, genesisHash)
-	if err != nil {
+	config := rawdb.ReadChainConfig(db, genesisHash)
+	if config == nil {
 		t.Errorf("test %d: failed to retrieve chain config: %v", test, err)
 		return // we want to return here, the other checks can't make it past this point (nil panic).
 	}

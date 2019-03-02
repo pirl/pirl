@@ -22,8 +22,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/pirl/pirl/p2p"
-	"github.com/pirl/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 const (
@@ -35,11 +36,13 @@ const (
 
 // DefaultConfig contains reasonable default settings.
 var DefaultConfig = Config{
-	DataDir:     DefaultDataDir(),
-	HTTPPort:    DefaultHTTPPort,
-	HTTPModules: []string{"net", "web3"},
-	WSPort:      DefaultWSPort,
-	WSModules:   []string{"net", "web3"},
+	DataDir:          DefaultDataDir(),
+	HTTPPort:         DefaultHTTPPort,
+	HTTPModules:      []string{"net", "web3"},
+	HTTPVirtualHosts: []string{"localhost"},
+	HTTPTimeouts:     rpc.DefaultHTTPTimeouts,
+	WSPort:           DefaultWSPort,
+	WSModules:        []string{"net", "web3"},
 	P2P: p2p.Config{
 		ListenAddr: ":30303",
 		MaxPeers:   100,

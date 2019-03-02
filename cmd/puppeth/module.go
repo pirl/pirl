@@ -25,7 +25,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 var (

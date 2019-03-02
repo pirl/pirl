@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/pirl/pirl/accounts/keystore"
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/crypto"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/crypto"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -60,7 +60,7 @@ make sure to use this feature with great caution!`,
 		}
 
 		// Decrypt key with passphrase.
-		passphrase := getPassPhrase(ctx, false)
+		passphrase := getPassphrase(ctx)
 		key, err := keystore.DecryptKey(keyjson, passphrase)
 		if err != nil {
 			utils.Fatalf("Error decrypting key: %v", err)

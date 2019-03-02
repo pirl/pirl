@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/pirl/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/cmd/utils"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -86,10 +86,6 @@ var (
 		Name:  "create",
 		Usage: "indicates the action should be create rather than call",
 	}
-	DisableGasMeteringFlag = cli.BoolFlag{
-		Name:  "nogasmetering",
-		Usage: "disable gas metering",
-	}
 	GenesisFlag = cli.StringFlag{
 		Name:  "prestate",
 		Usage: "JSON file with prestate (genesis) config",
@@ -114,6 +110,11 @@ var (
 		Name:  "nostack",
 		Usage: "disable stack output",
 	}
+	EVMInterpreterFlag = cli.StringFlag{
+		Name:  "vm.evm",
+		Usage: "External EVM configuration (default = built-in interpreter)",
+		Value: "",
+	}
 )
 
 func init() {
@@ -128,7 +129,6 @@ func init() {
 		ValueFlag,
 		DumpFlag,
 		InputFlag,
-		DisableGasMeteringFlag,
 		MemProfileFlag,
 		CPUProfileFlag,
 		StatDumpFlag,
@@ -138,6 +138,7 @@ func init() {
 		ReceiverFlag,
 		DisableMemoryFlag,
 		DisableStackFlag,
+		EVMInterpreterFlag,
 	}
 	app.Commands = []cli.Command{
 		compileCommand,

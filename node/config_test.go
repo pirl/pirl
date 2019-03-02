@@ -24,8 +24,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/p2p"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/p2p"
 )
 
 // Tests that datadirs can be successfully created, be them manually configured
@@ -79,9 +79,9 @@ func TestIPCPathResolution(t *testing.T) {
 		{"data", "/pirl.ipc", false, "/pirl.ipc"},
 		{"", "", true, ``},
 		{"data", "", true, ``},
-		{"", "pirl.ipc", true, `\\.\pipe\pirl.ipc`},
-		{"data", "pirl.ipc", true, `\\.\pipe\pirl.ipc`},
-		{"data", `\\.\pipe\pirl.ipc`, true, `\\.\pipe\pirl.ipc`},
+		{"", "pirl.ipc", true, `\\.\pipe\geth.ipc`},
+		{"data", "pirl.ipc", true, `\\.\pipe\geth.ipc`},
+		{"data", `\\.\pipe\geth.ipc`, true, `\\.\pipe\geth.ipc`},
 	}
 	for i, test := range tests {
 		// Only run when platform/test match

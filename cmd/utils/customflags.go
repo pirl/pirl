@@ -27,7 +27,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/pirl/pirl/common/math"
+	"git.pirl.io/community/pirl/common/math"
 	"gopkg.in/urfave/cli.v1"
 )
 

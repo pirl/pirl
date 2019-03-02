@@ -24,20 +24,21 @@ import (
 	"net"
 	"os"
 
-	"github.com/pirl/pirl/cmd/utils"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
-	"github.com/pirl/pirl/p2p/discover"
-	"github.com/pirl/pirl/p2p/discv5"
-	"github.com/pirl/pirl/p2p/nat"
-	"github.com/pirl/pirl/p2p/netutil"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/discv5"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/p2p/netutil"
 )
 
 func main() {
 	var (
 		listenAddr  = flag.String("addr", ":30301", "listen address")
 		genKey      = flag.String("genkey", "", "generate a node key")
-		writeAddr   = flag.Bool("writeaddress", false, "write out the node's pubkey hash and quit")
+		writeAddr   = flag.Bool("writeaddress", false, "write out the node's public key and quit")
 		nodeKeyFile = flag.String("nodekey", "", "private key filename")
 		nodeKeyHex  = flag.String("nodekeyhex", "", "private key as hex (for testing)")
 		natdesc     = flag.String("nat", "none", "port mapping mechanism (any|none|upnp|pmp|extip:<IP>)")
@@ -85,7 +86,7 @@ func main() {
 	}
 
 	if *writeAddr {
-		fmt.Printf("%v\n", discover.PubkeyID(&nodeKey.PublicKey))
+		fmt.Printf("%x\n", crypto.FromECDSAPub(&nodeKey.PublicKey)[1:])
 		os.Exit(0)
 	}
 
@@ -118,16 +119,17 @@ func main() {
 	}
 
 	if *runv5 {
-		if _, err := discv5.ListenUDP(nodeKey, conn, realaddr, "", restrictList); err != nil {
+		if _, err := discv5.ListenUDP(nodeKey, conn, "", restrictList); err != nil {
 			utils.Fatalf("%v", err)
 		}
 	} else {
+		db, _ := enode.OpenDB("")
+		ln := enode.NewLocalNode(db, nodeKey)
 		cfg := discover.Config{
-			PrivateKey:   nodeKey,
-			AnnounceAddr: realaddr,
-			NetRestrict:  restrictList,
+			PrivateKey:  nodeKey,
+			NetRestrict: restrictList,
 		}
-		if _, err := discover.ListenUDP(conn, cfg); err != nil {
+		if _, err := discover.ListenUDP(conn, ln, cfg); err != nil {
 			utils.Fatalf("%v", err)
 		}
 	}

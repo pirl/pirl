@@ -20,7 +20,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 const Version = "1.0"

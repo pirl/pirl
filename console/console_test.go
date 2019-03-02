@@ -26,12 +26,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/consensus/ethash"
-	"github.com/pirl/pirl/core"
-	"github.com/pirl/pirl/eth"
-	"github.com/pirl/pirl/internal/jsre"
-	"github.com/pirl/pirl/node"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/internal/jsre"
+	"git.pirl.io/community/pirl/node"
 )
 
 const (
@@ -201,7 +201,7 @@ func TestInteractive(t *testing.T) {
 
 	go tester.console.Interactive()
 
-	// Wait for a promt and send a statement back
+	// Wait for a prompt and send a statement back
 	select {
 	case <-tester.input.scheduler:
 	case <-time.After(time.Second):
@@ -212,7 +212,7 @@ func TestInteractive(t *testing.T) {
 	case <-time.After(time.Second):
 		t.Fatalf("input feedback timeout")
 	}
-	// Wait for the second promt and ensure first statement was evaluated
+	// Wait for the second prompt and ensure first statement was evaluated
 	select {
 	case <-tester.input.scheduler:
 	case <-time.After(time.Second):
@@ -249,7 +249,7 @@ func TestExecute(t *testing.T) {
 }
 
 // Tests that the JavaScript objects returned by statement executions are properly
-// pretty printed instead of just displaing "[object]".
+// pretty printed instead of just displaying "[object]".
 func TestPrettyPrint(t *testing.T) {
 	tester := newTester(t, nil)
 	defer tester.Close(t)
@@ -300,7 +300,7 @@ func TestIndenting(t *testing.T) {
 	}{
 		{`var a = 1;`, 0},
 		{`"some string"`, 0},
-		{`"some string with (parentesis`, 0},
+		{`"some string with (parenthesis`, 0},
 		{`"some string with newline
 		("`, 0},
 		{`function v(a,b) {}`, 0},

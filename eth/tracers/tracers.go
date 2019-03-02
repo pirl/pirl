@@ -21,7 +21,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/pirl/pirl/eth/tracers/internal/tracers"
+	"git.pirl.io/community/pirl/eth/tracers/internal/tracers"
 )
 
 // all contains all the built in JavaScript tracers by name.

@@ -21,7 +21,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/pirl/pirl/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // precompiledTest defines the input/output pairs for precompiled contract tests.

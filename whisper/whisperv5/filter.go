@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/pirl/pirl/common"
-	"github.com/pirl/pirl/crypto"
-	"github.com/pirl/pirl/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
 )
 
 type Filter struct {
@@ -220,7 +220,7 @@ func matchSingleTopic(topic TopicType, bt []byte) bool {
 		bt = bt[:TopicLength]
 	}
 
-	if len(bt) < TopicLength {
+	if len(bt) == 0 {
 		return false
 	}
 

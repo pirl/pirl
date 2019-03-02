@@ -26,7 +26,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pirl/pirl/rlp"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 var (
