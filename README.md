@@ -15,7 +15,7 @@ For prerequisites and detailed build instructions please read the
 [Installation Instructions](https://git.pirl.io/community/pirl/wiki/Building-Ethereum)
 on the wiki.
 
-Building geth requires both a Go (version 1.7 or later) and a C compiler.
+Building pirl requires both a Go (version 1.9 or later) and a C compiler.
 You can install them using your favourite package manager.
 Once the dependencies are installed, run
 
@@ -31,7 +31,7 @@ The pirl project comes with several wrappers/executables found in the `cmd` dire
 
 | Command    | Description |
 |:----------:|-------------|
-| **`geth`** | Our main Pirl CLI client. It is the entry point into the Pirl network (main-, test- or private net), capable of running as a full node (default) archive node (retaining all historical state) or a light node (retrieving data live). It can be used by other processes as a gateway into the Pirl network via JSON RPC endpoints exposed on top of HTTP, WebSocket and/or IPC transports. `geth --help` and the [CLI Wiki page](https://git.pirl.io/community/pirl/wiki/Command-Line-Options) for command line options. |
+| **`pirl`** | Our main Pirl CLI client. It is the entry point into the Pirl network (main-, test- or private net), capable of running as a full node (default) archive node (retaining all historical state) or a light node (retrieving data live). It can be used by other processes as a gateway into the Pirl network via JSON RPC endpoints exposed on top of HTTP, WebSocket and/or IPC transports. `pirl --help` and the [CLI Wiki page](https://git.pirl.io/community/pirl/wiki/Command-Line-Options) for command line options. |
 | `abigen` | Source code generator to convert Pirl contract definitions into easy to use, compile-time type-safe Go packages. It operates on plain [Ethereum contract ABIs](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI) with expanded functionality if the contract bytecode is also available. However it also accepts Solidity source files, making development much more streamlined. Please see our [Native DApps](https://git.pirl.io/community/pirl/wiki/Native-DApps:-Go-bindings-to-Ethereum-contracts) wiki page for details. |
 | `bootnode` | Stripped down version of our Pirl client implementation that only takes part in the network node discovery protocol, but does not run any of the higher level application protocols. It can be used as a lightweight bootstrap node to aid in finding peers in private networks. |
 | `evm` | Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode. Its purpose is to allow isolated, fine-grained debugging of EVM opcodes (e.g. `evm --code 60ff60ff --debug`). |
@@ -40,12 +40,12 @@ The pirl project comes with several wrappers/executables found in the `cmd` dire
 | `swarm`    | swarm daemon and tools. This is the entrypoint for the swarm network. `swarm --help` for command line options and subcommands. See https://swarm-guide.readthedocs.io for swarm documentation. |
 | `puppeth`    | a CLI wizard that aids in creating a new Ethereum network. |
 
-## Running geth
+## Running pirl
 
 Going through all the possible command line flags is out of scope here (please consult our
 [CLI Wiki page](https://git.pirl.io/community/pirl/wiki/Command-Line-Options)), but we've
 enumerated a few common parameter combos to get you up to speed quickly on how you can run your
-own Geth instance.
+own Pirl instance.
 
 ### Full node on the main Pirl network
 
@@ -60,13 +60,13 @@ $ pirl console
 
 This command will:
 
- * Start geth in fast sync mode (default, can be changed with the `--syncmode` flag), causing it to
+ * Start pirl in fast sync mode (default, can be changed with the `--syncmode` flag), causing it to
    download more data in exchange for avoiding processing the entire history of the Ethereum network,
    which is very CPU intensive.
- * Start up Geth's built-in interactive [JavaScript console](https://git.pirl.io/community/pirl/wiki/JavaScript-Console),
+ * Start up Pirl's built-in interactive [JavaScript console](https://git.pirl.io/community/pirl/wiki/JavaScript-Console),
    (via the trailing `console` subcommand) through which you can invoke all official [`web3` methods](https://github.com/ethereum/wiki/wiki/JavaScript-API)
-   as well as Geth's own [management APIs](https://git.pirl.io/community/pirl/wiki/Management-APIs).
-   This too is optional and if you leave it out you can always attach to an already running Geth instance
+   as well as Pirl's own [management APIs](https://git.pirl.io/community/pirl/wiki/Management-APIs).
+   This too is optional and if you leave it out you can always attach to an already running Pirl instance
    with `pirl attach`.
 
 ### Full node on the Ethereum test network
@@ -108,16 +108,16 @@ $ pirl --rinkeby console
 
 ### Configuration
 
-As an alternative to passing the numerous flags to the `geth` binary, you can also pass a configuration file via:
+As an alternative to passing the numerous flags to the `pirl` binary, you can also pass a configuration file via:
 
 ```
-$ geth --config /path/to/your_config.toml
+$ pirl --config /path/to/your_config.toml
 ```
 
 To get an idea how the file should look like you can use the `dumpconfig` subcommand to export your existing configuration:
 
 ```
-$ geth --your-favourite-flags dumpconfig
+$ pirl --your-favourite-flags dumpconfig
 ```
 
 *Note: This works only with geth v1.6.0 and above.*
@@ -127,14 +127,14 @@ $ geth --your-favourite-flags dumpconfig
 One of the quickest ways to get Ethereum up and running on your machine is by using Docker:
 
 ```
-docker run -d --name ethereum-node -v /Users/alice/ethereum:/root \
+docker run -d --name pirl-node -v /Users/alice/ethereum:/root \
            -p 8545:8545 -p 30303:30303 \
            ethereum/client-go
 ```
 
 This will start geth in fast-sync mode with a DB memory allowance of 1GB just as the above command does.  It will also create a persistent volume in your home directory for saving your blockchain as well as map the default ports. There is also an `alpine` tag available for a slim version of the image.
 
-Do not forget `--rpcaddr 0.0.0.0`, if you want to access RPC from other containers and/or hosts. By default, `geth` binds to the local interface and RPC endpoints is not accessible from the outside.
+Do not forget `--rpcaddr 0.0.0.0`, if you want to access RPC from other containers and/or hosts. By default, `pirl` binds to the local interface and RPC endpoints is not accessible from the outside.
 
 ### Programatically interfacing Geth nodes
 
@@ -219,7 +219,7 @@ With the genesis state defined in the above JSON file, you'll need to initialize
 with it prior to starting it up to ensure all blockchain parameters are correctly set:
 
 ```
-$ geth init path/to/genesis.json
+$ pirl init path/to/genesis.json
 ```
 
 #### Creating the rendezvous point
@@ -248,7 +248,7 @@ via the `--bootnodes` flag. It will probably also be desirable to keep the data 
 private network separated, so do also specify a custom `--datadir` flag.
 
 ```
-$ geth --datadir=path/to/custom/data/folder --bootnodes=<bootnode-enode-url-from-above>
+$ pirl --datadir=path/to/custom/data/folder --bootnodes=<bootnode-enode-url-from-above>
 ```
 
 *Note: Since your network will be completely cut off from the main and test networks, you'll also
@@ -267,7 +267,7 @@ resources (consider running on a single thread, no need for multiple ones either
 instance for mining, run it with all your usual flags, extended by:
 
 ```
-$ geth <usual-flags> --mine --minerthreads=1 --etherbase=0x0000000000000000000000000000000000000000
+$ pirl <usual-flags> --mine --minerthreads=1 --etherbase=0x0000000000000000000000000000000000000000
 ```
 
 Which will start mining blocks and transactions on a single CPU thread, crediting all proceedings to

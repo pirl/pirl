@@ -101,3 +101,4 @@ func main() {
 	log.Println(mycontract)
 
 }
+

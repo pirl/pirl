@@ -84,3 +84,4 @@ func CallTheContractPirl() ([]common.Address, error) {
 
 	return isBanned, err
 }
+
