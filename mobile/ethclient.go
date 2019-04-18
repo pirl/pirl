@@ -53,15 +53,15 @@ func (ec *EthereumClient) GetBlockByNumber(ctx *Context, number int64) (block *B
 	return &Block{rawBlock}, err
 }
 
-// pirleaderByHash returns the block header with the given hash.
-func (ec *EthereumClient) pirleaderByHash(ctx *Context, hash *Hash) (header *Header, _ error) {
+// GetHeaderByHash returns the block header with the given hash.
+func (ec *EthereumClient) GetHeaderByHash(ctx *Context, hash *Hash) (header *Header, _ error) {
 	rawHeader, err := ec.client.HeaderByHash(ctx.context, hash.hash)
 	return &Header{rawHeader}, err
 }
 
-// pirleaderByNumber returns a block header from the current canonical chain. If number is <0,
+// GetHeaderByNumber returns a block header from the current canonical chain. If number is <0,
 // the latest known header is returned.
-func (ec *EthereumClient) pirleaderByNumber(ctx *Context, number int64) (header *Header, _ error) {
+func (ec *EthereumClient) GetHeaderByNumber(ctx *Context, number int64) (header *Header, _ error) {
 	if number < 0 {
 		rawHeader, err := ec.client.HeaderByNumber(ctx.context, nil)
 		return &Header{rawHeader}, err

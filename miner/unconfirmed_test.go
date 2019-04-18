@@ -27,7 +27,7 @@ import (
 // returns nil for any requested headers.
 type noopChainRetriever struct{}
 
-func (r *noopChainRetriever) pirleaderByNumber(number uint64) *types.Header {
+func (r *noopChainRetriever) GetHeaderByNumber(number uint64) *types.Header {
 	return nil
 }
 func (r *noopChainRetriever) GetBlockByNumber(number uint64) *types.Block {

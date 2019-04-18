@@ -160,7 +160,7 @@ func testGetBlockHeaders(t *testing.T, protocol int) {
 		// Collect the headers to expect in the response
 		headers := []*types.Header{}
 		for _, hash := range tt.expect {
-			headers = append(headers, bc.pirleaderByHash(hash))
+			headers = append(headers, bc.GetHeaderByHash(hash))
 		}
 		// Send the hash request and verify the response
 		reqID++
@@ -259,7 +259,7 @@ func testGetCode(t *testing.T, protocol int) {
 	var codes [][]byte
 
 	for i := uint64(0); i <= bc.CurrentBlock().NumberU64(); i++ {
-		header := bc.pirleaderByNumber(i)
+		header := bc.GetHeaderByNumber(i)
 		req := &CodeReq{
 			BHash:  header.Hash(),
 			AccKey: crypto.Keccak256(testContractAddr[:]),
@@ -316,7 +316,7 @@ func testGetProofs(t *testing.T, protocol int) {
 
 	accounts := []common.Address{testBankAddress, acc1Addr, acc2Addr, {}}
 	for i := uint64(0); i <= bc.CurrentBlock().NumberU64(); i++ {
-		header := bc.pirleaderByNumber(i)
+		header := bc.GetHeaderByNumber(i)
 		root := header.Root
 		trie, _ := trie.New(root, trie.NewDatabase(server.db))
 
@@ -357,7 +357,7 @@ func testGetCHTProofs(t *testing.T, protocol int) {
 	bc := server.pm.blockchain.(*core.BlockChain)
 
 	// Assemble the proofs from the different protocols
-	header := bc.pirleaderByNumber(config.ChtSize - 1)
+	header := bc.GetHeaderByNumber(config.ChtSize - 1)
 	rlp, _ := rlp.EncodeToBytes(header)
 
 	key := make([]byte, 8)
@@ -366,7 +366,7 @@ func testGetCHTProofs(t *testing.T, protocol int) {
 	proofsV2 := HelperTrieResps{
 		AuxData: [][]byte{rlp},
 	}
-	root := light.GetChtRoot(server.db, 0, bc.pirleaderByNumber(config.ChtSize-1).Hash())
+	root := light.GetChtRoot(server.db, 0, bc.GetHeaderByNumber(config.ChtSize-1).Hash())
 	trie, _ := trie.New(root, trie.NewDatabase(rawdb.NewTable(server.db, light.ChtTablePrefix)))
 	trie.Prove(key, 0, &proofsV2.Proofs)
 	// Assemble the requests for the different protocols
@@ -417,7 +417,7 @@ func TestGetBloombitsProofs(t *testing.T) {
 		}}
 		var proofs HelperTrieResps
 
-		root := light.GetBloomTrieRoot(server.db, 0, bc.pirleaderByNumber(config.BloomTrieSize-1).Hash())
+		root := light.GetBloomTrieRoot(server.db, 0, bc.GetHeaderByNumber(config.BloomTrieSize-1).Hash())
 		trie, _ := trie.New(root, trie.NewDatabase(rawdb.NewTable(server.db, light.BloomTrieTablePrefix)))
 		trie.Prove(key, 0, &proofs.Proofs)
 

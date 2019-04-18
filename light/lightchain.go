@@ -109,7 +109,7 @@ func NewLightChain(odr OdrBackend, config *params.ChainConfig, engine consensus.
 	}
 	// Check the current state of the block hashes and make sure that we do not have any of the bad blocks in our chain
 	for hash := range core.BadHashes {
-		if header := bc.pirleaderByHash(hash); header != nil {
+		if header := bc.GetHeaderByHash(hash); header != nil {
 			log.Error("Found bad hash, rewinding chain", "number", header.Number, "hash", header.ParentHash)
 			bc.SetHead(header.Number.Uint64() - 1)
 			log.Error("Chain rewind was successful, resuming normal operation")
@@ -150,7 +150,7 @@ func (lc *LightChain) loadLastState() error {
 		// Corrupt or empty database, init from scratch
 		lc.Reset()
 	} else {
-		if header := lc.pirleaderByHash(head); header != nil {
+		if header := lc.GetHeaderByHash(head); header != nil {
 			lc.hc.SetCurrentHeader(header)
 		}
 	}
@@ -322,7 +322,7 @@ func (lc *LightChain) Rollback(chain []common.Hash) {
 		hash := chain[i]
 
 		if head := lc.hc.CurrentHeader(); head.Hash() == hash {
-			lc.hc.SetCurrentHeader(lc.pirleader(head.ParentHash, head.Number.Uint64()-1))
+			lc.hc.SetCurrentHeader(lc.GetHeader(head.ParentHash, head.Number.Uint64()-1))
 		}
 	}
 }
@@ -408,16 +408,16 @@ func (lc *LightChain) GetTdByHash(hash common.Hash) *big.Int {
 	return lc.hc.GetTdByHash(hash)
 }
 
-// pirleader retrieves a block header from the database by hash and number,
+// GetHeader retrieves a block header from the database by hash and number,
 // caching it if found.
-func (lc *LightChain) pirleader(hash common.Hash, number uint64) *types.Header {
-	return lc.hc.pirleader(hash, number)
+func (lc *LightChain) GetHeader(hash common.Hash, number uint64) *types.Header {
+	return lc.hc.GetHeader(hash, number)
 }
 
-// pirleaderByHash retrieves a block header from the database by hash, caching it if
+// GetHeaderByHash retrieves a block header from the database by hash, caching it if
 // found.
-func (lc *LightChain) pirleaderByHash(hash common.Hash) *types.Header {
-	return lc.hc.pirleaderByHash(hash)
+func (lc *LightChain) GetHeaderByHash(hash common.Hash) *types.Header {
+	return lc.hc.GetHeaderByHash(hash)
 }
 
 // HasHeader checks if a block header is present in the database or not, caching
@@ -444,19 +444,19 @@ func (lc *LightChain) GetAncestor(hash common.Hash, number, ancestor uint64, max
 	return lc.hc.GetAncestor(hash, number, ancestor, maxNonCanonical)
 }
 
-// pirleaderByNumber retrieves a block header from the database by number,
+// GetHeaderByNumber retrieves a block header from the database by number,
 // caching it (associated with its hash) if found.
-func (lc *LightChain) pirleaderByNumber(number uint64) *types.Header {
-	return lc.hc.pirleaderByNumber(number)
+func (lc *LightChain) GetHeaderByNumber(number uint64) *types.Header {
+	return lc.hc.GetHeaderByNumber(number)
 }
 
-// pirleaderByNumberOdr retrieves a block header from the database or network
+// GetHeaderByNumberOdr retrieves a block header from the database or network
 // by number, caching it (associated with its hash) if found.
-func (lc *LightChain) pirleaderByNumberOdr(ctx context.Context, number uint64) (*types.Header, error) {
-	if header := lc.hc.pirleaderByNumber(number); header != nil {
+func (lc *LightChain) GetHeaderByNumberOdr(ctx context.Context, number uint64) (*types.Header, error) {
+	if header := lc.hc.GetHeaderByNumber(number); header != nil {
 		return header, nil
 	}
-	return pirleaderByNumber(ctx, lc.odr, number)
+	return GetHeaderByNumber(ctx, lc.odr, number)
 }
 
 // Config retrieves the header chain's chain configuration.
@@ -479,7 +479,7 @@ func (lc *LightChain) SyncCht(ctx context.Context) bool {
 		return false
 	}
 	// Retrieve the latest useful header and update to it
-	if header, err := pirleaderByNumber(ctx, lc.odr, latest); header != nil && err == nil {
+	if header, err := GetHeaderByNumber(ctx, lc.odr, latest); header != nil && err == nil {
 		lc.chainmu.Lock()
 		defer lc.chainmu.Unlock()
 

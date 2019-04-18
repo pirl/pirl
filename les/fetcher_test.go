@@ -121,7 +121,7 @@ type lightChainStub struct {
 	insertHeaderChainAssertFunc func(chain []*types.Header, checkFreq int) (int, error)
 }
 
-func (l *lightChainStub) pirleader(hash common.Hash, number uint64) *types.Header {
+func (l *lightChainStub) GetHeader(hash common.Hash, number uint64) *types.Header {
 	if h, ok := l.headers[hash]; ok {
 		return h
 	}

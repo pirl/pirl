@@ -161,8 +161,8 @@ type LightChain interface {
 	// HasHeader verifies a header's presence in the local chain.
 	HasHeader(common.Hash, uint64) bool
 
-	// pirleaderByHash retrieves a header from the local chain.
-	pirleaderByHash(common.Hash) *types.Header
+	// GetHeaderByHash retrieves a header from the local chain.
+	GetHeaderByHash(common.Hash) *types.Header
 
 	// CurrentHeader retrieves the head header from the local chain.
 	CurrentHeader() *types.Header
@@ -688,7 +688,7 @@ func (d *Downloader) findAncestor(p *peerConnection, remoteHeader *types.Header)
 				if floor >= int64(d.genesis)-1 {
 					break
 				}
-				header = d.lightchain.pirleaderByHash(header.ParentHash)
+				header = d.lightchain.GetHeaderByHash(header.ParentHash)
 			}
 		}
 		// We already know the "genesis" block number, cap floor to that
@@ -830,7 +830,7 @@ func (d *Downloader) findAncestor(p *peerConnection, remoteHeader *types.Header)
 					end = check
 					break
 				}
-				header := d.lightchain.pirleaderByHash(h) // Independent of sync mode, header surely exists
+				header := d.lightchain.GetHeaderByHash(h) // Independent of sync mode, header surely exists
 				if header.Number.Uint64() != check {
 					p.log.Debug("Received non requested header", "number", header.Number, "hash", header.Hash(), "request", check)
 					return 0, errBadPeer
@@ -877,7 +877,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 	defer timeout.Stop()
 
 	var ttl time.Duration
-	pirleaders := func(from uint64) {
+	GetHeaders := func(from uint64) {
 		request = time.Now()
 
 		ttl = d.requestTTL()
@@ -892,7 +892,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 		}
 	}
 	// Start pulling the header chain skeleton until all is done
-	pirleaders(from)
+	GetHeaders(from)
 
 	for {
 		select {
@@ -911,7 +911,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 			// If the skeleton's finished, pull any remaining head headers directly from the origin
 			if packet.Items() == 0 && skeleton {
 				skeleton = false
-				pirleaders(from)
+				GetHeaders(from)
 				continue
 			}
 			// If no more headers are inbound, notify the content fetchers and return
@@ -921,7 +921,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 					p.log.Debug("No headers, waiting for pivot commit")
 					select {
 					case <-time.After(fsHeaderContCheck):
-						pirleaders(from)
+						GetHeaders(from)
 						continue
 					case <-d.cancelCh:
 						return errCancelHeaderFetch
@@ -981,13 +981,13 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 					return errCancelHeaderFetch
 				}
 				from += uint64(len(headers))
-				pirleaders(from)
+				GetHeaders(from)
 			} else {
 				// No headers delivered, or all of them being delayed, sleep a bit and retry
 				p.log.Trace("All headers delayed, waiting")
 				select {
 				case <-time.After(fsHeaderContCheck):
-					pirleaders(from)
+					GetHeaders(from)
 					continue
 				case <-d.cancelCh:
 					return errCancelHeaderFetch

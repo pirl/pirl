@@ -29,7 +29,7 @@ import (
 
 var sha3Nil = crypto.Keccak256Hash(nil)
 
-func pirleaderByNumber(ctx context.Context, odr OdrBackend, number uint64) (*types.Header, error) {
+func GetHeaderByNumber(ctx context.Context, odr OdrBackend, number uint64) (*types.Header, error) {
 	db := odr.Database()
 	hash := rawdb.ReadCanonicalHash(db, number)
 	if (hash != common.Hash{}) {
@@ -73,7 +73,7 @@ func GetCanonicalHash(ctx context.Context, odr OdrBackend, number uint64) (commo
 	if (hash != common.Hash{}) {
 		return hash, nil
 	}
-	header, err := pirleaderByNumber(ctx, odr, number)
+	header, err := GetHeaderByNumber(ctx, odr, number)
 	if header != nil {
 		return header.Hash(), nil
 	}

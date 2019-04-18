@@ -68,14 +68,14 @@ func errResp(code errCode, format string, v ...interface{}) error {
 type BlockChain interface {
 	Config() *params.ChainConfig
 	HasHeader(hash common.Hash, number uint64) bool
-	pirleader(hash common.Hash, number uint64) *types.Header
-	pirleaderByHash(hash common.Hash) *types.Header
+	GetHeader(hash common.Hash, number uint64) *types.Header
+	GetHeaderByHash(hash common.Hash) *types.Header
 	CurrentHeader() *types.Header
 	GetTd(hash common.Hash, number uint64) *big.Int
 	StateCache() state.Database
 	InsertHeaderChain(chain []*types.Header, checkFreq int) (int, error)
 	Rollback(chain []common.Hash)
-	pirleaderByNumber(number uint64) *types.Header
+	GetHeaderByNumber(number uint64) *types.Header
 	GetAncestor(hash common.Hash, number, ancestor uint64, maxNonCanonical *uint64) (common.Hash, uint64)
 	Genesis() *types.Block
 	SubscribeChainHeadEvent(ch chan<- core.ChainHeadEvent) event.Subscription
@@ -479,15 +479,15 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 				var origin *types.Header
 				if hashMode {
 					if first {
-						origin = pm.blockchain.pirleaderByHash(query.Origin.Hash)
+						origin = pm.blockchain.GetHeaderByHash(query.Origin.Hash)
 						if origin != nil {
 							query.Origin.Number = origin.Number.Uint64()
 						}
 					} else {
-						origin = pm.blockchain.pirleader(query.Origin.Hash, query.Origin.Number)
+						origin = pm.blockchain.GetHeader(query.Origin.Hash, query.Origin.Number)
 					}
 				} else {
-					origin = pm.blockchain.pirleaderByNumber(query.Origin.Number)
+					origin = pm.blockchain.GetHeaderByNumber(query.Origin.Number)
 				}
 				if origin == nil {
 					break
@@ -517,7 +517,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 						p.Log().Warn("GetBlockHeaders skip overflow attack", "current", current, "skip", query.Skip, "next", next, "attacker", infos)
 						unknown = true
 					} else {
-						if header := pm.blockchain.pirleaderByNumber(next); header != nil {
+						if header := pm.blockchain.GetHeaderByNumber(next); header != nil {
 							nextHash := header.Hash()
 							expOldHash, _ := pm.blockchain.GetAncestor(nextHash, next, query.Skip+1, &maxNonCanonical)
 							if expOldHash == query.Origin.Hash {
@@ -739,7 +739,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 					results = rawdb.ReadRawReceipts(pm.chainDb, hash, *number)
 				}
 				if results == nil {
-					if header := pm.blockchain.pirleaderByHash(hash); header == nil || header.ReceiptHash != types.EmptyRootHash {
+					if header := pm.blockchain.GetHeaderByHash(hash); header == nil || header.ReceiptHash != types.EmptyRootHash {
 						continue
 					}
 				}

@@ -109,7 +109,7 @@ func (dl *downloadTester) sync(id string, td *big.Int, mode SyncMode) error {
 
 // HasHeader checks if a header is present in the testers canonical chain.
 func (dl *downloadTester) HasHeader(hash common.Hash, number uint64) bool {
-	return dl.pirleaderByHash(hash) != nil
+	return dl.GetHeaderByHash(hash) != nil
 }
 
 // HasBlock checks if a block is present in the testers canonical chain.
@@ -126,8 +126,8 @@ func (dl *downloadTester) HasFastBlock(hash common.Hash, number uint64) bool {
 	return ok
 }
 
-// pirleader retrieves a header from the testers canonical chain.
-func (dl *downloadTester) pirleaderByHash(hash common.Hash) *types.Header {
+// GetHeader retrieves a header from the testers canonical chain.
+func (dl *downloadTester) GetHeaderByHash(hash common.Hash) *types.Header {
 	dl.lock.RLock()
 	defer dl.lock.RUnlock()
 

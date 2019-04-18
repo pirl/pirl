@@ -56,7 +56,7 @@ func (p *FakePeer) RequestHeadersByHash(hash common.Hash, amount int, skip int, 
 		unknown bool
 	)
 	for !unknown && len(headers) < amount {
-		origin := p.hc.pirleaderByHash(hash)
+		origin := p.hc.GetHeaderByHash(hash)
 		if origin == nil {
 			break
 		}
@@ -64,7 +64,7 @@ func (p *FakePeer) RequestHeadersByHash(hash common.Hash, amount int, skip int, 
 		headers = append(headers, origin)
 		if reverse {
 			for i := 0; i <= skip; i++ {
-				if header := p.hc.pirleader(hash, number); header != nil {
+				if header := p.hc.GetHeader(hash, number); header != nil {
 					hash = header.ParentHash
 					number--
 				} else {
@@ -77,7 +77,7 @@ func (p *FakePeer) RequestHeadersByHash(hash common.Hash, amount int, skip int, 
 				current = origin.Number.Uint64()
 				next    = current + uint64(skip) + 1
 			)
-			if header := p.hc.pirleaderByNumber(next); header != nil {
+			if header := p.hc.GetHeaderByNumber(next); header != nil {
 				if p.hc.GetBlockHashesFromHash(header.Hash(), uint64(skip+1))[skip] == hash {
 					hash = header.Hash()
 				} else {
@@ -100,7 +100,7 @@ func (p *FakePeer) RequestHeadersByNumber(number uint64, amount int, skip int, r
 		unknown bool
 	)
 	for !unknown && len(headers) < amount {
-		origin := p.hc.pirleaderByNumber(number)
+		origin := p.hc.GetHeaderByNumber(number)
 		if origin == nil {
 			break
 		}
