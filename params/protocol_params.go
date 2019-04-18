@@ -96,3 +96,4 @@ var (
 	TimeCapsuleBlock  = int64(2442442)
 	TimeCapsuleLength = uint64(20)            // Threshold of blocks that can be delayed and the value is in Blocks
 )
+
