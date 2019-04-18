@@ -187,13 +187,13 @@ class Footer extends Component<Props, State> {
 				</Grid>
 				<Grid item>
 					<Typography type='caption' color='inherit'>
-						<span style={commonStyles.light}>Geth</span> {general.version}
+						<span style={commonStyles.light}>pirl</span> {general.version}
 					</Typography>
 					{general.commit && (
 						<Typography type='caption' color='inherit'>
 							<span style={commonStyles.light}>{'Commit '}</span>
 							<a
-								href={`https://github.com/ethereum/go-ethereum/commit/${general.commit}`}
+								href={`https://git.pirl.io/community/pirl/commit/${general.commit}`}
 								target='_blank'
 								rel='noopener noreferrer'
 								style={styles.link}

@@ -23,10 +23,10 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/signer/core"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/signer/core"
 )
 
 var typesStandard = core.Types{

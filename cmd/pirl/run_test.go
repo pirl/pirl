@@ -23,18 +23,18 @@ import (
 	"testing"
 
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/ethereum/go-ethereum/internal/cmdtest"
+	"git.pirl.io/community/pirl/internal/cmdtest"
 )
 
 func tmpdir(t *testing.T) string {
-	dir, err := ioutil.TempDir("", "geth-test")
+	dir, err := ioutil.TempDir("", "pirl-test")
 	if err != nil {
 		t.Fatal(err)
 	}
 	return dir
 }
 
-type testgeth struct {
+type testpirl struct {
 	*cmdtest.TestCmd
 
 	// template variables for expect
@@ -43,8 +43,8 @@ type testgeth struct {
 }
 
 func init() {
-	// Run the app if we've been exec'd as "geth-test" in runGeth.
-	reexec.Register("geth-test", func() {
+	// Run the app if we've been exec'd as "pirl-test" in runpirl.
+	reexec.Register("pirl-test", func() {
 		if err := app.Run(os.Args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -61,10 +61,10 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// spawns geth with the given command line args. If the args don't set --datadir, the
+// spawns pirl with the given command line args. If the args don't set --datadir, the
 // child g gets a temporary data directory.
-func runGeth(t *testing.T, args ...string) *testgeth {
-	tt := &testgeth{}
+func runpirl(t *testing.T, args ...string) *testpirl {
+	tt := &testpirl{}
 	tt.TestCmd = cmdtest.NewTestCmd(t, tt)
 	for i, arg := range args {
 		switch {
@@ -90,9 +90,9 @@ func runGeth(t *testing.T, args ...string) *testgeth {
 		}()
 	}
 
-	// Boot "geth". This actually runs the test binary but the TestMain
+	// Boot "pirl". This actually runs the test binary but the TestMain
 	// function will prevent any tests from running.
-	tt.Run("geth-test", args...)
+	tt.Run("pirl-test", args...)
 
 	return tt
 }

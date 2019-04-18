@@ -21,12 +21,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/accounts/abi"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/params"
 )
 
 func TestDefaults(t *testing.T) {
@@ -49,7 +49,7 @@ func TestDefaults(t *testing.T) {
 	if cfg.Value == nil {
 		t.Error("expected time to be non nil")
 	}
-	if cfg.GetHashFn == nil {
+	if cfg.pirlashFn == nil {
 		t.Error("expected time to be non nil")
 	}
 	if cfg.BlockNumber == nil {

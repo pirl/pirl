@@ -21,13 +21,13 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/params"
 )
 
 // So we can deterministically seed different blockchains
@@ -91,8 +91,8 @@ func testFork(t *testing.T, LightChain *LightChain, i, n int, comparator func(td
 	}
 	// Assert the chains have the same header/block at #i
 	var hash1, hash2 common.Hash
-	hash1 = LightChain.GetHeaderByNumber(uint64(i)).Hash()
-	hash2 = LightChain2.GetHeaderByNumber(uint64(i)).Hash()
+	hash1 = LightChain.pirleaderByNumber(uint64(i)).Hash()
+	hash2 = LightChain2.pirleaderByNumber(uint64(i)).Hash()
 	if hash1 != hash2 {
 		t.Errorf("chain content mismatch at %d: have hash %v, want hash %v", i, hash2, hash1)
 	}
@@ -301,7 +301,7 @@ func testReorg(t *testing.T, first, second []int, td int64) {
 	bc.InsertHeaderChain(makeHeaderChainWithDiff(bc.genesisBlock, second, 22), 1)
 	// Check that the chain is valid number and link wise
 	prev := bc.CurrentHeader()
-	for header := bc.GetHeaderByNumber(bc.CurrentHeader().Number.Uint64() - 1); header.Number.Uint64() != 0; prev, header = header, bc.GetHeaderByNumber(header.Number.Uint64()-1) {
+	for header := bc.pirleaderByNumber(bc.CurrentHeader().Number.Uint64() - 1); header.Number.Uint64() != 0; prev, header = header, bc.pirleaderByNumber(header.Number.Uint64()-1) {
 		if prev.ParentHash != header.Hash() {
 			t.Errorf("parent header hash mismatch: have %x, want %x", prev.ParentHash, header.Hash())
 		}

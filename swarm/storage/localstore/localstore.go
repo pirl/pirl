@@ -22,10 +22,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/chunk"
-	"github.com/ethereum/go-ethereum/swarm/shed"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/chunk"
+	"git.pirl.io/community/pirl/swarm/shed"
+	"git.pirl.io/community/pirl/swarm/storage/mock"
 )
 
 var (

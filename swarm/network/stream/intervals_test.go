@@ -25,14 +25,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/swarm/network/simulation"
-	"github.com/ethereum/go-ethereum/swarm/state"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/simulations/adapters"
+	"git.pirl.io/community/pirl/swarm/network/simulation"
+	"git.pirl.io/community/pirl/swarm/state"
+	"git.pirl.io/community/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 func TestIntervalsLive(t *testing.T) {
@@ -158,7 +158,7 @@ func testIntervals(t *testing.T, live bool, history *Range, skipCheck bool) {
 
 			// live stream
 			var liveHashesChan chan []byte
-			liveHashesChan, err = getHashes(ctx, registry, storer, NewStream(externalStreamName, "", true))
+			liveHashesChan, err = pirlashes(ctx, registry, storer, NewStream(externalStreamName, "", true))
 			if err != nil {
 				log.Error("get hashes", "err", err)
 				return
@@ -202,7 +202,7 @@ func testIntervals(t *testing.T, live bool, history *Range, skipCheck bool) {
 
 			// history stream
 			var historyHashesChan chan []byte
-			historyHashesChan, err = getHashes(ctx, registry, storer, NewStream(externalStreamName, "", false))
+			historyHashesChan, err = pirlashes(ctx, registry, storer, NewStream(externalStreamName, "", false))
 			if err != nil {
 				log.Error("get hashes", "err", err)
 				return
@@ -256,7 +256,7 @@ func testIntervals(t *testing.T, live bool, history *Range, skipCheck bool) {
 	}
 }
 
-func getHashes(ctx context.Context, r *Registry, peerID enode.ID, s Stream) (chan []byte, error) {
+func pirlashes(ctx context.Context, r *Registry, peerID enode.ID, s Stream) (chan []byte, error) {
 	peer := r.getPeer(peerID)
 
 	client, err := peer.getClient(ctx, s)

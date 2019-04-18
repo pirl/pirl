@@ -6,11 +6,11 @@ import (
 
 	"net"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
 )
 
 func TestFetcherULCPeerSelector(t *testing.T) {
@@ -121,7 +121,7 @@ type lightChainStub struct {
 	insertHeaderChainAssertFunc func(chain []*types.Header, checkFreq int) (int, error)
 }
 
-func (l *lightChainStub) GetHeader(hash common.Hash, number uint64) *types.Header {
+func (l *lightChainStub) pirleader(hash common.Hash, number uint64) *types.Header {
 	if h, ok := l.headers[hash]; ok {
 		return h
 	}

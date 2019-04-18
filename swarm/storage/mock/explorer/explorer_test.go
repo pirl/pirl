@@ -30,10 +30,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/db"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/mem"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/storage/mock"
+	"git.pirl.io/community/pirl/swarm/storage/mock/db"
+	"git.pirl.io/community/pirl/swarm/storage/mock/mem"
 )
 
 // TestHandler_memGlobalStore runs a set of tests

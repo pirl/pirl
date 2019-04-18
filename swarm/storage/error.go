@@ -16,7 +16,7 @@
 
 package storage
 
-import "github.com/ethereum/go-ethereum/swarm/chunk"
+import "git.pirl.io/community/pirl/swarm/chunk"
 
 const (
 	ErrInit = iota

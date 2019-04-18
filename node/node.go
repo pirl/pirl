@@ -26,14 +26,14 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/internal/debug"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/internal/debug"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/prometheus/tsdb/fileutil"
 )
 
@@ -99,7 +99,7 @@ func New(conf *Config) (*Node, error) {
 		return nil, errors.New(`Config.Name cannot end in ".ipc"`)
 	}
 	// Ensure that the AccountManager method works before the node has started.
-	// We rely on this in cmd/geth.
+	// We rely on this in cmd/pirl.
 	am, ephemeralKeystore, err := makeAccountManager(conf)
 	if err != nil {
 		return nil, err

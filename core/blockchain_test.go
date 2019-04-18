@@ -23,17 +23,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/ethdb/memorydb"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/ethdb/memorydb"
+	"git.pirl.io/community/pirl/params"
 )
 
 // So we can deterministically seed different blockchains
@@ -84,8 +84,8 @@ func testFork(t *testing.T, blockchain *BlockChain, i, n int, full bool, compara
 		hash1 = blockchain.GetBlockByNumber(uint64(i)).Hash()
 		hash2 = blockchain2.GetBlockByNumber(uint64(i)).Hash()
 	} else {
-		hash1 = blockchain.GetHeaderByNumber(uint64(i)).Hash()
-		hash2 = blockchain2.GetHeaderByNumber(uint64(i)).Hash()
+		hash1 = blockchain.pirleaderByNumber(uint64(i)).Hash()
+		hash2 = blockchain2.pirleaderByNumber(uint64(i)).Hash()
 	}
 	if hash1 != hash2 {
 		t.Errorf("chain content mismatch at %d: have hash %v, want hash %v", i, hash2, hash1)
@@ -418,7 +418,7 @@ func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
 		}
 	} else {
 		prev := blockchain.CurrentHeader()
-		for header := blockchain.GetHeaderByNumber(blockchain.CurrentHeader().Number.Uint64() - 1); header.Number.Uint64() != 0; prev, header = header, blockchain.GetHeaderByNumber(header.Number.Uint64()-1) {
+		for header := blockchain.pirleaderByNumber(blockchain.CurrentHeader().Number.Uint64() - 1); header.Number.Uint64() != 0; prev, header = header, blockchain.pirleaderByNumber(header.Number.Uint64()-1) {
 			if prev.ParentHash != header.Hash() {
 				t.Errorf("parent header hash mismatch: have %x, want %x", prev.ParentHash, header.Hash())
 			}
@@ -574,7 +574,7 @@ func testInsertNonceError(t *testing.T, full bool) {
 					t.Errorf("test %d: invalid block in chain: %v", i, block)
 				}
 			} else {
-				if header := blockchain.GetHeaderByNumber(failNum + uint64(j)); header != nil {
+				if header := blockchain.pirleaderByNumber(failNum + uint64(j)); header != nil {
 					t.Errorf("test %d: invalid header in chain: %v", i, header)
 				}
 			}
@@ -648,7 +648,7 @@ func TestFastVsFullChains(t *testing.T) {
 		if ftd, atd := fast.GetTdByHash(hash), archive.GetTdByHash(hash); ftd.Cmp(atd) != 0 {
 			t.Errorf("block #%d [%x]: td mismatch: have %v, want %v", num, hash, ftd, atd)
 		}
-		if fheader, aheader := fast.GetHeaderByHash(hash), archive.GetHeaderByHash(hash); fheader.Hash() != aheader.Hash() {
+		if fheader, aheader := fast.pirleaderByHash(hash), archive.pirleaderByHash(hash); fheader.Hash() != aheader.Hash() {
 			t.Errorf("block #%d [%x]: header mismatch: have %v, want %v", num, hash, fheader, aheader)
 		}
 		if fblock, ablock := fast.GetBlockByHash(hash), archive.GetBlockByHash(hash); fblock.Hash() != ablock.Hash() {
@@ -1420,7 +1420,7 @@ func TestEIP161AccountRemoval(t *testing.T) {
 // tests that under weird reorg conditions the blockchain and its internal header-
 // chain return the same latest block/header.
 //
-// https://github.com/ethereum/go-ethereum/pull/15941
+// https://git.pirl.io/community/pirl/pull/15941
 func TestBlockchainHeaderchainReorgConsistency(t *testing.T) {
 	// Generate a canonical chain to act as the main dataset
 	engine := ethash.NewFaker()
@@ -1679,8 +1679,8 @@ func BenchmarkBlockChain_1x1000Executions(b *testing.B) {
 // overtake the 'canon' chain until after it's passed canon by about 200 blocks.
 //
 // Details at:
-//  - https://github.com/ethereum/go-ethereum/issues/18977
-//  - https://github.com/ethereum/go-ethereum/pull/18988
+//  - https://git.pirl.io/community/pirl/issues/18977
+//  - https://git.pirl.io/community/pirl/pull/18988
 func TestLowDiffLongChain(t *testing.T) {
 	// Generate a canonical chain to act as the main dataset
 	engine := ethash.NewFaker()
@@ -1722,10 +1722,10 @@ func TestLowDiffLongChain(t *testing.T) {
 	// Sanity check that all the canonical numbers are present
 	header := chain.CurrentHeader()
 	for number := head.NumberU64(); number > 0; number-- {
-		if hash := chain.GetHeaderByNumber(number).Hash(); hash != header.Hash() {
+		if hash := chain.pirleaderByNumber(number).Hash(); hash != header.Hash() {
 			t.Fatalf("header %d: canonical hash mismatch: have %x, want %x", number, hash, header.Hash())
 		}
-		header = chain.GetHeader(header.ParentHash, number-1)
+		header = chain.pirleader(header.ParentHash, number-1)
 	}
 }
 

@@ -25,15 +25,15 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/accounts/usbwallet"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/internal/ethapi"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/signer/storage"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/accounts/usbwallet"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/internal/ethapi"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/signer/storage"
 )
 
 const (

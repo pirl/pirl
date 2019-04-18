@@ -19,10 +19,10 @@ package core
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
 )
 
 // ChainContext supports retrieving headers and consensus parameters from the
@@ -31,8 +31,8 @@ type ChainContext interface {
 	// Engine retrieves the chain's consensus engine.
 	Engine() consensus.Engine
 
-	// GetHeader returns the hash corresponding to their hash.
-	GetHeader(common.Hash, uint64) *types.Header
+	// pirleader returns the hash corresponding to their hash.
+	pirleader(common.Hash, uint64) *types.Header
 }
 
 // NewEVMContext creates a new context for use in the EVM.
@@ -47,7 +47,7 @@ func NewEVMContext(msg Message, header *types.Header, chain ChainContext, author
 	return vm.Context{
 		CanTransfer: CanTransfer,
 		Transfer:    Transfer,
-		GetHash:     GetHashFn(header, chain),
+		pirlash:     pirlashFn(header, chain),
 		Origin:      msg.From(),
 		Coinbase:    beneficiary,
 		BlockNumber: new(big.Int).Set(header.Number),
@@ -58,8 +58,8 @@ func NewEVMContext(msg Message, header *types.Header, chain ChainContext, author
 	}
 }
 
-// GetHashFn returns a GetHashFunc which retrieves header hashes by number
-func GetHashFn(ref *types.Header, chain ChainContext) func(n uint64) common.Hash {
+// pirlashFn returns a pirlashFunc which retrieves header hashes by number
+func pirlashFn(ref *types.Header, chain ChainContext) func(n uint64) common.Hash {
 	var cache map[uint64]common.Hash
 
 	return func(n uint64) common.Hash {
@@ -74,7 +74,7 @@ func GetHashFn(ref *types.Header, chain ChainContext) func(n uint64) common.Hash
 			return hash
 		}
 		// Not cached, iterate the blocks and cache the hashes
-		for header := chain.GetHeader(ref.ParentHash, ref.Number.Uint64()-1); header != nil; header = chain.GetHeader(header.ParentHash, header.Number.Uint64()-1) {
+		for header := chain.pirleader(ref.ParentHash, ref.Number.Uint64()-1); header != nil; header = chain.pirleader(header.ParentHash, header.Number.Uint64()-1) {
 			cache[header.Number.Uint64()-1] = header.ParentHash
 			if n == header.Number.Uint64()-1 {
 				return header.ParentHash

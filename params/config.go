@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Genesis hashes to enforce below configs on.
@@ -43,17 +43,17 @@ var TrustedCheckpoints = map[common.Hash]*TrustedCheckpoint{
 var (
 	// MainnetChainConfig is the chain parameters to run a node on the main network.
 	MainnetChainConfig = &ChainConfig{
-		ChainID:             big.NewInt(1),
-		HomesteadBlock:      big.NewInt(1150000),
-		DAOForkBlock:        big.NewInt(1920000),
+		ChainID:             big.NewInt(3125659152),
+		HomesteadBlock:      big.NewInt(0),
+		DAOForkBlock:        big.NewInt(0),
 		DAOForkSupport:      true,
-		EIP150Block:         big.NewInt(2463000),
+		EIP150Block:         big.NewInt(0),
 		EIP150Hash:          common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
-		EIP155Block:         big.NewInt(2675000),
-		EIP158Block:         big.NewInt(2675000),
-		ByzantiumBlock:      big.NewInt(4370000),
-		ConstantinopleBlock: big.NewInt(7280000),
-		PetersburgBlock:     big.NewInt(7280000),
+		EIP155Block:         big.NewInt(0),
+		EIP158Block:         big.NewInt(0),
+		ByzantiumBlock:      nil,
+		ConstantinopleBlock: nil,
+		PetersburgBlock:     big.NewInt(6000000),
 		Ethash:              new(EthashConfig),
 	}
 
@@ -61,9 +61,9 @@ var (
 	MainnetTrustedCheckpoint = &TrustedCheckpoint{
 		Name:         "mainnet",
 		SectionIndex: 227,
-		SectionHead:  common.HexToHash("0xa2e0b25d72c2fc6e35a7f853cdacb193b4b4f95c606accf7f8fa8415283582c7"),
-		CHTRoot:      common.HexToHash("0xf69bdd4053b95b61a27b106a0e86103d791edd8574950dc96aa351ab9b9f1aa0"),
-		BloomRoot:    common.HexToHash("0xec1b454d4c6322c78ccedf76ac922a8698c3cac4d98748a84af4995b7bd3d744"),
+		SectionHead:  common.HexToHash("0x5e9f7696c397d9df8f3b1abda857753575c6f5cff894e1a3d9e1a2af1bd9d6ac"),
+		CHTRoot:      common.HexToHash("0x954a63134f6897f015f026387c59c98c4dae7b336610ff5a143455aac9153e9d"),
+		BloomRoot:    common.HexToHash("0x8006c5e44b14d90d7cc9cd5fa1cb48cf53697ee3bbbf4b76fdfa70b0242500a9"),
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.
@@ -76,9 +76,9 @@ var (
 		EIP150Hash:          common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"),
 		EIP155Block:         big.NewInt(10),
 		EIP158Block:         big.NewInt(10),
-		ByzantiumBlock:      big.NewInt(1700000),
-		ConstantinopleBlock: big.NewInt(4230000),
-		PetersburgBlock:     big.NewInt(4939394),
+		ByzantiumBlock:      nil,
+		ConstantinopleBlock: nil,
+		PetersburgBlock:     big.NewInt(6000000),
 		Ethash:              new(EthashConfig),
 	}
 

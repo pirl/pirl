@@ -21,13 +21,13 @@ import (
 	"math/big"
 	"testing"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/accounts/abi/bind/backends"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 func TestSimulatedBackend(t *testing.T) {

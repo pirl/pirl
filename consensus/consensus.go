@@ -20,11 +20,11 @@ package consensus
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // ChainReader defines a small collection of methods needed to access the local
@@ -36,14 +36,14 @@ type ChainReader interface {
 	// CurrentHeader retrieves the current header from the local chain.
 	CurrentHeader() *types.Header
 
-	// GetHeader retrieves a block header from the database by hash and number.
-	GetHeader(hash common.Hash, number uint64) *types.Header
+	// pirleader retrieves a block header from the database by hash and number.
+	pirleader(hash common.Hash, number uint64) *types.Header
 
-	// GetHeaderByNumber retrieves a block header from the database by number.
-	GetHeaderByNumber(number uint64) *types.Header
+	// pirleaderByNumber retrieves a block header from the database by number.
+	pirleaderByNumber(number uint64) *types.Header
 
-	// GetHeaderByHash retrieves a block header from the database by its hash.
-	GetHeaderByHash(hash common.Hash) *types.Header
+	// pirleaderByHash retrieves a block header from the database by its hash.
+	pirleaderByHash(hash common.Hash) *types.Header
 
 	// GetBlock retrieves a block from the database by hash and number.
 	GetBlock(hash common.Hash, number uint64) *types.Block

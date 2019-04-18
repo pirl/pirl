@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/enode"
 )
 
 func TestMocker(t *testing.T) {

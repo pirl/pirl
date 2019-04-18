@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Tests for the decoding of the example ENS

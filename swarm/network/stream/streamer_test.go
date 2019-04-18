@@ -28,17 +28,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"git.pirl.io/community/pirl/swarm/testutil"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	p2ptest "github.com/ethereum/go-ethereum/p2p/testing"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/network/simulation"
-	"github.com/ethereum/go-ethereum/swarm/state"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/simulations/adapters"
+	p2ptest "git.pirl.io/community/pirl/p2p/testing"
+	"git.pirl.io/community/pirl/swarm/network"
+	"git.pirl.io/community/pirl/swarm/network/simulation"
+	"git.pirl.io/community/pirl/swarm/state"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -747,7 +747,7 @@ func TestStreamerRequestSubscriptionQuitMsgExchange(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	historyStream := getHistoryStream(stream)
+	historyStream := pirlistoryStream(stream)
 
 	err = streamer.Quit(node.ID(), historyStream)
 	if err != nil {

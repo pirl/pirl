@@ -19,8 +19,8 @@ package les
 import (
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/common/prque"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/common/prque"
 )
 
 // servingQueue allows running tasks in a limited number of threads and puts the

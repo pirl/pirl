@@ -20,16 +20,16 @@ import (
 	"bytes"
 	"context"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 var sha3Nil = crypto.Keccak256Hash(nil)
 
-func GetHeaderByNumber(ctx context.Context, odr OdrBackend, number uint64) (*types.Header, error) {
+func pirleaderByNumber(ctx context.Context, odr OdrBackend, number uint64) (*types.Header, error) {
 	db := odr.Database()
 	hash := rawdb.ReadCanonicalHash(db, number)
 	if (hash != common.Hash{}) {
@@ -73,7 +73,7 @@ func GetCanonicalHash(ctx context.Context, odr OdrBackend, number uint64) (commo
 	if (hash != common.Hash{}) {
 		return hash, nil
 	}
-	header, err := GetHeaderByNumber(ctx, odr, number)
+	header, err := pirleaderByNumber(ctx, odr, number)
 	if header != nil {
 		return header.Hash(), nil
 	}

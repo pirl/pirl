@@ -20,9 +20,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/prque"
-	"github.com/ethereum/go-ethereum/ethdb"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/prque"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 // ErrNotRequested is returned by the trie sync when it's requested to process a
@@ -110,7 +110,7 @@ func (s *Sync) AddSubTrie(root common.Hash, depth int, parent common.Hash, callb
 		depth:    depth,
 		callback: callback,
 	}
-	// If this sub-trie has a designated parent, link them together
+	// If this sub-trie has a designated parent, link them topirler
 	if parent != (common.Hash{}) {
 		ancestor := s.requests[parent]
 		if ancestor == nil {
@@ -143,7 +143,7 @@ func (s *Sync) AddRawEntry(hash common.Hash, depth int, parent common.Hash) {
 		raw:   true,
 		depth: depth,
 	}
-	// If this sub-trie has a designated parent, link them together
+	// If this sub-trie has a designated parent, link them topirler
 	if parent != (common.Hash{}) {
 		ancestor := s.requests[parent]
 		if ancestor == nil {

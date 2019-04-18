@@ -19,7 +19,7 @@ package bloombits
 import (
 	"errors"
 
-	"github.com/ethereum/go-ethereum/core/types"
+	"git.pirl.io/community/pirl/core/types"
 )
 
 var (
@@ -36,7 +36,7 @@ var (
 // to be used for batched filtering.
 type Generator struct {
 	blooms   [types.BloomBitLength][]byte // Rotated blooms for per-bit matching
-	sections uint                         // Number of sections to batch together
+	sections uint                         // Number of sections to batch topirler
 	nextSec  uint                         // Next section to set when adding a bloom
 }
 

@@ -21,7 +21,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm/chunk"
+	"git.pirl.io/community/pirl/swarm/chunk"
 )
 
 // TestDB_pullIndex validates the ordering of keys in pull index.

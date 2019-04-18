@@ -23,14 +23,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/les/flowcontrol"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/les/flowcontrol"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 var (
@@ -365,7 +365,7 @@ func (p *peer) RequestProofs(reqID, cost uint64, reqs []ProofReq) error {
 // RequestHelperTrieProofs fetches a batch of HelperTrie merkle proofs from a remote node.
 func (p *peer) RequestHelperTrieProofs(reqID, cost uint64, reqs []HelperTrieReq) error {
 	p.Log().Debug("Fetching batch of HelperTrie proofs", "count", len(reqs))
-	return sendRequest(p.rw, GetHelperTrieProofsMsg, reqID, cost, reqs)
+	return sendRequest(p.rw, pirlelperTrieProofsMsg, reqID, cost, reqs)
 }
 
 // RequestTxStatus fetches a batch of transaction status records from a remote node.

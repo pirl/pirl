@@ -38,12 +38,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/swarm/spancontext"
-	"github.com/ethereum/go-ethereum/swarm/tracing"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/swarm/spancontext"
+	"git.pirl.io/community/pirl/swarm/tracing"
 	opentracing "github.com/opentracing/opentracing-go"
 )
 

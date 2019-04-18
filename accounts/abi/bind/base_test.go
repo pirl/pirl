@@ -23,14 +23,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/accounts/abi"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 type mockCaller struct {

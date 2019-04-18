@@ -12,12 +12,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/swarm/storage/feed"
+	"git.pirl.io/community/pirl/swarm/testutil"
 	"github.com/pborman/uuid"
 	cli "gopkg.in/urfave/cli.v1"
 )

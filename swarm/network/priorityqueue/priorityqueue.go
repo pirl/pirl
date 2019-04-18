@@ -30,7 +30,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/ethereum/go-ethereum/metrics"
+	"git.pirl.io/community/pirl/metrics"
 )
 
 var (

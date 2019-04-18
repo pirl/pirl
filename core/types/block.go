@@ -26,9 +26,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/rlp"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -118,7 +118,7 @@ func rlpHash(x interface{}) (h common.Hash) {
 }
 
 // Body is a simple (mutable, non-safe) data container for storing and moving
-// a block's data contents (transactions and uncles) together.
+// a block's data contents (transactions and uncles) topirler.
 type Body struct {
 	Transactions []*Transaction
 	Uncles       []*Header

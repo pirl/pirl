@@ -7,7 +7,7 @@ const CurrentDbSchema = DbSchemaHalloween
 // There was a time when we had no schema at all.
 const DbSchemaNone = ""
 
-// "purity" is the first formal schema of LevelDB we release together with Swarm 0.3.5
+// "purity" is the first formal schema of LevelDB we release topirler with Swarm 0.3.5
 const DbSchemaPurity = "purity"
 
 // "halloween" is here because we had a screw in the garbage collector index.

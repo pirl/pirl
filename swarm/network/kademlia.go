@@ -24,10 +24,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/pot"
-	sv "github.com/ethereum/go-ethereum/swarm/version"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/pot"
+	sv "git.pirl.io/community/pirl/swarm/version"
 )
 
 /*
@@ -493,9 +493,9 @@ func (k *Kademlia) NeighbourhoodDepth() (depth int) {
 
 // neighbourhoodRadiusForPot returns the neighbourhood radius of the kademlia
 // neighbourhood radius encloses the nearest neighbour set with size >= neighbourhoodSize
-// i.e., neighbourhood radius is the deepest PO such that all bins not shallower altogether
+// i.e., neighbourhood radius is the deepest PO such that all bins not shallower altopirler
 // contain at least neighbourhoodSize connected peers
-// if there is altogether less than neighbourhoodSize peers connected, it returns 0
+// if there is altopirler less than neighbourhoodSize peers connected, it returns 0
 // caller must hold the lock
 func neighbourhoodRadiusForPot(p *pot.Pot, neighbourhoodSize int, pivotAddr []byte) (depth int) {
 	if p.Size() <= neighbourhoodSize {
@@ -760,7 +760,7 @@ func (k *Kademlia) saturation() int {
 // (if there is no peer for a given bin, then no connection could ever be established;
 // in a God's view this is relevant as no more peers will ever appear on that bin)
 func (k *Kademlia) isSaturated(peersPerBin []int, depth int) bool {
-	// depth could be calculated from k but as this is called from `GetHealthInfo()`,
+	// depth could be calculated from k but as this is called from `pirlealthInfo()`,
 	// the depth has already been calculated so we can require it as a parameter
 
 	// early check for depth
@@ -874,7 +874,7 @@ type Health struct {
 	Hive      string
 }
 
-// GetHealthInfo reports the health state of the kademlia connectivity
+// pirlealthInfo reports the health state of the kademlia connectivity
 //
 // The PeerPot argument provides an all-knowing view of the network
 // The resulting Health object is a result of comparisons between
@@ -882,7 +882,7 @@ type Health struct {
 // what SHOULD it have been when we take all we know about the network into consideration.
 //
 // used for testing only
-func (k *Kademlia) GetHealthInfo(pp *PeerPot) *Health {
+func (k *Kademlia) pirlealthInfo(pp *PeerPot) *Health {
 	k.lock.RLock()
 	defer k.lock.RUnlock()
 	if len(pp.NNSet) < k.NeighbourhoodSize {

@@ -37,17 +37,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/swarm/storage/feed/lookup"
+	"git.pirl.io/community/pirl/swarm/storage/feed/lookup"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	swarm "github.com/ethereum/go-ethereum/swarm/api/client"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/api"
+	swarm "git.pirl.io/community/pirl/swarm/api/client"
+	"git.pirl.io/community/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/storage/feed"
+	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 func init() {
@@ -82,7 +82,7 @@ func TestBzzWithFeed(t *testing.T) {
 	srv := NewTestSwarmServer(t, serverFunc, nil)
 	defer srv.Close()
 
-	// put together some data for our test:
+	// put topirler some data for our test:
 	dataBytes := []byte(`
 	//
 	// Create some data our manifest will point to. Data that could be very big and wouldn't fit in a feed update.

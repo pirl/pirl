@@ -26,13 +26,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/trie"
+	"git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/trie"
 )
 
 // Reduce some of the parameters to make the tester faster.
@@ -109,7 +109,7 @@ func (dl *downloadTester) sync(id string, td *big.Int, mode SyncMode) error {
 
 // HasHeader checks if a header is present in the testers canonical chain.
 func (dl *downloadTester) HasHeader(hash common.Hash, number uint64) bool {
-	return dl.GetHeaderByHash(hash) != nil
+	return dl.pirleaderByHash(hash) != nil
 }
 
 // HasBlock checks if a block is present in the testers canonical chain.
@@ -126,8 +126,8 @@ func (dl *downloadTester) HasFastBlock(hash common.Hash, number uint64) bool {
 	return ok
 }
 
-// GetHeader retrieves a header from the testers canonical chain.
-func (dl *downloadTester) GetHeaderByHash(hash common.Hash) *types.Header {
+// pirleader retrieves a header from the testers canonical chain.
+func (dl *downloadTester) pirleaderByHash(hash common.Hash) *types.Header {
 	dl.lock.RLock()
 	defer dl.lock.RUnlock()
 

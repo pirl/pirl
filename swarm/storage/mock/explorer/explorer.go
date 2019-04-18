@@ -25,9 +25,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/storage/mock"
 	"github.com/rs/cors"
 )
 

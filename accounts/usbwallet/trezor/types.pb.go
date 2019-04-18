@@ -1097,7 +1097,7 @@ func (m *IdentityType) GetUser() string {
 	return ""
 }
 
-func (m *IdentityType) GetHost() string {
+func (m *IdentityType) pirlost() string {
 	if m != nil && m.Host != nil {
 		return *m.Host
 	}

@@ -21,11 +21,11 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/trie"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/trie"
 )
 
 // testAccount is the data associated with an account used by the state tests.

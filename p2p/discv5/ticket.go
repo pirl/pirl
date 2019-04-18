@@ -25,10 +25,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
 )
 
 const (
@@ -514,10 +514,10 @@ func (s *ticketStore) searchLookupDone(lookup lookupInfo, nodes []*Node, query f
 	}
 }
 
-func (s *ticketStore) adjustWithTicket(now mclock.AbsTime, targetHash common.Hash, t *ticket) {
+func (s *ticketStore) adjustWithTicket(now mclock.AbsTime, tarpirlash common.Hash, t *ticket) {
 	for i, topic := range t.topics {
 		if tt, ok := s.radius[topic]; ok {
-			tt.adjustWithTicket(now, targetHash, ticketRef{t, i})
+			tt.adjustWithTicket(now, tarpirlash, ticketRef{t, i})
 		}
 	}
 }
@@ -931,7 +931,7 @@ func (r *topicRadius) nextTarget(forceRegular bool) lookupInfo {
 	return lookupInfo{target: target, topic: r.topic, radiusLookup: false}
 }
 
-func (r *topicRadius) adjustWithTicket(now mclock.AbsTime, targetHash common.Hash, t ticketRef) {
+func (r *topicRadius) adjustWithTicket(now mclock.AbsTime, tarpirlash common.Hash, t ticketRef) {
 	wait := t.t.regTime[t.idx] - t.t.issueTime
 	inside := float64(wait)/float64(targetWaitTime) - 0.5
 	if inside > 1 {
@@ -940,15 +940,15 @@ func (r *topicRadius) adjustWithTicket(now mclock.AbsTime, targetHash common.Has
 	if inside < 0 {
 		inside = 0
 	}
-	r.adjust(now, targetHash, t.t.node.sha, inside)
+	r.adjust(now, tarpirlash, t.t.node.sha, inside)
 }
 
-func (r *topicRadius) adjust(now mclock.AbsTime, targetHash, addrHash common.Hash, inside float64) {
+func (r *topicRadius) adjust(now mclock.AbsTime, tarpirlash, addrHash common.Hash, inside float64) {
 	bucket := r.getBucketIdx(addrHash)
 	//fmt.Println("adjust", bucket, len(r.buckets), inside)
 	if bucket >= len(r.buckets) {
 		return
 	}
 	r.buckets[bucket].adjust(now, inside)
-	delete(r.buckets[bucket].lookupSent, targetHash)
+	delete(r.buckets[bucket].lookupSent, tarpirlash)
 }

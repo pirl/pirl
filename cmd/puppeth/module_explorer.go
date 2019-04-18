@@ -25,7 +25,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 // explorerDockerfile is the Dockerfile required to run a block explorer.
@@ -58,7 +58,7 @@ var explorerEthstats = `[
     {
       "NODE_ENV"        : "production",
       "RPC_HOST"        : "localhost",
-      "RPC_PORT"        : "8545",
+      "RPC_PORT"        : "6588",
       "LISTENING_PORT"  : "{{.Port}}",
       "INSTANCE_NAME"   : "{{.Name}}",
       "CONTACT_DETAILS" : "",

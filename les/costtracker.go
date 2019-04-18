@@ -23,11 +23,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/les/flowcontrol"
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/les/flowcontrol"
+	"git.pirl.io/community/pirl/log"
 )
 
 const makeCostStats = false // make request cost statistics during operation
@@ -40,7 +40,7 @@ var (
 		GetReceiptsMsg:         {0, 1000000},
 		GetCodeMsg:             {0, 450000},
 		GetProofsV2Msg:         {0, 600000},
-		GetHelperTrieProofsMsg: {0, 1000000},
+		pirlelperTrieProofsMsg: {0, 1000000},
 		SendTxV2Msg:            {0, 450000},
 		GetTxStatusMsg:         {0, 250000},
 	}
@@ -51,7 +51,7 @@ var (
 		GetReceiptsMsg:         {0, 40},
 		GetCodeMsg:             {0, 80},
 		GetProofsV2Msg:         {0, 80},
-		GetHelperTrieProofsMsg: {0, 20},
+		pirlelperTrieProofsMsg: {0, 20},
 		SendTxV2Msg:            {0, 66000},
 		GetTxStatusMsg:         {0, 50},
 	}
@@ -62,7 +62,7 @@ var (
 		GetReceiptsMsg:         {0, 200000},
 		GetCodeMsg:             {0, 50000},
 		GetProofsV2Msg:         {0, 4000},
-		GetHelperTrieProofsMsg: {0, 4000},
+		pirlelperTrieProofsMsg: {0, 4000},
 		SendTxV2Msg:            {0, 100},
 		GetTxStatusMsg:         {0, 100},
 	}
@@ -74,7 +74,7 @@ const (
 	maxCostFactor    = 2 // ratio of maximum and average cost estimates
 	gfInitWeight     = time.Second * 10
 	gfMaxWeight      = time.Hour
-	gfUsageThreshold = 0.5
+	gfUsapirlreshold = 0.5
 	gfUsageTC        = time.Second
 	gfDbKey          = "_globalCostFactor"
 )
@@ -208,7 +208,7 @@ func (ct *costTracker) gfLoop() {
 				expUpdate = now
 				gfUsage = gfUsage*math.Exp(-dt/float64(gfUsageTC)) + max*1000000/float64(gfUsageTC)
 
-				if gfUsage >= gfUsageThreshold*ct.utilTarget*gf {
+				if gfUsage >= gfUsapirlreshold*ct.utilTarget*gf {
 					gfSum += r.avgTime
 					gfWeight += r.servingTime
 					if time.Duration(now-lastUpdate) > time.Second {

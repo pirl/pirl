@@ -4,11 +4,11 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/les/flowcontrol"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/les/flowcontrol"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 const (

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 const (

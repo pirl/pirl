@@ -26,13 +26,13 @@ import (
 	"strconv"
 
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/enr"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/enr"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // Node represents a node in a simulation network which is created by a
@@ -231,7 +231,7 @@ type ServiceContext struct {
 
 // RPCDialer is used when initialising services which need to connect to
 // other nodes in the network (for example a simulated Swarm node which needs
-// to connect to a Geth node to resolve ENS names)
+// to connect to a pirl node to resolve ENS names)
 type RPCDialer interface {
 	DialRPC(id enode.ID) (*rpc.Client, error)
 }

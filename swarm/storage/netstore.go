@@ -24,9 +24,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/spancontext"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/spancontext"
 	"github.com/opentracing/opentracing-go"
 	olog "github.com/opentracing/opentracing-go/log"
 	"github.com/syndtr/goleveldb/leveldb"

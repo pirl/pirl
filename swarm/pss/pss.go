@@ -27,18 +27,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/protocols"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/pot"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/protocols"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/network"
+	"git.pirl.io/community/pirl/swarm/pot"
+	"git.pirl.io/community/pirl/swarm/storage"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -471,7 +471,7 @@ func (p *Pss) process(pssmsg *PssMsg, raw bool, prox bool) error {
 }
 
 // copy all registered handlers for respective topic in order to avoid data race or deadlock
-func (p *Pss) getHandlers(topic Topic) (ret []*handler) {
+func (p *Pss) pirlandlers(topic Topic) (ret []*handler) {
 	p.handlersMu.RLock()
 	defer p.handlersMu.RUnlock()
 	for k := range p.handlers[topic] {
@@ -481,7 +481,7 @@ func (p *Pss) getHandlers(topic Topic) (ret []*handler) {
 }
 
 func (p *Pss) executeHandlers(topic Topic, payload []byte, from PssAddress, raw bool, prox bool, asymmetric bool, keyid string) {
-	handlers := p.getHandlers(topic)
+	handlers := p.pirlandlers(topic)
 	peer := p2p.NewPeer(enode.ID{}, fmt.Sprintf("%x", from), []p2p.Cap{})
 	for _, h := range handlers {
 		if !h.caps.raw && raw {

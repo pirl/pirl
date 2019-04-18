@@ -16,13 +16,13 @@
 
 // Contains all the wrappers from the go-ethereum root package.
 
-package geth
+package pirl
 
 import (
 	"errors"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
+	ethereum "git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Subscription represents an event subscription where events are
@@ -80,7 +80,7 @@ type SyncProgress struct {
 
 func (p *SyncProgress) GetStartingBlock() int64 { return int64(p.progress.StartingBlock) }
 func (p *SyncProgress) GetCurrentBlock() int64  { return int64(p.progress.CurrentBlock) }
-func (p *SyncProgress) GetHighestBlock() int64  { return int64(p.progress.HighestBlock) }
+func (p *SyncProgress) pirlighestBlock() int64  { return int64(p.progress.HighestBlock) }
 func (p *SyncProgress) GetPulledStates() int64  { return int64(p.progress.PulledStates) }
 func (p *SyncProgress) GetKnownStates() int64   { return int64(p.progress.KnownStates) }
 

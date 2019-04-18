@@ -26,9 +26,9 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 func init() {
@@ -123,8 +123,8 @@ var (
 // 	// put a few nodes into the table. their exact
 // 	// distribution shouldn't matter much, although we need to
 // 	// take care not to overflow any bucket.
-// 	targetHash := crypto.Keccak256Hash(testTarget[:])
-// 	nodes := &nodesByDistance{target: targetHash}
+// 	tarpirlash := crypto.Keccak256Hash(testTarget[:])
+// 	nodes := &nodesByDistance{target: tarpirlash}
 // 	for i := 0; i < bucketSize; i++ {
 // 		nodes.push(nodeAtDistance(test.table.self.sha, i+2), bucketSize)
 // 	}
@@ -140,7 +140,7 @@ var (
 // 	))
 // 	// check that closest neighbors are returned.
 // 	test.packetIn(nil, findnodePacket, &findnode{Target: testTarget, Expiration: futureExp})
-// 	expected := test.table.closest(targetHash, bucketSize)
+// 	expected := test.table.closest(tarpirlash, bucketSize)
 //
 // 	waitNeighbors := func(want []*Node) {
 // 		test.waitPacketOut(func(p *neighbors) {

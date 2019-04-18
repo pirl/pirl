@@ -20,16 +20,16 @@ import (
 	"container/ring"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/log"
 )
 
 // chainRetriever is used by the unconfirmed block set to verify whether a previously
 // mined block is part of the canonical chain or not.
 type chainRetriever interface {
-	// GetHeaderByNumber retrieves the canonical header associated with a block number.
-	GetHeaderByNumber(number uint64) *types.Header
+	// pirleaderByNumber retrieves the canonical header associated with a block number.
+	pirleaderByNumber(number uint64) *types.Header
 
 	// GetBlockByNumber retrieves the canonical block associated with a block number.
 	GetBlockByNumber(number uint64) *types.Block
@@ -99,7 +99,7 @@ func (set *unconfirmedBlocks) Shift(height uint64) {
 			break
 		}
 		// Block seems to exceed depth allowance, check for canonical status
-		header := set.chain.GetHeaderByNumber(next.index)
+		header := set.chain.pirleaderByNumber(next.index)
 		switch {
 		case header == nil:
 			log.Warn("Failed to retrieve header of mined block", "number", next.index, "hash", next.hash)

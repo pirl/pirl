@@ -27,11 +27,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
+	"git.pirl.io/community/pirl/swarm/storage/feed"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 const (

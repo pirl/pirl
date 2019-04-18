@@ -17,12 +17,12 @@
 // Contains all the wrappers from the accounts package to support client side enode
 // management on mobile platforms.
 
-package geth
+package pirl
 
 import (
 	"errors"
 
-	"github.com/ethereum/go-ethereum/p2p/discv5"
+	"git.pirl.io/community/pirl/p2p/discv5"
 )
 
 // Enode represents a host on the network.

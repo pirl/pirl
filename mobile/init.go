@@ -16,13 +16,13 @@
 
 // Contains initialization code for the mbile library.
 
-package geth
+package pirl
 
 import (
 	"os"
 	"runtime"
 
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/log"
 )
 
 func init() {

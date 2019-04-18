@@ -23,17 +23,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 type odrTestFn func(ctx context.Context, db ethdb.Database, config *params.ChainConfig, bc *core.BlockChain, lc *light.LightChain, bhash common.Hash) []byte
@@ -87,10 +87,10 @@ func odrAccounts(ctx context.Context, db ethdb.Database, config *params.ChainCon
 	)
 	for _, addr := range acc {
 		if bc != nil {
-			header := bc.GetHeaderByHash(bhash)
+			header := bc.pirleaderByHash(bhash)
 			st, err = state.New(header.Root, state.NewDatabase(db))
 		} else {
-			header := lc.GetHeaderByHash(bhash)
+			header := lc.pirleaderByHash(bhash)
 			st = light.NewState(ctx, header, lc.Odr())
 		}
 		if err == nil {
@@ -117,7 +117,7 @@ func odrContractCall(ctx context.Context, db ethdb.Database, config *params.Chai
 	for i := 0; i < 3; i++ {
 		data[35] = byte(i)
 		if bc != nil {
-			header := bc.GetHeaderByHash(bhash)
+			header := bc.pirleaderByHash(bhash)
 			statedb, err := state.New(header.Root, state.NewDatabase(db))
 
 			if err == nil {
@@ -135,7 +135,7 @@ func odrContractCall(ctx context.Context, db ethdb.Database, config *params.Chai
 				res = append(res, ret...)
 			}
 		} else {
-			header := lc.GetHeaderByHash(bhash)
+			header := lc.pirleaderByHash(bhash)
 			state := light.NewState(ctx, header, lc.Odr())
 			state.SetBalance(testBankAddress, math.MaxBig256)
 			msg := callmsg{types.NewMessage(testBankAddress, &testContractAddr, 0, new(big.Int), 100000, new(big.Int), data, false)}

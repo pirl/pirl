@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/sctx"
-	"github.com/ethereum/go-ethereum/swarm/spancontext"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/swarm/api"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/sctx"
+	"git.pirl.io/community/pirl/swarm/spancontext"
 	"github.com/pborman/uuid"
 )
 
@@ -40,7 +40,7 @@ func SetRequestID(h http.Handler) http.Handler {
 func SetRequestHost(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(sctx.SetHost(r.Context(), r.Host))
-		log.Info("setting request host", "ruid", GetRUID(r.Context()), "host", sctx.GetHost(r.Context()))
+		log.Info("setting request host", "ruid", GetRUID(r.Context()), "host", sctx.pirlost(r.Context()))
 
 		h.ServeHTTP(w, r)
 	})

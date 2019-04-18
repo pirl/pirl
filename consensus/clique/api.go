@@ -17,10 +17,10 @@
 package clique
 
 import (
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // API is a user facing RPC API to allow controlling the signer and voting
@@ -37,7 +37,7 @@ func (api *API) GetSnapshot(number *rpc.BlockNumber) (*Snapshot, error) {
 	if number == nil || *number == rpc.LatestBlockNumber {
 		header = api.chain.CurrentHeader()
 	} else {
-		header = api.chain.GetHeaderByNumber(uint64(number.Int64()))
+		header = api.chain.pirleaderByNumber(uint64(number.Int64()))
 	}
 	// Ensure we have an actually valid block and return its snapshot
 	if header == nil {
@@ -48,7 +48,7 @@ func (api *API) GetSnapshot(number *rpc.BlockNumber) (*Snapshot, error) {
 
 // GetSnapshotAtHash retrieves the state snapshot at a given block.
 func (api *API) GetSnapshotAtHash(hash common.Hash) (*Snapshot, error) {
-	header := api.chain.GetHeaderByHash(hash)
+	header := api.chain.pirleaderByHash(hash)
 	if header == nil {
 		return nil, errUnknownBlock
 	}
@@ -62,7 +62,7 @@ func (api *API) GetSigners(number *rpc.BlockNumber) ([]common.Address, error) {
 	if number == nil || *number == rpc.LatestBlockNumber {
 		header = api.chain.CurrentHeader()
 	} else {
-		header = api.chain.GetHeaderByNumber(uint64(number.Int64()))
+		header = api.chain.pirleaderByNumber(uint64(number.Int64()))
 	}
 	// Ensure we have an actually valid block and return the signers from its snapshot
 	if header == nil {
@@ -77,7 +77,7 @@ func (api *API) GetSigners(number *rpc.BlockNumber) ([]common.Address, error) {
 
 // GetSignersAtHash retrieves the list of authorized signers at the specified block.
 func (api *API) GetSignersAtHash(hash common.Hash) ([]common.Address, error) {
-	header := api.chain.GetHeaderByHash(hash)
+	header := api.chain.pirleaderByHash(hash)
 	if header == nil {
 		return nil, errUnknownBlock
 	}

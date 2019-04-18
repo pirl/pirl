@@ -33,15 +33,15 @@ import (
 	"time"
 
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/internal/cmdtest"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	swarmhttp "github.com/ethereum/go-ethereum/swarm/api/http"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/internal/cmdtest"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm"
+	"git.pirl.io/community/pirl/swarm/api"
+	swarmhttp "git.pirl.io/community/pirl/swarm/api/http"
 )
 
 var loglevel = flag.Int("loglevel", 3, "verbosity of logs")
@@ -106,7 +106,7 @@ type testCluster struct {
 // ports (assigned by first listening on 127.0.0.1:0 and then passing the ports
 // as flags).
 //
-// When starting more than one node, they are connected together using the
+// When starting more than one node, they are connected topirler using the
 // admin SetPeer RPC method.
 
 func newTestCluster(t *testing.T, size int) *testCluster {
@@ -130,7 +130,7 @@ func newTestCluster(t *testing.T, size int) *testCluster {
 		return cluster
 	}
 
-	// connect the nodes together
+	// connect the nodes topirler
 	for _, node := range cluster.Nodes {
 		if err := node.Client.Call(nil, "admin_addPeer", cluster.Nodes[0].Enode); err != nil {
 			t.Fatal(err)

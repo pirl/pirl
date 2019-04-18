@@ -17,9 +17,9 @@
 package rawdb
 
 import (
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/ethdb/leveldb"
-	"github.com/ethereum/go-ethereum/ethdb/memorydb"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/ethdb/leveldb"
+	"git.pirl.io/community/pirl/ethdb/memorydb"
 )
 
 // NewDatabase creates a high level database on top of a given key-value data

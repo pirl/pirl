@@ -23,9 +23,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/chunk"
-	"github.com/ethereum/go-ethereum/swarm/shed"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/chunk"
+	"git.pirl.io/community/pirl/swarm/shed"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 

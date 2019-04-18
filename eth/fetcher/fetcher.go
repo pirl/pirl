@@ -22,11 +22,11 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/prque"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/prque"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/log"
 )
 
 const (
@@ -283,7 +283,7 @@ func (f *Fetcher) loop() {
 		// Clean up any expired block fetches
 		for hash, announce := range f.fetching {
 			if time.Since(announce.time) > fetchTimeout {
-				f.forgetHash(hash)
+				f.forpirlash(hash)
 			}
 		}
 		// Import any queued blocks that could potentially fit
@@ -357,7 +357,7 @@ func (f *Fetcher) loop() {
 
 		case hash := <-f.done:
 			// A pending import finished, remove all traces of the notification
-			f.forgetHash(hash)
+			f.forpirlash(hash)
 			f.forgetBlock(hash)
 
 		case <-fetchTimer.C:
@@ -368,7 +368,7 @@ func (f *Fetcher) loop() {
 				if time.Since(announces[0].time) > arriveTimeout-gatherSlack {
 					// Pick a random peer to retrieve from, reset all others
 					announce := announces[rand.Intn(len(announces))]
-					f.forgetHash(hash)
+					f.forpirlash(hash)
 
 					// If the block still didn't arrive, queue for fetching
 					if f.getBlock(hash) == nil {
@@ -403,7 +403,7 @@ func (f *Fetcher) loop() {
 			for hash, announces := range f.fetched {
 				// Pick a random peer to retrieve from, reset all others
 				announce := announces[rand.Intn(len(announces))]
-				f.forgetHash(hash)
+				f.forpirlash(hash)
 
 				// If the block still didn't arrive, queue for completion
 				if f.getBlock(hash) == nil {
@@ -449,7 +449,7 @@ func (f *Fetcher) loop() {
 					if header.Number.Uint64() != announce.number {
 						log.Trace("Invalid block number fetched", "peer", announce.origin, "hash", header.Hash(), "announced", announce.number, "provided", header.Number)
 						f.dropPeer(announce.origin)
-						f.forgetHash(hash)
+						f.forpirlash(hash)
 						continue
 					}
 					// Only keep if not imported by other means
@@ -472,7 +472,7 @@ func (f *Fetcher) loop() {
 						incomplete = append(incomplete, announce)
 					} else {
 						log.Trace("Block already imported, discarding header", "peer", announce.origin, "number", header.Number, "hash", header.Hash())
-						f.forgetHash(hash)
+						f.forpirlash(hash)
 					}
 				} else {
 					// Fetcher doesn't know about it, add to the return list
@@ -533,7 +533,7 @@ func (f *Fetcher) loop() {
 
 								blocks = append(blocks, block)
 							} else {
-								f.forgetHash(hash)
+								f.forpirlash(hash)
 							}
 						}
 					}
@@ -604,14 +604,14 @@ func (f *Fetcher) enqueue(peer string, block *types.Block) {
 	if count > blockLimit {
 		log.Debug("Discarded propagated block, exceeded allowance", "peer", peer, "number", block.Number(), "hash", hash, "limit", blockLimit)
 		propBroadcastDOSMeter.Mark(1)
-		f.forgetHash(hash)
+		f.forpirlash(hash)
 		return
 	}
 	// Discard any past or too distant blocks
 	if dist := int64(block.NumberU64()) - int64(f.chainHeight()); dist < -maxUncleDist || dist > maxQueueDist {
 		log.Debug("Discarded propagated block, too far away", "peer", peer, "number", block.Number(), "hash", hash, "distance", dist)
 		propBroadcastDropMeter.Mark(1)
-		f.forgetHash(hash)
+		f.forpirlash(hash)
 		return
 	}
 	// Schedule the block for future importing
@@ -679,9 +679,9 @@ func (f *Fetcher) insert(peer string, block *types.Block) {
 	}()
 }
 
-// forgetHash removes all traces of a block announcement from the fetcher's
+// forpirlash removes all traces of a block announcement from the fetcher's
 // internal state.
-func (f *Fetcher) forgetHash(hash common.Hash) {
+func (f *Fetcher) forpirlash(hash common.Hash) {
 	// Remove all pending announces and decrement DOS counters
 	for _, announce := range f.announced[hash] {
 		f.announces[announce.origin]--

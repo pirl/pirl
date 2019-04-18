@@ -25,14 +25,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/protocols"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/pss"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/protocols"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/pss"
 )
 
 const (
@@ -123,7 +123,7 @@ func (rw *pssRPCRW) WriteMsg(msg p2p.Msg) error {
 
 	// Get the keys we have
 	var symkeyids []string
-	err = rw.Client.rpc.Call(&symkeyids, "pss_getHandshakeKeys", rw.pubKeyId, rw.topic, false, true)
+	err = rw.Client.rpc.Call(&symkeyids, "pss_pirlandshakeKeys", rw.pubKeyId, rw.topic, false, true)
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func (rw *pssRPCRW) WriteMsg(msg p2p.Msg) error {
 	// Check the capacity of the first key
 	var symkeycap uint16
 	if len(symkeyids) > 0 {
-		err = rw.Client.rpc.Call(&symkeycap, "pss_getHandshakeKeyCapacity", symkeyids[0])
+		err = rw.Client.rpc.Call(&symkeycap, "pss_pirlandshakeKeyCapacity", symkeyids[0])
 		if err != nil {
 			return err
 		}
@@ -258,7 +258,7 @@ func (c *Client) RunProtocol(ctx context.Context, proto *p2p.Protocol) error {
 				// we get passed the symkeyid
 				// need the symkey itself to resolve to peer's pubkey
 				var pubkeyid string
-				err = c.rpc.Call(&pubkeyid, "pss_getHandshakePublicKey", msg.Key)
+				err = c.rpc.Call(&pubkeyid, "pss_pirlandshakePublicKey", msg.Key)
 				if err != nil || pubkeyid == "" {
 					log.Trace("proto err or no pubkey", "err", err, "symkeyid", msg.Key)
 					continue

@@ -21,9 +21,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common/bitutil"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"git.pirl.io/community/pirl/common/bitutil"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 // TopicLength establishes the max length of a topic string
@@ -36,7 +36,7 @@ type Topic [TopicLength]byte
 var ErrTopicTooLong = fmt.Errorf("Topic is too long. Max length is %d", TopicLength)
 
 // NewTopic creates a new topic from a provided name and "related content" byte array,
-// merging the two together.
+// merging the two topirler.
 // If relatedContent or name are longer than TopicLength, they will be truncated and an error returned
 // name can be an empty string
 // relatedContent can be nil

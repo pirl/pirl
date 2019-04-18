@@ -22,14 +22,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/network/simulation"
-	"github.com/ethereum/go-ethereum/swarm/state"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/simulations/adapters"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/network/simulation"
+	"git.pirl.io/community/pirl/swarm/state"
+	"git.pirl.io/community/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 //constants for random file generation

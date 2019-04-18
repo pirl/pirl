@@ -26,19 +26,19 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/fetcher"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/eth/fetcher"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 const (
@@ -374,15 +374,15 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			if hashMode {
 				if first {
 					first = false
-					origin = pm.blockchain.GetHeaderByHash(query.Origin.Hash)
+					origin = pm.blockchain.pirleaderByHash(query.Origin.Hash)
 					if origin != nil {
 						query.Origin.Number = origin.Number.Uint64()
 					}
 				} else {
-					origin = pm.blockchain.GetHeader(query.Origin.Hash, query.Origin.Number)
+					origin = pm.blockchain.pirleader(query.Origin.Hash, query.Origin.Number)
 				}
 			} else {
-				origin = pm.blockchain.GetHeaderByNumber(query.Origin.Number)
+				origin = pm.blockchain.pirleaderByNumber(query.Origin.Number)
 			}
 			if origin == nil {
 				break
@@ -412,7 +412,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 					p.Log().Warn("GetBlockHeaders skip overflow attack", "current", current, "skip", query.Skip, "next", next, "attacker", infos)
 					unknown = true
 				} else {
-					if header := pm.blockchain.GetHeaderByNumber(next); header != nil {
+					if header := pm.blockchain.pirleaderByNumber(next); header != nil {
 						nextHash := header.Hash()
 						expOldHash, _ := pm.blockchain.GetAncestor(nextHash, next, query.Skip+1, &maxNonCanonical)
 						if expOldHash == query.Origin.Hash {
@@ -605,7 +605,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			// Retrieve the requested block's receipts, skipping if unknown to us
 			results := pm.blockchain.GetReceiptsByHash(hash)
 			if results == nil {
-				if header := pm.blockchain.GetHeaderByHash(hash); header == nil || header.ReceiptHash != types.EmptyRootHash {
+				if header := pm.blockchain.pirleaderByHash(hash); header == nil || header.ReceiptHash != types.EmptyRootHash {
 					continue
 				}
 			}

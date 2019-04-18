@@ -23,9 +23,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/explorer"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/swarm/storage/mock"
+	"git.pirl.io/community/pirl/swarm/storage/mock/explorer"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

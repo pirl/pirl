@@ -28,19 +28,19 @@ import (
 	"os"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/fdlimit"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/fdlimit"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/params"
 )
 
 func main() {
@@ -175,7 +175,7 @@ func makeSealer(genesis *core.Genesis) (*node.Node, error) {
 	datadir, _ := ioutil.TempDir("", "")
 
 	config := &node.Config{
-		Name:    "geth",
+		Name:    "pirl",
 		Version: params.Version,
 		DataDir: datadir,
 		P2P: p2p.Config{

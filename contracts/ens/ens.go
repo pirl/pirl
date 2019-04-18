@@ -25,12 +25,12 @@ import (
 	"encoding/binary"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/ens/contract"
-	"github.com/ethereum/go-ethereum/contracts/ens/fallback_contract"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/ens/contract"
+	"git.pirl.io/community/pirl/contracts/ens/fallback_contract"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 var (

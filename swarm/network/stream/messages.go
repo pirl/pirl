@@ -21,11 +21,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	bv "github.com/ethereum/go-ethereum/swarm/network/bitvector"
-	"github.com/ethereum/go-ethereum/swarm/spancontext"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/swarm/log"
+	bv "git.pirl.io/community/pirl/swarm/network/bitvector"
+	"git.pirl.io/community/pirl/swarm/spancontext"
+	"git.pirl.io/community/pirl/swarm/storage"
 	"github.com/opentracing/opentracing-go"
 )
 
@@ -139,7 +139,7 @@ func (p *Peer) handleSubscribeMsg(ctx context.Context, req *SubscribeMsg) (err e
 			return err
 		}
 
-		os, err := p.setServer(getHistoryStream(req.Stream), s, getHistoryPriority(req.Priority))
+		os, err := p.setServer(pirlistoryStream(req.Stream), s, pirlistoryPriority(req.Priority))
 		if err != nil {
 			return err
 		}

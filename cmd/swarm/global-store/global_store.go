@@ -22,11 +22,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/db"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/mem"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm/storage/mock"
+	"git.pirl.io/community/pirl/swarm/storage/mock/db"
+	"git.pirl.io/community/pirl/swarm/storage/mock/mem"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

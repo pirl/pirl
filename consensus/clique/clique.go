@@ -26,19 +26,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/misc"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/consensus/misc"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/rpc"
 	lru "github.com/hashicorp/golang-lru"
 	"golang.org/x/crypto/sha3"
 )
@@ -316,7 +316,7 @@ func (c *Clique) verifyCascadingFields(chain consensus.ChainReader, header *type
 	if len(parents) > 0 {
 		parent = parents[len(parents)-1]
 	} else {
-		parent = chain.GetHeader(header.ParentHash, number-1)
+		parent = chain.pirleader(header.ParentHash, number-1)
 	}
 	if parent == nil || parent.Number.Uint64() != number-1 || parent.Hash() != header.ParentHash {
 		return consensus.ErrUnknownAncestor
@@ -366,8 +366,8 @@ func (c *Clique) snapshot(chain consensus.ChainReader, number uint64, hash commo
 			}
 		}
 		// If we're at an checkpoint block, make a snapshot if it's known
-		if number == 0 || (number%c.config.Epoch == 0 && chain.GetHeaderByNumber(number-1) == nil) {
-			checkpoint := chain.GetHeaderByNumber(number)
+		if number == 0 || (number%c.config.Epoch == 0 && chain.pirleaderByNumber(number-1) == nil) {
+			checkpoint := chain.pirleaderByNumber(number)
 			if checkpoint != nil {
 				hash := checkpoint.Hash()
 
@@ -394,7 +394,7 @@ func (c *Clique) snapshot(chain consensus.ChainReader, number uint64, hash commo
 			parents = parents[:len(parents)-1]
 		} else {
 			// No explicit parents (or no more left), reach out to the database
-			header = chain.GetHeader(hash, number)
+			header = chain.pirleader(hash, number)
 			if header == nil {
 				return nil, consensus.ErrUnknownAncestor
 			}
@@ -536,7 +536,7 @@ func (c *Clique) Prepare(chain consensus.ChainReader, header *types.Header) erro
 	header.MixDigest = common.Hash{}
 
 	// Ensure the timestamp has the correct delay
-	parent := chain.GetHeader(header.ParentHash, number-1)
+	parent := chain.pirleader(header.ParentHash, number-1)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}

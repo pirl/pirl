@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/rpc"
-	mockRPC "github.com/ethereum/go-ethereum/swarm/storage/mock/rpc"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/rpc"
+	mockRPC "git.pirl.io/community/pirl/swarm/storage/mock/rpc"
 )
 
 // TestHTTP_InMemory tests in-memory global store that exposes

@@ -23,13 +23,13 @@ import (
 	"net"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations/pipes"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/simulations/pipes"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 // SimAdapter is a NodeAdapter which creates in-memory simulation nodes and

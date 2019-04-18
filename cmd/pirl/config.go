@@ -27,13 +27,13 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/dashboard"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/graphql"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/dashboard"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/graphql"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/params"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 	"github.com/naoina/toml"
 )
 
@@ -75,7 +75,7 @@ type ethstatsConfig struct {
 	URL string `toml:",omitempty"`
 }
 
-type gethConfig struct {
+type pirlConfig struct {
 	Eth       eth.Config
 	Shh       whisper.Config
 	Node      node.Config
@@ -83,7 +83,7 @@ type gethConfig struct {
 	Dashboard dashboard.Config
 }
 
-func loadConfig(file string, cfg *gethConfig) error {
+func loadConfig(file string, cfg *pirlConfig) error {
 	f, err := os.Open(file)
 	if err != nil {
 		return err
@@ -104,13 +104,13 @@ func defaultNodeConfig() node.Config {
 	cfg.Version = params.VersionWithCommit(gitCommit)
 	cfg.HTTPModules = append(cfg.HTTPModules, "eth", "shh")
 	cfg.WSModules = append(cfg.WSModules, "eth", "shh")
-	cfg.IPCPath = "geth.ipc"
+	cfg.IPCPath = "pirl.ipc"
 	return cfg
 }
 
-func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
+func makeConfigNode(ctx *cli.Context) (*node.Node, pirlConfig) {
 	// Load defaults.
-	cfg := gethConfig{
+	cfg := pirlConfig{
 		Eth:       eth.DefaultConfig,
 		Shh:       whisper.DefaultConfig,
 		Node:      defaultNodeConfig(),

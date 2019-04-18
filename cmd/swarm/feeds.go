@@ -21,13 +21,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/crypto"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	swarm "github.com/ethereum/go-ethereum/swarm/api/client"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
+	"git.pirl.io/community/pirl/cmd/utils"
+	swarm "git.pirl.io/community/pirl/swarm/api/client"
+	"git.pirl.io/community/pirl/swarm/storage/feed"
 	"gopkg.in/urfave/cli.v1"
 )
 

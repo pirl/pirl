@@ -23,9 +23,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm/api"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
+	"git.pirl.io/community/pirl/swarm/api"
+	"git.pirl.io/community/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/storage/feed"
 )
 
 type TestServer interface {

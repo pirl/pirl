@@ -23,12 +23,12 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Constants to match up protocol versions and messages
@@ -67,7 +67,7 @@ const (
 	// Protocol messages introduced in LPV2
 	GetProofsV2Msg         = 0x0f
 	ProofsV2Msg            = 0x10
-	GetHelperTrieProofsMsg = 0x11
+	pirlelperTrieProofsMsg = 0x11
 	HelperTrieProofsMsg    = 0x12
 	SendTxV2Msg            = 0x13
 	GetTxStatusMsg         = 0x14
@@ -85,7 +85,7 @@ var requests = map[uint64]requestInfo{
 	GetReceiptsMsg:         {"GetReceipts", MaxReceiptFetch},
 	GetCodeMsg:             {"GetCode", MaxCodeFetch},
 	GetProofsV2Msg:         {"GetProofsV2", MaxProofsFetch},
-	GetHelperTrieProofsMsg: {"GetHelperTrieProofs", MaxHelperTrieProofsFetch},
+	pirlelperTrieProofsMsg: {"pirlelperTrieProofs", MaxHelperTrieProofsFetch},
 	SendTxV2Msg:            {"SendTxV2", MaxTxSend},
 	GetTxStatusMsg:         {"GetTxStatus", MaxTxStatus},
 }

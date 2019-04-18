@@ -25,8 +25,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -356,7 +356,7 @@ func unpackTestEventData(dest interface{}, hexData string, jsonEvent []byte, ass
 
 /*
 Taken from
-https://github.com/ethereum/go-ethereum/pull/15568
+https://git.pirl.io/community/pirl/pull/15568
 */
 
 type testResult struct {

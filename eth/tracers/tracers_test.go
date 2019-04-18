@@ -27,21 +27,21 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/tests"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/tests"
 )
 
 // To generate a new callTracer test, copy paste the makeTest method below into
-// a Geth console and call it with a transaction hash you which to export.
+// a pirl console and call it with a transaction hash you which to export.
 
 /*
 // makeTest generates a callTracer test by running a prestate reassembled and a

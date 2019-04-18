@@ -12,12 +12,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/sctx"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/crypto/ecies"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/sctx"
+	"git.pirl.io/community/pirl/swarm/storage"
 	"golang.org/x/crypto/scrypt"
 	"golang.org/x/crypto/sha3"
 	cli "gopkg.in/urfave/cli.v1"
@@ -207,7 +207,7 @@ func (a *API) doDecrypt(ctx context.Context, credentials string, pk *ecdsa.Priva
 		}
 
 		allowed := false
-		requestDomain := sctx.GetHost(ctx)
+		requestDomain := sctx.pirlost(ctx)
 		for _, v := range AllowedDecryptDomains {
 			if strings.Contains(requestDomain, v) {
 				allowed = true

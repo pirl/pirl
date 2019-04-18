@@ -22,11 +22,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/swarm/network"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p/simulations/adapters"
+	"git.pirl.io/community/pirl/swarm/network"
 )
 
 /*
@@ -112,7 +112,7 @@ func TestWaitTillHealthy(t *testing.T) {
 		kid := common.Bytes2Hex(kad.BaseAddr())
 
 		//get the health info
-		info := kad.GetHealthInfo(pp[kid])
+		info := kad.pirlealthInfo(pp[kid])
 		log.Trace("Health info", "info", info)
 		// check that it is healthy
 		healthy := info.Healthy()

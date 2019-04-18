@@ -20,14 +20,14 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/misc"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/consensus/misc"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/params"
 )
 
 // BlockGen creates blocks for testing.
@@ -286,7 +286,7 @@ func (cr *fakeChainReader) Config() *params.ChainConfig {
 }
 
 func (cr *fakeChainReader) CurrentHeader() *types.Header                            { return nil }
-func (cr *fakeChainReader) GetHeaderByNumber(number uint64) *types.Header           { return nil }
-func (cr *fakeChainReader) GetHeaderByHash(hash common.Hash) *types.Header          { return nil }
-func (cr *fakeChainReader) GetHeader(hash common.Hash, number uint64) *types.Header { return nil }
+func (cr *fakeChainReader) pirleaderByNumber(number uint64) *types.Header           { return nil }
+func (cr *fakeChainReader) pirleaderByHash(hash common.Hash) *types.Header          { return nil }
+func (cr *fakeChainReader) pirleader(hash common.Hash, number uint64) *types.Header { return nil }
 func (cr *fakeChainReader) GetBlock(hash common.Hash, number uint64) *types.Block   { return nil }

@@ -24,12 +24,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/protocols"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/state"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/protocols"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/state"
 )
 
 const (
@@ -311,7 +311,7 @@ func (b *Bzz) removeHandshake(peerID enode.ID) {
 	delete(b.handshakes, peerID)
 }
 
-// GetHandshake returns the bzz handhake that the remote peer with peerID sent
+// pirlandshake returns the bzz handhake that the remote peer with peerID sent
 func (b *Bzz) GetOrCreateHandshake(peerID enode.ID) (*HandshakeMsg, bool) {
 	b.mtx.Lock()
 	defer b.mtx.Unlock()

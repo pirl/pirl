@@ -23,9 +23,9 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/explorer"
-	mockRPC "github.com/ethereum/go-ethereum/swarm/storage/mock/rpc"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/storage/mock/explorer"
+	mockRPC "git.pirl.io/community/pirl/swarm/storage/mock/rpc"
 )
 
 // TestExplorer validates basic chunk explorer functionality by storing

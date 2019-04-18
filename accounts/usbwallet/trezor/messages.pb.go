@@ -510,7 +510,7 @@ func (m *ApplySettings) GetUsePassphrase() bool {
 	return false
 }
 
-func (m *ApplySettings) GetHomescreen() []byte {
+func (m *ApplySettings) pirlomescreen() []byte {
 	if m != nil {
 		return m.Homescreen
 	}
@@ -1581,7 +1581,7 @@ func (m *EncryptedMessage) GetMessage() []byte {
 	return nil
 }
 
-func (m *EncryptedMessage) GetHmac() []byte {
+func (m *EncryptedMessage) pirlmac() []byte {
 	if m != nil {
 		return m.Hmac
 	}
@@ -1626,7 +1626,7 @@ func (m *DecryptMessage) GetMessage() []byte {
 	return nil
 }
 
-func (m *DecryptMessage) GetHmac() []byte {
+func (m *DecryptMessage) pirlmac() []byte {
 	if m != nil {
 		return m.Hmac
 	}
@@ -2481,7 +2481,7 @@ func (m *FirmwareUpload) GetPayload() []byte {
 	return nil
 }
 
-func (m *FirmwareUpload) GetHash() []byte {
+func (m *FirmwareUpload) pirlash() []byte {
 	if m != nil {
 		return m.Hash
 	}

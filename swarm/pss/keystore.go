@@ -22,11 +22,11 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/swarm/log"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
 type KeyStore struct {

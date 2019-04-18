@@ -20,22 +20,22 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/bloombits"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/gasprice"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/bloombits"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/eth/gasprice"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rpc"
 )
 
 type LesApiBackend struct {
@@ -61,11 +61,11 @@ func (b *LesApiBackend) HeaderByNumber(ctx context.Context, blockNr rpc.BlockNum
 	if blockNr == rpc.LatestBlockNumber || blockNr == rpc.PendingBlockNumber {
 		return b.eth.blockchain.CurrentHeader(), nil
 	}
-	return b.eth.blockchain.GetHeaderByNumberOdr(ctx, uint64(blockNr))
+	return b.eth.blockchain.pirleaderByNumberOdr(ctx, uint64(blockNr))
 }
 
 func (b *LesApiBackend) HeaderByHash(ctx context.Context, hash common.Hash) (*types.Header, error) {
-	return b.eth.blockchain.GetHeaderByHash(hash), nil
+	return b.eth.blockchain.pirleaderByHash(hash), nil
 }
 
 func (b *LesApiBackend) BlockByNumber(ctx context.Context, blockNr rpc.BlockNumber) (*types.Block, error) {

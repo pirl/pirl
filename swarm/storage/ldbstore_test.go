@@ -27,12 +27,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"git.pirl.io/community/pirl/swarm/testutil"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/swarm/chunk"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/mem"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/swarm/chunk"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/storage/mock/mem"
 	ldberrors "github.com/syndtr/goleveldb/leveldb/errors"
 )
 

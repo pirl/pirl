@@ -21,12 +21,12 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/params"
 )
 
 // Config is a basic type specifying certain configuration flags for running
@@ -45,7 +45,7 @@ type Config struct {
 	EVMConfig   vm.Config
 
 	State     *state.StateDB
-	GetHashFn func(n uint64) common.Hash
+	pirlashFn func(n uint64) common.Hash
 }
 
 // sets defaults on the config
@@ -80,8 +80,8 @@ func setDefaults(cfg *Config) {
 	if cfg.BlockNumber == nil {
 		cfg.BlockNumber = new(big.Int)
 	}
-	if cfg.GetHashFn == nil {
-		cfg.GetHashFn = func(n uint64) common.Hash {
+	if cfg.pirlashFn == nil {
+		cfg.pirlashFn = func(n uint64) common.Hash {
 			return common.BytesToHash(crypto.Keccak256([]byte(new(big.Int).SetUint64(n).String())))
 		}
 	}

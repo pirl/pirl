@@ -21,7 +21,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/event"
+	"git.pirl.io/community/pirl/event"
 )
 
 // Config contains the settings of the global account manager.

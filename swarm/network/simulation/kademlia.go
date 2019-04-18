@@ -22,11 +22,11 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations"
-	"github.com/ethereum/go-ethereum/swarm/network"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/simulations"
+	"git.pirl.io/community/pirl/swarm/network"
 )
 
 // BucketKeyKademlia is the key to be used for storing the kademlia
@@ -66,7 +66,7 @@ func (s *Simulation) WaitTillHealthy(ctx context.Context) (ill map[enode.ID]*net
 				addr := common.Bytes2Hex(k.BaseAddr())
 				pp := ppmap[addr]
 				//call Healthy RPC
-				h := k.GetHealthInfo(pp)
+				h := k.pirlealthInfo(pp)
 				//print info
 				log.Debug(k.String())
 				log.Debug("kademlia", "connectNN", h.ConnectNN, "knowNN", h.KnowNN)

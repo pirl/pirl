@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// package web3ext contains geth specific web3.js extensions.
+// package web3ext contains pirl specific web3.js extensions.
 package web3ext
 
 var Modules = map[string]string{
@@ -121,8 +121,8 @@ web3._extend({
 			params: 0
 		}),
 		new web3._extend.Method({
-			name: 'getHashrate',
-			call: 'ethash_getHashrate',
+			name: 'pirlashrate',
+			call: 'ethash_pirlashrate',
 			params: 0
 		}),
 		new web3._extend.Method({
@@ -556,8 +556,8 @@ web3._extend({
 			params: 1,
 		}),
 		new web3._extend.Method({
-			name: 'getHashrate',
-			call: 'miner_getHashrate'
+			name: 'pirlashrate',
+			call: 'miner_pirlashrate'
 		}),
 	],
 	properties: []

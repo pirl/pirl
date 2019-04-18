@@ -26,24 +26,24 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/accounts/scwallet"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/consensus/clique"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/accounts/scwallet"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/consensus/clique"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/tyler-smith/go-bip39"
 )
@@ -422,7 +422,7 @@ func (s *PrivateAccountAPI) SignTransaction(ctx context.Context, args SendTxArgs
 //
 // The key used to calculate the signature is decrypted with the given password.
 //
-// https://github.com/ethereum/go-ethereum/wiki/Management-APIs#personal_sign
+// https://git.pirl.io/community/pirl/wiki/Management-APIs#personal_sign
 func (s *PrivateAccountAPI) Sign(ctx context.Context, data hexutil.Bytes, addr common.Address, passwd string) (hexutil.Bytes, error) {
 	// Look up the wallet containing the requested signer
 	account := accounts.Account{Address: addr}
@@ -450,7 +450,7 @@ func (s *PrivateAccountAPI) Sign(ctx context.Context, data hexutil.Bytes, addr c
 // Note, the signature must conform to the secp256k1 curve R, S and V values, where
 // the V value must be 27 or 28 for legacy reasons.
 //
-// https://github.com/ethereum/go-ethereum/wiki/Management-APIs#personal_ecRecover
+// https://git.pirl.io/community/pirl/wiki/Management-APIs#personal_ecRecover
 func (s *PrivateAccountAPI) EcRecover(ctx context.Context, data, sig hexutil.Bytes) (common.Address, error) {
 	if len(sig) != 65 {
 		return common.Address{}, fmt.Errorf("signature must be 65 bytes long")
@@ -500,7 +500,7 @@ func (s *PrivateAccountAPI) InitializeWallet(ctx context.Context, url string) (s
 	}
 }
 
-// Unpair deletes a pairing between wallet and geth.
+// Unpair deletes a pairing between wallet and pirl.
 func (s *PrivateAccountAPI) Unpair(ctx context.Context, url string, pin string) error {
 	wallet, err := s.am.Wallet(url)
 	if err != nil {

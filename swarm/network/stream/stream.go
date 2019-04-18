@@ -25,16 +25,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/protocols"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/network/stream/intervals"
-	"github.com/ethereum/go-ethereum/swarm/state"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/protocols"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/network"
+	"git.pirl.io/community/pirl/swarm/network/stream/intervals"
+	"git.pirl.io/community/pirl/swarm/state"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 const (
@@ -367,8 +367,8 @@ func (r *Registry) Subscribe(peerId enode.ID, s Stream, h *Range, priority uint8
 	}
 	if s.Live && h != nil {
 		if err := peer.setClientParams(
-			getHistoryStream(s),
-			newClientParams(getHistoryPriority(priority), h.To),
+			pirlistoryStream(s),
+			newClientParams(pirlistoryPriority(priority), h.To),
 		); err != nil {
 			return err
 		}
@@ -576,7 +576,7 @@ func doRequestSubscription(r *Registry, p *network.Peer, bin uint8, subs map[eno
 	if streams, ok := subs[p.ID()]; ok {
 		// delete live and history streams from the map, so that it won't be removed with a Quit request
 		delete(streams, stream)
-		delete(streams, getHistoryStream(stream))
+		delete(streams, pirlistoryStream(stream))
 	}
 	err := r.RequestSubscription(p.ID(), stream, NewRange(0, 0), High)
 	if err != nil {
@@ -939,14 +939,14 @@ func (r *Range) String() string {
 	return fmt.Sprintf("%v-%v", r.From, r.To)
 }
 
-func getHistoryPriority(priority uint8) uint8 {
+func pirlistoryPriority(priority uint8) uint8 {
 	if priority == 0 {
 		return 0
 	}
 	return priority - 1
 }
 
-func getHistoryStream(s Stream) Stream {
+func pirlistoryStream(s Stream) Stream {
 	return NewStream(s.Name, s.Key, false)
 }
 

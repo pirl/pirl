@@ -16,7 +16,7 @@
 
 // Contains all the wrappers from the common package.
 
-package geth
+package pirl
 
 import (
 	"encoding/hex"
@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Hash represents the 32 byte Keccak256 hash of arbitrary data.
@@ -81,8 +81,8 @@ func (h *Hash) SetHex(hash string) error {
 	return nil
 }
 
-// GetHex retrieves the hex string representation of the hash.
-func (h *Hash) GetHex() string {
+// pirlex retrieves the hex string representation of the hash.
+func (h *Hash) pirlex() string {
 	return h.hash.Hex()
 }
 
@@ -182,8 +182,8 @@ func (a *Address) SetHex(address string) error {
 	return nil
 }
 
-// GetHex retrieves the hex string representation of the address.
-func (a *Address) GetHex() string {
+// pirlex retrieves the hex string representation of the address.
+func (a *Address) pirlex() string {
 	return a.address.Hex()
 }
 

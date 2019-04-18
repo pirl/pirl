@@ -22,7 +22,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/swarm/storage/mock/mem"
+	"git.pirl.io/community/pirl/swarm/storage/mock/mem"
 )
 
 // TestHandler_CORSOrigin validates that the correct Access-Control-Allow-Origin

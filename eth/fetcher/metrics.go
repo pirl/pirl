@@ -19,7 +19,7 @@
 package fetcher
 
 import (
-	"github.com/ethereum/go-ethereum/metrics"
+	"git.pirl.io/community/pirl/metrics"
 )
 
 var (

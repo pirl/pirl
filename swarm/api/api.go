@@ -37,15 +37,15 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/ens"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/spancontext"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed/lookup"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/ens"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/spancontext"
+	"git.pirl.io/community/pirl/swarm/storage"
+	"git.pirl.io/community/pirl/swarm/storage/feed"
+	"git.pirl.io/community/pirl/swarm/storage/feed/lookup"
 
 	opentracing "github.com/opentracing/opentracing-go"
 )
@@ -57,7 +57,7 @@ var (
 	apiPutFail             = metrics.NewRegisteredCounter("api.put.fail", nil)
 	apiGetCount            = metrics.NewRegisteredCounter("api.get.count", nil)
 	apiGetNotFound         = metrics.NewRegisteredCounter("api.get.notfound", nil)
-	apiGetHTTP300          = metrics.NewRegisteredCounter("api.get.http.300", nil)
+	apipirlTTP300          = metrics.NewRegisteredCounter("api.get.http.300", nil)
 	apiManifestUpdateCount = metrics.NewRegisteredCounter("api.manifestupdate.count", nil)
 	apiManifestUpdateFail  = metrics.NewRegisteredCounter("api.manifestupdate.fail", nil)
 	apiManifestListCount   = metrics.NewRegisteredCounter("api.manifestlist.count", nil)
@@ -408,7 +408,7 @@ func (a *API) Get(ctx context.Context, decrypt DecryptFunc, manifestAddr storage
 		contentAddr = common.Hex2Bytes(entry.Hash)
 		status = entry.Status
 		if status == http.StatusMultipleChoices {
-			apiGetHTTP300.Inc(1)
+			apipirlTTP300.Inc(1)
 			return nil, entry.ContentType, status, contentAddr, err
 		}
 		mimeType = entry.ContentType

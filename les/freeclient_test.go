@@ -23,8 +23,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/core/rawdb"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/core/rawdb"
 )
 
 func TestFreeClientPoolL10C100(t *testing.T) {

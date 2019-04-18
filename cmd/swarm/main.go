@@ -29,24 +29,24 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/console"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/internal/debug"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm"
-	bzzapi "github.com/ethereum/go-ethereum/swarm/api"
-	swarmmetrics "github.com/ethereum/go-ethereum/swarm/metrics"
-	"github.com/ethereum/go-ethereum/swarm/storage/mock"
-	mockrpc "github.com/ethereum/go-ethereum/swarm/storage/mock/rpc"
-	"github.com/ethereum/go-ethereum/swarm/tracing"
-	sv "github.com/ethereum/go-ethereum/swarm/version"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/console"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/internal/debug"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/rpc"
+	"git.pirl.io/community/pirl/swarm"
+	bzzapi "git.pirl.io/community/pirl/swarm/api"
+	swarmmetrics "git.pirl.io/community/pirl/swarm/metrics"
+	"git.pirl.io/community/pirl/swarm/storage/mock"
+	mockrpc "git.pirl.io/community/pirl/swarm/storage/mock/rpc"
+	"git.pirl.io/community/pirl/swarm/tracing"
+	sv "git.pirl.io/community/pirl/swarm/version"
 
 	cli "gopkg.in/urfave/cli.v1"
 )
@@ -91,7 +91,7 @@ var defaultSubcommandHelp = cli.Command{
 
 var defaultNodeConfig = node.DefaultConfig
 
-// This init function sets defaults so cmd/swarm can run alongside geth.
+// This init function sets defaults so cmd/swarm can run alongside pirl.
 func init() {
 	sv.GitCommit = gitCommit
 	defaultNodeConfig.Name = clientIdentifier
@@ -275,9 +275,9 @@ func bzzd(ctx *cli.Context) error {
 	//pss operates on ws
 	cfg.WSModules = append(cfg.WSModules, "pss")
 
-	//geth only supports --datadir via command line
+	//pirl only supports --datadir via command line
 	//in order to be consistent within swarm, if we pass --datadir via environment variable
-	//or via config file, we get the same directory for geth and swarm
+	//or via config file, we get the same directory for pirl and swarm
 	if _, err := os.Stat(bzzconfig.Path); err == nil {
 		cfg.DataDir = bzzconfig.Path
 	}

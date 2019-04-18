@@ -29,13 +29,13 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/node"
 	"github.com/naoina/toml"
 
-	bzzapi "github.com/ethereum/go-ethereum/swarm/api"
+	bzzapi "git.pirl.io/community/pirl/swarm/api"
 )
 
 var (
@@ -83,7 +83,7 @@ const (
 	SwarmAccessPassword          = "SWARM_ACCESS_PASSWORD"
 	SwarmAutoDefaultPath         = "SWARM_AUTO_DEFAULTPATH"
 	SwarmGlobalstoreAPI          = "SWARM_GLOBALSTORE_API"
-	GethEnvDataDir               = "GETH_DATADIR"
+	pirlEnvDataDir               = "pirl_DATADIR"
 )
 
 // These settings ensure that TOML keys use the same names as Go struct fields.
@@ -97,7 +97,7 @@ var tomlSettings = toml.Config{
 	MissingField: func(rt reflect.Type, field string) error {
 		link := ""
 		if unicode.IsUpper(rune(rt.Name()[0])) && rt.PkgPath() != "main" {
-			link = fmt.Sprintf(", check github.com/ethereum/go-ethereum/swarm/api/config.go for available fields")
+			link = fmt.Sprintf(", check git.pirl.io/community/pirl/swarm/api/config.go for available fields")
 		}
 		return fmt.Errorf("field '%s' is not defined in %s%s", field, rt.String(), link)
 	},
@@ -127,7 +127,7 @@ func initSwarmNode(config *bzzapi.Config, stack *node.Node, ctx *cli.Context, no
 	//at this point, all vars should be set in the Config
 	//get the account for the provided swarm account
 	prvkey := getAccount(config.BzzAccount, ctx, stack)
-	//set the resolved config path (geth --datadir)
+	//set the resolved config path (pirl --datadir)
 	config.Path = expandPath(stack.InstanceDir())
 	//finally, initialize the configuration
 	err := config.Init(prvkey, nodeconfig.NodeKey())
@@ -296,7 +296,7 @@ func envVarsOverride(currentConfig *bzzapi.Config) (config *bzzapi.Config) {
 		}
 	}
 
-	if datadir := os.Getenv(GethEnvDataDir); datadir != "" {
+	if datadir := os.Getenv(pirlEnvDataDir); datadir != "" {
 		currentConfig.Path = expandPath(datadir)
 	}
 

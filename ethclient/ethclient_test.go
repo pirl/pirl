@@ -22,8 +22,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
+	"git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Verify that Client implements the ethereum interfaces.

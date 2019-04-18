@@ -21,13 +21,13 @@ import (
 	"os"
 	"sort"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	gethmetrics "github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/metrics/influxdb"
-	swarmmetrics "github.com/ethereum/go-ethereum/swarm/metrics"
-	"github.com/ethereum/go-ethereum/swarm/tracing"
+	"git.pirl.io/community/pirl/cmd/utils"
+	pirlmetrics "git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/metrics/influxdb"
+	swarmmetrics "git.pirl.io/community/pirl/swarm/metrics"
+	"git.pirl.io/community/pirl/swarm/tracing"
 
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/log"
 
 	cli "gopkg.in/urfave/cli.v1"
 )
@@ -177,7 +177,7 @@ func main() {
 }
 
 func emitMetrics(ctx *cli.Context) error {
-	if gethmetrics.Enabled {
+	if pirlmetrics.Enabled {
 		var (
 			endpoint = ctx.GlobalString(swarmmetrics.MetricsInfluxDBEndpointFlag.Name)
 			database = ctx.GlobalString(swarmmetrics.MetricsInfluxDBDatabaseFlag.Name)
@@ -190,7 +190,7 @@ func emitMetrics(ctx *cli.Context) error {
 		tagsMap["version"] = gitCommit
 		tagsMap["filesize"] = fmt.Sprintf("%v", filesize)
 
-		return influxdb.InfluxDBWithTagsOnce(gethmetrics.DefaultRegistry, endpoint, database, username, password, "swarm-smoke.", tagsMap)
+		return influxdb.InfluxDBWithTagsOnce(pirlmetrics.DefaultRegistry, endpoint, database, username, password, "swarm-smoke.", tagsMap)
 	}
 
 	return nil

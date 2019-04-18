@@ -17,28 +17,28 @@
 // Contains all the wrappers from the node package to support client side node
 // management on mobile platforms.
 
-package geth
+package pirl
 
 import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/ethstats"
-	"github.com/ethereum/go-ethereum/internal/debug"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/ethclient"
+	"git.pirl.io/community/pirl/ethstats"
+	"git.pirl.io/community/pirl/internal/debug"
+	"git.pirl.io/community/pirl/les"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/params"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
-// NodeConfig represents the collection of configuration values to fine tune the Geth
+// NodeConfig represents the collection of configuration values to fine tune the pirl
 // node embedded into a mobile process. The available values are a subset of the
 // entire API provided by go-ethereum to reduce the maintenance surface and dev
 // complexity.
@@ -97,12 +97,12 @@ func NewNodeConfig() *NodeConfig {
 	return &config
 }
 
-// Node represents a Geth Ethereum node instance.
+// Node represents a pirl Ethereum node instance.
 type Node struct {
 	node *node.Node
 }
 
-// NewNode creates and configures a new Geth node.
+// NewNode creates and configures a new pirl node.
 func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	// If no or partial configurations were specified, use defaults
 	if config == nil {

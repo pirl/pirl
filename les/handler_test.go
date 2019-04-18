@@ -23,18 +23,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/trie"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/trie"
 )
 
 func expectResponse(r p2p.MsgReader, msgcode, reqID, bv uint64, data interface{}) error {
@@ -160,7 +160,7 @@ func testGetBlockHeaders(t *testing.T, protocol int) {
 		// Collect the headers to expect in the response
 		headers := []*types.Header{}
 		for _, hash := range tt.expect {
-			headers = append(headers, bc.GetHeaderByHash(hash))
+			headers = append(headers, bc.pirleaderByHash(hash))
 		}
 		// Send the hash request and verify the response
 		reqID++
@@ -259,7 +259,7 @@ func testGetCode(t *testing.T, protocol int) {
 	var codes [][]byte
 
 	for i := uint64(0); i <= bc.CurrentBlock().NumberU64(); i++ {
-		header := bc.GetHeaderByNumber(i)
+		header := bc.pirleaderByNumber(i)
 		req := &CodeReq{
 			BHash:  header.Hash(),
 			AccKey: crypto.Keccak256(testContractAddr[:]),
@@ -316,7 +316,7 @@ func testGetProofs(t *testing.T, protocol int) {
 
 	accounts := []common.Address{testBankAddress, acc1Addr, acc2Addr, {}}
 	for i := uint64(0); i <= bc.CurrentBlock().NumberU64(); i++ {
-		header := bc.GetHeaderByNumber(i)
+		header := bc.pirleaderByNumber(i)
 		root := header.Root
 		trie, _ := trie.New(root, trie.NewDatabase(server.db))
 
@@ -357,7 +357,7 @@ func testGetCHTProofs(t *testing.T, protocol int) {
 	bc := server.pm.blockchain.(*core.BlockChain)
 
 	// Assemble the proofs from the different protocols
-	header := bc.GetHeaderByNumber(config.ChtSize - 1)
+	header := bc.pirleaderByNumber(config.ChtSize - 1)
 	rlp, _ := rlp.EncodeToBytes(header)
 
 	key := make([]byte, 8)
@@ -366,7 +366,7 @@ func testGetCHTProofs(t *testing.T, protocol int) {
 	proofsV2 := HelperTrieResps{
 		AuxData: [][]byte{rlp},
 	}
-	root := light.GetChtRoot(server.db, 0, bc.GetHeaderByNumber(config.ChtSize-1).Hash())
+	root := light.GetChtRoot(server.db, 0, bc.pirleaderByNumber(config.ChtSize-1).Hash())
 	trie, _ := trie.New(root, trie.NewDatabase(rawdb.NewTable(server.db, light.ChtTablePrefix)))
 	trie.Prove(key, 0, &proofsV2.Proofs)
 	// Assemble the requests for the different protocols
@@ -377,8 +377,8 @@ func testGetCHTProofs(t *testing.T, protocol int) {
 		AuxReq:  auxHeader,
 	}}
 	// Send the proof request and verify the response
-	cost := server.tPeer.GetRequestCost(GetHelperTrieProofsMsg, len(requestsV2))
-	sendRequest(server.tPeer.app, GetHelperTrieProofsMsg, 42, cost, requestsV2)
+	cost := server.tPeer.GetRequestCost(pirlelperTrieProofsMsg, len(requestsV2))
+	sendRequest(server.tPeer.app, pirlelperTrieProofsMsg, 42, cost, requestsV2)
 	if err := expectResponse(server.tPeer.app, HelperTrieProofsMsg, 42, testBufLimit, proofsV2); err != nil {
 		t.Errorf("proofs mismatch: %v", err)
 	}
@@ -417,13 +417,13 @@ func TestGetBloombitsProofs(t *testing.T) {
 		}}
 		var proofs HelperTrieResps
 
-		root := light.GetBloomTrieRoot(server.db, 0, bc.GetHeaderByNumber(config.BloomTrieSize-1).Hash())
+		root := light.GetBloomTrieRoot(server.db, 0, bc.pirleaderByNumber(config.BloomTrieSize-1).Hash())
 		trie, _ := trie.New(root, trie.NewDatabase(rawdb.NewTable(server.db, light.BloomTrieTablePrefix)))
 		trie.Prove(key, 0, &proofs.Proofs)
 
 		// Send the proof request and verify the response
-		cost := server.tPeer.GetRequestCost(GetHelperTrieProofsMsg, len(requests))
-		sendRequest(server.tPeer.app, GetHelperTrieProofsMsg, 42, cost, requests)
+		cost := server.tPeer.GetRequestCost(pirlelperTrieProofsMsg, len(requests))
+		sendRequest(server.tPeer.app, pirlelperTrieProofsMsg, 42, cost, requests)
 		if err := expectResponse(server.tPeer.app, HelperTrieProofsMsg, 42, testBufLimit, proofs); err != nil {
 			t.Errorf("bit %d: proofs mismatch: %v", bit, err)
 		}

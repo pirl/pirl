@@ -20,10 +20,10 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/params"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -563,7 +563,7 @@ func opBlockhash(pc *uint64, interpreter *EVMInterpreter, contract *Contract, me
 
 	n := interpreter.intPool.get().Sub(interpreter.evm.BlockNumber, common.Big257)
 	if num.Cmp(n) > 0 && num.Cmp(interpreter.evm.BlockNumber) < 0 {
-		stack.push(interpreter.evm.GetHash(num.Uint64()).Big())
+		stack.push(interpreter.evm.pirlash(num.Uint64()).Big())
 	} else {
 		stack.push(interpreter.intPool.getZero())
 	}

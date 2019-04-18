@@ -29,34 +29,34 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/fdlimit"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/clique"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/dashboard"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/gasprice"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/ethstats"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/metrics/influxdb"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/p2p/netutil"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/accounts/keystore"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/fdlimit"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/consensus/clique"
+	"git.pirl.io/community/pirl/consensus/ethash"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/dashboard"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/eth/gasprice"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/ethstats"
+	"git.pirl.io/community/pirl/les"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/metrics/influxdb"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discv5"
+	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/p2p/nat"
+	"git.pirl.io/community/pirl/p2p/netutil"
+	"git.pirl.io/community/pirl/params"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -675,7 +675,7 @@ var (
 	MetricsInfluxDBDatabaseFlag = cli.StringFlag{
 		Name:  "metrics.influxdb.database",
 		Usage: "InfluxDB database name to push reported metrics to",
-		Value: "geth",
+		Value: "pirl",
 	}
 	MetricsInfluxDBUsernameFlag = cli.StringFlag{
 		Name:  "metrics.influxdb.username",
@@ -967,7 +967,7 @@ func SetULC(ctx *cli.Context, cfg *eth.Config) {
 }
 
 // makeDatabaseHandles raises out the number of allowed file handles per process
-// for Geth and returns half of the allowance to assign to the database.
+// for pirl and returns half of the allowance to assign to the database.
 func makeDatabaseHandles() int {
 	limit, err := fdlimit.Maximum()
 	if err != nil {
@@ -995,7 +995,7 @@ func MakeAddress(ks *keystore.KeyStore, account string) (accounts.Account, error
 	log.Warn("-------------------------------------------------------------------")
 	log.Warn("Referring to accounts by order in the keystore folder is dangerous!")
 	log.Warn("This functionality is deprecated and will be removed in the future!")
-	log.Warn("Please use explicit addresses! (can search via `geth account list`)")
+	log.Warn("Please use explicit addresses! (can search via `pirl account list`)")
 	log.Warn("-------------------------------------------------------------------")
 
 	accs := ks.Accounts()
@@ -1532,7 +1532,7 @@ func SetupMetrics(ctx *cli.Context) {
 
 			log.Info("Enabling metrics export to InfluxDB")
 
-			go influxdb.InfluxDBWithTags(metrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "geth.", tagsMap)
+			go influxdb.InfluxDBWithTags(metrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "pirl.", tagsMap)
 		}
 	}
 }
@@ -1655,11 +1655,11 @@ func MakeConsolePreloads(ctx *cli.Context) []string {
 // This is a temporary function used for migrating old command/flags to the
 // new format.
 //
-// e.g. geth account new --keystore /tmp/mykeystore --lightkdf
+// e.g. pirl account new --keystore /tmp/mykeystore --lightkdf
 //
 // is equivalent after calling this method with:
 //
-// geth --keystore /tmp/mykeystore --lightkdf account new
+// pirl --keystore /tmp/mykeystore --lightkdf account new
 //
 // This allows the use of the existing configuration functionality.
 // When all flags are migrated this function can be removed and the existing

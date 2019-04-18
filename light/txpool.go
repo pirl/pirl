@@ -22,16 +22,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 const (
@@ -220,18 +220,18 @@ func (pool *TxPool) rollbackTxs(hash common.Hash, txc txStateChanges) {
 // possible to continue checking the missing blocks at the next chain head event
 func (pool *TxPool) reorgOnNewHead(ctx context.Context, newHeader *types.Header) (txStateChanges, error) {
 	txc := make(txStateChanges)
-	oldh := pool.chain.GetHeaderByHash(pool.head)
+	oldh := pool.chain.pirleaderByHash(pool.head)
 	newh := newHeader
 	// find common ancestor, create list of rolled back and new block hashes
 	var oldHashes, newHashes []common.Hash
 	for oldh.Hash() != newh.Hash() {
 		if oldh.Number.Uint64() >= newh.Number.Uint64() {
 			oldHashes = append(oldHashes, oldh.Hash())
-			oldh = pool.chain.GetHeader(oldh.ParentHash, oldh.Number.Uint64()-1)
+			oldh = pool.chain.pirleader(oldh.ParentHash, oldh.Number.Uint64()-1)
 		}
 		if oldh.Number.Uint64() < newh.Number.Uint64() {
 			newHashes = append(newHashes, newh.Hash())
-			newh = pool.chain.GetHeader(newh.ParentHash, newh.Number.Uint64()-1)
+			newh = pool.chain.pirleader(newh.ParentHash, newh.Number.Uint64()-1)
 			if newh == nil {
 				// happens when CHT syncing, nothing to do
 				newh = oldh
@@ -359,7 +359,7 @@ func (pool *TxPool) validateTx(ctx context.Context, tx *types.Transaction) error
 
 	// Check the transaction doesn't exceed the current
 	// block limit gas.
-	header := pool.chain.GetHeaderByHash(pool.head)
+	header := pool.chain.pirleaderByHash(pool.head)
 	if header.GasLimit < tx.Gas() {
 		return core.ErrGasLimit
 	}

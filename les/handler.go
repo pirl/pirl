@@ -24,23 +24,23 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/trie"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/consensus"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/discv5"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/trie"
 )
 
 const (
@@ -68,14 +68,14 @@ func errResp(code errCode, format string, v ...interface{}) error {
 type BlockChain interface {
 	Config() *params.ChainConfig
 	HasHeader(hash common.Hash, number uint64) bool
-	GetHeader(hash common.Hash, number uint64) *types.Header
-	GetHeaderByHash(hash common.Hash) *types.Header
+	pirleader(hash common.Hash, number uint64) *types.Header
+	pirleaderByHash(hash common.Hash) *types.Header
 	CurrentHeader() *types.Header
 	GetTd(hash common.Hash, number uint64) *big.Int
 	StateCache() state.Database
 	InsertHeaderChain(chain []*types.Header, checkFreq int) (int, error)
 	Rollback(chain []common.Hash)
-	GetHeaderByNumber(number uint64) *types.Header
+	pirleaderByNumber(number uint64) *types.Header
 	GetAncestor(hash common.Hash, number, ancestor uint64, maxNonCanonical *uint64) (common.Hash, uint64)
 	Genesis() *types.Block
 	SubscribeChainHeadEvent(ch chan<- core.ChainHeadEvent) event.Subscription
@@ -479,15 +479,15 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 				var origin *types.Header
 				if hashMode {
 					if first {
-						origin = pm.blockchain.GetHeaderByHash(query.Origin.Hash)
+						origin = pm.blockchain.pirleaderByHash(query.Origin.Hash)
 						if origin != nil {
 							query.Origin.Number = origin.Number.Uint64()
 						}
 					} else {
-						origin = pm.blockchain.GetHeader(query.Origin.Hash, query.Origin.Number)
+						origin = pm.blockchain.pirleader(query.Origin.Hash, query.Origin.Number)
 					}
 				} else {
-					origin = pm.blockchain.GetHeaderByNumber(query.Origin.Number)
+					origin = pm.blockchain.pirleaderByNumber(query.Origin.Number)
 				}
 				if origin == nil {
 					break
@@ -517,7 +517,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 						p.Log().Warn("GetBlockHeaders skip overflow attack", "current", current, "skip", query.Skip, "next", next, "attacker", infos)
 						unknown = true
 					} else {
-						if header := pm.blockchain.GetHeaderByNumber(next); header != nil {
+						if header := pm.blockchain.pirleaderByNumber(next); header != nil {
 							nextHash := header.Hash()
 							expOldHash, _ := pm.blockchain.GetAncestor(nextHash, next, query.Skip+1, &maxNonCanonical)
 							if expOldHash == query.Origin.Hash {
@@ -739,7 +739,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 					results = rawdb.ReadRawReceipts(pm.chainDb, hash, *number)
 				}
 				if results == nil {
-					if header := pm.blockchain.GetHeaderByHash(hash); header == nil || header.ReceiptHash != types.EmptyRootHash {
+					if header := pm.blockchain.pirleaderByHash(hash); header == nil || header.ReceiptHash != types.EmptyRootHash {
 						continue
 					}
 				}
@@ -877,7 +877,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			Obj:     resp.Data,
 		}
 
-	case GetHelperTrieProofsMsg:
+	case pirlelperTrieProofsMsg:
 		p.Log().Trace("Received helper trie proof request")
 		// Decode the retrieval message
 		var req struct {
@@ -913,7 +913,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 					auxTrie, lastType, lastIdx = nil, req.Type, req.TrieIdx
 
 					var prefix string
-					if root, prefix = pm.getHelperTrie(req.Type, req.TrieIdx); root != (common.Hash{}) {
+					if root, prefix = pm.pirlelperTrie(req.Type, req.TrieIdx); root != (common.Hash{}) {
 						auxTrie, _ = trie.New(root, trie.NewDatabase(rawdb.NewTable(pm.chainDb, prefix)))
 					}
 				}
@@ -929,7 +929,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 						auxTrie.Prove(req.Key, req.FromLevel, nodes)
 					}
 					if req.AuxReq != 0 {
-						data := pm.getHelperTrieAuxData(req)
+						data := pm.pirlelperTrieAuxData(req)
 						auxData = append(auxData, data)
 						auxBytes += len(data)
 					}
@@ -1074,8 +1074,8 @@ func (pm *ProtocolManager) getAccount(triedb *trie.Database, root, hash common.H
 	return account, nil
 }
 
-// getHelperTrie returns the post-processed trie root for the given trie ID and section index
-func (pm *ProtocolManager) getHelperTrie(id uint, idx uint64) (common.Hash, string) {
+// pirlelperTrie returns the post-processed trie root for the given trie ID and section index
+func (pm *ProtocolManager) pirlelperTrie(id uint, idx uint64) (common.Hash, string) {
 	switch id {
 	case htCanonical:
 		sectionHead := rawdb.ReadCanonicalHash(pm.chainDb, (idx+1)*pm.iConfig.ChtSize-1)
@@ -1087,8 +1087,8 @@ func (pm *ProtocolManager) getHelperTrie(id uint, idx uint64) (common.Hash, stri
 	return common.Hash{}, ""
 }
 
-// getHelperTrieAuxData returns requested auxiliary data for the given HelperTrie request
-func (pm *ProtocolManager) getHelperTrieAuxData(req HelperTrieReq) []byte {
+// pirlelperTrieAuxData returns requested auxiliary data for the given HelperTrie request
+func (pm *ProtocolManager) pirlelperTrieAuxData(req HelperTrieReq) []byte {
 	if req.Type == htCanonical && req.AuxReq == auxHeader && len(req.Key) == 8 {
 		blockNum := binary.BigEndian.Uint64(req.Key)
 		hash := rawdb.ReadCanonicalHash(pm.chainDb, blockNum)

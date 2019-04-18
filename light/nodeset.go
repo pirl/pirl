@@ -20,10 +20,10 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // NodeSet stores a set of trie nodes. It implements trie.Database and can also

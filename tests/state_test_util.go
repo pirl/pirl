@@ -23,18 +23,18 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/math"
+	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/state"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/params"
+	"git.pirl.io/community/pirl/rlp"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -135,7 +135,7 @@ func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) (*state.StateD
 		return nil, err
 	}
 	context := core.NewEVMContext(msg, block.Header(), nil, &t.json.Env.Coinbase)
-	context.GetHash = vmTestBlockHash
+	context.pirlash = vmTestBlockHash
 	evm := vm.NewEVM(context, statedb, config, vmconfig)
 
 	gaspool := new(core.GasPool)

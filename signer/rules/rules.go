@@ -22,11 +22,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/internal/ethapi"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/signer/core"
-	"github.com/ethereum/go-ethereum/signer/rules/deps"
-	"github.com/ethereum/go-ethereum/signer/storage"
+	"git.pirl.io/community/pirl/internal/ethapi"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/signer/core"
+	"git.pirl.io/community/pirl/signer/rules/deps"
+	"git.pirl.io/community/pirl/signer/storage"
 	"github.com/robertkrimen/otto"
 )
 

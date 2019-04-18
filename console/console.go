@@ -28,9 +28,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ethereum/go-ethereum/internal/jsre"
-	"github.com/ethereum/go-ethereum/internal/web3ext"
-	"github.com/ethereum/go-ethereum/rpc"
+	"git.pirl.io/community/pirl/internal/jsre"
+	"git.pirl.io/community/pirl/internal/web3ext"
+	"git.pirl.io/community/pirl/rpc"
 	"github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
 	"github.com/robertkrimen/otto"
@@ -271,12 +271,12 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 	return line[:start], c.jsre.CompleteKeywords(line[start:pos]), line[pos:]
 }
 
-// Welcome show summary of current Geth instance and some metadata about the
+// Welcome show summary of current pirl instance and some metadata about the
 // console's available modules.
 func (c *Console) Welcome() {
-	message := "Welcome to the Geth JavaScript console!\n\n"
+	message := "Welcome to the pirl JavaScript console!\n\n"
 
-	// Print some generic Geth metadata
+	// Print some generic pirl metadata
 	if res, err := c.jsre.Run(`
 		var message = "instance: " + web3.version.node + "\n";
 		try {

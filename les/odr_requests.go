@@ -21,15 +21,15 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/trie"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/light"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/trie"
 )
 
 var (
@@ -313,7 +313,7 @@ type ChtRequest light.ChtRequest
 // GetCost returns the cost of the given ODR request according to the serving
 // peer's cost table (implementation of LesOdrRequest)
 func (r *ChtRequest) GetCost(peer *peer) uint64 {
-	return peer.GetRequestCost(GetHelperTrieProofsMsg, 1)
+	return peer.GetRequestCost(pirlelperTrieProofsMsg, 1)
 }
 
 // CanSend tells if a certain peer is suitable for serving the given request
@@ -401,7 +401,7 @@ type BloomRequest light.BloomRequest
 // GetCost returns the cost of the given ODR request according to the serving
 // peer's cost table (implementation of LesOdrRequest)
 func (r *BloomRequest) GetCost(peer *peer) uint64 {
-	return peer.GetRequestCost(GetHelperTrieProofsMsg, len(r.SectionIndexList))
+	return peer.GetRequestCost(pirlelperTrieProofsMsg, len(r.SectionIndexList))
 }
 
 // CanSend tells if a certain peer is suitable for serving the given request

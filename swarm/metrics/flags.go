@@ -19,10 +19,10 @@ package metrics
 import (
 	"time"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	gethmetrics "github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/metrics/influxdb"
-	"github.com/ethereum/go-ethereum/swarm/log"
+	"git.pirl.io/community/pirl/cmd/utils"
+	pirlmetrics "git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/metrics/influxdb"
+	"git.pirl.io/community/pirl/swarm/log"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -79,7 +79,7 @@ var Flags = []cli.Flag{
 }
 
 func Setup(ctx *cli.Context) {
-	if gethmetrics.Enabled {
+	if pirlmetrics.Enabled {
 		log.Info("Enabling swarm metrics collection")
 		var (
 			endpoint               = ctx.GlobalString(MetricsInfluxDBEndpointFlag.Name)
@@ -91,18 +91,18 @@ func Setup(ctx *cli.Context) {
 		)
 
 		// Start system runtime metrics collection
-		go gethmetrics.CollectProcessMetrics(2 * time.Second)
+		go pirlmetrics.CollectProcessMetrics(2 * time.Second)
 
 		tagsMap := utils.SplitTagsFlag(ctx.GlobalString(MetricsInfluxDBTagsFlag.Name))
 
 		if enableExport {
 			log.Info("Enabling swarm metrics export to InfluxDB")
-			go influxdb.InfluxDBWithTags(gethmetrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "swarm.", tagsMap)
+			go influxdb.InfluxDBWithTags(pirlmetrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "swarm.", tagsMap)
 		}
 
 		if enableAccountingExport {
 			log.Info("Exporting swarm accounting metrics to InfluxDB")
-			go influxdb.InfluxDBWithTags(gethmetrics.AccountingRegistry, 10*time.Second, endpoint, database, username, password, "accounting.", tagsMap)
+			go influxdb.InfluxDBWithTags(pirlmetrics.AccountingRegistry, 10*time.Second, endpoint, database, username, password, "accounting.", tagsMap)
 		}
 	}
 }
