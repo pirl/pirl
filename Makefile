@@ -7,7 +7,7 @@
 .PHONY: pirl-linux-arm pirl-linux-arm-5 pirl-linux-arm-6 pirl-linux-arm-7 pirl-linux-arm64
 .PHONY: pirl-darwin pirl-darwin-386 pirl-darwin-amd64
 .PHONY: pirl-windows pirl-windows-386 pirl-windows-amd64
-
+##export GOPATH=$(pwd)
 GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
