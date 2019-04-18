@@ -41,7 +41,7 @@ import (
 )
 
 // To generate a new callTracer test, copy paste the makeTest method below into
-// a pirl console and call it with a transaction hash you which to export.
+// a Geth console and call it with a transaction hash you which to export.
 
 /*
 // makeTest generates a callTracer test by running a prestate reassembled and a

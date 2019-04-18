@@ -45,7 +45,7 @@ type Config struct {
 	EVMConfig   vm.Config
 
 	State     *state.StateDB
-	pirlashFn func(n uint64) common.Hash
+	GetHashFn func(n uint64) common.Hash
 }
 
 // sets defaults on the config
@@ -80,8 +80,8 @@ func setDefaults(cfg *Config) {
 	if cfg.BlockNumber == nil {
 		cfg.BlockNumber = new(big.Int)
 	}
-	if cfg.pirlashFn == nil {
-		cfg.pirlashFn = func(n uint64) common.Hash {
+	if cfg.GetHashFn == nil {
+		cfg.GetHashFn = func(n uint64) common.Hash {
 			return common.BytesToHash(crypto.Keccak256([]byte(new(big.Int).SetUint64(n).String())))
 		}
 	}

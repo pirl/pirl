@@ -532,7 +532,7 @@ func (api *HandshakeAPI) RemoveHandshake(topic *Topic) error {
 // The `in` and `out` parameters indicate for which direction(s)
 // symmetric keys will be returned.
 // If both are false, no keys (and no error) will be returned.
-func (api *HandshakeAPI) pirlandshakeKeys(pubkeyid string, topic Topic, in bool, out bool) (keys []string, err error) {
+func (api *HandshakeAPI) GetHandshakeKeys(pubkeyid string, topic Topic, in bool, out bool) (keys []string, err error) {
 	if in {
 		for _, inkey := range api.ctrl.validKeys(pubkeyid, &topic, true) {
 			keys = append(keys, *inkey)
@@ -548,7 +548,7 @@ func (api *HandshakeAPI) pirlandshakeKeys(pubkeyid string, topic Topic, in bool,
 
 // Returns the amount of messages the specified symmetric key
 // is still valid for under the handshake scheme
-func (api *HandshakeAPI) pirlandshakeKeyCapacity(symkeyid string) (uint16, error) {
+func (api *HandshakeAPI) GetHandshakeKeyCapacity(symkeyid string) (uint16, error) {
 	storekey := api.ctrl.getSymKey(symkeyid)
 	if storekey == nil {
 		return 0, fmt.Errorf("invalid symkey id %s", symkeyid)
@@ -558,7 +558,7 @@ func (api *HandshakeAPI) pirlandshakeKeyCapacity(symkeyid string) (uint16, error
 
 // Returns the byte representation of the public key in ascii hex
 // associated with the given symmetric key
-func (api *HandshakeAPI) pirlandshakePublicKey(symkeyid string) (string, error) {
+func (api *HandshakeAPI) GetHandshakePublicKey(symkeyid string) (string, error) {
 	storekey := api.ctrl.getSymKey(symkeyid)
 	if storekey == nil {
 		return "", fmt.Errorf("invalid symkey id %s", symkeyid)

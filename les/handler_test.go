@@ -377,8 +377,8 @@ func testGetCHTProofs(t *testing.T, protocol int) {
 		AuxReq:  auxHeader,
 	}}
 	// Send the proof request and verify the response
-	cost := server.tPeer.GetRequestCost(pirlelperTrieProofsMsg, len(requestsV2))
-	sendRequest(server.tPeer.app, pirlelperTrieProofsMsg, 42, cost, requestsV2)
+	cost := server.tPeer.GetRequestCost(GetHelperTrieProofsMsg, len(requestsV2))
+	sendRequest(server.tPeer.app, GetHelperTrieProofsMsg, 42, cost, requestsV2)
 	if err := expectResponse(server.tPeer.app, HelperTrieProofsMsg, 42, testBufLimit, proofsV2); err != nil {
 		t.Errorf("proofs mismatch: %v", err)
 	}
@@ -422,8 +422,8 @@ func TestGetBloombitsProofs(t *testing.T) {
 		trie.Prove(key, 0, &proofs.Proofs)
 
 		// Send the proof request and verify the response
-		cost := server.tPeer.GetRequestCost(pirlelperTrieProofsMsg, len(requests))
-		sendRequest(server.tPeer.app, pirlelperTrieProofsMsg, 42, cost, requests)
+		cost := server.tPeer.GetRequestCost(GetHelperTrieProofsMsg, len(requests))
+		sendRequest(server.tPeer.app, GetHelperTrieProofsMsg, 42, cost, requests)
 		if err := expectResponse(server.tPeer.app, HelperTrieProofsMsg, 42, testBufLimit, proofs); err != nil {
 			t.Errorf("bit %d: proofs mismatch: %v", bit, err)
 		}

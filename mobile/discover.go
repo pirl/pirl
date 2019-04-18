@@ -17,7 +17,7 @@
 // Contains all the wrappers from the accounts package to support client side enode
 // management on mobile platforms.
 
-package pirl
+package geth
 
 import (
 	"errors"

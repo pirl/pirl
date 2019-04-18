@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
-// pirl is the official command-line client for Ethereum.
+// geth is the official command-line client for Ethereum.
 package main
 
 import (
@@ -44,14 +44,14 @@ import (
 )
 
 const (
-	clientIdentifier = "pirl" // Client identifier to advertise over the network
+	clientIdentifier = "geth" // Client identifier to advertise over the network
 )
 
 var (
 	// Git SHA1 commit hash of the release (set via linker flags)
 	gitCommit = ""
 	// The app that holds all commands and flags.
-	app = utils.NewApp(gitCommit, "the pirl command line interface")
+	app = utils.NewApp(gitCommit, "the go-ethereum command line interface")
 	// flags that configure the node
 	nodeFlags = []cli.Flag{
 		utils.IdentityFlag,
@@ -188,8 +188,8 @@ var (
 )
 
 func init() {
-	// Initialize the CLI app and start pirl
-	app.Action = pirl
+	// Initialize the CLI app and start Geth
+	app.Action = geth
 	app.HideVersion = true // we have a command to print the version
 	app.Copyright = "Copyright 2013-2019 The go-ethereum Authors"
 	app.Commands = []cli.Command{
@@ -234,6 +234,20 @@ func init() {
 		if err := debug.Setup(ctx, logdir); err != nil {
 			return err
 		}
+		// If we're a full node on mainnet without --cache specified, bump default cache allowance
+		if ctx.GlobalString(utils.SyncModeFlag.Name) != "light" && !ctx.GlobalIsSet(utils.CacheFlag.Name) && !ctx.GlobalIsSet(utils.NetworkIdFlag.Name) {
+			// Make sure we're not on any supported preconfigured testnet either
+			if !ctx.GlobalIsSet(utils.TestnetFlag.Name) && !ctx.GlobalIsSet(utils.RinkebyFlag.Name) && !ctx.GlobalIsSet(utils.GoerliFlag.Name) {
+				// Nope, we're really on mainnet. Bump that cache up!
+				log.Info("Bumping default cache on mainnet", "provided", ctx.GlobalInt(utils.CacheFlag.Name), "updated", 4096)
+				ctx.GlobalSet(utils.CacheFlag.Name, strconv.Itoa(4096))
+			}
+		}
+		// If we're running a light client on any network, drop the cache to some meaningfully low amount
+		if ctx.GlobalString(utils.SyncModeFlag.Name) == "light" && !ctx.GlobalIsSet(utils.CacheFlag.Name) {
+			log.Info("Dropping default light client cache", "provided", ctx.GlobalInt(utils.CacheFlag.Name), "updated", 128)
+			ctx.GlobalSet(utils.CacheFlag.Name, strconv.Itoa(128))
+		}
 		// Cap the cache allowance and tune the garbage collector
 		var mem gosigar.Mem
 		if err := mem.Get(); err == nil {
@@ -273,10 +287,10 @@ func main() {
 	}
 }
 
-// pirl is the main entry point into the system if no special subcommand is ran.
+// geth is the main entry point into the system if no special subcommand is ran.
 // It creates a default node based on the command line arguments and runs it in
 // blocking mode, waiting for it to be shut down.
-func pirl(ctx *cli.Context) error {
+func geth(ctx *cli.Context) error {
 	if args := ctx.Args(); len(args) > 0 {
 		return fmt.Errorf("invalid command: %q", args[0])
 	}
@@ -374,7 +388,7 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 		}
 		var ethereum *eth.Ethereum
 		if err := stack.Service(&ethereum); err != nil {
-			utils.Fatalf("Pirl service not running: %v", err)
+			utils.Fatalf("Ethereum service not running: %v", err)
 		}
 		// Set the gas price to the limits from the CLI and start mining
 		gasprice := utils.GlobalBig(ctx, utils.MinerLegacyGasPriceFlag.Name)

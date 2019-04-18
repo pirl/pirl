@@ -121,7 +121,7 @@ func testHandshake(t *testing.T) {
 
 	// check if we have 6 outgoing keys stored, and they match what was received from R
 	var lsendsymkeyids []string
-	err = clients[0].Call(&lsendsymkeyids, "pss_pirlandshakeKeys", rpubkey, topic, false, true)
+	err = clients[0].Call(&lsendsymkeyids, "pss_getHandshakeKeys", rpubkey, topic, false, true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -139,17 +139,17 @@ func testHandshake(t *testing.T) {
 
 	// check if in- and outgoing keys on l-node and r-node match up and are in opposite categories (l recv = r send, l send = r recv)
 	var rsendsymkeyids []string
-	err = clients[1].Call(&rsendsymkeyids, "pss_pirlandshakeKeys", lpubkey, topic, false, true)
+	err = clients[1].Call(&rsendsymkeyids, "pss_getHandshakeKeys", lpubkey, topic, false, true)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var lrecvsymkeyids []string
-	err = clients[0].Call(&lrecvsymkeyids, "pss_pirlandshakeKeys", rpubkey, topic, true, false)
+	err = clients[0].Call(&lrecvsymkeyids, "pss_getHandshakeKeys", rpubkey, topic, true, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var rrecvsymkeyids []string
-	err = clients[1].Call(&rrecvsymkeyids, "pss_pirlandshakeKeys", lpubkey, topic, true, false)
+	err = clients[1].Call(&rrecvsymkeyids, "pss_getHandshakeKeys", lpubkey, topic, true, false)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -30,7 +30,7 @@ const (
 	// StoreLabelId is the context value key of the name of the span to be saved
 	StoreLabelId = "span_save_id"
 
-	// StoreLabelMeta is the context value key that topirler with StoreLabelId constitutes the retrieval key for saved spans in the span store
+	// StoreLabelMeta is the context value key that together with StoreLabelId constitutes the retrieval key for saved spans in the span store
 	// StartSaveSpan and ShiftSpanByKey
 	StoreLabelMeta = "span_save_meta"
 )

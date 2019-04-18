@@ -58,7 +58,7 @@ var explorerEthstats = `[
     {
       "NODE_ENV"        : "production",
       "RPC_HOST"        : "localhost",
-      "RPC_PORT"        : "6588",
+      "RPC_PORT"        : "8545",
       "LISTENING_PORT"  : "{{.Port}}",
       "INSTANCE_NAME"   : "{{.Name}}",
       "CONTACT_DETAILS" : "",

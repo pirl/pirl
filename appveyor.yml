@@ -9,12 +9,12 @@ environment:
     GOPATH: C:\gopath
     CC: gcc.exe
   matrix:
-    - pirl_ARCH: amd64
+    - GETH_ARCH: amd64
       MSYS2_ARCH: x86_64
       MSYS2_BITS: 64
       MSYSTEM: MINGW64
       PATH: C:\msys64\mingw64\bin\;C:\Program Files (x86)\NSIS\;%PATH%
-    - pirl_ARCH: 386
+    - GETH_ARCH: 386
       MSYS2_ARCH: i686
       MSYS2_BITS: 32
       MSYSTEM: MINGW32
@@ -23,8 +23,8 @@ environment:
 install:
   - git submodule update --init
   - rmdir C:\go /s /q
-  - appveyor DownloadFile https://dl.google.com/go/go1.12.4.windows-%pirl_ARCH%.zip
-  - 7z x go1.12.4.windows-%pirl_ARCH%.zip -y -oC:\ > NUL
+  - appveyor DownloadFile https://dl.google.com/go/go1.12.4.windows-%GETH_ARCH%.zip
+  - 7z x go1.12.4.windows-%GETH_ARCH%.zip -y -oC:\ > NUL
   - go version
   - gcc --version
 
@@ -32,8 +32,8 @@ build_script:
   - go run build\ci.go install
 
 after_build:
-  - go run build\ci.go archive -type zip -signer WINDOWS_SIGNING_KEY -upload pirlstore/builds
-  - go run build\ci.go nsis -signer WINDOWS_SIGNING_KEY -upload pirlstore/builds
+  - go run build\ci.go archive -type zip -signer WINDOWS_SIGNING_KEY -upload gethstore/builds
+  - go run build\ci.go nsis -signer WINDOWS_SIGNING_KEY -upload gethstore/builds
 
 test_script:
   - set CGO_ENABLED=1

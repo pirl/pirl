@@ -263,7 +263,7 @@ returns:
 1. list of symmetric keys (string[])
 ```
 
-#### pss_pirlandshakeKeys
+#### pss_getHandshakeKeys
 
 Get valid symmetric encryption keys for a specified peer and topic.
 
@@ -276,7 +276,7 @@ parameters:
 returns:
 1. list of symmetric keys (string[])
 
-#### pss_pirlandshakeKeyCapacity
+#### pss_getHandshakeKeyCapacity
 
 Get amount of remaining messages the specified key is valid for.
 
@@ -288,7 +288,7 @@ returns:
 1. number of messages (uint16)
 ```
 
-#### pss_pirlandshakePublicKey
+#### pss_getHandshakePublicKey
 
 Get the peer's public key associated with the specified symmetric key.
 

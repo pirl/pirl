@@ -16,7 +16,7 @@
 
 // Contains perverted wrappers to allow crossing over empty interfaces.
 
-package pirl
+package geth
 
 import (
 	"errors"
@@ -92,8 +92,8 @@ func (i *Interface) GetBinary() []byte        { return *i.object.(*[]byte) }
 func (i *Interface) GetBinaries() [][]byte    { return *i.object.(*[][]byte) }
 func (i *Interface) GetAddress() *Address     { return &Address{*i.object.(*common.Address)} }
 func (i *Interface) GetAddresses() *Addresses { return &Addresses{*i.object.(*[]common.Address)} }
-func (i *Interface) pirlash() *Hash           { return &Hash{*i.object.(*common.Hash)} }
-func (i *Interface) pirlashes() *Hashes       { return &Hashes{*i.object.(*[]common.Hash)} }
+func (i *Interface) GetHash() *Hash           { return &Hash{*i.object.(*common.Hash)} }
+func (i *Interface) GetHashes() *Hashes       { return &Hashes{*i.object.(*[]common.Hash)} }
 func (i *Interface) GetInt8() int8            { return *i.object.(*int8) }
 func (i *Interface) GetInt16() int16          { return *i.object.(*int16) }
 func (i *Interface) GetInt32() int32          { return *i.object.(*int32) }

@@ -335,7 +335,7 @@ func (tk *testKademlia) checkHealth(expectHealthy bool) {
 	})
 
 	pp := NewPeerPotMap(tk.NeighbourhoodSize, addrs)
-	healthParams := tk.pirlealthInfo(pp[kid])
+	healthParams := tk.GetHealthInfo(pp[kid])
 
 	// definition of health, all conditions but be true:
 	// - we at least know one peer

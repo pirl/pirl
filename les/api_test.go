@@ -96,7 +96,7 @@ func testCapacityAPI(t *testing.T, clientCount int) {
 		if err != nil {
 			t.Fatalf("Failed to obtain rpc client: %v", err)
 		}
-		headNum, headHash := pirlead(ctx, t, serverRpcClient)
+		headNum, headHash := getHead(ctx, t, serverRpcClient)
 		totalCap := getTotalCap(ctx, t, serverRpcClient)
 		minCap := getMinCap(ctx, t, serverRpcClient)
 		testCap := totalCap * 3 / 4
@@ -128,7 +128,7 @@ func testCapacityAPI(t *testing.T, clientCount int) {
 					t.Fatalf("Timeout")
 				default:
 				}
-				num, hash := pirlead(ctx, t, clientRpcClients[i])
+				num, hash := getHead(ctx, t, clientRpcClients[i])
 				if num == headNum && hash == headHash {
 					fmt.Println("client", i, "synced")
 					break
@@ -293,7 +293,7 @@ func testCapacityAPI(t *testing.T, clientCount int) {
 	}
 }
 
-func pirlead(ctx context.Context, t *testing.T, client *rpc.Client) (uint64, common.Hash) {
+func getHead(ctx context.Context, t *testing.T, client *rpc.Client) (uint64, common.Hash) {
 	res := make(map[string]interface{})
 	if err := client.CallContext(ctx, &res, "eth_getBlockByNumber", "latest", false); err != nil {
 		t.Fatalf("Failed to obtain head block: %v", err)

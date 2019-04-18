@@ -139,7 +139,7 @@ func (w *wizard) makeGenesis() {
 	w.conf.flush()
 }
 
-// importGenesis imports a pirl genesis spec into puppeth.
+// importGenesis imports a Geth genesis spec into puppeth.
 func (w *wizard) importGenesis() {
 	// Request the genesis JSON spec URL from the user
 	fmt.Println()
@@ -247,13 +247,13 @@ func (w *wizard) manageGenesis() {
 		}
 		out, _ := json.MarshalIndent(w.conf.Genesis, "", "  ")
 
-		// Export the native genesis spec used by puppeth and pirl
-		pirlJson := filepath.Join(folder, fmt.Sprintf("%s.json", w.network))
-		if err := ioutil.WriteFile((pirlJson), out, 0644); err != nil {
+		// Export the native genesis spec used by puppeth and Geth
+		gethJson := filepath.Join(folder, fmt.Sprintf("%s.json", w.network))
+		if err := ioutil.WriteFile((gethJson), out, 0644); err != nil {
 			log.Error("Failed to save genesis file", "err", err)
 			return
 		}
-		log.Info("Saved native genesis chain spec", "path", pirlJson)
+		log.Info("Saved native genesis chain spec", "path", gethJson)
 
 		// Export the genesis spec used by Aleth (formerly C++ Ethereum)
 		if spec, err := newAlethGenesisSpec(w.network, w.conf.Genesis); err != nil {

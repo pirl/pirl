@@ -391,7 +391,7 @@ func TestClientBzzWithFeed(t *testing.T) {
 	swarmClient := NewClient(srv.URL)
 	defer srv.Close()
 
-	// put topirler some data for our test:
+	// put together some data for our test:
 	dataBytes := []byte(`
 	//
 	// Create some data our manifest will point to. Data that could be very big and wouldn't fit in a feed update.

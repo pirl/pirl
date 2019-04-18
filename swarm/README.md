@@ -37,7 +37,7 @@ Going through all the possible command line flags is out of scope here, but we'v
 
 To run Swarm you need an Ethereum account. You can create a new account by running the following command:
 
-    pirl account new
+    geth account new
 
 You will be prompted for a password:
 
@@ -66,15 +66,15 @@ Confirm that it is up and running by pointing your browser to http://localhost:8
 
 ### Ethereum Name Service resolution
 
-The Ethereum Name Service is the Ethereum equivalent of DNS in the classic web. In order to use ENS to resolve names to Swarm content hashes (e.g. `bzz://theswarm.eth`), `swarm` has to connect to a `pirl` instance, which is synced with the Ethereum mainnet. This is done using the `--ens-api` flag.
+The Ethereum Name Service is the Ethereum equivalent of DNS in the classic web. In order to use ENS to resolve names to Swarm content hashes (e.g. `bzz://theswarm.eth`), `swarm` has to connect to a `geth` instance, which is synced with the Ethereum mainnet. This is done using the `--ens-api` flag.
 
     swarm --bzzaccount <your-account-here> \
-          --ens-api '$HOME/.ethereum/pirl.ipc'
+          --ens-api '$HOME/.ethereum/geth.ipc'
 
     # in our example
 
     swarm --bzzaccount 2f1cd699b0bf461dcfbf0098ad8f5587b038f0f1 \
-          --ens-api '$HOME/.ethereum/pirl.ipc'
+          --ens-api '$HOME/.ethereum/geth.ipc'
 
 For more information on usage, features or command line flags, please consult the Documentation.
 

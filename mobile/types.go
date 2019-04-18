@@ -16,7 +16,7 @@
 
 // Contains all the wrappers from the core/types package.
 
-package pirl
+package geth
 
 import (
 	"encoding/json"
@@ -40,8 +40,8 @@ func (n *Nonce) GetBytes() []byte {
 	return n.nonce[:]
 }
 
-// pirlex retrieves the hex string representation of the block nonce.
-func (n *Nonce) pirlex() string {
+// GetHex retrieves the hex string representation of the block nonce.
+func (n *Nonce) GetHex() string {
 	return fmt.Sprintf("0x%x", n.nonce[:])
 }
 
@@ -55,8 +55,8 @@ func (b *Bloom) GetBytes() []byte {
 	return b.bloom[:]
 }
 
-// pirlex retrieves the hex string representation of the bloom filter.
-func (b *Bloom) pirlex() string {
+// GetHex retrieves the hex string representation of the bloom filter.
+func (b *Bloom) GetHex() string {
 	return fmt.Sprintf("0x%x", b.bloom[:])
 }
 
@@ -113,7 +113,7 @@ func (h *Header) GetTime() int64         { return int64(h.header.Time) }
 func (h *Header) GetExtra() []byte       { return h.header.Extra }
 func (h *Header) GetMixDigest() *Hash    { return &Hash{h.header.MixDigest} }
 func (h *Header) GetNonce() *Nonce       { return &Nonce{h.header.Nonce} }
-func (h *Header) pirlash() *Hash         { return &Hash{h.header.Hash()} }
+func (h *Header) GetHash() *Hash         { return &Hash{h.header.Hash()} }
 
 // Headers represents a slice of headers.
 type Headers struct{ headers []*types.Header }
@@ -184,7 +184,7 @@ func (b *Block) GetTime() int64                 { return int64(b.block.Time()) }
 func (b *Block) GetExtra() []byte               { return b.block.Extra() }
 func (b *Block) GetMixDigest() *Hash            { return &Hash{b.block.MixDigest()} }
 func (b *Block) GetNonce() int64                { return int64(b.block.Nonce()) }
-func (b *Block) pirlash() *Hash                 { return &Hash{b.block.Hash()} }
+func (b *Block) GetHash() *Hash                 { return &Hash{b.block.Hash()} }
 func (b *Block) GetHeader() *Header             { return &Header{b.block.Header()} }
 func (b *Block) GetUncles() *Headers            { return &Headers{b.block.Uncles()} }
 func (b *Block) GetTransactions() *Transactions { return &Transactions{b.block.Transactions()} }
@@ -251,7 +251,7 @@ func (tx *Transaction) GetGasPrice() *BigInt { return &BigInt{tx.tx.GasPrice()} 
 func (tx *Transaction) GetValue() *BigInt    { return &BigInt{tx.tx.Value()} }
 func (tx *Transaction) GetNonce() int64      { return int64(tx.tx.Nonce()) }
 
-func (tx *Transaction) pirlash() *Hash   { return &Hash{tx.tx.Hash()} }
+func (tx *Transaction) GetHash() *Hash   { return &Hash{tx.tx.Hash()} }
 func (tx *Transaction) GetCost() *BigInt { return &BigInt{tx.tx.Cost()} }
 
 // Deprecated: GetSigHash cannot know which signer to use.
@@ -394,7 +394,7 @@ func (m *Message) GetTTL() int64       { return int64(m.message.TTL) }
 func (m *Message) GetTimestamp() int64 { return int64(m.message.Timestamp) }
 func (m *Message) GetPayload() []byte  { return m.message.Payload }
 func (m *Message) GetPoW() float64     { return m.message.PoW }
-func (m *Message) pirlash() []byte     { return m.message.Hash }
+func (m *Message) GetHash() []byte     { return m.message.Hash }
 func (m *Message) GetDst() []byte      { return m.message.Dst }
 
 // Messages represents an array of messages.

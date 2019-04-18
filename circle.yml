@@ -23,10 +23,10 @@ dependencies:
 
 test:
   override:
-    # Build pirl and move into a known folder
-    - make pirl
-    - cp ./build/bin/pirl $HOME/pirl
+    # Build Geth and move into a known folder
+    - make geth
+    - cp ./build/bin/geth $HOME/geth
 
     # Run hive and move all generated logs into the public artifacts folder
-    - (cd ~/.go_workspace/src/github.com/karalabe/hive && hive --docker-noshell --client=go-ethereum:local --override=$HOME/pirl --test=. --sim=.)
+    - (cd ~/.go_workspace/src/github.com/karalabe/hive && hive --docker-noshell --client=go-ethereum:local --override=$HOME/geth --test=. --sim=.)
     - cp -r ~/.go_workspace/src/github.com/karalabe/hive/workspace/logs/* $CIRCLE_ARTIFACTS

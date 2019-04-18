@@ -11,7 +11,7 @@ func SetHost(ctx context.Context, domain string) context.Context {
 	return context.WithValue(ctx, requestHostKey{}, domain)
 }
 
-func pirlost(ctx context.Context) string {
+func GetHost(ctx context.Context) string {
 	v, ok := ctx.Value(requestHostKey{}).(string)
 	if ok {
 		return v

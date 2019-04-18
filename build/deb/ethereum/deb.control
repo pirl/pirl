@@ -11,8 +11,8 @@ Vcs-Browser: https://git.pirl.io/community/pirl
 Package: {{.Name}}
 Architecture: any
 Depends: ${misc:Depends}, {{.ExeList}}
-Description: Meta-package to install pirl, swarm, and other tools
- Meta-package to install pirl, swarm and other tools
+Description: Meta-package to install geth, swarm, and other tools
+ Meta-package to install geth, swarm and other tools
 
 {{range .Executables}}
 Package: {{$.ExeName .}}

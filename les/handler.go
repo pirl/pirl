@@ -877,7 +877,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			Obj:     resp.Data,
 		}
 
-	case pirlelperTrieProofsMsg:
+	case GetHelperTrieProofsMsg:
 		p.Log().Trace("Received helper trie proof request")
 		// Decode the retrieval message
 		var req struct {
@@ -913,7 +913,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 					auxTrie, lastType, lastIdx = nil, req.Type, req.TrieIdx
 
 					var prefix string
-					if root, prefix = pm.pirlelperTrie(req.Type, req.TrieIdx); root != (common.Hash{}) {
+					if root, prefix = pm.getHelperTrie(req.Type, req.TrieIdx); root != (common.Hash{}) {
 						auxTrie, _ = trie.New(root, trie.NewDatabase(rawdb.NewTable(pm.chainDb, prefix)))
 					}
 				}
@@ -929,7 +929,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 						auxTrie.Prove(req.Key, req.FromLevel, nodes)
 					}
 					if req.AuxReq != 0 {
-						data := pm.pirlelperTrieAuxData(req)
+						data := pm.getHelperTrieAuxData(req)
 						auxData = append(auxData, data)
 						auxBytes += len(data)
 					}
@@ -1074,8 +1074,8 @@ func (pm *ProtocolManager) getAccount(triedb *trie.Database, root, hash common.H
 	return account, nil
 }
 
-// pirlelperTrie returns the post-processed trie root for the given trie ID and section index
-func (pm *ProtocolManager) pirlelperTrie(id uint, idx uint64) (common.Hash, string) {
+// getHelperTrie returns the post-processed trie root for the given trie ID and section index
+func (pm *ProtocolManager) getHelperTrie(id uint, idx uint64) (common.Hash, string) {
 	switch id {
 	case htCanonical:
 		sectionHead := rawdb.ReadCanonicalHash(pm.chainDb, (idx+1)*pm.iConfig.ChtSize-1)
@@ -1087,8 +1087,8 @@ func (pm *ProtocolManager) pirlelperTrie(id uint, idx uint64) (common.Hash, stri
 	return common.Hash{}, ""
 }
 
-// pirlelperTrieAuxData returns requested auxiliary data for the given HelperTrie request
-func (pm *ProtocolManager) pirlelperTrieAuxData(req HelperTrieReq) []byte {
+// getHelperTrieAuxData returns requested auxiliary data for the given HelperTrie request
+func (pm *ProtocolManager) getHelperTrieAuxData(req HelperTrieReq) []byte {
 	if req.Type == htCanonical && req.AuxReq == auxHeader && len(req.Key) == 8 {
 		blockNum := binary.BigEndian.Uint64(req.Key)
 		hash := rawdb.ReadCanonicalHash(pm.chainDb, blockNum)

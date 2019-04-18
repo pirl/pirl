@@ -139,7 +139,7 @@ var (
 	}
 	SwarmStorePath = cli.StringFlag{
 		Name:   "store.path",
-		Usage:  "Path to leveldb chunk DB (default <$pirl_ENV_DIR>/swarm/bzz-<$BZZ_KEY>/chunks)",
+		Usage:  "Path to leveldb chunk DB (default <$GETH_ENV_DIR>/swarm/bzz-<$BZZ_KEY>/chunks)",
 		EnvVar: SwarmEnvStorePath,
 	}
 	SwarmStoreCapacity = cli.Uint64Flag{

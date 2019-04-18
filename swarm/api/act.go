@@ -207,7 +207,7 @@ func (a *API) doDecrypt(ctx context.Context, credentials string, pk *ecdsa.Priva
 		}
 
 		allowed := false
-		requestDomain := sctx.pirlost(ctx)
+		requestDomain := sctx.GetHost(ctx)
 		for _, v := range AllowedDecryptDomains {
 			if strings.Contains(requestDomain, v) {
 				allowed = true

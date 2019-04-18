@@ -877,7 +877,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 	defer timeout.Stop()
 
 	var ttl time.Duration
-	GetHeaders := func(from uint64) {
+	getHeaders := func(from uint64) {
 		request = time.Now()
 
 		ttl = d.requestTTL()
@@ -892,7 +892,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 		}
 	}
 	// Start pulling the header chain skeleton until all is done
-	GetHeaders(from)
+	getHeaders(from)
 
 	for {
 		select {
@@ -911,7 +911,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 			// If the skeleton's finished, pull any remaining head headers directly from the origin
 			if packet.Items() == 0 && skeleton {
 				skeleton = false
-				GetHeaders(from)
+				getHeaders(from)
 				continue
 			}
 			// If no more headers are inbound, notify the content fetchers and return
@@ -921,7 +921,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 					p.log.Debug("No headers, waiting for pivot commit")
 					select {
 					case <-time.After(fsHeaderContCheck):
-						GetHeaders(from)
+						getHeaders(from)
 						continue
 					case <-d.cancelCh:
 						return errCancelHeaderFetch
@@ -981,13 +981,13 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 					return errCancelHeaderFetch
 				}
 				from += uint64(len(headers))
-				GetHeaders(from)
+				getHeaders(from)
 			} else {
 				// No headers delivered, or all of them being delayed, sleep a bit and retry
 				p.log.Trace("All headers delayed, waiting")
 				select {
 				case <-time.After(fsHeaderContCheck):
-					GetHeaders(from)
+					getHeaders(from)
 					continue
 				case <-d.cancelCh:
 					return errCancelHeaderFetch
@@ -1500,7 +1500,7 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 		} else {
 			// The InsertChain method in blockchain.go will sometimes return an out-of-bounds index,
 			// when it needs to preprocess blocks to import a sidechain.
-			// The importer will put topirler a new list of blocks to import, which is a superset
+			// The importer will put together a new list of blocks to import, which is a superset
 			// of the blocks delivered from the downloader, and the indexing will be off.
 			log.Debug("Downloaded item processing failed on sidechain import", "index", index, "err", err)
 		}

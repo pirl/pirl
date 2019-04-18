@@ -112,7 +112,7 @@ func TestWaitTillHealthy(t *testing.T) {
 		kid := common.Bytes2Hex(kad.BaseAddr())
 
 		//get the health info
-		info := kad.pirlealthInfo(pp[kid])
+		info := kad.GetHealthInfo(pp[kid])
 		log.Trace("Health info", "info", info)
 		// check that it is healthy
 		healthy := info.Healthy()

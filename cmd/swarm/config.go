@@ -83,7 +83,7 @@ const (
 	SwarmAccessPassword          = "SWARM_ACCESS_PASSWORD"
 	SwarmAutoDefaultPath         = "SWARM_AUTO_DEFAULTPATH"
 	SwarmGlobalstoreAPI          = "SWARM_GLOBALSTORE_API"
-	pirlEnvDataDir               = "pirl_DATADIR"
+	GethEnvDataDir               = "GETH_DATADIR"
 )
 
 // These settings ensure that TOML keys use the same names as Go struct fields.
@@ -127,7 +127,7 @@ func initSwarmNode(config *bzzapi.Config, stack *node.Node, ctx *cli.Context, no
 	//at this point, all vars should be set in the Config
 	//get the account for the provided swarm account
 	prvkey := getAccount(config.BzzAccount, ctx, stack)
-	//set the resolved config path (pirl --datadir)
+	//set the resolved config path (geth --datadir)
 	config.Path = expandPath(stack.InstanceDir())
 	//finally, initialize the configuration
 	err := config.Init(prvkey, nodeconfig.NodeKey())
@@ -296,7 +296,7 @@ func envVarsOverride(currentConfig *bzzapi.Config) (config *bzzapi.Config) {
 		}
 	}
 
-	if datadir := os.Getenv(pirlEnvDataDir); datadir != "" {
+	if datadir := os.Getenv(GethEnvDataDir); datadir != "" {
 		currentConfig.Path = expandPath(datadir)
 	}
 

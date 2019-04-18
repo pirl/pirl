@@ -187,7 +187,7 @@ class Footer extends Component<Props, State> {
 				</Grid>
 				<Grid item>
 					<Typography type='caption' color='inherit'>
-						<span style={commonStyles.light}>pirl</span> {general.version}
+						<span style={commonStyles.light}>Geth</span> {general.version}
 					</Typography>
 					{general.commit && (
 						<Typography type='caption' color='inherit'>

@@ -747,7 +747,7 @@ func TestStreamerRequestSubscriptionQuitMsgExchange(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	historyStream := pirlistoryStream(stream)
+	historyStream := getHistoryStream(stream)
 
 	err = streamer.Quit(node.ID(), historyStream)
 	if err != nil {

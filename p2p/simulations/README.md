@@ -1,7 +1,7 @@
 # devp2p Simulations
 
 The `p2p/simulations` package implements a simulation framework which supports
-creating a collection of devp2p nodes, connecting them topirler to form a
+creating a collection of devp2p nodes, connecting them together to form a
 simulation network, performing simulation actions in that network and then
 extracting useful information.
 
@@ -80,7 +80,7 @@ A simulation network emits the following events:
 
 The events have a "control" flag which when set indicates that the event is the
 outcome of a controlled simulation action (e.g. creating a node or explicitly
-connecting two nodes topirler).
+connecting two nodes together).
 
 This is in contrast to a non-control event, otherwise called a "live" event,
 which is the outcome of something happening in the network as a result of a

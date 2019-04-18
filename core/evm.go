@@ -47,7 +47,7 @@ func NewEVMContext(msg Message, header *types.Header, chain ChainContext, author
 	return vm.Context{
 		CanTransfer: CanTransfer,
 		Transfer:    Transfer,
-		pirlash:     pirlashFn(header, chain),
+		GetHash:     GetHashFn(header, chain),
 		Origin:      msg.From(),
 		Coinbase:    beneficiary,
 		BlockNumber: new(big.Int).Set(header.Number),
@@ -58,8 +58,8 @@ func NewEVMContext(msg Message, header *types.Header, chain ChainContext, author
 	}
 }
 
-// pirlashFn returns a pirlashFunc which retrieves header hashes by number
-func pirlashFn(ref *types.Header, chain ChainContext) func(n uint64) common.Hash {
+// GetHashFn returns a GetHashFunc which retrieves header hashes by number
+func GetHashFn(ref *types.Header, chain ChainContext) func(n uint64) common.Hash {
 	var cache map[uint64]common.Hash
 
 	return func(n uint64) common.Hash {

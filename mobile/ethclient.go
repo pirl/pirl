@@ -16,7 +16,7 @@
 
 // Contains a wrapper for the Ethereum client.
 
-package pirl
+package geth
 
 import (
 	"math/big"

@@ -133,7 +133,7 @@ func (t *VMTest) newEVM(statedb *state.StateDB, vmconfig vm.Config) *vm.EVM {
 	context := vm.Context{
 		CanTransfer: canTransfer,
 		Transfer:    transfer,
-		pirlash:     vmTestBlockHash,
+		GetHash:     vmTestBlockHash,
 		Origin:      t.json.Exec.Origin,
 		Coinbase:    t.json.Env.Coinbase,
 		BlockNumber: new(big.Int).SetUint64(t.json.Env.Number),

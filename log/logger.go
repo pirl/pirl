@@ -110,8 +110,8 @@ type Logger interface {
 	// New returns a new Logger that has this logger's context plus the given context
 	New(ctx ...interface{}) Logger
 
-	// pirlandler gets the handler associated with the logger.
-	pirlandler() Handler
+	// GetHandler gets the handler associated with the logger.
+	GetHandler() Handler
 
 	// SetHandler updates the logger to write records to the specified handler.
 	SetHandler(h Handler)
@@ -185,7 +185,7 @@ func (l *logger) Crit(msg string, ctx ...interface{}) {
 	os.Exit(1)
 }
 
-func (l *logger) pirlandler() Handler {
+func (l *logger) GetHandler() Handler {
 	return l.h.Get()
 }
 

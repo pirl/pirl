@@ -67,7 +67,7 @@ const (
 	// Protocol messages introduced in LPV2
 	GetProofsV2Msg         = 0x0f
 	ProofsV2Msg            = 0x10
-	pirlelperTrieProofsMsg = 0x11
+	GetHelperTrieProofsMsg = 0x11
 	HelperTrieProofsMsg    = 0x12
 	SendTxV2Msg            = 0x13
 	GetTxStatusMsg         = 0x14
@@ -85,7 +85,7 @@ var requests = map[uint64]requestInfo{
 	GetReceiptsMsg:         {"GetReceipts", MaxReceiptFetch},
 	GetCodeMsg:             {"GetCode", MaxCodeFetch},
 	GetProofsV2Msg:         {"GetProofsV2", MaxProofsFetch},
-	pirlelperTrieProofsMsg: {"pirlelperTrieProofs", MaxHelperTrieProofsFetch},
+	GetHelperTrieProofsMsg: {"GetHelperTrieProofs", MaxHelperTrieProofsFetch},
 	SendTxV2Msg:            {"SendTxV2", MaxTxSend},
 	GetTxStatusMsg:         {"GetTxStatus", MaxTxStatus},
 }

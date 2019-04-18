@@ -35,9 +35,9 @@ type (
 	CanTransferFunc func(StateDB, common.Address, *big.Int) bool
 	// TransferFunc is the signature of a transfer function
 	TransferFunc func(StateDB, common.Address, common.Address, *big.Int)
-	// pirlashFunc returns the nth block hash in the blockchain
+	// GetHashFunc returns the nth block hash in the blockchain
 	// and is used by the BLOCKHASH EVM op code.
-	pirlashFunc func(uint64) common.Hash
+	GetHashFunc func(uint64) common.Hash
 )
 
 // run runs the given contract and takes care of running precompiles with a fallback to the byte code interpreter.
@@ -75,8 +75,8 @@ type Context struct {
 	CanTransfer CanTransferFunc
 	// Transfer transfers ether from one account to the other
 	Transfer TransferFunc
-	// pirlash returns the hash corresponding to n
-	pirlash pirlashFunc
+	// GetHash returns the hash corresponding to n
+	GetHash GetHashFunc
 
 	// Message information
 	Origin   common.Address // Provides information for ORIGIN

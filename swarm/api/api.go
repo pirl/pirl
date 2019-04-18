@@ -57,7 +57,7 @@ var (
 	apiPutFail             = metrics.NewRegisteredCounter("api.put.fail", nil)
 	apiGetCount            = metrics.NewRegisteredCounter("api.get.count", nil)
 	apiGetNotFound         = metrics.NewRegisteredCounter("api.get.notfound", nil)
-	apipirlTTP300          = metrics.NewRegisteredCounter("api.get.http.300", nil)
+	apiGetHTTP300          = metrics.NewRegisteredCounter("api.get.http.300", nil)
 	apiManifestUpdateCount = metrics.NewRegisteredCounter("api.manifestupdate.count", nil)
 	apiManifestUpdateFail  = metrics.NewRegisteredCounter("api.manifestupdate.fail", nil)
 	apiManifestListCount   = metrics.NewRegisteredCounter("api.manifestlist.count", nil)
@@ -408,7 +408,7 @@ func (a *API) Get(ctx context.Context, decrypt DecryptFunc, manifestAddr storage
 		contentAddr = common.Hex2Bytes(entry.Hash)
 		status = entry.Status
 		if status == http.StatusMultipleChoices {
-			apipirlTTP300.Inc(1)
+			apiGetHTTP300.Inc(1)
 			return nil, entry.ContentType, status, contentAddr, err
 		}
 		mimeType = entry.ContentType

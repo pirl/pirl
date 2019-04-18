@@ -139,7 +139,7 @@ func (p *Peer) handleSubscribeMsg(ctx context.Context, req *SubscribeMsg) (err e
 			return err
 		}
 
-		os, err := p.setServer(pirlistoryStream(req.Stream), s, pirlistoryPriority(req.Priority))
+		os, err := p.setServer(getHistoryStream(req.Stream), s, getHistoryPriority(req.Priority))
 		if err != nil {
 			return err
 		}

@@ -16,7 +16,7 @@
 
 // Contains all the wrappers from the common package.
 
-package pirl
+package geth
 
 import (
 	"encoding/hex"
@@ -81,8 +81,8 @@ func (h *Hash) SetHex(hash string) error {
 	return nil
 }
 
-// pirlex retrieves the hex string representation of the hash.
-func (h *Hash) pirlex() string {
+// GetHex retrieves the hex string representation of the hash.
+func (h *Hash) GetHex() string {
 	return h.hash.Hex()
 }
 
@@ -182,8 +182,8 @@ func (a *Address) SetHex(address string) error {
 	return nil
 }
 
-// pirlex retrieves the hex string representation of the address.
-func (a *Address) pirlex() string {
+// GetHex retrieves the hex string representation of the address.
+func (a *Address) GetHex() string {
 	return a.address.Hex()
 }
 

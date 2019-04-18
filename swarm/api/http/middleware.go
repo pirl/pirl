@@ -40,7 +40,7 @@ func SetRequestID(h http.Handler) http.Handler {
 func SetRequestHost(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(sctx.SetHost(r.Context(), r.Host))
-		log.Info("setting request host", "ruid", GetRUID(r.Context()), "host", sctx.pirlost(r.Context()))
+		log.Info("setting request host", "ruid", GetRUID(r.Context()), "host", sctx.GetHost(r.Context()))
 
 		h.ServeHTTP(w, r)
 	})

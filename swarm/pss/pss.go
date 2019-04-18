@@ -471,7 +471,7 @@ func (p *Pss) process(pssmsg *PssMsg, raw bool, prox bool) error {
 }
 
 // copy all registered handlers for respective topic in order to avoid data race or deadlock
-func (p *Pss) pirlandlers(topic Topic) (ret []*handler) {
+func (p *Pss) getHandlers(topic Topic) (ret []*handler) {
 	p.handlersMu.RLock()
 	defer p.handlersMu.RUnlock()
 	for k := range p.handlers[topic] {
@@ -481,7 +481,7 @@ func (p *Pss) pirlandlers(topic Topic) (ret []*handler) {
 }
 
 func (p *Pss) executeHandlers(topic Topic, payload []byte, from PssAddress, raw bool, prox bool, asymmetric bool, keyid string) {
-	handlers := p.pirlandlers(topic)
+	handlers := p.getHandlers(topic)
 	peer := p2p.NewPeer(enode.ID{}, fmt.Sprintf("%x", from), []p2p.Cap{})
 	for _, h := range handlers {
 		if !h.caps.raw && raw {

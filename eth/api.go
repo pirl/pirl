@@ -149,8 +149,8 @@ func (api *PrivateMinerAPI) SetRecommitInterval(interval int) {
 	api.e.Miner().SetRecommitInterval(time.Duration(interval) * time.Millisecond)
 }
 
-// pirlashrate returns the current hashrate of the miner.
-func (api *PrivateMinerAPI) pirlashrate() uint64 {
+// GetHashrate returns the current hashrate of the miner.
+func (api *PrivateMinerAPI) GetHashrate() uint64 {
 	return api.e.miner.HashRate()
 }
 

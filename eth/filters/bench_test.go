@@ -63,7 +63,7 @@ func BenchmarkBloomBits32k(b *testing.B) {
 const benchFilterCnt = 2000
 
 func benchmarkBloomBits(b *testing.B, sectionSize uint64) {
-	benchDataDir := node.DefaultDataDir() + "/pirl/chaindata"
+	benchDataDir := node.DefaultDataDir() + "/geth/chaindata"
 	fmt.Println("Running bloombits benchmark   section size:", sectionSize)
 
 	db, err := rawdb.NewLevelDBDatabase(benchDataDir, 128, 1024, "")
@@ -157,7 +157,7 @@ func clearBloomBits(db ethdb.Database) {
 }
 
 func BenchmarkNoBloomBits(b *testing.B) {
-	benchDataDir := node.DefaultDataDir() + "/pirl/chaindata"
+	benchDataDir := node.DefaultDataDir() + "/geth/chaindata"
 	fmt.Println("Running benchmark without bloombits")
 	db, err := rawdb.NewLevelDBDatabase(benchDataDir, 128, 1024, "")
 	if err != nil {

@@ -367,8 +367,8 @@ func (r *Registry) Subscribe(peerId enode.ID, s Stream, h *Range, priority uint8
 	}
 	if s.Live && h != nil {
 		if err := peer.setClientParams(
-			pirlistoryStream(s),
-			newClientParams(pirlistoryPriority(priority), h.To),
+			getHistoryStream(s),
+			newClientParams(getHistoryPriority(priority), h.To),
 		); err != nil {
 			return err
 		}
@@ -576,7 +576,7 @@ func doRequestSubscription(r *Registry, p *network.Peer, bin uint8, subs map[eno
 	if streams, ok := subs[p.ID()]; ok {
 		// delete live and history streams from the map, so that it won't be removed with a Quit request
 		delete(streams, stream)
-		delete(streams, pirlistoryStream(stream))
+		delete(streams, getHistoryStream(stream))
 	}
 	err := r.RequestSubscription(p.ID(), stream, NewRange(0, 0), High)
 	if err != nil {
@@ -939,14 +939,14 @@ func (r *Range) String() string {
 	return fmt.Sprintf("%v-%v", r.From, r.To)
 }
 
-func pirlistoryPriority(priority uint8) uint8 {
+func getHistoryPriority(priority uint8) uint8 {
 	if priority == 0 {
 		return 0
 	}
 	return priority - 1
 }
 
-func pirlistoryStream(s Stream) Stream {
+func getHistoryStream(s Stream) Stream {
 	return NewStream(s.Name, s.Key, false)
 }
 

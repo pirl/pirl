@@ -4,9 +4,9 @@
 //
 // build/bin/clef --4bytedb=./cmd/clef/4byte.json --rpc
 //
-// Start pirl with
+// Start geth with
 //
-// build/bin/pirl --nodiscover --maxpeers 0 --signer http://localhost:8550 console --preload=cmd/clef/tests/testsigner.js
+// build/bin/geth --nodiscover --maxpeers 0 --signer http://localhost:8550 console --preload=cmd/clef/tests/testsigner.js
 //
 // and in the console simply invoke
 //

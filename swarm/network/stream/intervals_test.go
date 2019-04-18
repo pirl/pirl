@@ -158,7 +158,7 @@ func testIntervals(t *testing.T, live bool, history *Range, skipCheck bool) {
 
 			// live stream
 			var liveHashesChan chan []byte
-			liveHashesChan, err = pirlashes(ctx, registry, storer, NewStream(externalStreamName, "", true))
+			liveHashesChan, err = getHashes(ctx, registry, storer, NewStream(externalStreamName, "", true))
 			if err != nil {
 				log.Error("get hashes", "err", err)
 				return
@@ -202,7 +202,7 @@ func testIntervals(t *testing.T, live bool, history *Range, skipCheck bool) {
 
 			// history stream
 			var historyHashesChan chan []byte
-			historyHashesChan, err = pirlashes(ctx, registry, storer, NewStream(externalStreamName, "", false))
+			historyHashesChan, err = getHashes(ctx, registry, storer, NewStream(externalStreamName, "", false))
 			if err != nil {
 				log.Error("get hashes", "err", err)
 				return
@@ -256,7 +256,7 @@ func testIntervals(t *testing.T, live bool, history *Range, skipCheck bool) {
 	}
 }
 
-func pirlashes(ctx context.Context, r *Registry, peerID enode.ID, s Stream) (chan []byte, error) {
+func getHashes(ctx context.Context, r *Registry, peerID enode.ID, s Stream) (chan []byte, error) {
 	peer := r.getPeer(peerID)
 
 	client, err := peer.getClient(ctx, s)

@@ -311,7 +311,7 @@ func (b *Bzz) removeHandshake(peerID enode.ID) {
 	delete(b.handshakes, peerID)
 }
 
-// pirlandshake returns the bzz handhake that the remote peer with peerID sent
+// GetHandshake returns the bzz handhake that the remote peer with peerID sent
 func (b *Bzz) GetOrCreateHandshake(peerID enode.ID) (*HandshakeMsg, bool) {
 	b.mtx.Lock()
 	defer b.mtx.Unlock()

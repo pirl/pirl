@@ -1,6 +1,5 @@
 // Copyright 2014 The go-ethereum Authors
-// Copyright 2018 Pirl Sprl
-// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+// This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -13,9 +12,9 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
-// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
+// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Package core implements the Ethereum consensus protocol.
 package core
 
 import (
@@ -100,7 +99,7 @@ type CacheConfig struct {
 	TrieCleanLimit      int           // Memory allowance (MB) to use for caching trie nodes in memory
 	TrieCleanNoPrefetch bool          // Whether to disable heuristic state prefetching for followup blocks
 	TrieDirtyLimit      int           // Memory limit (MB) at which to start flushing dirty trie nodes to disk
-	TrieDirtyDisabled   bool          // Whether to disable trie write caching and GC altopirler (archive node)
+	TrieDirtyDisabled   bool          // Whether to disable trie write caching and GC altogether (archive node)
 	TrieTimeLimit       time.Duration // Time limit after which to flush the current in-memory trie to disk
 }
 
@@ -1124,11 +1123,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 	}
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-
-
-	// PirlGuard
-
-	errChain := bc.checkChainForAttack(chain)
 
 	// Peek the error for the first block to decide the directing import logic
 	it := newInsertIterator(chain, results, bc.validator)
