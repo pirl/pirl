@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"git.pirl.io/community/pirl"
+	"git.pirl.io/community/pirl/common"
 )
 
 // Genesis hashes to enforce below configs on.
