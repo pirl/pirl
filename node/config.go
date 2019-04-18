@@ -225,7 +225,7 @@ func (c *Config) NodeDB() string {
 
 // DefaultIPCEndpoint returns the IPC path used by default.
 func DefaultIPCEndpoint(clientIdentifier string) string {
-	clientIdentifier = "pirl"
+
 	if clientIdentifier == "" {
 		clientIdentifier = strings.TrimSuffix(filepath.Base(os.Args[0]), ".exe")
 		if clientIdentifier == "" {
