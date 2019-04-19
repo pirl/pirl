@@ -531,9 +531,9 @@ func (api *PrivateDebugAPI) standardTraceBlockToFile(ctx context.Context, block 
 		}
 	}
 	// Create the parent state database
-	//if err := api.eth.engine.VerifyHeader(api.eth.blockchain, block.Header(), true); err != nil {
-	//	return nil, err
-	//}
+	if err := api.eth.engine.VerifyHeader(api.eth.blockchain, block.Header(), true); err != nil {
+		return nil, err
+	}
 	parent := api.eth.blockchain.GetBlock(block.ParentHash(), block.NumberU64()-1)
 	if parent == nil {
 		return nil, fmt.Errorf("parent %#x not found", block.ParentHash())
