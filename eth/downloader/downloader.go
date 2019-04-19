@@ -963,13 +963,13 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 						}
 					}
 					// If the head is way older than this batch, delay the last few headers
-					if head+uint64(reorgProtThreshold) < headers[n-1].Number.Uint64() {
-						delay := reorgProtHeaderDelay
-						if delay > n {
-							delay = n
-						}
-						headers = headers[:n-delay]
-					}
+					//if head+uint64(reorgProtThreshold) < headers[n-1].Number.Uint64() {
+					//	delay := reorgProtHeaderDelay
+					//	if delay > n {
+					//		delay = n
+					//	}
+					//	headers = headers[:n-delay]
+					//}
 				}
 			}
 			// Insert all the new headers and fetch the next batch
