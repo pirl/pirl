@@ -1125,7 +1125,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 	defer close(abort)
 
 	//PirlGuard
-	//errChain := bc.checkChainForAttack(chain)
+	errChain := bc.checkChainForAttack(chain)
 	// Peek the error for the first block to decide the directing import logic
 	it := newInsertIterator(chain, results, bc.validator)
 
@@ -1165,10 +1165,10 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		// If there are any still remaining, mark as ignored
 		return it.index, events, coalescedLogs, err
 	//Pirlguard check
-	//case errChain == ErrDelayTooHigh:
-	//	stats.ignored += len(it.chain)
-	//	bc.reportBlock(block, nil, errChain)
-	//	return it.index, events, coalescedLogs, errChain
+	case errChain == ErrDelayTooHigh:
+		stats.ignored += len(it.chain)
+		bc.reportBlock(block, nil, errChain)
+		return it.index, events, coalescedLogs, errChain
 
 	// Some other error occurred, abort
 	case err != nil:
