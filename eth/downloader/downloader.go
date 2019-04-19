@@ -32,7 +32,7 @@ import (
 	"git.pirl.io/community/pirl/event"
 	"git.pirl.io/community/pirl/log"
 	"git.pirl.io/community/pirl/params"
-	"github.com/rcrowley/go-metrics"
+	"git.pirl.io/community/pirl/metrics"
 )
 
 var (
