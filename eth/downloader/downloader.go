@@ -679,7 +679,7 @@ func (d *Downloader) findAncestor(p *peerConnection, remoteHeader *types.Header)
 	}
 	// If we're doing a light sync, ensure the floor doesn't go below the CHT, as
 	// all headers before that point will be missing.
-	if d.mode == LightSync {
+	//if d.mode == LightSync {
 		// If we dont know the current CHT position, find it
 		//if d.genesis == 0 {
 		//	header := d.lightchain.CurrentHeader()
@@ -690,12 +690,12 @@ func (d *Downloader) findAncestor(p *peerConnection, remoteHeader *types.Header)
 		//		}
 		//		header = d.lightchain.GetHeaderByHash(header.ParentHash)
 		//	}
-		}
+		//}
 		// We already know the "genesis" block number, cap floor to that
-		if floor < int64(d.genesis)-1 {
-			floor = int64(d.genesis) - 1
-		}
-	}
+		//if floor < int64(d.genesis)-1 {
+		//	floor = int64(d.genesis) - 1
+		//}
+	//}
 
 	from, count, skip, max := calculateRequestSpan(remoteHeight, localHeight)
 
