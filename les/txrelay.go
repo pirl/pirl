@@ -123,12 +123,12 @@ func (self *LesTxRelay) send(txs types.Transactions, count int) {
 				return peer.GetTxRelayCost(len(ll), len(enc))
 			},
 			canSend: func(dp distPeer) bool {
-				return !dp.(*peer).isOnlyAnnounce && dp.(*peer) == pp
+				return dp.(*peer) == pp
 			},
 			request: func(dp distPeer) func() {
 				peer := dp.(*peer)
 				cost := peer.GetTxRelayCost(len(ll), len(enc))
-				peer.fcServer.QueuedRequest(reqID, cost)
+				peer.fcServer.QueueRequest(reqID, cost)
 				return func() { peer.SendTxs(reqID, cost, enc) }
 			},
 		}

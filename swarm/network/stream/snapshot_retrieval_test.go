@@ -29,7 +29,6 @@ import (
 	"git.pirl.io/community/pirl/swarm/network/simulation"
 	"git.pirl.io/community/pirl/swarm/state"
 	"git.pirl.io/community/pirl/swarm/storage"
-	"git.pirl.io/community/pirl/swarm/testutil"
 )
 
 //constants for random file generation
@@ -44,24 +43,23 @@ const (
 //Files are uploaded to nodes, other nodes try to retrieve the file
 //Number of nodes can be provided via commandline too.
 func TestFileRetrieval(t *testing.T) {
-	var nodeCount []int
-
 	if *nodes != 0 {
-		nodeCount = []int{*nodes}
-	} else {
-		nodeCount = []int{16}
-
-		if *longrunning {
-			nodeCount = append(nodeCount, 32, 64)
-		} else if testutil.RaceEnabled {
-			nodeCount = []int{4}
+		err := runFileRetrievalTest(*nodes)
+		if err != nil {
+			t.Fatal(err)
 		}
-
-	}
-
-	for _, nc := range nodeCount {
-		if err := runFileRetrievalTest(nc); err != nil {
-			t.Error(err)
+	} else {
+		nodeCnt := []int{16}
+		//if the `longrunning` flag has been provided
+		//run more test combinations
+		if *longrunning {
+			nodeCnt = append(nodeCnt, 32, 64, 128)
+		}
+		for _, n := range nodeCnt {
+			err := runFileRetrievalTest(n)
+			if err != nil {
+				t.Fatal(err)
+			}
 		}
 	}
 }
@@ -81,17 +79,18 @@ func TestRetrieval(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		nodeCnt := []int{16}
-		chnkCnt := []int{32}
-
+		var nodeCnt []int
+		var chnkCnt []int
+		//if the `longrunning` flag has been provided
+		//run more test combinations
 		if *longrunning {
-			nodeCnt = []int{16, 32, 64}
+			nodeCnt = []int{16, 32, 128}
 			chnkCnt = []int{4, 32, 256}
-		} else if testutil.RaceEnabled {
-			nodeCnt = []int{4}
-			chnkCnt = []int{4}
+		} else {
+			//default test
+			nodeCnt = []int{16}
+			chnkCnt = []int{32}
 		}
-
 		for _, n := range nodeCnt {
 			for _, c := range chnkCnt {
 				t.Run(fmt.Sprintf("TestRetrieval_%d_%d", n, c), func(t *testing.T) {
@@ -112,15 +111,10 @@ var retrievalSimServiceMap = map[string]simulation.ServiceFunc{
 			return nil, nil, err
 		}
 
-		syncUpdateDelay := 1 * time.Second
-		if *longrunning {
-			syncUpdateDelay = 3 * time.Second
-		}
-
 		r := NewRegistry(addr.ID(), delivery, netStore, state.NewInmemoryStore(), &RegistryOptions{
 			Retrieval:       RetrievalEnabled,
 			Syncing:         SyncingAutoSubscribe,
-			SyncUpdateDelay: syncUpdateDelay,
+			SyncUpdateDelay: 3 * time.Second,
 		}, nil)
 
 		cleanup = func() {
@@ -144,7 +138,7 @@ func runFileRetrievalTest(nodeCount int) error {
 	sim := simulation.New(retrievalSimServiceMap)
 	defer sim.Close()
 
-	log.Info("Initializing test config", "node count", nodeCount)
+	log.Info("Initializing test config")
 
 	conf := &synctestConfig{}
 	//map of discover ID to indexes of chunks expected at that ID
@@ -154,16 +148,13 @@ func runFileRetrievalTest(nodeCount int) error {
 	//array where the generated chunk hashes will be stored
 	conf.hashes = make([]storage.Address, 0)
 
-	ctx, cancelSimRun := context.WithTimeout(context.Background(), 3*time.Minute)
-	defer cancelSimRun()
-
-	filename := fmt.Sprintf("testing/snapshot_%d.json", nodeCount)
-	err := sim.UploadSnapshot(ctx, filename)
+	err := sim.UploadSnapshot(fmt.Sprintf("testing/snapshot_%d.json", nodeCount))
 	if err != nil {
 		return err
 	}
 
-	log.Info("Starting simulation")
+	ctx, cancelSimRun := context.WithTimeout(context.Background(), 3*time.Minute)
+	defer cancelSimRun()
 
 	result := sim.Run(ctx, func(ctx context.Context, sim *simulation.Simulation) error {
 		nodeIDs := sim.UpNodeIDs()
@@ -188,8 +179,9 @@ func runFileRetrievalTest(nodeCount int) error {
 		if err != nil {
 			return err
 		}
-
-		log.Info("network healthy, start file checks")
+		if _, err := sim.WaitTillHealthy(ctx); err != nil {
+			return err
+		}
 
 		// File retrieval check is repeated until all uploaded files are retrieved from all nodes
 		// or until the timeout is reached.
@@ -217,8 +209,6 @@ func runFileRetrievalTest(nodeCount int) error {
 			return nil
 		}
 	})
-
-	log.Info("Simulation terminated")
 
 	if result.Error != nil {
 		return result.Error
@@ -250,15 +240,12 @@ func runRetrievalTest(t *testing.T, chunkCount int, nodeCount int) error {
 	//array where the generated chunk hashes will be stored
 	conf.hashes = make([]storage.Address, 0)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-	defer cancel()
-
-	filename := fmt.Sprintf("testing/snapshot_%d.json", nodeCount)
-	err := sim.UploadSnapshot(ctx, filename)
+	err := sim.UploadSnapshot(fmt.Sprintf("testing/snapshot_%d.json", nodeCount))
 	if err != nil {
 		return err
 	}
 
+	ctx := context.Background()
 	result := sim.Run(ctx, func(ctx context.Context, sim *simulation.Simulation) error {
 		nodeIDs := sim.UpNodeIDs()
 		for _, n := range nodeIDs {
@@ -281,6 +268,9 @@ func runRetrievalTest(t *testing.T, chunkCount int, nodeCount int) error {
 		lstore := item.(*storage.LocalStore)
 		conf.hashes, err = uploadFileToSingleNodeStore(node.ID(), chunkCount, lstore)
 		if err != nil {
+			return err
+		}
+		if _, err := sim.WaitTillHealthy(ctx); err != nil {
 			return err
 		}
 

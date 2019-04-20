@@ -27,7 +27,7 @@ import (
 var gitCommit string // Git SHA1 commit hash of the release (set via linker flags)
 
 // default value for "create" command --nodes flag
-const defaultNodes = 8
+const defaultNodes = 10
 
 func main() {
 	err := newApp().Run(os.Args)

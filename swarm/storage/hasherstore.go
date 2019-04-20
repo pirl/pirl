@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"git.pirl.io/community/pirl/swarm/chunk"
+	ch "git.pirl.io/community/pirl/swarm/chunk"
 	"git.pirl.io/community/pirl/swarm/storage/encryption"
 	"golang.org/x/crypto/sha3"
 )
@@ -156,7 +156,7 @@ func (h *hasherStore) createHash(chunkData ChunkData) Address {
 	return hasher.Sum(nil)
 }
 
-func (h *hasherStore) createChunk(chunkData ChunkData) Chunk {
+func (h *hasherStore) createChunk(chunkData ChunkData) *chunk {
 	hash := h.createHash(chunkData)
 	chunk := NewChunk(hash, chunkData)
 	return chunk
@@ -189,9 +189,9 @@ func (h *hasherStore) decryptChunkData(chunkData ChunkData, encryptionKey encryp
 
 	// removing extra bytes which were just added for padding
 	length := ChunkData(decryptedSpan).Size()
-	for length > chunk.DefaultSize {
-		length = length + (chunk.DefaultSize - 1)
-		length = length / chunk.DefaultSize
+	for length > ch.DefaultSize {
+		length = length + (ch.DefaultSize - 1)
+		length = length / ch.DefaultSize
 		length *= uint64(h.refSize)
 	}
 
@@ -232,14 +232,14 @@ func (h *hasherStore) decrypt(chunkData ChunkData, key encryption.Key) ([]byte, 
 }
 
 func (h *hasherStore) newSpanEncryption(key encryption.Key) encryption.Encryption {
-	return encryption.New(key, 0, uint32(chunk.DefaultSize/h.refSize), sha3.NewLegacyKeccak256)
+	return encryption.New(key, 0, uint32(ch.DefaultSize/h.refSize), sha3.NewLegacyKeccak256)
 }
 
 func (h *hasherStore) newDataEncryption(key encryption.Key) encryption.Encryption {
-	return encryption.New(key, int(chunk.DefaultSize), 0, sha3.NewLegacyKeccak256)
+	return encryption.New(key, int(ch.DefaultSize), 0, sha3.NewLegacyKeccak256)
 }
 
-func (h *hasherStore) storeChunk(ctx context.Context, chunk Chunk) {
+func (h *hasherStore) storeChunk(ctx context.Context, chunk *chunk) {
 	atomic.AddUint64(&h.nrChunks, 1)
 	go func() {
 		select {

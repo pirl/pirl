@@ -80,7 +80,6 @@ var (
 		executablePath("puppeth"),
 		executablePath("rlpdump"),
 		executablePath("wnode"),
-		executablePath("clef"),
 	}
 
 	// Files that end up in the swarm*.zip archive.
@@ -118,10 +117,6 @@ var (
 		{
 			BinaryName:  "wnode",
 			Description: "Ethereum Whisper diagnostic tool",
-		},
-		{
-			BinaryName:  "clef",
-			Description: "Ethereum account management tool.",
 		},
 	}
 
@@ -161,7 +156,7 @@ var (
 	// Note: yakkety is unsupported because it was officially deprecated on lanchpad.
 	// Note: zesty is unsupported because it was officially deprecated on lanchpad.
 	// Note: artful is unsupported because it was officially deprecated on lanchpad.
-	debDistros = []string{"trusty", "xenial", "bionic", "cosmic", "disco"}
+	debDistros = []string{"trusty", "xenial", "bionic", "cosmic"}
 )
 
 var GOBIN, _ = filepath.Abs(filepath.Join("build", "bin"))
@@ -805,8 +800,12 @@ func doAndroidArchive(cmdline []string) {
 	if os.Getenv("ANDROID_HOME") == "" {
 		log.Fatal("Please ensure ANDROID_HOME points to your Android SDK")
 	}
+	if os.Getenv("ANDROID_NDK") == "" {
+		log.Fatal("Please ensure ANDROID_NDK points to your Android NDK")
+	}
 	// Build the Android archive and Maven resources
 	build.MustRun(goTool("get", "golang.org/x/mobile/cmd/gomobile", "golang.org/x/mobile/cmd/gobind"))
+	build.MustRun(gomobileTool("init", "--ndk", os.Getenv("ANDROID_NDK")))
 	build.MustRun(gomobileTool("bind", "-ldflags", "-s -w", "--target", "android", "--javapkg", "org.ethereum", "-v", "git.pirl.io/community/pirl/mobile"))
 
 	if *local {

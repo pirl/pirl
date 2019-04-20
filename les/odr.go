@@ -84,7 +84,9 @@ const (
 	MsgBlockBodies = iota
 	MsgCode
 	MsgReceipts
+	MsgProofsV1
 	MsgProofsV2
+	MsgHeaderProofs
 	MsgHelperTrieProofs
 )
 
@@ -107,15 +109,12 @@ func (odr *LesOdr) Retrieve(ctx context.Context, req light.OdrRequest) (err erro
 		},
 		canSend: func(dp distPeer) bool {
 			p := dp.(*peer)
-			if !p.isOnlyAnnounce {
-				return lreq.CanSend(p)
-			}
-			return false
+			return lreq.CanSend(p)
 		},
 		request: func(dp distPeer) func() {
 			p := dp.(*peer)
 			cost := lreq.GetCost(p)
-			p.fcServer.QueuedRequest(reqID, cost)
+			p.fcServer.QueueRequest(reqID, cost)
 			return func() { lreq.Request(reqID, p) }
 		},
 	}

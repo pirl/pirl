@@ -21,13 +21,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sync"
 	"testing"
 	"time"
 
 	"git.pirl.io/community/pirl/rlp"
 
-	"git.pirl.io/community/pirl/crypto"
 	"git.pirl.io/community/pirl/p2p"
 	"git.pirl.io/community/pirl/p2p/enode"
 	"git.pirl.io/community/pirl/p2p/simulations/adapters"
@@ -145,11 +143,8 @@ func newProtocol(pp *p2ptest.TestPeerPool) func(*p2p.Peer, p2p.MsgReadWriter) er
 }
 
 func protocolTester(pp *p2ptest.TestPeerPool) *p2ptest.ProtocolTester {
-	prvkey, err := crypto.GenerateKey()
-	if err != nil {
-		panic(err)
-	}
-	return p2ptest.NewProtocolTester(prvkey, 2, newProtocol(pp))
+	conf := adapters.RandomNodeConfig()
+	return p2ptest.NewProtocolTester(conf.ID, 2, newProtocol(pp))
 }
 
 func protoHandshakeExchange(id enode.ID, proto *protoHandshake) []p2ptest.Exchange {
@@ -177,11 +172,8 @@ func protoHandshakeExchange(id enode.ID, proto *protoHandshake) []p2ptest.Exchan
 }
 
 func runProtoHandshake(t *testing.T, proto *protoHandshake, errs ...error) {
-	t.Helper()
 	pp := p2ptest.NewTestPeerPool()
 	s := protocolTester(pp)
-	defer s.Stop()
-
 	// TODO: make this more than one handshake
 	node := s.Nodes[0]
 	if err := s.TestExchanges(protoHandshakeExchange(node.ID(), proto)...); err != nil {
@@ -203,7 +195,6 @@ type dummyHook struct {
 	send  bool
 	err   error
 	waitC chan struct{}
-	mu    sync.Mutex
 }
 
 type dummyMsg struct {
@@ -211,9 +202,6 @@ type dummyMsg struct {
 }
 
 func (d *dummyHook) Send(peer *Peer, size uint32, msg interface{}) error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
 	d.peer = peer
 	d.size = size
 	d.msg = msg
@@ -222,9 +210,6 @@ func (d *dummyHook) Send(peer *Peer, size uint32, msg interface{}) error {
 }
 
 func (d *dummyHook) Receive(peer *Peer, size uint32, msg interface{}) error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
 	d.peer = peer
 	d.size = size
 	d.msg = msg
@@ -264,12 +249,9 @@ func TestProtocolHook(t *testing.T) {
 		return peer.Run(handle)
 	}
 
-	prvkey, err := crypto.GenerateKey()
-	if err != nil {
-		panic(err)
-	}
-	tester := p2ptest.NewProtocolTester(prvkey, 2, runFunc)
-	err = tester.TestExchanges(p2ptest.Exchange{
+	conf := adapters.RandomNodeConfig()
+	tester := p2ptest.NewProtocolTester(conf.ID, 2, runFunc)
+	err := tester.TestExchanges(p2ptest.Exchange{
 		Expects: []p2ptest.Expect{
 			{
 				Code: 0,
@@ -281,23 +263,18 @@ func TestProtocolHook(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	testHook.mu.Lock()
 	if testHook.msg == nil || testHook.msg.(*dummyMsg).Content != "handshake" {
 		t.Fatal("Expected msg to be set, but it is not")
 	}
 	if !testHook.send {
 		t.Fatal("Expected a send message, but it is not")
 	}
-	if testHook.peer == nil {
-		t.Fatal("Expected peer to be set, is nil")
-	}
-	if peerId := testHook.peer.ID(); peerId != tester.Nodes[0].ID() && peerId != tester.Nodes[1].ID() {
-		t.Fatalf("Expected peer ID to be set correctly, but it is not (got %v, exp %v or %v", peerId, tester.Nodes[0].ID(), tester.Nodes[1].ID())
+	if testHook.peer == nil || testHook.peer.ID() != tester.Nodes[0].ID() {
+		t.Fatal("Expected peer ID to be set correctly, but it is not")
 	}
 	if testHook.size != 11 { //11 is the length of the encoded message
 		t.Fatalf("Expected size to be %d, but it is %d ", 1, testHook.size)
 	}
-	testHook.mu.Unlock()
 
 	err = tester.TestExchanges(p2ptest.Exchange{
 		Triggers: []p2ptest.Trigger{
@@ -314,8 +291,6 @@ func TestProtocolHook(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	testHook.mu.Lock()
 	if testHook.msg == nil || testHook.msg.(*dummyMsg).Content != "response" {
 		t.Fatal("Expected msg to be set, but it is not")
 	}
@@ -328,7 +303,6 @@ func TestProtocolHook(t *testing.T) {
 	if testHook.size != 10 { //11 is the length of the encoded message
 		t.Fatalf("Expected size to be %d, but it is %d ", 1, testHook.size)
 	}
-	testHook.mu.Unlock()
 
 	testHook.err = fmt.Errorf("dummy error")
 	err = tester.TestExchanges(p2ptest.Exchange{
@@ -348,6 +322,7 @@ func TestProtocolHook(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Expected a specific disconnect error, but got different one: %v", err)
 	}
+
 }
 
 //We need to test that if the hook is not defined, then message infrastructure
@@ -364,19 +339,16 @@ func TestNoHook(t *testing.T) {
 	ctx := context.TODO()
 	msg := &perBytesMsgSenderPays{Content: "testBalance"}
 	//send a message
-
-	if err := peer.Send(ctx, msg); err != nil {
+	err := peer.Send(ctx, msg)
+	if err != nil {
 		t.Fatal(err)
 	}
 	//simulate receiving a message
 	rw.msg = msg
-	handler := func(ctx context.Context, msg interface{}) error {
+	peer.handleIncoming(func(ctx context.Context, msg interface{}) error {
 		return nil
-	}
-
-	if err := peer.handleIncoming(handler); err != nil {
-		t.Fatal(err)
-	}
+	})
+	//all should just work and not result in any error
 }
 
 func TestProtoHandshakeVersionMismatch(t *testing.T) {
@@ -416,11 +388,8 @@ func moduleHandshakeExchange(id enode.ID, resp uint) []p2ptest.Exchange {
 }
 
 func runModuleHandshake(t *testing.T, resp uint, errs ...error) {
-	t.Helper()
 	pp := p2ptest.NewTestPeerPool()
 	s := protocolTester(pp)
-	defer s.Stop()
-
 	node := s.Nodes[0]
 	if err := s.TestExchanges(protoHandshakeExchange(node.ID(), &protoHandshake{42, "420"})...); err != nil {
 		t.Fatal(err)
@@ -499,10 +468,8 @@ func testMultiPeerSetup(a, b enode.ID) []p2ptest.Exchange {
 }
 
 func runMultiplePeers(t *testing.T, peer int, errs ...error) {
-	t.Helper()
 	pp := p2ptest.NewTestPeerPool()
 	s := protocolTester(pp)
-	defer s.Stop()
 
 	if err := s.TestExchanges(testMultiPeerSetup(s.Nodes[0].ID(), s.Nodes[1].ID())...); err != nil {
 		t.Fatal(err)
@@ -572,14 +539,14 @@ WAIT:
 	}
 
 }
-func TestMultiplePeersDropSelf(t *testing.T) {
+func XTestMultiplePeersDropSelf(t *testing.T) {
 	runMultiplePeers(t, 0,
 		fmt.Errorf("subprotocol error"),
 		fmt.Errorf("Message handler error: (msg code 3): dropped"),
 	)
 }
 
-func TestMultiplePeersDropOther(t *testing.T) {
+func XTestMultiplePeersDropOther(t *testing.T) {
 	runMultiplePeers(t, 1,
 		fmt.Errorf("Message handler error: (msg code 3): dropped"),
 		fmt.Errorf("subprotocol error"),

@@ -110,6 +110,7 @@ type Fetcher struct {
 	notify chan *announce
 	inject chan *inject
 
+	blockFilter  chan chan []*types.Block
 	headerFilter chan chan *headerFilterTask
 	bodyFilter   chan chan *bodyFilterTask
 
@@ -149,6 +150,7 @@ func New(getBlock blockRetrievalFn, verifyHeader headerVerifierFn, broadcastBloc
 	return &Fetcher{
 		notify:         make(chan *announce),
 		inject:         make(chan *inject),
+		blockFilter:    make(chan chan []*types.Block),
 		headerFilter:   make(chan chan *headerFilterTask),
 		bodyFilter:     make(chan chan *bodyFilterTask),
 		done:           make(chan common.Hash),

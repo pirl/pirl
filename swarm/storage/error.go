@@ -16,7 +16,9 @@
 
 package storage
 
-import "git.pirl.io/community/pirl/swarm/chunk"
+import (
+	"errors"
+)
 
 const (
 	ErrInit = iota
@@ -29,8 +31,7 @@ const (
 	ErrNotSynced
 )
 
-// Errors are the same as the ones in chunk package for backward compatibility.
 var (
-	ErrChunkNotFound = chunk.ErrChunkNotFound
-	ErrChunkInvalid  = chunk.ErrChunkNotFound
+	ErrChunkNotFound = errors.New("chunk not found")
+	ErrChunkInvalid  = errors.New("invalid chunk")
 )

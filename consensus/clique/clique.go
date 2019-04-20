@@ -20,7 +20,6 @@ package clique
 import (
 	"bytes"
 	"errors"
-	"io"
 	"math/big"
 	"math/rand"
 	"sync"
@@ -137,9 +136,40 @@ var (
 	errRecentlySigned = errors.New("recently signed")
 )
 
-// SignerFn is a signer callback function to request a header to be signed by a
+// SignerFn is a signer callback function to request a hash to be signed by a
 // backing account.
-type SignerFn func(accounts.Account, string, []byte) ([]byte, error)
+type SignerFn func(accounts.Account, []byte) ([]byte, error)
+
+// sigHash returns the hash which is used as input for the proof-of-authority
+// signing. It is the hash of the entire header apart from the 65 byte signature
+// contained at the end of the extra data.
+//
+// Note, the method requires the extra data to be at least 65 bytes, otherwise it
+// panics. This is done to avoid accidentally using both forms (signature present
+// or not), which could be abused to produce different hashes for the same header.
+func sigHash(header *types.Header) (hash common.Hash) {
+	hasher := sha3.NewLegacyKeccak256()
+
+	rlp.Encode(hasher, []interface{}{
+		header.ParentHash,
+		header.UncleHash,
+		header.Coinbase,
+		header.Root,
+		header.TxHash,
+		header.ReceiptHash,
+		header.Bloom,
+		header.Difficulty,
+		header.Number,
+		header.GasLimit,
+		header.GasUsed,
+		header.Time,
+		header.Extra[:len(header.Extra)-65], // Yes, this will panic if extra is too short
+		header.MixDigest,
+		header.Nonce,
+	})
+	hasher.Sum(hash[:0])
+	return hash
+}
 
 // ecrecover extracts the Ethereum account address from a signed header.
 func ecrecover(header *types.Header, sigcache *lru.ARCCache) (common.Address, error) {
@@ -155,7 +185,7 @@ func ecrecover(header *types.Header, sigcache *lru.ARCCache) (common.Address, er
 	signature := header.Extra[len(header.Extra)-extraSeal:]
 
 	// Recover the public key and the Ethereum address
-	pubkey, err := crypto.Ecrecover(SealHash(header).Bytes(), signature)
+	pubkey, err := crypto.Ecrecover(sigHash(header).Bytes(), signature)
 	if err != nil {
 		return common.Address{}, err
 	}
@@ -616,7 +646,7 @@ func (c *Clique) Seal(chain consensus.ChainReader, block *types.Block, results c
 		log.Trace("Out-of-turn signing requested", "wiggle", common.PrettyDuration(wiggle))
 	}
 	// Sign all the things!
-	sighash, err := signFn(accounts.Account{Address: signer}, accounts.MimetypeClique, CliqueRLP(header))
+	sighash, err := signFn(accounts.Account{Address: signer}, sigHash(header).Bytes())
 	if err != nil {
 		return err
 	}
@@ -633,7 +663,7 @@ func (c *Clique) Seal(chain consensus.ChainReader, block *types.Block, results c
 		select {
 		case results <- block.WithSeal(header):
 		default:
-			log.Warn("Sealing result is not read by miner", "sealhash", SealHash(header))
+			log.Warn("Sealing result is not read by miner", "sealhash", c.SealHash(header))
 		}
 	}()
 
@@ -663,7 +693,7 @@ func CalcDifficulty(snap *Snapshot, signer common.Address) *big.Int {
 
 // SealHash returns the hash of a block prior to it being sealed.
 func (c *Clique) SealHash(header *types.Header) common.Hash {
-	return SealHash(header)
+	return sigHash(header)
 }
 
 // Close implements consensus.Engine. It's a noop for clique as there are no background threads.
@@ -680,48 +710,4 @@ func (c *Clique) APIs(chain consensus.ChainReader) []rpc.API {
 		Service:   &API{chain: chain, clique: c},
 		Public:    false,
 	}}
-}
-
-// SealHash returns the hash of a block prior to it being sealed.
-func SealHash(header *types.Header) (hash common.Hash) {
-	hasher := sha3.NewLegacyKeccak256()
-	encodeSigHeader(hasher, header)
-	hasher.Sum(hash[:0])
-	return hash
-}
-
-// CliqueRLP returns the rlp bytes which needs to be signed for the proof-of-authority
-// sealing. The RLP to sign consists of the entire header apart from the 65 byte signature
-// contained at the end of the extra data.
-//
-// Note, the method requires the extra data to be at least 65 bytes, otherwise it
-// panics. This is done to avoid accidentally using both forms (signature present
-// or not), which could be abused to produce different hashes for the same header.
-func CliqueRLP(header *types.Header) []byte {
-	b := new(bytes.Buffer)
-	encodeSigHeader(b, header)
-	return b.Bytes()
-}
-
-func encodeSigHeader(w io.Writer, header *types.Header) {
-	err := rlp.Encode(w, []interface{}{
-		header.ParentHash,
-		header.UncleHash,
-		header.Coinbase,
-		header.Root,
-		header.TxHash,
-		header.ReceiptHash,
-		header.Bloom,
-		header.Difficulty,
-		header.Number,
-		header.GasLimit,
-		header.GasUsed,
-		header.Time,
-		header.Extra[:len(header.Extra)-65], // Yes, this will panic if extra is too short
-		header.MixDigest,
-		header.Nonce,
-	})
-	if err != nil {
-		panic("can't encode: " + err.Error())
-	}
 }

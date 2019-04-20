@@ -18,8 +18,8 @@ package localstore
 
 import (
 	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/swarm/chunk"
 	"git.pirl.io/community/pirl/swarm/shed"
+	"git.pirl.io/community/pirl/swarm/storage"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -51,23 +51,23 @@ func (db *DB) NewGetter(mode ModeGet) *Getter {
 }
 
 // Get returns a chunk from the database. If the chunk is
-// not found chunk.ErrChunkNotFound will be returned.
+// not found storage.ErrChunkNotFound will be returned.
 // All required indexes will be updated required by the
 // Getter Mode.
-func (g *Getter) Get(addr chunk.Address) (ch chunk.Chunk, err error) {
+func (g *Getter) Get(addr storage.Address) (chunk storage.Chunk, err error) {
 	out, err := g.db.get(g.mode, addr)
 	if err != nil {
 		if err == leveldb.ErrNotFound {
-			return nil, chunk.ErrChunkNotFound
+			return nil, storage.ErrChunkNotFound
 		}
 		return nil, err
 	}
-	return chunk.NewChunk(out.Address, out.Data), nil
+	return storage.NewChunk(out.Address, out.Data), nil
 }
 
 // get returns Item from the retrieval index
 // and updates other indexes.
-func (db *DB) get(mode ModeGet, addr chunk.Address) (out shed.Item, err error) {
+func (db *DB) get(mode ModeGet, addr storage.Address) (out shed.Item, err error) {
 	item := addressToItem(addr)
 
 	out, err = db.retrievalDataIndex.Get(item)
@@ -113,8 +113,11 @@ func (db *DB) get(mode ModeGet, addr chunk.Address) (out shed.Item, err error) {
 // only Address and Data fields with non zero values,
 // which is ensured by the get function.
 func (db *DB) updateGC(item shed.Item) (err error) {
-	db.batchMu.Lock()
-	defer db.batchMu.Unlock()
+	unlock, err := db.lockAddr(item.Address)
+	if err != nil {
+		return err
+	}
+	defer unlock()
 
 	batch := new(leveldb.Batch)
 

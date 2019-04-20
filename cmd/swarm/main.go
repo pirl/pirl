@@ -76,8 +76,8 @@ var gitCommit string
 
 //declare a few constant error messages, useful for later error check comparisons in test
 var (
-	SwarmErrNoBZZAccount = "bzzaccount option is required but not set; check your config file, command line or environment variables"
-	SwarmErrSwapSetNoAPI = "SWAP is enabled but --swap-api is not set"
+	SWARM_ERR_NO_BZZACCOUNT   = "bzzaccount option is required but not set; check your config file, command line or environment variables"
+	SWARM_ERR_SWAP_SET_NO_API = "SWAP is enabled but --swap-api is not set"
 )
 
 // this help command gets added to any subcommand that does not define it explicitly
@@ -287,21 +287,17 @@ func bzzd(ctx *cli.Context) error {
 	//setup the ethereum node
 	utils.SetNodeConfig(ctx, &cfg)
 
-	//disable dynamic dialing from p2p/discovery
-	cfg.P2P.NoDial = true
+	//always disable discovery from p2p package - swarm discovery is done with the `hive` protocol
+	cfg.P2P.NoDiscovery = true
 
 	stack, err := node.New(&cfg)
 	if err != nil {
 		utils.Fatalf("can't create node: %v", err)
 	}
-	defer stack.Close()
 
 	//a few steps need to be done after the config phase is completed,
 	//due to overriding behavior
-	err = initSwarmNode(bzzconfig, stack, ctx, &cfg)
-	if err != nil {
-		return err
-	}
+	initSwarmNode(bzzconfig, stack, ctx)
 	//register BZZ as node.Service in the ethereum node
 	registerBzzService(bzzconfig, stack)
 	//start the node
@@ -354,7 +350,7 @@ func registerBzzService(bzzconfig *bzzapi.Config, stack *node.Node) {
 func getAccount(bzzaccount string, ctx *cli.Context, stack *node.Node) *ecdsa.PrivateKey {
 	//an account is mandatory
 	if bzzaccount == "" {
-		utils.Fatalf(SwarmErrNoBZZAccount)
+		utils.Fatalf(SWARM_ERR_NO_BZZACCOUNT)
 	}
 	// Try to load the arg as a hex key file.
 	if key, err := crypto.LoadECDSA(bzzaccount); err == nil {
@@ -385,8 +381,6 @@ func getPrivKey(ctx *cli.Context) *ecdsa.PrivateKey {
 	if err != nil {
 		utils.Fatalf("can't create node: %v", err)
 	}
-	defer stack.Close()
-
 	return getAccount(bzzconfig.BzzAccount, ctx, stack)
 }
 

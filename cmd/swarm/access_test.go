@@ -52,12 +52,11 @@ func TestACT(t *testing.T) {
 		t.Skip()
 	}
 
-	cluster := newTestCluster(t, clusterSize)
-	defer cluster.Shutdown()
+	initCluster(t)
 
 	cases := []struct {
 		name string
-		f    func(t *testing.T, cluster *testCluster)
+		f    func(t *testing.T)
 	}{
 		{"Password", testPassword},
 		{"PK", testPK},
@@ -66,9 +65,7 @@ func TestACT(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			tc.f(t, cluster)
-		})
+		t.Run(tc.name, tc.f)
 	}
 }
 
@@ -77,7 +74,7 @@ func TestACT(t *testing.T) {
 // The parties participating - node (publisher), uploads to second node then disappears. Content which was uploaded
 // is then fetched through 2nd node. since the tested code is not key-aware - we can just
 // fetch from the 2nd node using HTTP BasicAuth
-func testPassword(t *testing.T, cluster *testCluster) {
+func testPassword(t *testing.T) {
 	dataFilename := testutil.TempFileWithContent(t, data)
 	defer os.RemoveAll(dataFilename)
 
@@ -229,7 +226,7 @@ func testPassword(t *testing.T, cluster *testCluster) {
 // The parties participating - node (publisher), uploads to second node (which is also the grantee) then disappears.
 // Content which was uploaded is then fetched through the grantee's http proxy. Since the tested code is private-key aware,
 // the test will fail if the proxy's given private key is not granted on the ACT.
-func testPK(t *testing.T, cluster *testCluster) {
+func testPK(t *testing.T) {
 	dataFilename := testutil.TempFileWithContent(t, data)
 	defer os.RemoveAll(dataFilename)
 
@@ -362,13 +359,13 @@ func testPK(t *testing.T, cluster *testCluster) {
 }
 
 // testACTWithoutBogus tests the creation of the ACT manifest end-to-end, without any bogus entries (i.e. default scenario = 3 nodes 1 unauthorized)
-func testACTWithoutBogus(t *testing.T, cluster *testCluster) {
-	testACT(t, cluster, 0)
+func testACTWithoutBogus(t *testing.T) {
+	testACT(t, 0)
 }
 
 // testACTWithBogus tests the creation of the ACT manifest end-to-end, with 100 bogus entries (i.e. 100 EC keys + default scenario = 3 nodes 1 unauthorized = 103 keys in the ACT manifest)
-func testACTWithBogus(t *testing.T, cluster *testCluster) {
-	testACT(t, cluster, 100)
+func testACTWithBogus(t *testing.T) {
+	testACT(t, 100)
 }
 
 // testACT tests the e2e creation, uploading and downloading of an ACT access control with both EC keys AND password protection
@@ -376,7 +373,7 @@ func testACTWithBogus(t *testing.T, cluster *testCluster) {
 // set and also protects the ACT with a password. the third node should fail decoding the reference as it will not be granted access.
 // the third node then then tries to download using a correct password (and succeeds) then uses a wrong password and fails.
 // the publisher uploads through one of the nodes then disappears.
-func testACT(t *testing.T, cluster *testCluster, bogusEntries int) {
+func testACT(t *testing.T, bogusEntries int) {
 	var uploadThroughNode = cluster.Nodes[0]
 	client := swarmapi.NewClient(uploadThroughNode.URL)
 
@@ -400,7 +397,7 @@ func testACT(t *testing.T, cluster *testCluster, bogusEntries int) {
 	}
 
 	ref := matches[0]
-	var grantees []string
+	grantees := []string{}
 	for i, v := range cluster.Nodes {
 		if i == nodeToSkip {
 			continue
@@ -411,7 +408,7 @@ func testACT(t *testing.T, cluster *testCluster, bogusEntries int) {
 	}
 
 	if bogusEntries > 0 {
-		var bogusGrantees []string
+		bogusGrantees := []string{}
 
 		for i := 0; i < bogusEntries; i++ {
 			prv, err := ecies.GenerateKey(rand.Reader, DefaultCurve, nil)

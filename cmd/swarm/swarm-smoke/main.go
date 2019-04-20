@@ -40,7 +40,6 @@ var (
 	allhosts     string
 	hosts        []string
 	filesize     int
-	inputSeed    int
 	syncDelay    int
 	httpPort     int
 	wsPort       int
@@ -74,12 +73,6 @@ func main() {
 			Value:       8546,
 			Usage:       "ws port",
 			Destination: &wsPort,
-		},
-		cli.IntFlag{
-			Name:        "seed",
-			Value:       0,
-			Usage:       "input seed in case we need deterministic upload",
-			Destination: &inputSeed,
 		},
 		cli.IntFlag{
 			Name:        "filesize",

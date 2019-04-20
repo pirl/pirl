@@ -35,6 +35,7 @@ import (
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/internal/ethapi"
+	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
 	"git.pirl.io/community/pirl/rpc"
 	"git.pirl.io/community/pirl/trie"
@@ -69,7 +70,7 @@ func (api *PublicEthereumAPI) Hashrate() hexutil.Uint64 {
 // ChainId is the EIP-155 replay-protection chain id for the current ethereum chain config.
 func (api *PublicEthereumAPI) ChainId() hexutil.Uint64 {
 	chainID := new(big.Int)
-	if config := api.e.blockchain.Config(); config.IsEIP155(api.e.blockchain.CurrentBlock().Number()) {
+	if config := api.e.chainConfig; config.IsEIP155(api.e.blockchain.CurrentBlock().Number()) {
 		chainID = config.ChainID
 	}
 	return (hexutil.Uint64)(chainID.Uint64())
@@ -287,13 +288,14 @@ func (api *PublicDebugAPI) DumpBlock(blockNr rpc.BlockNumber) (state.Dump, error
 // PrivateDebugAPI is the collection of Ethereum full node APIs exposed over
 // the private debugging endpoint.
 type PrivateDebugAPI struct {
-	eth *Ethereum
+	config *params.ChainConfig
+	eth    *Ethereum
 }
 
 // NewPrivateDebugAPI creates a new API definition for the full node-related
 // private debug methods of the Ethereum service.
-func NewPrivateDebugAPI(eth *Ethereum) *PrivateDebugAPI {
-	return &PrivateDebugAPI{eth: eth}
+func NewPrivateDebugAPI(config *params.ChainConfig, eth *Ethereum) *PrivateDebugAPI {
+	return &PrivateDebugAPI{config: config, eth: eth}
 }
 
 // Preimage is a debug API function that returns the preimage for a sha3 hash, if known.
@@ -444,11 +446,11 @@ func (api *PrivateDebugAPI) getModifiedAccounts(startBlock, endBlock *types.Bloc
 	}
 	triedb := api.eth.BlockChain().StateCache().TrieDB()
 
-	oldTrie, err := trie.NewSecure(startBlock.Root(), triedb)
+	oldTrie, err := trie.NewSecure(startBlock.Root(), triedb, 0)
 	if err != nil {
 		return nil, err
 	}
-	newTrie, err := trie.NewSecure(endBlock.Root(), triedb)
+	newTrie, err := trie.NewSecure(endBlock.Root(), triedb, 0)
 	if err != nil {
 		return nil, err
 	}

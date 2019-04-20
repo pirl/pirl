@@ -34,10 +34,10 @@ import (
 // If the trie does not contain a value for key, the returned proof contains all
 // nodes of the longest existing prefix of the key (at least the root node), ending
 // with the node that proves the absence of the key.
-func (t *Trie) Prove(key []byte, fromLevel uint, proofDb ethdb.Writer) error {
+func (t *Trie) Prove(key []byte, fromLevel uint, proofDb ethdb.Putter) error {
 	// Collect all nodes on the path to key.
 	key = keybytesToHex(key)
-	var nodes []node
+	nodes := []node{}
 	tn := t.root
 	for len(key) > 0 && tn != nil {
 		switch n := tn.(type) {
@@ -65,7 +65,7 @@ func (t *Trie) Prove(key []byte, fromLevel uint, proofDb ethdb.Writer) error {
 			panic(fmt.Sprintf("%T: invalid node: %v", tn, tn))
 		}
 	}
-	hasher := newHasher(nil)
+	hasher := newHasher(0, 0, nil)
 	defer returnHasherToPool(hasher)
 
 	for i, n := range nodes {
@@ -97,14 +97,14 @@ func (t *Trie) Prove(key []byte, fromLevel uint, proofDb ethdb.Writer) error {
 // If the trie does not contain a value for key, the returned proof contains all
 // nodes of the longest existing prefix of the key (at least the root node), ending
 // with the node that proves the absence of the key.
-func (t *SecureTrie) Prove(key []byte, fromLevel uint, proofDb ethdb.Writer) error {
+func (t *SecureTrie) Prove(key []byte, fromLevel uint, proofDb ethdb.Putter) error {
 	return t.trie.Prove(key, fromLevel, proofDb)
 }
 
 // VerifyProof checks merkle proofs. The given proof must contain the value for
 // key in a trie with the given root hash. VerifyProof returns an error if the
 // proof contains invalid trie nodes or the wrong value.
-func VerifyProof(rootHash common.Hash, key []byte, proofDb ethdb.Reader) (value []byte, nodes int, err error) {
+func VerifyProof(rootHash common.Hash, key []byte, proofDb DatabaseReader) (value []byte, nodes int, err error) {
 	key = keybytesToHex(key)
 	wantHash := rootHash
 	for i := 0; ; i++ {
@@ -112,7 +112,7 @@ func VerifyProof(rootHash common.Hash, key []byte, proofDb ethdb.Reader) (value 
 		if buf == nil {
 			return nil, i, fmt.Errorf("proof node %d (hash %064x) missing", i, wantHash)
 		}
-		n, err := decodeNode(wantHash[:], buf)
+		n, err := decodeNode(wantHash[:], buf, 0)
 		if err != nil {
 			return nil, i, fmt.Errorf("bad proof node %d: %v", i, err)
 		}

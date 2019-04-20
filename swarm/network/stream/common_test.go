@@ -30,7 +30,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"git.pirl.io/community/pirl/crypto"
 	"git.pirl.io/community/pirl/log"
 	"git.pirl.io/community/pirl/p2p/enode"
 	"git.pirl.io/community/pirl/p2p/simulations/adapters"
@@ -135,9 +134,6 @@ func netStoreAndDeliveryWithAddr(ctx *adapters.ServiceContext, bucket *sync.Map,
 	bucket.Store(bucketKeyDB, netStore)
 	bucket.Store(bucketKeyDelivery, delivery)
 	bucket.Store(bucketKeyFileStore, fileStore)
-	// for the kademlia object, we use the global key from the simulation package,
-	// as the simulation will try to access it in the WaitTillHealthy with that key
-	bucket.Store(simulation.BucketKeyKademlia, kad)
 
 	cleanup := func() {
 		netStore.Close()
@@ -184,13 +180,7 @@ func newStreamerTester(registryOptions *RegistryOptions) (*p2ptest.ProtocolTeste
 		streamer.Close()
 		removeDataDir()
 	}
-	prvkey, err := crypto.GenerateKey()
-	if err != nil {
-		removeDataDir()
-		return nil, nil, nil, nil, err
-	}
-
-	protocolTester := p2ptest.NewProtocolTester(prvkey, 1, streamer.runProtocol)
+	protocolTester := p2ptest.NewProtocolTester(addr.ID(), 1, streamer.runProtocol)
 
 	err = waitForPeers(streamer, 10*time.Second, 1)
 	if err != nil {

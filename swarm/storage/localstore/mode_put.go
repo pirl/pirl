@@ -17,8 +17,8 @@
 package localstore
 
 import (
-	"git.pirl.io/community/pirl/swarm/chunk"
 	"git.pirl.io/community/pirl/swarm/shed"
+	"git.pirl.io/community/pirl/swarm/storage"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -53,7 +53,7 @@ func (db *DB) NewPutter(mode ModePut) *Putter {
 
 // Put stores the Chunk to database and depending
 // on the Putter mode, it updates required indexes.
-func (p *Putter) Put(ch chunk.Chunk) (err error) {
+func (p *Putter) Put(ch storage.Chunk) (err error) {
 	return p.db.put(p.mode, chunkToItem(ch))
 }
 
@@ -64,8 +64,11 @@ func (p *Putter) Put(ch chunk.Chunk) (err error) {
 // with their nil values.
 func (db *DB) put(mode ModePut, item shed.Item) (err error) {
 	// protect parallel updates
-	db.batchMu.Lock()
-	defer db.batchMu.Unlock()
+	unlock, err := db.lockAddr(item.Address)
+	if err != nil {
+		return err
+	}
+	defer unlock()
 
 	batch := new(leveldb.Batch)
 
@@ -113,6 +116,7 @@ func (db *DB) put(mode ModePut, item shed.Item) (err error) {
 		db.retrievalAccessIndex.PutInBatch(batch, item)
 		// add new entry to gc index
 		db.gcIndex.PutInBatch(batch, item)
+		db.gcUncountedHashesIndex.PutInBatch(batch, item)
 		gcSizeChange++
 
 		db.retrievalDataIndex.PutInBatch(batch, item)
@@ -139,14 +143,12 @@ func (db *DB) put(mode ModePut, item shed.Item) (err error) {
 		return ErrInvalidMode
 	}
 
-	err = db.incGCSizeInBatch(batch, gcSizeChange)
-	if err != nil {
-		return err
-	}
-
 	err = db.shed.WriteBatch(batch)
 	if err != nil {
 		return err
+	}
+	if gcSizeChange != 0 {
+		db.incGCSize(gcSizeChange)
 	}
 	if triggerPullFeed {
 		db.triggerPullSubscriptions(db.po(item.Address))

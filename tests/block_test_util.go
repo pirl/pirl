@@ -30,10 +30,10 @@ import (
 	"git.pirl.io/community/pirl/consensus"
 	"git.pirl.io/community/pirl/consensus/ethash"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/core/vm"
+	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
 )
@@ -101,7 +101,7 @@ func (t *BlockTest) Run() error {
 	}
 
 	// import pre accounts & construct test genesis block & state root
-	db := rawdb.NewMemoryDatabase()
+	db := ethdb.NewMemDatabase()
 	gblock, err := t.genesis(config).Commit(db)
 	if err != nil {
 		return err

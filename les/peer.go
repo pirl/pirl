@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Package les implements the Light Ethereum Subprotocol.
 package les
 
 import (
@@ -24,7 +25,6 @@ import (
 	"time"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/mclock"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/eth"
 	"git.pirl.io/community/pirl/les/flowcontrol"
@@ -34,23 +34,18 @@ import (
 )
 
 var (
-	errClosed            = errors.New("peer set is closed")
-	errAlreadyRegistered = errors.New("peer is already registered")
-	errNotRegistered     = errors.New("peer is not registered")
+	errClosed             = errors.New("peer set is closed")
+	errAlreadyRegistered  = errors.New("peer is already registered")
+	errNotRegistered      = errors.New("peer is not registered")
+	errInvalidHelpTrieReq = errors.New("invalid help trie request")
 )
 
 const maxResponseErrors = 50 // number of invalid responses tolerated (makes the protocol less brittle but still avoids spam)
 
-// capacity limitation for parameter updates
-const (
-	allowedUpdateBytes = 100000                // initial/maximum allowed update size
-	allowedUpdateRate  = time.Millisecond * 10 // time constant for recharging one byte of allowance
-)
-
 // if the total encoded size of a sent transaction batch is over txSizeCostLimit
 // per transaction then the request cost is calculated as proportional to the
 // encoded size instead of the transaction count
-const txSizeCostLimit = 0x10000
+const txSizeCostLimit = 0x4000
 
 const (
 	announceTypeNone = iota
@@ -66,67 +61,37 @@ type peer struct {
 	version int    // Protocol version negotiated
 	network uint64 // Network ID being on
 
-	announceType uint64
+	announceType, requestAnnounceType uint64
 
 	id string
 
 	headInfo *announceData
 	lock     sync.RWMutex
 
-	sendQueue *execQueue
-
-	errCh chan error
-	// responseLock ensures that responses are queued in the same order as
-	// RequestProcessed is called
-	responseLock  sync.Mutex
-	responseCount uint64
+	announceChn chan announceData
+	sendQueue   *execQueue
 
 	poolEntry      *poolEntry
 	hasBlock       func(common.Hash, uint64, bool) bool
 	responseErrors int
-	updateCounter  uint64
-	updateTime     mclock.AbsTime
 
-	fcClient *flowcontrol.ClientNode // nil if the peer is server only
-	fcServer *flowcontrol.ServerNode // nil if the peer is client only
-	fcParams flowcontrol.ServerParams
-	fcCosts  requestCostTable
-
-	isTrusted      bool
-	isOnlyAnnounce bool
+	fcClient       *flowcontrol.ClientNode // nil if the peer is server only
+	fcServer       *flowcontrol.ServerNode // nil if the peer is client only
+	fcServerParams *flowcontrol.ServerParams
+	fcCosts        requestCostTable
 }
 
-func newPeer(version int, network uint64, isTrusted bool, p *p2p.Peer, rw p2p.MsgReadWriter) *peer {
+func newPeer(version int, network uint64, p *p2p.Peer, rw p2p.MsgReadWriter) *peer {
+	id := p.ID()
+
 	return &peer{
-		Peer:      p,
-		rw:        rw,
-		version:   version,
-		network:   network,
-		id:        fmt.Sprintf("%x", p.ID().Bytes()),
-		isTrusted: isTrusted,
-		errCh:     make(chan error, 1),
+		Peer:        p,
+		rw:          rw,
+		version:     version,
+		network:     network,
+		id:          fmt.Sprintf("%x", id[:8]),
+		announceChn: make(chan announceData, 20),
 	}
-}
-
-// rejectUpdate returns true if a parameter update has to be rejected because
-// the size and/or rate of updates exceed the capacity limitation
-func (p *peer) rejectUpdate(size uint64) bool {
-	now := mclock.Now()
-	if p.updateCounter == 0 {
-		p.updateTime = now
-	} else {
-		dt := now - p.updateTime
-		r := uint64(dt / mclock.AbsTime(allowedUpdateRate))
-		if p.updateCounter > r {
-			p.updateCounter -= r
-			p.updateTime += mclock.AbsTime(allowedUpdateRate * time.Duration(r))
-		} else {
-			p.updateCounter = 0
-			p.updateTime = now
-		}
-	}
-	p.updateCounter += size
-	return p.updateCounter > allowedUpdateBytes
 }
 
 func (p *peer) canQueue() bool {
@@ -183,20 +148,6 @@ func (p *peer) waitBefore(maxCost uint64) (time.Duration, float64) {
 	return p.fcServer.CanSend(maxCost)
 }
 
-// updateCapacity updates the request serving capacity assigned to a given client
-// and also sends an announcement about the updated flow control parameters
-func (p *peer) updateCapacity(cap uint64) {
-	p.responseLock.Lock()
-	defer p.responseLock.Unlock()
-
-	p.fcParams = flowcontrol.ServerParams{MinRecharge: cap, BufLimit: cap * bufLimitRatio}
-	p.fcClient.UpdateParams(p.fcParams)
-	var kvList keyValueList
-	kvList = kvList.add("flowControl/MRR", cap)
-	kvList = kvList.add("flowControl/BL", cap*bufLimitRatio)
-	p.queueSend(func() { p.SendAnnounce(announceData{Update: kvList}) })
-}
-
 func sendRequest(w p2p.MsgWriter, msgcode, reqID, cost uint64, data interface{}) error {
 	type req struct {
 		ReqID uint64
@@ -205,27 +156,12 @@ func sendRequest(w p2p.MsgWriter, msgcode, reqID, cost uint64, data interface{})
 	return p2p.Send(w, msgcode, req{reqID, data})
 }
 
-// reply struct represents a reply with the actual data already RLP encoded and
-// only the bv (buffer value) missing. This allows the serving mechanism to
-// calculate the bv value which depends on the data size before sending the reply.
-type reply struct {
-	w              p2p.MsgWriter
-	msgcode, reqID uint64
-	data           rlp.RawValue
-}
-
-// send sends the reply with the calculated buffer value
-func (r *reply) send(bv uint64) error {
+func sendResponse(w p2p.MsgWriter, msgcode, reqID, bv uint64, data interface{}) error {
 	type resp struct {
 		ReqID, BV uint64
-		Data      rlp.RawValue
+		Data      interface{}
 	}
-	return p2p.Send(r.w, r.msgcode, resp{r.reqID, bv, r.data})
-}
-
-// size returns the RLP encoded size of the message data
-func (r *reply) size() uint32 {
-	return uint32(len(r.data))
+	return p2p.Send(w, msgcode, resp{reqID, bv, data})
 }
 
 func (p *peer) GetRequestCost(msgcode uint64, amount int) uint64 {
@@ -237,8 +173,8 @@ func (p *peer) GetRequestCost(msgcode uint64, amount int) uint64 {
 		return 0
 	}
 	cost := costs.baseCost + costs.reqCost*uint64(amount)
-	if cost > p.fcParams.BufLimit {
-		cost = p.fcParams.BufLimit
+	if cost > p.fcServerParams.BufLimit {
+		cost = p.fcServerParams.BufLimit
 	}
 	return cost
 }
@@ -247,7 +183,17 @@ func (p *peer) GetTxRelayCost(amount, size int) uint64 {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
-	costs := p.fcCosts[SendTxV2Msg]
+	var msgcode uint64
+	switch p.version {
+	case lpv1:
+		msgcode = SendTxMsg
+	case lpv2:
+		msgcode = SendTxV2Msg
+	default:
+		panic(nil)
+	}
+
+	costs := p.fcCosts[msgcode]
 	if costs == nil {
 		return 0
 	}
@@ -257,8 +203,8 @@ func (p *peer) GetTxRelayCost(amount, size int) uint64 {
 		cost = sizeCost
 	}
 
-	if cost > p.fcParams.BufLimit {
-		cost = p.fcParams.BufLimit
+	if cost > p.fcServerParams.BufLimit {
+		cost = p.fcServerParams.BufLimit
 	}
 	return cost
 }
@@ -277,49 +223,52 @@ func (p *peer) SendAnnounce(request announceData) error {
 	return p2p.Send(p.rw, AnnounceMsg, request)
 }
 
-// ReplyBlockHeaders creates a reply with a batch of block headers
-func (p *peer) ReplyBlockHeaders(reqID uint64, headers []*types.Header) *reply {
-	data, _ := rlp.EncodeToBytes(headers)
-	return &reply{p.rw, BlockHeadersMsg, reqID, data}
+// SendBlockHeaders sends a batch of block headers to the remote peer.
+func (p *peer) SendBlockHeaders(reqID, bv uint64, headers []*types.Header) error {
+	return sendResponse(p.rw, BlockHeadersMsg, reqID, bv, headers)
 }
 
-// ReplyBlockBodiesRLP creates a reply with a batch of block contents from
+// SendBlockBodiesRLP sends a batch of block contents to the remote peer from
 // an already RLP encoded format.
-func (p *peer) ReplyBlockBodiesRLP(reqID uint64, bodies []rlp.RawValue) *reply {
-	data, _ := rlp.EncodeToBytes(bodies)
-	return &reply{p.rw, BlockBodiesMsg, reqID, data}
+func (p *peer) SendBlockBodiesRLP(reqID, bv uint64, bodies []rlp.RawValue) error {
+	return sendResponse(p.rw, BlockBodiesMsg, reqID, bv, bodies)
 }
 
-// ReplyCode creates a reply with a batch of arbitrary internal data, corresponding to the
+// SendCodeRLP sends a batch of arbitrary internal data, corresponding to the
 // hashes requested.
-func (p *peer) ReplyCode(reqID uint64, codes [][]byte) *reply {
-	data, _ := rlp.EncodeToBytes(codes)
-	return &reply{p.rw, CodeMsg, reqID, data}
+func (p *peer) SendCode(reqID, bv uint64, data [][]byte) error {
+	return sendResponse(p.rw, CodeMsg, reqID, bv, data)
 }
 
-// ReplyReceiptsRLP creates a reply with a batch of transaction receipts, corresponding to the
+// SendReceiptsRLP sends a batch of transaction receipts, corresponding to the
 // ones requested from an already RLP encoded format.
-func (p *peer) ReplyReceiptsRLP(reqID uint64, receipts []rlp.RawValue) *reply {
-	data, _ := rlp.EncodeToBytes(receipts)
-	return &reply{p.rw, ReceiptsMsg, reqID, data}
+func (p *peer) SendReceiptsRLP(reqID, bv uint64, receipts []rlp.RawValue) error {
+	return sendResponse(p.rw, ReceiptsMsg, reqID, bv, receipts)
 }
 
-// ReplyProofsV2 creates a reply with a batch of merkle proofs, corresponding to the ones requested.
-func (p *peer) ReplyProofsV2(reqID uint64, proofs light.NodeList) *reply {
-	data, _ := rlp.EncodeToBytes(proofs)
-	return &reply{p.rw, ProofsV2Msg, reqID, data}
+// SendProofs sends a batch of legacy LES/1 merkle proofs, corresponding to the ones requested.
+func (p *peer) SendProofs(reqID, bv uint64, proofs proofsData) error {
+	return sendResponse(p.rw, ProofsV1Msg, reqID, bv, proofs)
 }
 
-// ReplyHelperTrieProofs creates a reply with a batch of HelperTrie proofs, corresponding to the ones requested.
-func (p *peer) ReplyHelperTrieProofs(reqID uint64, resp HelperTrieResps) *reply {
-	data, _ := rlp.EncodeToBytes(resp)
-	return &reply{p.rw, HelperTrieProofsMsg, reqID, data}
+// SendProofsV2 sends a batch of merkle proofs, corresponding to the ones requested.
+func (p *peer) SendProofsV2(reqID, bv uint64, proofs light.NodeList) error {
+	return sendResponse(p.rw, ProofsV2Msg, reqID, bv, proofs)
 }
 
-// ReplyTxStatus creates a reply with a batch of transaction status records, corresponding to the ones requested.
-func (p *peer) ReplyTxStatus(reqID uint64, stats []txStatus) *reply {
-	data, _ := rlp.EncodeToBytes(stats)
-	return &reply{p.rw, TxStatusMsg, reqID, data}
+// SendHeaderProofs sends a batch of legacy LES/1 header proofs, corresponding to the ones requested.
+func (p *peer) SendHeaderProofs(reqID, bv uint64, proofs []ChtResp) error {
+	return sendResponse(p.rw, HeaderProofsMsg, reqID, bv, proofs)
+}
+
+// SendHelperTrieProofs sends a batch of HelperTrie proofs, corresponding to the ones requested.
+func (p *peer) SendHelperTrieProofs(reqID, bv uint64, resp HelperTrieResps) error {
+	return sendResponse(p.rw, HelperTrieProofsMsg, reqID, bv, resp)
+}
+
+// SendTxStatus sends a batch of transaction status records, corresponding to the ones requested.
+func (p *peer) SendTxStatus(reqID, bv uint64, stats []txStatus) error {
+	return sendResponse(p.rw, TxStatusMsg, reqID, bv, stats)
 }
 
 // RequestHeadersByHash fetches a batch of blocks' headers corresponding to the
@@ -359,13 +308,36 @@ func (p *peer) RequestReceipts(reqID, cost uint64, hashes []common.Hash) error {
 // RequestProofs fetches a batch of merkle proofs from a remote node.
 func (p *peer) RequestProofs(reqID, cost uint64, reqs []ProofReq) error {
 	p.Log().Debug("Fetching batch of proofs", "count", len(reqs))
-	return sendRequest(p.rw, GetProofsV2Msg, reqID, cost, reqs)
+	switch p.version {
+	case lpv1:
+		return sendRequest(p.rw, GetProofsV1Msg, reqID, cost, reqs)
+	case lpv2:
+		return sendRequest(p.rw, GetProofsV2Msg, reqID, cost, reqs)
+	default:
+		panic(nil)
+	}
 }
 
 // RequestHelperTrieProofs fetches a batch of HelperTrie merkle proofs from a remote node.
-func (p *peer) RequestHelperTrieProofs(reqID, cost uint64, reqs []HelperTrieReq) error {
-	p.Log().Debug("Fetching batch of HelperTrie proofs", "count", len(reqs))
-	return sendRequest(p.rw, GetHelperTrieProofsMsg, reqID, cost, reqs)
+func (p *peer) RequestHelperTrieProofs(reqID, cost uint64, data interface{}) error {
+	switch p.version {
+	case lpv1:
+		reqs, ok := data.([]ChtReq)
+		if !ok {
+			return errInvalidHelpTrieReq
+		}
+		p.Log().Debug("Fetching batch of header proofs", "count", len(reqs))
+		return sendRequest(p.rw, GetHeaderProofsMsg, reqID, cost, reqs)
+	case lpv2:
+		reqs, ok := data.([]HelperTrieReq)
+		if !ok {
+			return errInvalidHelpTrieReq
+		}
+		p.Log().Debug("Fetching batch of HelperTrie proofs", "count", len(reqs))
+		return sendRequest(p.rw, GetHelperTrieProofsMsg, reqID, cost, reqs)
+	default:
+		panic(nil)
+	}
 }
 
 // RequestTxStatus fetches a batch of transaction status records from a remote node.
@@ -374,10 +346,17 @@ func (p *peer) RequestTxStatus(reqID, cost uint64, txHashes []common.Hash) error
 	return sendRequest(p.rw, GetTxStatusMsg, reqID, cost, txHashes)
 }
 
-// SendTxStatus creates a reply with a batch of transactions to be added to the remote transaction pool.
+// SendTxs sends a batch of transactions to be added to the remote transaction pool.
 func (p *peer) SendTxs(reqID, cost uint64, txs rlp.RawValue) error {
-	p.Log().Debug("Sending batch of transactions", "size", len(txs))
-	return sendRequest(p.rw, SendTxV2Msg, reqID, cost, txs)
+	p.Log().Debug("Fetching batch of transactions", "size", len(txs))
+	switch p.version {
+	case lpv1:
+		return p2p.Send(p.rw, SendTxMsg, txs) // old message format does not include reqID
+	case lpv2:
+		return sendRequest(p.rw, SendTxV2Msg, reqID, cost, txs)
+	default:
+		panic(nil)
+	}
 }
 
 type keyValueEntry struct {
@@ -400,14 +379,12 @@ func (l keyValueList) add(key string, val interface{}) keyValueList {
 	return append(l, entry)
 }
 
-func (l keyValueList) decode() (keyValueMap, uint64) {
+func (l keyValueList) decode() keyValueMap {
 	m := make(keyValueMap)
-	var size uint64
 	for _, entry := range l {
 		m[entry.Key] = entry.Value
-		size += uint64(len(entry.Key)) + uint64(len(entry.Value)) + 8
 	}
-	return m, size
+	return m
 }
 
 func (m keyValueMap) get(key string, val interface{}) error {
@@ -463,41 +440,24 @@ func (p *peer) Handshake(td *big.Int, head common.Hash, headNum uint64, genesis 
 	send = send.add("headNum", headNum)
 	send = send.add("genesisHash", genesis)
 	if server != nil {
-		if !server.onlyAnnounce {
-			//only announce server. It sends only announse requests
-			send = send.add("serveHeaders", nil)
-			send = send.add("serveChainSince", uint64(0))
-			send = send.add("serveStateSince", uint64(0))
-			send = send.add("txRelay", nil)
-		}
+		send = send.add("serveHeaders", nil)
+		send = send.add("serveChainSince", uint64(0))
+		send = send.add("serveStateSince", uint64(0))
+		send = send.add("txRelay", nil)
 		send = send.add("flowControl/BL", server.defParams.BufLimit)
 		send = send.add("flowControl/MRR", server.defParams.MinRecharge)
-		var costList RequestCostList
-		if server.costTracker != nil {
-			costList = server.costTracker.makeCostList()
-		} else {
-			costList = testCostList()
-		}
-		send = send.add("flowControl/MRC", costList)
-		p.fcCosts = costList.decode()
-		p.fcParams = server.defParams
+		list := server.fcCostStats.getCurrentList()
+		send = send.add("flowControl/MRC", list)
+		p.fcCosts = list.decode()
 	} else {
-		//on client node
-		p.announceType = announceTypeSimple
-		if p.isTrusted {
-			p.announceType = announceTypeSigned
-		}
-		send = send.add("announceType", p.announceType)
+		p.requestAnnounceType = announceTypeSimple // set to default until "very light" client mode is implemented
+		send = send.add("announceType", p.requestAnnounceType)
 	}
-
 	recvList, err := p.sendReceiveHandshake(send)
 	if err != nil {
 		return err
 	}
-	recv, size := recvList.decode()
-	if p.rejectUpdate(size) {
-		return errResp(ErrRequestRejected, "")
-	}
+	recv := recvList.decode()
 
 	var rGenesis, rHash common.Hash
 	var rVersion, rNetwork, rNum uint64
@@ -531,34 +491,26 @@ func (p *peer) Handshake(td *big.Int, head common.Hash, headNum uint64, genesis 
 	if int(rVersion) != p.version {
 		return errResp(ErrProtocolVersionMismatch, "%d (!= %d)", rVersion, p.version)
 	}
-
 	if server != nil {
 		// until we have a proper peer connectivity API, allow LES connection to other servers
 		/*if recv.get("serveStateSince", nil) == nil {
 			return errResp(ErrUselessPeer, "wanted client, got server")
 		}*/
 		if recv.get("announceType", &p.announceType) != nil {
-			//set default announceType on server side
 			p.announceType = announceTypeSimple
 		}
 		p.fcClient = flowcontrol.NewClientNode(server.fcManager, server.defParams)
 	} else {
-		//mark OnlyAnnounce server if "serveHeaders", "serveChainSince", "serveStateSince" or "txRelay" fields don't exist
 		if recv.get("serveChainSince", nil) != nil {
-			p.isOnlyAnnounce = true
+			return errResp(ErrUselessPeer, "peer cannot serve chain")
 		}
 		if recv.get("serveStateSince", nil) != nil {
-			p.isOnlyAnnounce = true
+			return errResp(ErrUselessPeer, "peer cannot serve state")
 		}
 		if recv.get("txRelay", nil) != nil {
-			p.isOnlyAnnounce = true
+			return errResp(ErrUselessPeer, "peer cannot relay transactions")
 		}
-
-		if p.isOnlyAnnounce && !p.isTrusted {
-			return errResp(ErrUselessPeer, "peer cannot serve requests")
-		}
-
-		var params flowcontrol.ServerParams
+		params := &flowcontrol.ServerParams{}
 		if err := recv.get("flowControl/BL", &params.BufLimit); err != nil {
 			return err
 		}
@@ -569,43 +521,27 @@ func (p *peer) Handshake(td *big.Int, head common.Hash, headNum uint64, genesis 
 		if err := recv.get("flowControl/MRC", &MRC); err != nil {
 			return err
 		}
-		p.fcParams = params
-		p.fcServer = flowcontrol.NewServerNode(params, &mclock.System{})
+		p.fcServerParams = params
+		p.fcServer = flowcontrol.NewServerNode(params)
 		p.fcCosts = MRC.decode()
-		if !p.isOnlyAnnounce {
-			for msgCode := range reqAvgTimeCost {
-				if p.fcCosts[msgCode] == nil {
-					return errResp(ErrUselessPeer, "peer does not support message %d", msgCode)
-				}
+		var checkList []uint64
+		switch p.version {
+		case lpv1:
+			checkList = reqListV1
+		case lpv2:
+			checkList = reqListV2
+		default:
+			panic(nil)
+		}
+		for _, msgCode := range checkList {
+			if p.fcCosts[msgCode] == nil {
+				return errResp(ErrUselessPeer, "peer does not support message %d", msgCode)
 			}
 		}
 	}
+
 	p.headInfo = &announceData{Td: rTd, Hash: rHash, Number: rNum}
 	return nil
-}
-
-// updateFlowControl updates the flow control parameters belonging to the server
-// node if the announced key/value set contains relevant fields
-func (p *peer) updateFlowControl(update keyValueMap) {
-	if p.fcServer == nil {
-		return
-	}
-	params := p.fcParams
-	updateParams := false
-	if update.get("flowControl/BL", &params.BufLimit) == nil {
-		updateParams = true
-	}
-	if update.get("flowControl/MRR", &params.MinRecharge) == nil {
-		updateParams = true
-	}
-	if updateParams {
-		p.fcParams = params
-		p.fcServer.UpdateParams(params)
-	}
-	var MRC RequestCostList
-	if update.get("flowControl/MRC", &MRC) == nil {
-		p.fcCosts = MRC.decode()
-	}
 }
 
 // String implements fmt.Stringer.
@@ -693,10 +629,8 @@ func (ps *peerSet) Unregister(id string) error {
 		for _, n := range peers {
 			n.unregisterPeer(p)
 		}
-
 		p.sendQueue.quit()
 		p.Peer.Disconnect(p2p.DiscUselessPeer)
-
 		return nil
 	}
 }

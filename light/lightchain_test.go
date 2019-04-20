@@ -52,7 +52,7 @@ func makeHeaderChain(parent *types.Header, n int, db ethdb.Database, seed int) [
 // chain. Depending on the full flag, if creates either a full block chain or a
 // header only chain.
 func newCanonical(n int) (ethdb.Database, *LightChain, error) {
-	db := rawdb.NewMemoryDatabase()
+	db := ethdb.NewMemDatabase()
 	gspec := core.Genesis{Config: params.TestChainConfig}
 	genesis := gspec.MustCommit(db)
 	blockchain, _ := NewLightChain(&dummyOdr{db: db, indexerConfig: TestClientIndexerConfig}, gspec.Config, ethash.NewFaker())
@@ -69,7 +69,7 @@ func newCanonical(n int) (ethdb.Database, *LightChain, error) {
 
 // newTestLightChain creates a LightChain that doesn't validate anything.
 func newTestLightChain() *LightChain {
-	db := rawdb.NewMemoryDatabase()
+	db := ethdb.NewMemDatabase()
 	gspec := &core.Genesis{
 		Difficulty: big.NewInt(1),
 		Config:     params.TestChainConfig,
@@ -122,10 +122,10 @@ func testHeaderChainImport(chain []*types.Header, lightchain *LightChain) error 
 			return err
 		}
 		// Manually insert the header into the database, but don't reorganize (allows subsequent testing)
-		lightchain.chainmu.Lock()
+		lightchain.mu.Lock()
 		rawdb.WriteTd(lightchain.chainDb, header.Hash(), header.Number.Uint64(), new(big.Int).Add(header.Difficulty, lightchain.GetTdByHash(header.ParentHash)))
 		rawdb.WriteHeader(lightchain.chainDb, header)
-		lightchain.chainmu.Unlock()
+		lightchain.mu.Unlock()
 	}
 	return nil
 }

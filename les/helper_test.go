@@ -27,10 +27,8 @@ import (
 	"time"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/mclock"
 	"git.pirl.io/community/pirl/consensus/ethash"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/core/vm"
 	"git.pirl.io/community/pirl/crypto"
@@ -135,10 +133,20 @@ func testIndexers(db ethdb.Database, odr light.OdrBackend, iConfig *light.Indexe
 	return chtIndexer, bloomIndexer, bloomTrieIndexer
 }
 
+func testRCL() RequestCostList {
+	cl := make(RequestCostList, len(reqList))
+	for i, code := range reqList {
+		cl[i].MsgCode = code
+		cl[i].BaseCost = 0
+		cl[i].ReqCost = 0
+	}
+	return cl
+}
+
 // newTestProtocolManager creates a new protocol manager for testing purposes,
 // with the given number of blocks already known, potential notification
 // channels for different events and relative chain indexers array.
-func newTestProtocolManager(lightSync bool, blocks int, generator func(int, *core.BlockGen), odr *LesOdr, peers *peerSet, db ethdb.Database, ulcConfig *eth.ULCConfig) (*ProtocolManager, error) {
+func newTestProtocolManager(lightSync bool, blocks int, generator func(int, *core.BlockGen), odr *LesOdr, peers *peerSet, db ethdb.Database) (*ProtocolManager, error) {
 	var (
 		evmux  = new(event.TypeMux)
 		engine = ethash.NewFaker()
@@ -168,21 +176,21 @@ func newTestProtocolManager(lightSync bool, blocks int, generator func(int, *cor
 	if lightSync {
 		indexConfig = light.TestClientIndexerConfig
 	}
-	pm, err := NewProtocolManager(gspec.Config, indexConfig, lightSync, NetworkId, evmux, engine, peers, chain, nil, db, odr, nil, nil, make(chan struct{}), new(sync.WaitGroup), ulcConfig)
+	pm, err := NewProtocolManager(gspec.Config, indexConfig, lightSync, NetworkId, evmux, engine, peers, chain, nil, db, odr, nil, nil, make(chan struct{}), new(sync.WaitGroup))
 	if err != nil {
 		return nil, err
 	}
 	if !lightSync {
 		srv := &LesServer{lesCommons: lesCommons{protocolManager: pm}}
 		pm.server = srv
-		pm.servingQueue.setThreads(4)
 
-		srv.defParams = flowcontrol.ServerParams{
+		srv.defParams = &flowcontrol.ServerParams{
 			BufLimit:    testBufLimit,
 			MinRecharge: 1,
 		}
 
-		srv.fcManager = flowcontrol.NewClientManager(nil, &mclock.System{})
+		srv.fcManager = flowcontrol.NewClientManager(50, 10, 1000000000)
+		srv.fcCostStats = newCostStats(nil)
 	}
 	pm.Start(1000)
 	return pm, nil
@@ -192,8 +200,8 @@ func newTestProtocolManager(lightSync bool, blocks int, generator func(int, *cor
 // with the given number of blocks already known, potential notification
 // channels for different events and relative chain indexers array. In case of an error, the constructor force-
 // fails the test.
-func newTestProtocolManagerMust(t *testing.T, lightSync bool, blocks int, generator func(int, *core.BlockGen), odr *LesOdr, peers *peerSet, db ethdb.Database, ulcConfig *eth.ULCConfig) *ProtocolManager {
-	pm, err := newTestProtocolManager(lightSync, blocks, generator, odr, peers, db, ulcConfig)
+func newTestProtocolManagerMust(t *testing.T, lightSync bool, blocks int, generator func(int, *core.BlockGen), odr *LesOdr, peers *peerSet, db ethdb.Database) *ProtocolManager {
+	pm, err := newTestProtocolManager(lightSync, blocks, generator, odr, peers, db)
 	if err != nil {
 		t.Fatalf("Failed to create protocol manager: %v", err)
 	}
@@ -296,7 +304,7 @@ func (p *testPeer) handshake(t *testing.T, td *big.Int, head common.Hash, headNu
 	expList = expList.add("txRelay", nil)
 	expList = expList.add("flowControl/BL", testBufLimit)
 	expList = expList.add("flowControl/MRR", uint64(1))
-	expList = expList.add("flowControl/MRC", testCostList())
+	expList = expList.add("flowControl/MRC", testRCL())
 
 	if err := p2p.ExpectMsg(p.app, StatusMsg, expList); err != nil {
 		t.Fatalf("status recv: %v", err)
@@ -305,7 +313,7 @@ func (p *testPeer) handshake(t *testing.T, td *big.Int, head common.Hash, headNu
 		t.Fatalf("status send: %v", err)
 	}
 
-	p.fcParams = flowcontrol.ServerParams{
+	p.fcServerParams = &flowcontrol.ServerParams{
 		BufLimit:    testBufLimit,
 		MinRecharge: 1,
 	}
@@ -332,10 +340,10 @@ type TestEntity struct {
 
 // newServerEnv creates a server testing environment with a connected test peer for testing purpose.
 func newServerEnv(t *testing.T, blocks int, protocol int, waitIndexers func(*core.ChainIndexer, *core.ChainIndexer, *core.ChainIndexer)) (*TestEntity, func()) {
-	db := rawdb.NewMemoryDatabase()
+	db := ethdb.NewMemDatabase()
 	cIndexer, bIndexer, btIndexer := testIndexers(db, nil, light.TestServerIndexerConfig)
 
-	pm := newTestProtocolManagerMust(t, false, blocks, testChainGen, nil, nil, db, nil)
+	pm := newTestProtocolManagerMust(t, false, blocks, testChainGen, nil, nil, db)
 	peer, _ := newTestPeer(t, "peer", protocol, pm, true)
 
 	cIndexer.Start(pm.blockchain.(*core.BlockChain))
@@ -364,10 +372,10 @@ func newServerEnv(t *testing.T, blocks int, protocol int, waitIndexers func(*cor
 // newClientServerEnv creates a client/server arch environment with a connected les server and light client pair
 // for testing purpose.
 func newClientServerEnv(t *testing.T, blocks int, protocol int, waitIndexers func(*core.ChainIndexer, *core.ChainIndexer, *core.ChainIndexer), newPeer bool) (*TestEntity, *TestEntity, func()) {
-	db, ldb := rawdb.NewMemoryDatabase(), rawdb.NewMemoryDatabase()
+	db, ldb := ethdb.NewMemDatabase(), ethdb.NewMemDatabase()
 	peers, lPeers := newPeerSet(), newPeerSet()
 
-	dist := newRequestDistributor(lPeers, make(chan struct{}), &mclock.System{})
+	dist := newRequestDistributor(lPeers, make(chan struct{}))
 	rm := newRetrieveManager(lPeers, dist, nil)
 	odr := NewLesOdr(ldb, light.TestClientIndexerConfig, rm)
 
@@ -375,8 +383,8 @@ func newClientServerEnv(t *testing.T, blocks int, protocol int, waitIndexers fun
 	lcIndexer, lbIndexer, lbtIndexer := testIndexers(ldb, odr, light.TestClientIndexerConfig)
 	odr.SetIndexers(lcIndexer, lbtIndexer, lbIndexer)
 
-	pm := newTestProtocolManagerMust(t, false, blocks, testChainGen, nil, peers, db, nil)
-	lpm := newTestProtocolManagerMust(t, true, 0, nil, odr, lPeers, ldb, nil)
+	pm := newTestProtocolManagerMust(t, false, blocks, testChainGen, nil, peers, db)
+	lpm := newTestProtocolManagerMust(t, true, 0, nil, odr, lPeers, ldb)
 
 	startIndexers := func(clientMode bool, pm *ProtocolManager) {
 		if clientMode {

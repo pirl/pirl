@@ -17,6 +17,10 @@
 
 package storage
 
+import (
+	"fmt"
+)
+
 type Storage interface {
 	// Put stores a value by key. 0-length keys results in no-op
 	Put(key, value string)
@@ -35,7 +39,7 @@ func (s *EphemeralStorage) Put(key, value string) {
 	if len(key) == 0 {
 		return
 	}
-	//fmt.Printf("storage: put %v -> %v\n", key, value)
+	fmt.Printf("storage: put %v -> %v\n", key, value)
 	s.data[key] = value
 }
 
@@ -43,7 +47,7 @@ func (s *EphemeralStorage) Get(key string) string {
 	if len(key) == 0 {
 		return ""
 	}
-	//fmt.Printf("storage: get %v\n", key)
+	fmt.Printf("storage: get %v\n", key)
 	if v, exist := s.data[key]; exist {
 		return v
 	}
@@ -55,12 +59,4 @@ func NewEphemeralStorage() Storage {
 		data: make(map[string]string),
 	}
 	return s
-}
-
-// NoStorage is a dummy construct which doesn't remember anything you tell it
-type NoStorage struct{}
-
-func (s *NoStorage) Put(key, value string) {}
-func (s *NoStorage) Get(key string) string {
-	return ""
 }

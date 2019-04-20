@@ -26,7 +26,6 @@ import (
 	"git.pirl.io/community/pirl/consensus/clique"
 	"git.pirl.io/community/pirl/consensus/ethash"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/core/vm"
 	"git.pirl.io/community/pirl/crypto"
@@ -80,7 +79,7 @@ type testWorkerBackend struct {
 
 func newTestWorkerBackend(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine, n int) *testWorkerBackend {
 	var (
-		db    = rawdb.NewMemoryDatabase()
+		db    = ethdb.NewMemDatabase()
 		gspec = core.Genesis{
 			Config: chainConfig,
 			Alloc:  core.GenesisAlloc{testBankAddress: {Balance: testBankFunds}},
@@ -143,7 +142,7 @@ func TestPendingStateAndBlockEthash(t *testing.T) {
 	testPendingStateAndBlock(t, ethashChainConfig, ethash.NewFaker())
 }
 func TestPendingStateAndBlockClique(t *testing.T) {
-	testPendingStateAndBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, rawdb.NewMemoryDatabase()))
+	testPendingStateAndBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
 }
 
 func testPendingStateAndBlock(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {
@@ -175,7 +174,7 @@ func TestEmptyWorkEthash(t *testing.T) {
 	testEmptyWork(t, ethashChainConfig, ethash.NewFaker())
 }
 func TestEmptyWorkClique(t *testing.T) {
-	testEmptyWork(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, rawdb.NewMemoryDatabase()))
+	testEmptyWork(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
 }
 
 func testEmptyWork(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {
@@ -225,7 +224,7 @@ func testEmptyWork(t *testing.T, chainConfig *params.ChainConfig, engine consens
 	for i := 0; i < 2; i += 1 {
 		select {
 		case <-taskCh:
-		case <-time.NewTimer(2 * time.Second).C:
+		case <-time.NewTimer(time.Second).C:
 			t.Error("new task timeout")
 		}
 	}
@@ -292,7 +291,7 @@ func TestRegenerateMiningBlockEthash(t *testing.T) {
 }
 
 func TestRegenerateMiningBlockClique(t *testing.T) {
-	testRegenerateMiningBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, rawdb.NewMemoryDatabase()))
+	testRegenerateMiningBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
 }
 
 func testRegenerateMiningBlock(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {
@@ -357,7 +356,7 @@ func TestAdjustIntervalEthash(t *testing.T) {
 }
 
 func TestAdjustIntervalClique(t *testing.T) {
-	testAdjustInterval(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, rawdb.NewMemoryDatabase()))
+	testAdjustInterval(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
 }
 
 func testAdjustInterval(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {

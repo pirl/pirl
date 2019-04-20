@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
 	"git.pirl.io/community/pirl/crypto"
 	"git.pirl.io/community/pirl/crypto/ecies"
 	"git.pirl.io/community/pirl/rlp"
@@ -81,7 +82,7 @@ func (e *Envelope) Seal(options *MessageParams) error {
 		return nil
 	}
 
-	var target, bestLeadingZeros int
+	var target, bestBit int
 	if options.PoW < 0 {
 		// target is not set - the function should run for a period
 		// of time specified in WorkTime param. Since we can predict
@@ -100,10 +101,10 @@ func (e *Envelope) Seal(options *MessageParams) error {
 		for i := 0; i < 1024; i++ {
 			binary.BigEndian.PutUint64(buf[56:], nonce)
 			d := new(big.Int).SetBytes(crypto.Keccak256(buf))
-			leadingZeros := 256 - d.BitLen()
-			if leadingZeros > bestLeadingZeros {
-				e.Nonce, bestLeadingZeros = nonce, leadingZeros
-				if target > 0 && bestLeadingZeros >= target {
+			firstBit := math.FirstBitSet(d)
+			if firstBit > bestBit {
+				e.Nonce, bestBit = nonce, firstBit
+				if target > 0 && bestBit >= target {
 					return nil
 				}
 			}
@@ -111,7 +112,7 @@ func (e *Envelope) Seal(options *MessageParams) error {
 		}
 	}
 
-	if target > 0 && bestLeadingZeros < target {
+	if target > 0 && bestBit < target {
 		return fmt.Errorf("failed to reach the PoW target, specified pow time (%d seconds) was insufficient", options.WorkTime)
 	}
 
@@ -129,14 +130,13 @@ func (e *Envelope) PoW() float64 {
 
 func (e *Envelope) calculatePoW(diff uint32) {
 	buf := make([]byte, 64)
-	rlp := e.rlpWithoutNonce()
-	h := crypto.Keccak256(rlp)
+	h := crypto.Keccak256(e.rlpWithoutNonce())
 	copy(buf[:32], h)
 	binary.BigEndian.PutUint64(buf[56:], e.Nonce)
-	powHash := new(big.Int).SetBytes(crypto.Keccak256(buf))
-	leadingZeroes := 256 - powHash.BitLen()
-	x := gmath.Pow(2, float64(leadingZeroes))
-	x /= float64(len(rlp))
+	d := new(big.Int).SetBytes(crypto.Keccak256(buf))
+	firstBit := math.FirstBitSet(d)
+	x := gmath.Pow(2, float64(firstBit))
+	x /= float64(e.size())
 	x /= float64(e.TTL + diff)
 	e.pow = x
 }

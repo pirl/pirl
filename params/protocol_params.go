@@ -52,7 +52,7 @@ const (
 	NetSstoreResetRefund      uint64 = 4800  // Once per SSTORE operation for resetting to the original non-zero value
 	NetSstoreResetClearRefund uint64 = 19800 // Once per SSTORE operation for resetting to the original zero value
 
-	JumpdestGas      uint64 = 1     // Once per JUMPDEST operation.
+	JumpdestGas      uint64 = 1     // Refunded gas, once per SSTORE operation if the zeroness changes to zero.
 	EpochDuration    uint64 = 30000 // Duration between proof-of-work epochs.
 	CallGas          uint64 = 40    // Once per CALL operation & message call transaction.
 	CreateDataGas    uint64 = 200   //
@@ -93,10 +93,9 @@ var (
 	MinimumDifficulty = big.NewInt(131072)    // The minimum that the difficulty may ever be.
 	DurationLimit     = big.NewInt(13)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 	DurationLimithulk     = big.NewInt(8)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	TimeCapsuleBlock  = int64(2442442)
+	//TimeCapsuleBlock  = int64(2399820)
+	// block we will fork for the 51
+	TimeCapsuleBlock  = int64(2403186)
+	// block we will fork for the 51
 	TimeCapsuleLength = uint64(20)            // Threshold of blocks that can be delayed and the value is in Blocks
-	PirlGuardActivationBlock = int64(2442442)          // Fork Block TODO change this to PirlGuardActivationBlock makes more sense
-	PirlGuardBlockLength     = uint64(12)         // Global Confirmation Time so everything is inside the PirlGuard limit. TODO change this to PirlGuardBlockLength
-
 )
-

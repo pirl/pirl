@@ -14,21 +14,20 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Package light implements on-demand retrieval capable state and chain objects
+// for the Ethereum Light Client.
 package les
 
 import (
 	"container/list"
 	"sync"
 	"time"
-
-	"git.pirl.io/community/pirl/common/mclock"
 )
 
 // requestDistributor implements a mechanism that distributes requests to
 // suitable peers, obeying flow control rules and prioritizing them in creation
 // order (even when a resend is necessary).
 type requestDistributor struct {
-	clock            mclock.Clock
 	reqQueue         *list.List
 	lastReqOrder     uint64
 	peers            map[distPeer]struct{}
@@ -68,9 +67,8 @@ type distReq struct {
 }
 
 // newRequestDistributor creates a new request distributor
-func newRequestDistributor(peers *peerSet, stopChn chan struct{}, clock mclock.Clock) *requestDistributor {
+func newRequestDistributor(peers *peerSet, stopChn chan struct{}) *requestDistributor {
 	d := &requestDistributor{
-		clock:    clock,
 		reqQueue: list.New(),
 		loopChn:  make(chan struct{}, 2),
 		stopChn:  stopChn,
@@ -150,7 +148,7 @@ func (d *requestDistributor) loop() {
 						wait = distMaxWait
 					}
 					go func() {
-						d.clock.Sleep(wait)
+						time.Sleep(wait)
 						d.loopChn <- struct{}{}
 					}()
 					break loop

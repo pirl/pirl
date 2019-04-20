@@ -170,12 +170,8 @@ func TestNewSwarm(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			nodekey, err := crypto.GenerateKey()
-			if err != nil {
-				t.Fatal(err)
-			}
 
-			config.Init(privkey, nodekey)
+			config.Init(privkey)
 
 			if tc.configure != nil {
 				tc.configure(config)
@@ -311,12 +307,8 @@ func TestLocalStoreAndRetrieve(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	nodekey, err := crypto.GenerateKey()
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	config.Init(privkey, nodekey)
+	config.Init(privkey)
 
 	swarm, err := NewSwarm(config, nil)
 	if err != nil {

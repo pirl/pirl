@@ -59,6 +59,15 @@ func init() {
 
 const clusterSize = 3
 
+var clusteronce sync.Once
+var cluster *testCluster
+
+func initCluster(t *testing.T) {
+	clusteronce.Do(func() {
+		cluster = newTestCluster(t, clusterSize)
+	})
+}
+
 func serverFunc(api *api.API) swarmhttp.TestServer {
 	return swarmhttp.NewServer(api, "")
 }
@@ -72,18 +81,6 @@ func TestMain(m *testing.M) {
 
 func runSwarm(t *testing.T, args ...string) *cmdtest.TestCmd {
 	tt := cmdtest.NewTestCmd(t, nil)
-
-	found := false
-	for _, v := range args {
-		if v == "--bootnodes" {
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		args = append([]string{"--bootnodes", ""}, args...)
-	}
 
 	// Boot "swarm". This actually runs the test binary but the TestMain
 	// function will prevent any tests from running.
@@ -156,8 +153,10 @@ outer:
 }
 
 func (c *testCluster) Shutdown() {
-	c.Stop()
-	c.Cleanup()
+	for _, node := range c.Nodes {
+		node.Shutdown()
+	}
+	os.RemoveAll(c.TmpDir)
 }
 
 func (c *testCluster) Stop() {
@@ -168,35 +167,16 @@ func (c *testCluster) Stop() {
 
 func (c *testCluster) StartNewNodes(t *testing.T, size int) {
 	c.Nodes = make([]*testNode, 0, size)
-
-	errors := make(chan error, size)
-	nodes := make(chan *testNode, size)
 	for i := 0; i < size; i++ {
-		go func(nodeIndex int) {
-			dir := filepath.Join(c.TmpDir, fmt.Sprintf("swarm%02d", nodeIndex))
-			if err := os.Mkdir(dir, 0700); err != nil {
-				errors <- err
-				return
-			}
-
-			node := newTestNode(t, dir)
-			node.Name = fmt.Sprintf("swarm%02d", nodeIndex)
-			nodes <- node
-		}(i)
-	}
-
-	for i := 0; i < size; i++ {
-		select {
-		case node := <-nodes:
-			c.Nodes = append(c.Nodes, node)
-		case err := <-errors:
-			t.Error(err)
+		dir := filepath.Join(c.TmpDir, fmt.Sprintf("swarm%02d", i))
+		if err := os.Mkdir(dir, 0700); err != nil {
+			t.Fatal(err)
 		}
-	}
 
-	if t.Failed() {
-		c.Shutdown()
-		t.FailNow()
+		node := newTestNode(t, dir)
+		node.Name = fmt.Sprintf("swarm%02d", i)
+
+		c.Nodes = append(c.Nodes, node)
 	}
 }
 
@@ -272,7 +252,6 @@ func existingTestNode(t *testing.T, dir string, bzzaccount string) *testNode {
 
 	// start the node
 	node.Cmd = runSwarm(t,
-		"--bootnodes", "",
 		"--port", p2pPort,
 		"--nat", "extip:127.0.0.1",
 		"--datadir", dir,
@@ -348,7 +327,6 @@ func newTestNode(t *testing.T, dir string) *testNode {
 
 	// start the node
 	node.Cmd = runSwarm(t,
-		"--bootnodes", "",
 		"--port", p2pPort,
 		"--nat", "extip:127.0.0.1",
 		"--datadir", dir,

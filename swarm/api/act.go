@@ -33,7 +33,7 @@ var (
 	}
 )
 
-const EmptyCredentials = ""
+const EMPTY_CREDENTIALS = ""
 
 type AccessEntry struct {
 	Type      AccessType

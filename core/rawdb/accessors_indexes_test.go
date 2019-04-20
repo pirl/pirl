@@ -22,12 +22,12 @@ import (
 
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/core/types"
-	"git.pirl.io/community/pirl/rlp"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 // Tests that positional lookup metadata can be stored and retrieved.
 func TestLookupStorage(t *testing.T) {
-	db := NewMemoryDatabase()
+	db := ethdb.NewMemDatabase()
 
 	tx1 := types.NewTransaction(1, common.BytesToAddress([]byte{0x11}), big.NewInt(111), 1111, big.NewInt(11111), []byte{0x11, 0x11, 0x11})
 	tx2 := types.NewTransaction(2, common.BytesToAddress([]byte{0x22}), big.NewInt(222), 2222, big.NewInt(22222), []byte{0x22, 0x22, 0x22})
@@ -63,28 +63,6 @@ func TestLookupStorage(t *testing.T) {
 		DeleteTxLookupEntry(db, tx.Hash())
 		if txn, _, _, _ := ReadTransaction(db, tx.Hash()); txn != nil {
 			t.Fatalf("tx #%d [%x]: deleted transaction returned: %v", i, tx.Hash(), txn)
-		}
-	}
-	// Insert legacy txlookup and verify the data retrieval
-	for index, tx := range block.Transactions() {
-		entry := LegacyTxLookupEntry{
-			BlockHash:  block.Hash(),
-			BlockIndex: block.NumberU64(),
-			Index:      uint64(index),
-		}
-		data, _ := rlp.EncodeToBytes(entry)
-		db.Put(txLookupKey(tx.Hash()), data)
-	}
-	for i, tx := range txs {
-		if txn, hash, number, index := ReadTransaction(db, tx.Hash()); txn == nil {
-			t.Fatalf("tx #%d [%x]: transaction not found", i, tx.Hash())
-		} else {
-			if hash != block.Hash() || number != block.NumberU64() || index != uint64(i) {
-				t.Fatalf("tx #%d [%x]: positional metadata mismatch: have %x/%d/%d, want %x/%v/%v", i, tx.Hash(), hash, number, index, block.Hash(), block.NumberU64(), i)
-			}
-			if tx.Hash() != txn.Hash() {
-				t.Fatalf("tx #%d [%x]: transaction mismatch: have %v, want %v", i, tx.Hash(), txn, tx)
-			}
 		}
 	}
 }

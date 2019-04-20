@@ -27,14 +27,14 @@ import (
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/consensus/ethash"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/params"
 )
 
 var (
-	testdb       = rawdb.NewMemoryDatabase()
+	testdb       = ethdb.NewMemDatabase()
 	testKey, _   = crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")
 	testAddress  = crypto.PubkeyToAddress(testKey.PublicKey)
 	genesis      = core.GenesisBlockForTesting(testdb, testAddress, big.NewInt(1000000000))
@@ -244,7 +244,7 @@ func verifyImportEvent(t *testing.T, imported chan *types.Block, arrive bool) {
 		select {
 		case <-imported:
 			t.Fatalf("import invoked")
-		case <-time.After(20 * time.Millisecond):
+		case <-time.After(10 * time.Millisecond):
 		}
 	}
 }

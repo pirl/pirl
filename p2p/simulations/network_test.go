@@ -193,7 +193,7 @@ OUTER:
 
 	connEventCount = nodeCount
 
-OuterTwo:
+OUTER_TWO:
 	for {
 		select {
 		case <-ctx.Done():
@@ -211,7 +211,7 @@ OuterTwo:
 				connEventCount--
 				log.Debug("ev", "count", connEventCount)
 				if connEventCount == 0 {
-					break OuterTwo
+					break OUTER_TWO
 				}
 			}
 		}

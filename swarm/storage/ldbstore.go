@@ -312,7 +312,7 @@ func decodeIndex(data []byte, index *dpaDBIndex) error {
 	return dec.Decode(index)
 }
 
-func decodeData(addr Address, data []byte) (Chunk, error) {
+func decodeData(addr Address, data []byte) (*chunk, error) {
 	return NewChunk(addr, data[32:]), nil
 }
 
@@ -502,7 +502,7 @@ func (s *LDBStore) Import(in io.Reader) (int64, error) {
 }
 
 // Cleanup iterates over the database and deletes chunks if they pass the `f` condition
-func (s *LDBStore) Cleanup(f func(Chunk) bool) {
+func (s *LDBStore) Cleanup(f func(*chunk) bool) {
 	var errorsFound, removed, total int
 
 	it := s.db.NewIterator()
@@ -527,8 +527,8 @@ func (s *LDBStore) Cleanup(f func(Chunk) bool) {
 		if err != nil {
 			found := false
 
-			// The highest possible proximity is 255, so exit loop upon overflow.
-			for po = uint8(1); po != 0; po++ {
+			// highest possible proximity is 255
+			for po = 1; po <= 255; po++ {
 				datakey = getDataKey(index.Idx, po)
 				data, err = s.db.Get(datakey)
 				if err == nil {
@@ -551,14 +551,12 @@ func (s *LDBStore) Cleanup(f func(Chunk) bool) {
 			continue
 		}
 
-		sdata := c.Data()
-
-		cs := int64(binary.LittleEndian.Uint64(sdata[:8]))
-		log.Trace("chunk", "key", fmt.Sprintf("%x", key), "ck", fmt.Sprintf("%x", ck), "dkey", fmt.Sprintf("%x", datakey), "dataidx", index.Idx, "po", po, "len data", len(data), "len sdata", len(sdata), "size", cs)
+		cs := int64(binary.LittleEndian.Uint64(c.sdata[:8]))
+		log.Trace("chunk", "key", fmt.Sprintf("%x", key), "ck", fmt.Sprintf("%x", ck), "dkey", fmt.Sprintf("%x", datakey), "dataidx", index.Idx, "po", po, "len data", len(data), "len sdata", len(c.sdata), "size", cs)
 
 		// if chunk is to be removed
 		if f(c) {
-			log.Warn("chunk for cleanup", "key", fmt.Sprintf("%x", key), "ck", fmt.Sprintf("%x", ck), "dkey", fmt.Sprintf("%x", datakey), "dataidx", index.Idx, "po", po, "len data", len(data), "len sdata", len(sdata), "size", cs)
+			log.Warn("chunk for cleanup", "key", fmt.Sprintf("%x", key), "ck", fmt.Sprintf("%x", ck), "dkey", fmt.Sprintf("%x", datakey), "dataidx", index.Idx, "po", po, "len data", len(data), "len sdata", len(c.sdata), "size", cs)
 			s.deleteNow(&index, getIndexKey(key[1:]), po)
 			removed++
 			errorsFound++
@@ -982,7 +980,7 @@ func (s *LDBStore) Has(_ context.Context, addr Address) bool {
 }
 
 // TODO: To conform with other private methods of this object indices should not be updated
-func (s *LDBStore) get(addr Address) (chunk Chunk, err error) {
+func (s *LDBStore) get(addr Address) (chunk *chunk, err error) {
 	if s.closed {
 		return nil, ErrDBClosed
 	}
@@ -1005,10 +1003,7 @@ func (s *LDBStore) get(addr Address) (chunk Chunk, err error) {
 			if err != nil {
 				log.Trace("ldbstore.get chunk found but could not be accessed", "key", addr, "err", err)
 				s.deleteNow(index, getIndexKey(addr), s.po(addr))
-				if err == leveldb.ErrNotFound {
-					return nil, ErrChunkNotFound
-				}
-				return nil, err
+				return
 			}
 		}
 

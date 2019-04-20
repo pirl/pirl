@@ -33,45 +33,44 @@ type TestServer interface {
 }
 
 func NewTestSwarmServer(t *testing.T, serverFunc func(*api.API) TestServer, resolver api.Resolver) *TestSwarmServer {
-	swarmDir, err := ioutil.TempDir("", "swarm-storage-test")
+	dir, err := ioutil.TempDir("", "swarm-storage-test")
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	storeParams := storage.NewDefaultLocalStoreParams()
-	storeParams.DbCapacity = 5000000
-	storeParams.CacheCapacity = 5000
-	storeParams.Init(swarmDir)
-	localStore, err := storage.NewLocalStore(storeParams, nil)
+	storeparams := storage.NewDefaultLocalStoreParams()
+	storeparams.DbCapacity = 5000000
+	storeparams.CacheCapacity = 5000
+	storeparams.Init(dir)
+	localStore, err := storage.NewLocalStore(storeparams, nil)
 	if err != nil {
-		os.RemoveAll(swarmDir)
+		os.RemoveAll(dir)
 		t.Fatal(err)
 	}
 	fileStore := storage.NewFileStore(localStore, storage.NewFileStoreParams())
+
 	// Swarm feeds test setup
 	feedsDir, err := ioutil.TempDir("", "swarm-feeds-test")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	feeds, err := feed.NewTestHandler(feedsDir, &feed.HandlerParams{})
+	rhparams := &feed.HandlerParams{}
+	rh, err := feed.NewTestHandler(feedsDir, rhparams)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	swarmApi := api.NewAPI(fileStore, resolver, feeds.Handler, nil)
-	apiServer := httptest.NewServer(serverFunc(swarmApi))
-
+	a := api.NewAPI(fileStore, resolver, rh.Handler, nil)
+	srv := httptest.NewServer(serverFunc(a))
 	tss := &TestSwarmServer{
-		Server:    apiServer,
+		Server:    srv,
 		FileStore: fileStore,
-		dir:       swarmDir,
+		dir:       dir,
 		Hasher:    storage.MakeHashFunc(storage.DefaultHash)(),
 		cleanup: func() {
-			apiServer.Close()
-			fileStore.Close()
-			feeds.Close()
-			os.RemoveAll(swarmDir)
+			srv.Close()
+			rh.Close()
+			os.RemoveAll(dir)
 			os.RemoveAll(feedsDir)
 		},
 		CurrentTime: 42,

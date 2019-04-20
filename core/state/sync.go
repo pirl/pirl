@@ -20,13 +20,12 @@ import (
 	"bytes"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/rlp"
 	"git.pirl.io/community/pirl/trie"
 )
 
 // NewStateSync create a new state trie download scheduler.
-func NewStateSync(root common.Hash, database ethdb.Reader) *trie.Sync {
+func NewStateSync(root common.Hash, database trie.DatabaseReader) *trie.Sync {
 	var syncer *trie.Sync
 	callback := func(leaf []byte, parent common.Hash) error {
 		var obj Account

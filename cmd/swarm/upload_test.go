@@ -46,12 +46,11 @@ func TestSwarmUp(t *testing.T) {
 		t.Skip()
 	}
 
-	cluster := newTestCluster(t, clusterSize)
-	defer cluster.Shutdown()
+	initCluster(t)
 
 	cases := []struct {
 		name string
-		f    func(t *testing.T, cluster *testCluster)
+		f    func(t *testing.T)
 	}{
 		{"NoEncryption", testNoEncryption},
 		{"Encrypted", testEncrypted},
@@ -61,33 +60,31 @@ func TestSwarmUp(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			tc.f(t, cluster)
-		})
+		t.Run(tc.name, tc.f)
 	}
 }
 
 // testNoEncryption tests that running 'swarm up' makes the resulting file
 // available from all nodes via the HTTP API
-func testNoEncryption(t *testing.T, cluster *testCluster) {
-	testDefault(t, cluster, false)
+func testNoEncryption(t *testing.T) {
+	testDefault(false, t)
 }
 
 // testEncrypted tests that running 'swarm up --encrypted' makes the resulting file
 // available from all nodes via the HTTP API
-func testEncrypted(t *testing.T, cluster *testCluster) {
-	testDefault(t, cluster, true)
+func testEncrypted(t *testing.T) {
+	testDefault(true, t)
 }
 
-func testRecursiveNoEncryption(t *testing.T, cluster *testCluster) {
-	testRecursive(t, cluster, false)
+func testRecursiveNoEncryption(t *testing.T) {
+	testRecursive(false, t)
 }
 
-func testRecursiveEncrypted(t *testing.T, cluster *testCluster) {
-	testRecursive(t, cluster, true)
+func testRecursiveEncrypted(t *testing.T) {
+	testRecursive(true, t)
 }
 
-func testDefault(t *testing.T, cluster *testCluster, toEncrypt bool) {
+func testDefault(toEncrypt bool, t *testing.T) {
 	tmpFileName := testutil.TempFileWithContent(t, data)
 	defer os.Remove(tmpFileName)
 
@@ -192,7 +189,7 @@ func testDefault(t *testing.T, cluster *testCluster, toEncrypt bool) {
 	}
 }
 
-func testRecursive(t *testing.T, cluster *testCluster, toEncrypt bool) {
+func testRecursive(toEncrypt bool, t *testing.T) {
 	tmpUploadDir, err := ioutil.TempDir("", "swarm-test")
 	if err != nil {
 		t.Fatal(err)
@@ -282,14 +279,14 @@ func testRecursive(t *testing.T, cluster *testCluster, toEncrypt bool) {
 
 // testDefaultPathAll tests swarm recursive upload with relative and absolute
 // default paths and with encryption.
-func testDefaultPathAll(t *testing.T, cluster *testCluster) {
-	testDefaultPath(t, cluster, false, false)
-	testDefaultPath(t, cluster, false, true)
-	testDefaultPath(t, cluster, true, false)
-	testDefaultPath(t, cluster, true, true)
+func testDefaultPathAll(t *testing.T) {
+	testDefaultPath(false, false, t)
+	testDefaultPath(false, true, t)
+	testDefaultPath(true, false, t)
+	testDefaultPath(true, true, t)
 }
 
-func testDefaultPath(t *testing.T, cluster *testCluster, toEncrypt bool, absDefaultPath bool) {
+func testDefaultPath(toEncrypt bool, absDefaultPath bool, t *testing.T) {
 	tmp, err := ioutil.TempDir("", "swarm-defaultpath-test")
 	if err != nil {
 		t.Fatal(err)

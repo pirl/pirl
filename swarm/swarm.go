@@ -36,6 +36,7 @@ import (
 	"git.pirl.io/community/pirl/ethclient"
 	"git.pirl.io/community/pirl/metrics"
 	"git.pirl.io/community/pirl/p2p"
+	"git.pirl.io/community/pirl/p2p/enode"
 	"git.pirl.io/community/pirl/p2p/protocols"
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rpc"
@@ -170,7 +171,10 @@ func NewSwarm(config *api.Config, mockStore *mock.NodeStore) (self *Swarm, err e
 		self.accountingMetrics = protocols.SetupAccountingMetrics(10*time.Second, filepath.Join(config.Path, "metrics.db"))
 	}
 
-	nodeID := config.Enode.ID()
+	var nodeID enode.ID
+	if err := nodeID.UnmarshalText([]byte(config.NodeID)); err != nil {
+		return nil, err
+	}
 
 	syncing := stream.SyncingAutoSubscribe
 	if !config.SyncEnabled || config.LightNodeEnabled {
@@ -422,7 +426,6 @@ func (s *Swarm) Start(srv *p2p.Server) error {
 func (s *Swarm) Stop() error {
 	if s.tracerClose != nil {
 		err := s.tracerClose.Close()
-		tracing.FinishSpans()
 		if err != nil {
 			return err
 		}
@@ -504,7 +507,7 @@ func (s *Swarm) APIs() []rpc.API {
 		},
 		{
 			Namespace: "swarmfs",
-			Version:   fuse.SwarmFSVersion,
+			Version:   fuse.Swarmfs_Version,
 			Service:   s.sfs,
 			Public:    false,
 		},
@@ -517,8 +520,6 @@ func (s *Swarm) APIs() []rpc.API {
 	}
 
 	apis = append(apis, s.bzz.APIs()...)
-
-	apis = append(apis, s.streamer.APIs()...)
 
 	if s.ps != nil {
 		apis = append(apis, s.ps.APIs()...)

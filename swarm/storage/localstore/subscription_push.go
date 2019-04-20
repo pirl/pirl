@@ -21,16 +21,16 @@ import (
 	"sync"
 
 	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/swarm/chunk"
 	"git.pirl.io/community/pirl/swarm/shed"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 // SubscribePush returns a channel that provides storage chunks with ordering from push syncing index.
 // Returned stop function will terminate current and further iterations, and also it will close
 // the returned channel without any errors. Make sure that you check the second returned parameter
 // from the channel to stop iteration when its value is false.
-func (db *DB) SubscribePush(ctx context.Context) (c <-chan chunk.Chunk, stop func()) {
-	chunks := make(chan chunk.Chunk)
+func (db *DB) SubscribePush(ctx context.Context) (c <-chan storage.Chunk, stop func()) {
+	chunks := make(chan storage.Chunk)
 	trigger := make(chan struct{}, 1)
 
 	db.pushTriggersMu.Lock()
@@ -65,7 +65,7 @@ func (db *DB) SubscribePush(ctx context.Context) (c <-chan chunk.Chunk, stop fun
 					}
 
 					select {
-					case chunks <- chunk.NewChunk(dataItem.Address, dataItem.Data):
+					case chunks <- storage.NewChunk(dataItem.Address, dataItem.Data):
 						// set next iteration start item
 						// when its chunk is successfully sent to channel
 						sinceItem = &item

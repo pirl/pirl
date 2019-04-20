@@ -17,6 +17,7 @@
 package discover
 
 import (
+	"crypto/ecdsa"
 	"encoding/hex"
 	"fmt"
 	"math/rand"
@@ -165,4 +166,12 @@ func hexEncPubkey(h string) (ret encPubkey) {
 	}
 	copy(ret[:], b)
 	return ret
+}
+
+func hexPubkey(h string) *ecdsa.PublicKey {
+	k, err := decodePubkey(hexEncPubkey(h))
+	if err != nil {
+		panic(err)
+	}
+	return k
 }

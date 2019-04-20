@@ -23,7 +23,6 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -39,88 +38,76 @@ import (
 )
 
 func uploadAndSyncCmd(ctx *cli.Context, tuid string) error {
-	// use input seed if it has been set
-	if inputSeed != 0 {
-		seed = inputSeed
-	}
-
 	randomBytes := testutil.RandomBytes(seed, filesize*1000)
 
 	errc := make(chan error)
 
 	go func() {
-		errc <- uploadAndSync(ctx, randomBytes, tuid)
+		errc <- uplaodAndSync(ctx, randomBytes, tuid)
 	}()
 
-	var err error
 	select {
-	case err = <-errc:
+	case err := <-errc:
 		if err != nil {
 			metrics.GetOrRegisterCounter(fmt.Sprintf("%s.fail", commandName), nil).Inc(1)
 		}
+		return err
 	case <-time.After(time.Duration(timeout) * time.Second):
 		metrics.GetOrRegisterCounter(fmt.Sprintf("%s.timeout", commandName), nil).Inc(1)
 
-		err = fmt.Errorf("timeout after %v sec", timeout)
-	}
+		e := fmt.Errorf("timeout after %v sec", timeout)
+		// trigger debug functionality on randomBytes
+		err := trackChunks(randomBytes[:])
+		if err != nil {
+			e = fmt.Errorf("%v; triggerChunkDebug failed: %v", e, err)
+		}
 
-	// trigger debug functionality on randomBytes
-	e := trackChunks(randomBytes[:])
-	if e != nil {
-		log.Error(e.Error())
+		return e
 	}
-
-	return err
 }
 
 func trackChunks(testData []byte) error {
+	log.Warn("Test timed out; running chunk debug sequence")
+
 	addrs, err := getAllRefs(testData)
 	if err != nil {
 		return err
 	}
+	log.Trace("All references retrieved")
 
-	for i, ref := range addrs {
-		log.Trace(fmt.Sprintf("ref %d", i), "ref", ref)
-	}
-
+	// has-chunks
 	for _, host := range hosts {
 		httpHost := fmt.Sprintf("ws://%s:%d", host, 8546)
-
-		hostChunks := []string{}
-
+		log.Trace("Calling `Has` on host", "httpHost", httpHost)
 		rpcClient, err := rpc.Dial(httpHost)
 		if err != nil {
-			log.Error("error dialing host", "err", err, "host", httpHost)
-			continue
+			log.Trace("Error dialing host", "err", err)
+			return err
 		}
-
+		log.Trace("rpc dial ok")
 		var hasInfo []api.HasInfo
 		err = rpcClient.Call(&hasInfo, "bzz_has", addrs)
 		if err != nil {
-			log.Error("error calling rpc client", "err", err, "host", httpHost)
-			continue
+			log.Trace("Error calling host", "err", err)
+			return err
 		}
-
+		log.Trace("rpc call ok")
 		count := 0
 		for _, info := range hasInfo {
-			if info.Has {
-				hostChunks = append(hostChunks, "1")
-			} else {
-				hostChunks = append(hostChunks, "0")
+			if !info.Has {
 				count++
+				log.Error("Host does not have chunk", "host", httpHost, "chunk", info.Addr)
 			}
 		}
-
 		if count == 0 {
-			log.Info("host reported to have all chunks", "host", host)
+			log.Info("Host reported to have all chunks", "host", httpHost)
 		}
-
-		log.Trace("chunks", "chunks", strings.Join(hostChunks, ""), "host", host)
 	}
 	return nil
 }
 
 func getAllRefs(testData []byte) (storage.AddressCollection, error) {
+	log.Trace("Getting all references for given root hash")
 	datadir, err := ioutil.TempDir("", "chunk-debug")
 	if err != nil {
 		return nil, fmt.Errorf("unable to create temp dir: %v", err)
@@ -137,7 +124,7 @@ func getAllRefs(testData []byte) (storage.AddressCollection, error) {
 	return fileStore.GetAllReferences(ctx, reader, false)
 }
 
-func uploadAndSync(c *cli.Context, randomBytes []byte, tuid string) error {
+func uplaodAndSync(c *cli.Context, randomBytes []byte, tuid string) error {
 	log.Info("uploading to "+httpEndpoint(hosts[0])+" and syncing", "tuid", tuid, "seed", seed)
 
 	t1 := time.Now()

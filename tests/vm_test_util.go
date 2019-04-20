@@ -26,10 +26,10 @@ import (
 	"git.pirl.io/community/pirl/common/hexutil"
 	"git.pirl.io/community/pirl/common/math"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/vm"
 	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/params"
 )
 
@@ -79,7 +79,7 @@ type vmExecMarshaling struct {
 }
 
 func (t *VMTest) Run(vmconfig vm.Config) error {
-	statedb := MakePreState(rawdb.NewMemoryDatabase(), t.json.Pre)
+	statedb := MakePreState(ethdb.NewMemDatabase(), t.json.Pre)
 	ret, gasRemaining, err := t.exec(statedb, vmconfig)
 
 	if t.json.GasRemaining == nil {

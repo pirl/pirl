@@ -21,14 +21,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"sync"
 	"testing"
 	"time"
-
-	"git.pirl.io/community/pirl/swarm/testutil"
 
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/log"
@@ -1181,20 +1178,14 @@ stream registration, then tests that there are subscriptions.
 */
 func TestGetSubscriptionsRPC(t *testing.T) {
 
-	if testutil.RaceEnabled && os.Getenv("TRAVIS") == "true" {
-		t.Skip("flaky with -race on Travis")
-		// Note: related ticket https://github.com/ethersphere/go-ethereum/issues/1234
-	}
-
 	// arbitrarily set to 4
 	nodeCount := 4
-	// set the syncUpdateDelay for sync registrations to start
-	syncUpdateDelay := 200 * time.Millisecond
 	// run with more nodes if `longrunning` flag is set
 	if *longrunning {
 		nodeCount = 64
-		syncUpdateDelay = 10 * time.Second
 	}
+	// set the syncUpdateDelay for sync registrations to start
+	syncUpdateDelay := 200 * time.Millisecond
 	// holds the msg code for SubscribeMsg
 	var subscribeMsgCode uint64
 	var ok bool
@@ -1207,12 +1198,7 @@ func TestGetSubscriptionsRPC(t *testing.T) {
 
 	// we use this subscriptionFunc for this test: just increases count and calls the actual subscription
 	subscriptionFunc = func(r *Registry, p *network.Peer, bin uint8, subs map[enode.ID]map[Stream]struct{}) bool {
-		// syncing starts after syncUpdateDelay and loops after that Duration; we only want to count at the first iteration
-		// in the first iteration, subs will be empty (no existing subscriptions), thus we can use this check
-		// this avoids flakyness
-		if len(subs) == 0 {
-			expectedMsgCount.inc()
-		}
+		expectedMsgCount.inc()
 		doRequestSubscription(r, p, bin, subs)
 		return true
 	}
@@ -1247,22 +1233,21 @@ func TestGetSubscriptionsRPC(t *testing.T) {
 	})
 	defer sim.Close()
 
-	ctx, cancelSimRun := context.WithTimeout(context.Background(), 3*time.Minute)
+	ctx, cancelSimRun := context.WithTimeout(context.Background(), 1*time.Minute)
 	defer cancelSimRun()
+
+	// upload a snapshot
+	err := sim.UploadSnapshot(fmt.Sprintf("testing/snapshot_%d.json", nodeCount))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// setup the filter for SubscribeMsg
 	msgs := sim.PeerEvents(
 		context.Background(),
-		sim.UpNodeIDs(),
+		sim.NodeIDs(),
 		simulation.NewPeerEventsFilter().ReceivedMessages().Protocol("stream").MsgCode(subscribeMsgCode),
 	)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-	defer cancel()
-	filename := fmt.Sprintf("testing/snapshot_%d.json", nodeCount)
-	if err := sim.UploadSnapshot(ctx, filename); err != nil {
-		t.Fatal(err)
-	}
 
 	// strategy: listen to all SubscribeMsg events; after every event we wait
 	// if after `waitDuration` no more messages are being received, we assume the
@@ -1273,10 +1258,7 @@ func TestGetSubscriptionsRPC(t *testing.T) {
 	// any new subscriptions any more
 	go func() {
 		//for long running sims, waiting 1 sec will not be enough
-		waitDuration := 1 * time.Second
-		if *longrunning {
-			waitDuration = 3 * time.Second
-		}
+		waitDuration := time.Duration(nodeCount/16) * time.Second
 		for {
 			select {
 			case <-ctx.Done():
@@ -1338,11 +1320,9 @@ func TestGetSubscriptionsRPC(t *testing.T) {
 					}
 				}
 			}
-			log.Debug("All node streams counted", "realCount", realCount)
 		}
+		// every node is mutually subscribed to each other, so the actual count is half of it
 		emc := expectedMsgCount.count()
-		// after a subscription request, internally a live AND a history stream will be subscribed,
-		// thus the real count should be half of the actual request subscriptions sent
 		if realCount/2 != emc {
 			return fmt.Errorf("Real subscriptions and expected amount don't match; real: %d, expected: %d", realCount/2, emc)
 		}

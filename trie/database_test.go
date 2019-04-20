@@ -20,13 +20,13 @@ import (
 	"testing"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/ethdb/memorydb"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 // Tests that the trie database returns a missing trie node error if attempting
 // to retrieve the meta root.
 func TestDatabaseMetarootFetch(t *testing.T) {
-	db := NewDatabase(memorydb.New())
+	db := NewDatabase(ethdb.NewMemDatabase())
 	if _, err := db.Node(common.Hash{}); err == nil {
 		t.Fatalf("metaroot retrieval succeeded")
 	}

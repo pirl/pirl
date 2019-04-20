@@ -31,10 +31,10 @@ import (
 	"git.pirl.io/community/pirl/common/hexutil"
 	"git.pirl.io/community/pirl/common/math"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/core/vm"
 	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
 	"git.pirl.io/community/pirl/tests"
@@ -121,7 +121,7 @@ type callTracerTest struct {
 }
 
 func TestPrestateTracerCreate2(t *testing.T) {
-	unsignedTx := types.NewTransaction(1, common.HexToAddress("0x00000000000000000000000000000000deadbeef"),
+	unsigned_tx := types.NewTransaction(1, common.HexToAddress("0x00000000000000000000000000000000deadbeef"),
 		new(big.Int), 5000000, big.NewInt(1), []byte{})
 
 	privateKeyECDSA, err := ecdsa.GenerateKey(crypto.S256(), rand.Reader)
@@ -129,7 +129,7 @@ func TestPrestateTracerCreate2(t *testing.T) {
 		t.Fatalf("err %v", err)
 	}
 	signer := types.NewEIP155Signer(big.NewInt(1))
-	tx, err := types.SignTx(unsignedTx, signer, privateKeyECDSA)
+	tx, err := types.SignTx(unsigned_tx, signer, privateKeyECDSA)
 	if err != nil {
 		t.Fatalf("err %v", err)
 	}
@@ -155,7 +155,6 @@ func TestPrestateTracerCreate2(t *testing.T) {
 		GasPrice:    big.NewInt(1),
 	}
 	alloc := core.GenesisAlloc{}
-
 	// The code pushes 'deadbeef' into memory, then the other params, and calls CREATE2, then returns
 	// the address
 	alloc[common.HexToAddress("0x00000000000000000000000000000000deadbeef")] = core.GenesisAccount{
@@ -168,8 +167,7 @@ func TestPrestateTracerCreate2(t *testing.T) {
 		Code:    []byte{},
 		Balance: big.NewInt(500000000000000),
 	}
-	statedb := tests.MakePreState(rawdb.NewMemoryDatabase(), alloc)
-
+	statedb := tests.MakePreState(ethdb.NewMemDatabase(), alloc)
 	// Create the tracer, the EVM environment and run it
 	tracer, err := New("prestateTracer")
 	if err != nil {
@@ -242,7 +240,7 @@ func TestCallTracer(t *testing.T) {
 				GasLimit:    uint64(test.Context.GasLimit),
 				GasPrice:    tx.GasPrice(),
 			}
-			statedb := tests.MakePreState(rawdb.NewMemoryDatabase(), test.Genesis.Alloc)
+			statedb := tests.MakePreState(ethdb.NewMemDatabase(), test.Genesis.Alloc)
 
 			// Create the tracer, the EVM environment and run it
 			tracer, err := New("callTracer")

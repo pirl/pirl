@@ -85,16 +85,13 @@ func New(services map[string]ServiceFunc) (s *Simulation) {
 		name, serviceFunc := name, serviceFunc
 		s.serviceNames = append(s.serviceNames, name)
 		adapterServices[name] = func(ctx *adapters.ServiceContext) (node.Service, error) {
-			s.mu.Lock()
-			defer s.mu.Unlock()
-			b, ok := s.buckets[ctx.Config.ID]
-			if !ok {
-				b = new(sync.Map)
-			}
+			b := new(sync.Map)
 			service, cleanup, err := serviceFunc(ctx, b)
 			if err != nil {
 				return nil, err
 			}
+			s.mu.Lock()
+			defer s.mu.Unlock()
 			if cleanup != nil {
 				s.cleanupFuncs = append(s.cleanupFuncs, cleanup)
 			}

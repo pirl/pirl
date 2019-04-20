@@ -19,14 +19,12 @@ package main
 import (
 	"os"
 
+	"git.pirl.io/community/pirl/cmd/utils"
 	"git.pirl.io/community/pirl/log"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
-var (
-	version   = "0.1"
-	gitCommit string // Git SHA1 commit hash of the release (set via linker flags)
-)
+var gitCommit string // Git SHA1 commit hash of the release (set via linker flags)
 
 func main() {
 	err := newApp().Run(os.Args)
@@ -39,30 +37,16 @@ func main() {
 // newApp construct a new instance of Swarm Global Store.
 // Method Run is called on it in the main function and in tests.
 func newApp() (app *cli.App) {
-	app = cli.NewApp()
+	app = utils.NewApp(gitCommit, "Swarm Global Store")
+
 	app.Name = "global-store"
-	app.Version = version
-	if len(gitCommit) >= 8 {
-		app.Version += "-" + gitCommit[:8]
-	}
-	app.Usage = "Swarm Global Store"
 
 	// app flags (for all commands)
 	app.Flags = []cli.Flag{
 		cli.IntFlag{
 			Name:  "verbosity",
 			Value: 3,
-			Usage: "Verbosity level.",
-		},
-		cli.StringFlag{
-			Name:  "explorer-address",
-			Value: "",
-			Usage: "Chunk explorer HTTP listener address.",
-		},
-		cli.StringSliceFlag{
-			Name:  "explorer-cors-origin",
-			Value: nil,
-			Usage: "Chunk explorer CORS origin (can be specified multiple times).",
+			Usage: "verbosity level",
 		},
 	}
 
@@ -70,7 +54,7 @@ func newApp() (app *cli.App) {
 		{
 			Name:    "http",
 			Aliases: []string{"h"},
-			Usage:   "Start swarm global store with HTTP server.",
+			Usage:   "start swarm global store with http server",
 			Action:  startHTTP,
 			// Flags only for "start" command.
 			// Allow app flags to be specified after the
@@ -79,19 +63,19 @@ func newApp() (app *cli.App) {
 				cli.StringFlag{
 					Name:  "dir",
 					Value: "",
-					Usage: "Data directory.",
+					Usage: "data directory",
 				},
 				cli.StringFlag{
 					Name:  "addr",
 					Value: "0.0.0.0:3033",
-					Usage: "Address to listen for HTTP connections.",
+					Usage: "address to listen for http connection",
 				},
 			),
 		},
 		{
 			Name:    "websocket",
 			Aliases: []string{"ws"},
-			Usage:   "Start swarm global store with WebSocket server.",
+			Usage:   "start swarm global store with websocket server",
 			Action:  startWS,
 			// Flags only for "start" command.
 			// Allow app flags to be specified after the
@@ -100,17 +84,17 @@ func newApp() (app *cli.App) {
 				cli.StringFlag{
 					Name:  "dir",
 					Value: "",
-					Usage: "Data directory.",
+					Usage: "data directory",
 				},
 				cli.StringFlag{
 					Name:  "addr",
 					Value: "0.0.0.0:3033",
-					Usage: "Address to listen for WebSocket connections.",
+					Usage: "address to listen for websocket connection",
 				},
 				cli.StringSliceFlag{
-					Name:  "origin",
-					Value: nil,
-					Usage: "WebSocket CORS origin (can be specified multiple times).",
+					Name:  "origins",
+					Value: &cli.StringSlice{"*"},
+					Usage: "websocket origins",
 				},
 			),
 		},

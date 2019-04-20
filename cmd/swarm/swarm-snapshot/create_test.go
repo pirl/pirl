@@ -48,7 +48,7 @@ func TestSnapshotCreate(t *testing.T) {
 		},
 		{
 			name:  "more nodes",
-			nodes: defaultNodes + 4,
+			nodes: defaultNodes + 5,
 		},
 		{
 			name:     "services",
@@ -81,7 +81,7 @@ func TestSnapshotCreate(t *testing.T) {
 			}
 			testCmd := runSnapshot(t, append(args, file.Name())...)
 
-			testCmd.WaitExit()
+			testCmd.ExpectExit()
 			if code := testCmd.ExitStatus(); code != 0 {
 				t.Fatalf("command exit code %v, expected 0", code)
 			}

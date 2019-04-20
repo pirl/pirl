@@ -39,7 +39,7 @@ const statsReportLimit = 8 * time.Second
 
 // report prints statistics if some number of blocks have been processed
 // or more than a few seconds have passed since the last message.
-func (st *insertStats) report(chain []*types.Block, index int, dirty common.StorageSize) {
+func (st *insertStats) report(chain []*types.Block, index int, cache common.StorageSize) {
 	// Fetch the timings for the batch
 	var (
 		now     = mclock.Now()
@@ -63,7 +63,7 @@ func (st *insertStats) report(chain []*types.Block, index int, dirty common.Stor
 		if timestamp := time.Unix(int64(end.Time()), 0); time.Since(timestamp) > time.Minute {
 			context = append(context, []interface{}{"age", common.PrettyAge(timestamp)}...)
 		}
-		context = append(context, []interface{}{"dirty", dirty}...)
+		context = append(context, []interface{}{"cache", cache}...)
 
 		if st.queued > 0 {
 			context = append(context, []interface{}{"queued", st.queued}...)
@@ -80,13 +80,10 @@ func (st *insertStats) report(chain []*types.Block, index int, dirty common.Stor
 
 // insertIterator is a helper to assist during chain import.
 type insertIterator struct {
-	chain types.Blocks // Chain of blocks being iterated over
-
-	results <-chan error // Verification result sink from the consensus engine
-	errors  []error      // Header verification errors for the blocks
-
-	index     int       // Current offset of the iterator
-	validator Validator // Validator to run if verification succeeds
+	chain     types.Blocks
+	results   <-chan error
+	index     int
+	validator Validator
 }
 
 // newInsertIterator creates a new iterator based on the given blocks, which are
@@ -95,7 +92,6 @@ func newInsertIterator(chain types.Blocks, results <-chan error, validator Valid
 	return &insertIterator{
 		chain:     chain,
 		results:   results,
-		errors:    make([]error, 0, len(chain)),
 		index:     -1,
 		validator: validator,
 	}
@@ -104,50 +100,23 @@ func newInsertIterator(chain types.Blocks, results <-chan error, validator Valid
 // next returns the next block in the iterator, along with any potential validation
 // error for that block. When the end is reached, it will return (nil, nil).
 func (it *insertIterator) next() (*types.Block, error) {
-	// If we reached the end of the chain, abort
 	if it.index+1 >= len(it.chain) {
 		it.index = len(it.chain)
 		return nil, nil
 	}
-	// Advance the iterator and wait for verification result if not yet done
 	it.index++
-	if len(it.errors) <= it.index {
-		it.errors = append(it.errors, <-it.results)
+	if err := <-it.results; err != nil {
+		return it.chain[it.index], err
 	}
-	if it.errors[it.index] != nil {
-		return it.chain[it.index], it.errors[it.index]
-	}
-	// Block header valid, run body validation and return
 	return it.chain[it.index], it.validator.ValidateBody(it.chain[it.index])
 }
 
-// peek returns the next block in the iterator, along with any potential validation
-// error for that block, but does **not** advance the iterator.
-//
-// Both header and body validation errors (nil too) is cached into the iterator
-// to avoid duplicating work on the following next() call.
-func (it *insertIterator) peek() (*types.Block, error) {
-	// If we reached the end of the chain, abort
-	if it.index+1 >= len(it.chain) {
-		return nil, nil
-	}
-	// Wait for verification result if not yet done
-	if len(it.errors) <= it.index+1 {
-		it.errors = append(it.errors, <-it.results)
-	}
-	if it.errors[it.index+1] != nil {
-		return it.chain[it.index+1], it.errors[it.index+1]
-	}
-	// Block header valid, ignore body validation since we don't have a parent anyway
-	return it.chain[it.index+1], nil
-}
-
-// previous returns the previous header that was being processed, or nil.
-func (it *insertIterator) previous() *types.Header {
+// previous returns the previous block was being processed, or nil
+func (it *insertIterator) previous() *types.Block {
 	if it.index < 1 {
 		return nil
 	}
-	return it.chain[it.index-1].Header()
+	return it.chain[it.index-1]
 }
 
 // first returns the first block in the it.

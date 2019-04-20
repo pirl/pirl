@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	"git.pirl.io/community/pirl/swarm/chunk"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 // TestDB_SubscribePush uploads some chunks before and after
@@ -36,22 +36,21 @@ func TestDB_SubscribePush(t *testing.T) {
 
 	uploader := db.NewPutter(ModePutUpload)
 
-	chunks := make([]chunk.Chunk, 0)
+	chunks := make([]storage.Chunk, 0)
 	var chunksMu sync.Mutex
 
 	uploadRandomChunks := func(count int) {
-		chunksMu.Lock()
-		defer chunksMu.Unlock()
-
 		for i := 0; i < count; i++ {
-			chunk := generateTestRandomChunk()
+			chunk := generateRandomChunk()
 
 			err := uploader.Put(chunk)
 			if err != nil {
 				t.Fatal(err)
 			}
 
+			chunksMu.Lock()
 			chunks = append(chunks, chunk)
+			chunksMu.Unlock()
 		}
 	}
 
@@ -91,11 +90,7 @@ func TestDB_SubscribePush(t *testing.T) {
 				}
 				i++
 				// send one and only one error per received address
-				select {
-				case errChan <- err:
-				case <-ctx.Done():
-					return
-				}
+				errChan <- err
 			case <-ctx.Done():
 				return
 			}
@@ -124,22 +119,21 @@ func TestDB_SubscribePush_multiple(t *testing.T) {
 
 	uploader := db.NewPutter(ModePutUpload)
 
-	addrs := make([]chunk.Address, 0)
+	addrs := make([]storage.Address, 0)
 	var addrsMu sync.Mutex
 
 	uploadRandomChunks := func(count int) {
-		addrsMu.Lock()
-		defer addrsMu.Unlock()
-
 		for i := 0; i < count; i++ {
-			chunk := generateTestRandomChunk()
+			chunk := generateRandomChunk()
 
 			err := uploader.Put(chunk)
 			if err != nil {
 				t.Fatal(err)
 			}
 
+			addrsMu.Lock()
 			addrs = append(addrs, chunk.Address())
+			addrsMu.Unlock()
 		}
 	}
 
@@ -181,11 +175,7 @@ func TestDB_SubscribePush_multiple(t *testing.T) {
 					}
 					i++
 					// send one and only one error per received address
-					select {
-					case errChan <- err:
-					case <-ctx.Done():
-						return
-					}
+					errChan <- err
 				case <-ctx.Done():
 					return
 				}

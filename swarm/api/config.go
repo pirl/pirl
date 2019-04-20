@@ -24,11 +24,11 @@ import (
 	"time"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/common/hexutil"
 	"git.pirl.io/community/pirl/contracts/ens"
 	"git.pirl.io/community/pirl/crypto"
 	"git.pirl.io/community/pirl/node"
 	"git.pirl.io/community/pirl/p2p/enode"
+	"git.pirl.io/community/pirl/swarm/log"
 	"git.pirl.io/community/pirl/swarm/network"
 	"git.pirl.io/community/pirl/swarm/pss"
 	"git.pirl.io/community/pirl/swarm/services/swap"
@@ -47,8 +47,9 @@ type Config struct {
 	*storage.FileStoreParams
 	*storage.LocalStoreParams
 	*network.HiveParams
-	Swap                 *swap.LocalProfile
-	Pss                  *pss.PssParams
+	Swap *swap.LocalProfile
+	Pss  *pss.PssParams
+	//*network.SyncParams
 	Contract             common.Address
 	EnsRoot              common.Address
 	EnsAPIs              []string
@@ -57,7 +58,7 @@ type Config struct {
 	Port                 string
 	PublicKey            string
 	BzzKey               string
-	Enode                *enode.Node `toml:"-"`
+	NodeID               string
 	NetworkID            uint64
 	SwapEnabled          bool
 	SyncEnabled          bool
@@ -78,9 +79,10 @@ type Config struct {
 func NewConfig() (c *Config) {
 
 	c = &Config{
-		LocalStoreParams:     storage.NewDefaultLocalStoreParams(),
-		FileStoreParams:      storage.NewFileStoreParams(),
-		HiveParams:           network.NewHiveParams(),
+		LocalStoreParams: storage.NewDefaultLocalStoreParams(),
+		FileStoreParams:  storage.NewFileStoreParams(),
+		HiveParams:       network.NewHiveParams(),
+		//SyncParams:    network.NewDefaultSyncParams(),
 		Swap:                 swap.NewDefaultSwapParams(),
 		Pss:                  pss.NewPssParams(),
 		ListenAddr:           DefaultHTTPListenAddr,
@@ -103,38 +105,33 @@ func NewConfig() (c *Config) {
 
 //some config params need to be initialized after the complete
 //config building phase is completed (e.g. due to overriding flags)
-func (c *Config) Init(prvKey *ecdsa.PrivateKey, nodeKey *ecdsa.PrivateKey) error {
+func (c *Config) Init(prvKey *ecdsa.PrivateKey) {
 
-	// create swarm dir and record key
-	err := c.createAndSetPath(c.Path, prvKey)
+	address := crypto.PubkeyToAddress(prvKey.PublicKey)
+	c.Path = filepath.Join(c.Path, "bzz-"+common.Bytes2Hex(address.Bytes()))
+	err := os.MkdirAll(c.Path, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("Error creating root swarm data directory: %v", err)
-	}
-	c.setKey(prvKey)
-
-	// create the new enode record
-	// signed with the ephemeral node key
-	enodeParams := &network.EnodeParams{
-		PrivateKey: prvKey,
-		EnodeKey:   nodeKey,
-		Lightnode:  c.LightNodeEnabled,
-		Bootnode:   c.BootnodeMode,
-	}
-	c.Enode, err = network.NewEnode(enodeParams)
-	if err != nil {
-		return fmt.Errorf("Error creating enode: %v", err)
+		log.Error(fmt.Sprintf("Error creating root swarm data directory: %v", err))
+		return
 	}
 
-	// initialize components that depend on the swarm instance's private key
+	pubkey := crypto.FromECDSAPub(&prvKey.PublicKey)
+	pubkeyhex := common.ToHex(pubkey)
+	keyhex := crypto.Keccak256Hash(pubkey).Hex()
+
+	c.PublicKey = pubkeyhex
+	c.BzzKey = keyhex
+	c.NodeID = enode.PubkeyToIDV4(&prvKey.PublicKey).String()
+
 	if c.SwapEnabled {
 		c.Swap.Init(c.Contract, prvKey)
 	}
 
+	c.privateKey = prvKey
 	c.LocalStoreParams.Init(c.Path)
-	c.LocalStoreParams.BaseKey = common.FromHex(c.BzzKey)
+	c.LocalStoreParams.BaseKey = common.FromHex(keyhex)
 
 	c.Pss = c.Pss.WithPrivateKey(c.privateKey)
-	return nil
 }
 
 func (c *Config) ShiftPrivateKey() (privKey *ecdsa.PrivateKey) {
@@ -143,26 +140,4 @@ func (c *Config) ShiftPrivateKey() (privKey *ecdsa.PrivateKey) {
 		c.privateKey = nil
 	}
 	return privKey
-}
-
-func (c *Config) setKey(prvKey *ecdsa.PrivateKey) {
-	bzzkeybytes := network.PrivateKeyToBzzKey(prvKey)
-	pubkey := crypto.FromECDSAPub(&prvKey.PublicKey)
-	pubkeyhex := hexutil.Encode(pubkey)
-	keyhex := hexutil.Encode(bzzkeybytes)
-
-	c.privateKey = prvKey
-	c.PublicKey = pubkeyhex
-	c.BzzKey = keyhex
-}
-
-func (c *Config) createAndSetPath(datadirPath string, prvKey *ecdsa.PrivateKey) error {
-	address := crypto.PubkeyToAddress(prvKey.PublicKey)
-	bzzdirPath := filepath.Join(datadirPath, "bzz-"+common.Bytes2Hex(address.Bytes()))
-	err := os.MkdirAll(bzzdirPath, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	c.Path = bzzdirPath
-	return nil
 }

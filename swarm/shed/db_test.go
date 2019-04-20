@@ -100,13 +100,11 @@ func newTestDB(t *testing.T) (db *DB, cleanupFunc func()) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	cleanupFunc = func() { os.RemoveAll(dir) }
 	db, err = NewDB(dir, "")
 	if err != nil {
-		os.RemoveAll(dir)
+		cleanupFunc()
 		t.Fatal(err)
 	}
-	return db, func() {
-		db.Close()
-		os.RemoveAll(dir)
-	}
+	return db, cleanupFunc
 }

@@ -512,11 +512,6 @@ func TestMethodMultiReturn(t *testing.T) {
 		Int    *big.Int
 	}
 
-	newInterfaceSlice := func(len int) interface{} {
-		slice := make([]interface{}, len)
-		return &slice
-	}
-
 	abi, data, expected := methodMultiReturn(require.New(t))
 	bigint := new(big.Int)
 	var testCases = []struct {
@@ -544,16 +539,6 @@ func TestMethodMultiReturn(t *testing.T) {
 		&[2]interface{}{&expected.Int, &expected.String},
 		"",
 		"Can unpack into an array",
-	}, {
-		&[2]interface{}{},
-		&[2]interface{}{expected.Int, expected.String},
-		"",
-		"Can unpack into interface array",
-	}, {
-		newInterfaceSlice(2),
-		&[]interface{}{expected.Int, expected.String},
-		"",
-		"Can unpack into interface slice",
 	}, {
 		&[]interface{}{new(int), new(int)},
 		&[]interface{}{&expected.Int, &expected.String},

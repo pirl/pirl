@@ -60,7 +60,7 @@ func TestHTTP_Database(t *testing.T) {
 func testHTTP(t *testing.T, put bool, args ...string) {
 	addr := findFreeTCPAddress(t)
 	testCmd := runGlobalStore(t, append([]string{"http", "--addr", addr}, args...)...)
-	defer testCmd.Kill()
+	defer testCmd.Interrupt()
 
 	client, err := rpc.DialHTTP("http://" + addr)
 	if err != nil {
@@ -69,7 +69,16 @@ func testHTTP(t *testing.T, put bool, args ...string) {
 
 	// wait until global store process is started as
 	// rpc.DialHTTP is actually not connecting
-	waitHTTPEndpoint(t, addr)
+	for i := 0; i < 1000; i++ {
+		_, err = http.DefaultClient.Get("http://" + addr)
+		if err == nil {
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	store := mockRPC.NewGlobalStore(client)
 	defer store.Close()
@@ -126,9 +135,21 @@ func TestWebsocket_Database(t *testing.T) {
 func testWebsocket(t *testing.T, put bool, args ...string) {
 	addr := findFreeTCPAddress(t)
 	testCmd := runGlobalStore(t, append([]string{"ws", "--addr", addr}, args...)...)
-	defer testCmd.Kill()
+	defer testCmd.Interrupt()
 
-	client := websocketClient(t, addr)
+	var client *rpc.Client
+	var err error
+	// wait until global store process is started
+	for i := 0; i < 1000; i++ {
+		client, err = rpc.DialWebsocket(context.Background(), "ws://"+addr, "")
+		if err == nil {
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	store := mockRPC.NewGlobalStore(client)
 	defer store.Close()
@@ -139,7 +160,7 @@ func testWebsocket(t *testing.T, put bool, args ...string) {
 	wantValue := "value"
 
 	if put {
-		err := node.Put([]byte(wantKey), []byte(wantValue))
+		err = node.Put([]byte(wantKey), []byte(wantValue))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -167,41 +188,4 @@ func findFreeTCPAddress(t *testing.T) (addr string) {
 	defer listener.Close()
 
 	return listener.Addr().String()
-}
-
-// websocketClient waits until global store process is started
-// and returns rpc client.
-func websocketClient(t *testing.T, addr string) (client *rpc.Client) {
-	t.Helper()
-
-	var err error
-	for i := 0; i < 1000; i++ {
-		client, err = rpc.DialWebsocket(context.Background(), "ws://"+addr, "")
-		if err == nil {
-			break
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
-	if err != nil {
-		t.Fatal(err)
-	}
-	return client
-}
-
-// waitHTTPEndpoint retries http requests to a provided
-// address until the connection is established.
-func waitHTTPEndpoint(t *testing.T, addr string) {
-	t.Helper()
-
-	var err error
-	for i := 0; i < 1000; i++ {
-		_, err = http.Get("http://" + addr)
-		if err == nil {
-			break
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
-	if err != nil {
-		t.Fatal(err)
-	}
 }

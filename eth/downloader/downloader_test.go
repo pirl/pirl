@@ -28,7 +28,6 @@ import (
 
 	"git.pirl.io/community/pirl"
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/event"
@@ -72,7 +71,7 @@ func newTester() *downloadTester {
 		ownReceipts: map[common.Hash]types.Receipts{testGenesis.Hash(): nil},
 		ownChainTd:  map[common.Hash]*big.Int{testGenesis.Hash(): testGenesis.Difficulty()},
 	}
-	tester.stateDb = rawdb.NewMemoryDatabase()
+	tester.stateDb = ethdb.NewMemDatabase()
 	tester.stateDb.Put(testGenesis.Root().Bytes(), []byte{0x00})
 
 	tester.downloader = New(FullSync, 0, tester.stateDb, new(event.TypeMux), tester, nil, tester.dropPeer)
@@ -187,7 +186,7 @@ func (dl *downloadTester) CurrentFastBlock() *types.Block {
 func (dl *downloadTester) FastSyncCommitHead(hash common.Hash) error {
 	// For now only check that the state trie is correct
 	if block := dl.GetBlockByHash(hash); block != nil {
-		_, err := trie.NewSecure(block.Root(), trie.NewDatabase(dl.stateDb))
+		_, err := trie.NewSecure(block.Root(), trie.NewDatabase(dl.stateDb), 0)
 		return err
 	}
 	return fmt.Errorf("non existent block: %x", hash[:4])

@@ -31,15 +31,15 @@ import (
 	check "gopkg.in/check.v1"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 // Tests that updating a state trie does not leak any database writes prior to
 // actually committing the state.
 func TestUpdateLeaks(t *testing.T) {
 	// Create an empty state database
-	db := rawdb.NewMemoryDatabase()
+	db := ethdb.NewMemDatabase()
 	state, _ := New(common.Hash{}, NewDatabase(db))
 
 	// Update it with some accounts
@@ -56,19 +56,18 @@ func TestUpdateLeaks(t *testing.T) {
 		state.IntermediateRoot(false)
 	}
 	// Ensure that no data was leaked into the database
-	it := db.NewIterator()
-	for it.Next() {
-		t.Errorf("State leaked into database: %x -> %x", it.Key(), it.Value())
+	for _, key := range db.Keys() {
+		value, _ := db.Get(key)
+		t.Errorf("State leaked into database: %x -> %x", key, value)
 	}
-	it.Release()
 }
 
 // Tests that no intermediate state of an object is stored into the database,
 // only the one right before the commit.
 func TestIntermediateLeaks(t *testing.T) {
 	// Create two state databases, one transitioning to the final state, the other final from the beginning
-	transDb := rawdb.NewMemoryDatabase()
-	finalDb := rawdb.NewMemoryDatabase()
+	transDb := ethdb.NewMemDatabase()
+	finalDb := ethdb.NewMemDatabase()
 	transState, _ := New(common.Hash{}, NewDatabase(transDb))
 	finalState, _ := New(common.Hash{}, NewDatabase(finalDb))
 
@@ -104,20 +103,16 @@ func TestIntermediateLeaks(t *testing.T) {
 	if _, err := finalState.Commit(false); err != nil {
 		t.Fatalf("failed to commit final state: %v", err)
 	}
-	it := finalDb.NewIterator()
-	for it.Next() {
-		key := it.Key()
+	for _, key := range finalDb.Keys() {
 		if _, err := transDb.Get(key); err != nil {
-			t.Errorf("entry missing from the transition database: %x -> %x", key, it.Value())
+			val, _ := finalDb.Get(key)
+			t.Errorf("entry missing from the transition database: %x -> %x", key, val)
 		}
 	}
-	it.Release()
-
-	it = transDb.NewIterator()
-	for it.Next() {
-		key := it.Key()
+	for _, key := range transDb.Keys() {
 		if _, err := finalDb.Get(key); err != nil {
-			t.Errorf("extra entry in the transition database: %x -> %x", key, it.Value())
+			val, _ := transDb.Get(key)
+			t.Errorf("extra entry in the transition database: %x -> %x", key, val)
 		}
 	}
 }
@@ -127,7 +122,7 @@ func TestIntermediateLeaks(t *testing.T) {
 // https://git.pirl.io/community/pirl/pull/15549.
 func TestCopy(t *testing.T) {
 	// Create a random state test to copy and modify "independently"
-	orig, _ := New(common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+	orig, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
 
 	for i := byte(0); i < 255; i++ {
 		obj := orig.GetOrNewStateObject(common.BytesToAddress([]byte{i}))
@@ -281,15 +276,6 @@ func newTestAction(addr common.Address, r *rand.Rand) testAction {
 			},
 			args: make([]int64, 1),
 		},
-		{
-			name: "AddPreimage",
-			fn: func(a testAction, s *StateDB) {
-				preimage := []byte{1}
-				hash := common.BytesToHash(preimage)
-				s.AddPreimage(hash, preimage)
-			},
-			args: make([]int64, 1),
-		},
 	}
 	action := actions[r.Intn(len(actions))]
 	var nameargs []string
@@ -347,7 +333,7 @@ func (test *snapshotTest) String() string {
 func (test *snapshotTest) run() bool {
 	// Run all actions and create snapshots.
 	var (
-		state, _     = New(common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+		state, _     = New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
 		snapshotRevs = make([]int, len(test.snapshots))
 		sindex       = 0
 	)
@@ -438,7 +424,7 @@ func (s *StateSuite) TestTouchDelete(c *check.C) {
 // TestCopyOfCopy tests that modified objects are carried over to the copy, and the copy of the copy.
 // See https://git.pirl.io/community/pirl/pull/15225#issuecomment-380191512
 func TestCopyOfCopy(t *testing.T) {
-	sdb, _ := New(common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+	sdb, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
 	addr := common.HexToAddress("aaaa")
 	sdb.SetBalance(addr, big.NewInt(42))
 

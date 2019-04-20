@@ -27,12 +27,12 @@ import (
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/consensus/ethash"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/core/vm"
 	"git.pirl.io/community/pirl/crypto"
 	"git.pirl.io/community/pirl/eth/downloader"
+	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/event"
 	"git.pirl.io/community/pirl/p2p"
 	"git.pirl.io/community/pirl/params"
@@ -344,15 +344,11 @@ func testGetNodeData(t *testing.T, protocol int) {
 
 	// Fetch for now the entire chain db
 	hashes := []common.Hash{}
-
-	it := db.NewIterator()
-	for it.Next() {
-		if key := it.Key(); len(key) == common.HashLength {
+	for _, key := range db.Keys() {
+		if len(key) == len(common.Hash{}) {
 			hashes = append(hashes, common.BytesToHash(key))
 		}
 	}
-	it.Release()
-
 	p2p.Send(peer.app, 0x0d, hashes)
 	msg, err := peer.app.ReadMsg()
 	if err != nil {
@@ -371,7 +367,7 @@ func testGetNodeData(t *testing.T, protocol int) {
 			t.Errorf("data hash mismatch: have %x, want %x", hash, want)
 		}
 	}
-	statedb := rawdb.NewMemoryDatabase()
+	statedb := ethdb.NewMemDatabase()
 	for i := 0; i < len(data); i++ {
 		statedb.Put(hashes[i].Bytes(), data[i])
 	}
@@ -504,7 +500,7 @@ func testCheckpointChallenge(t *testing.T, syncmode downloader.SyncMode, checkpo
 
 	// Initialize a chain and generate a fake CHT if checkpointing is enabled
 	var (
-		db      = rawdb.NewMemoryDatabase()
+		db      = ethdb.NewMemDatabase()
 		config  = new(params.ChainConfig)
 		genesis = (&core.Genesis{Config: config}).MustCommit(db)
 	)
@@ -513,7 +509,7 @@ func testCheckpointChallenge(t *testing.T, syncmode downloader.SyncMode, checkpo
 	var response *types.Header
 	if checkpoint {
 		index := uint64(rand.Intn(500))
-		number := (index+1)*params.CHTFrequency - 1
+		number := (index+1)*params.CHTFrequencyClient - 1
 		response = &types.Header{Number: big.NewInt(int64(number)), Extra: []byte("valid")}
 
 		cht := &params.TrustedCheckpoint{
@@ -606,7 +602,7 @@ func testBroadcastBlock(t *testing.T, totalPeers, broadcastExpected int) {
 	var (
 		evmux   = new(event.TypeMux)
 		pow     = ethash.NewFaker()
-		db      = rawdb.NewMemoryDatabase()
+		db      = ethdb.NewMemDatabase()
 		config  = &params.ChainConfig{}
 		gspec   = &core.Genesis{Config: config}
 		genesis = gspec.MustCommit(db)

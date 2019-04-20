@@ -22,10 +22,10 @@ import (
 	"time"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/vm"
 	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/params"
 )
 
@@ -99,7 +99,7 @@ func Execute(code, input []byte, cfg *Config) ([]byte, *state.StateDB, error) {
 	setDefaults(cfg)
 
 	if cfg.State == nil {
-		cfg.State, _ = state.New(common.Hash{}, state.NewDatabase(rawdb.NewMemoryDatabase()))
+		cfg.State, _ = state.New(common.Hash{}, state.NewDatabase(ethdb.NewMemDatabase()))
 	}
 	var (
 		address = common.BytesToAddress([]byte("contract"))
@@ -129,7 +129,7 @@ func Create(input []byte, cfg *Config) ([]byte, common.Address, uint64, error) {
 	setDefaults(cfg)
 
 	if cfg.State == nil {
-		cfg.State, _ = state.New(common.Hash{}, state.NewDatabase(rawdb.NewMemoryDatabase()))
+		cfg.State, _ = state.New(common.Hash{}, state.NewDatabase(ethdb.NewMemDatabase()))
 	}
 	var (
 		vmenv  = NewEnv(cfg)

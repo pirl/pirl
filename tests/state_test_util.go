@@ -27,7 +27,6 @@ import (
 	"git.pirl.io/community/pirl/common/hexutil"
 	"git.pirl.io/community/pirl/common/math"
 	"git.pirl.io/community/pirl/core"
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/core/vm"
@@ -127,7 +126,7 @@ func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) (*state.StateD
 		return nil, UnsupportedForkError{subtest.Fork}
 	}
 	block := t.genesis(config).ToBlock(nil)
-	statedb := MakePreState(rawdb.NewMemoryDatabase(), t.json.Pre)
+	statedb := MakePreState(ethdb.NewMemDatabase(), t.json.Pre)
 
 	post := t.json.Post[subtest.Fork][subtest.Index]
 	msg, err := t.json.Tx.toMessage(post)

@@ -19,7 +19,6 @@ package core
 import (
 	"container/list"
 
-	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/event"
@@ -79,7 +78,7 @@ func (tm *TestManager) Db() ethdb.Database {
 func NewTestManager() *TestManager {
 	testManager := &TestManager{}
 	testManager.eventMux = new(event.TypeMux)
-	testManager.db = rawdb.NewMemoryDatabase()
+	testManager.db = ethdb.NewMemDatabase()
 	// testManager.txPool = NewTxPool(testManager)
 	// testManager.blockChain = NewBlockChain(testManager)
 	// testManager.stateManager = NewStateManager(testManager)

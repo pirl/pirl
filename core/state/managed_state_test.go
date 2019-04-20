@@ -20,13 +20,13 @@ import (
 	"testing"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/core/rawdb"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 var addr = common.BytesToAddress([]byte("test"))
 
 func create() (*ManagedState, *account) {
-	statedb, _ := New(common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+	statedb, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
 	ms := ManageState(statedb)
 	ms.StateDB.SetNonce(addr, 100)
 	ms.accounts[addr] = newAccount(ms.StateDB.getStateObject(addr))

@@ -34,7 +34,7 @@ var (
 // TrustedCheckpoints associates each known checkpoint with the genesis hash of
 // the chain it belongs to.
 var TrustedCheckpoints = map[common.Hash]*TrustedCheckpoint{
-	MainnetGenesisHash: MainnetTrustedCheckpoint,
+	//MainnetGenesisHash: MainnetTrustedCheckpoint,
 	//TestnetGenesisHash: TestnetTrustedCheckpoint,
 	//RinkebyGenesisHash: RinkebyTrustedCheckpoint,
 	//GoerliGenesisHash:  GoerliTrustedCheckpoint,
@@ -45,7 +45,7 @@ var (
 	MainnetChainConfig = &ChainConfig{
 		ChainID:             big.NewInt(3125659152),
 		HomesteadBlock:      big.NewInt(0),
-		DAOForkBlock:        nil,
+		DAOForkBlock:        big.NewInt(0),
 		DAOForkSupport:      true,
 		EIP150Block:         big.NewInt(0),
 		EIP150Hash:          common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
@@ -74,10 +74,10 @@ var (
 		DAOForkSupport:      true,
 		EIP150Block:         big.NewInt(0),
 		EIP150Hash:          common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"),
-		EIP155Block:         big.NewInt(0),
-		EIP158Block:         big.NewInt(0),
-		ByzantiumBlock:      big.NewInt(0),
-		ConstantinopleBlock: big.NewInt(0),
+		EIP155Block:         big.NewInt(10),
+		EIP158Block:         big.NewInt(10),
+		ByzantiumBlock:      big.NewInt(1700000),
+		ConstantinopleBlock: big.NewInt(4230000),
 		PetersburgBlock:     big.NewInt(4939394),
 		Ethash:              new(EthashConfig),
 	}

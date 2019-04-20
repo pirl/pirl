@@ -28,9 +28,8 @@ package priorityqueue
 import (
 	"context"
 	"errors"
-	"time"
 
-	"git.pirl.io/community/pirl/metrics"
+	"git.pirl.io/community/pirl/log"
 )
 
 var (
@@ -70,16 +69,13 @@ READ:
 		case <-ctx.Done():
 			return
 		case x := <-q:
-			val := x.(struct {
-				v interface{}
-				t time.Time
-			})
-			f(val.v)
-			metrics.GetOrRegisterResettingTimer("pq.run", nil).UpdateSince(val.t)
+			log.Trace("priority.queue f(x)", "p", p, "len(Queues[p])", len(pq.Queues[p]))
+			f(x)
 			p = top
 		default:
 			if p > 0 {
 				p--
+				log.Trace("priority.queue p > 0", "p", p)
 				continue READ
 			}
 			p = top
@@ -87,6 +83,7 @@ READ:
 			case <-ctx.Done():
 				return
 			case <-pq.wakeup:
+				log.Trace("priority.queue wakeup", "p", p)
 			}
 		}
 	}
@@ -98,15 +95,9 @@ func (pq *PriorityQueue) Push(x interface{}, p int) error {
 	if p < 0 || p >= len(pq.Queues) {
 		return errBadPriority
 	}
-	val := struct {
-		v interface{}
-		t time.Time
-	}{
-		x,
-		time.Now(),
-	}
+	log.Trace("priority.queue push", "p", p, "len(Queues[p])", len(pq.Queues[p]))
 	select {
-	case pq.Queues[p] <- val:
+	case pq.Queues[p] <- x:
 	default:
 		return ErrContention
 	}

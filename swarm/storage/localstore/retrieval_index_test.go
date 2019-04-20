@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"testing"
 
-	"git.pirl.io/community/pirl/swarm/chunk"
+	"git.pirl.io/community/pirl/swarm/storage"
 )
 
 // BenchmarkRetrievalIndexes uploads a number of chunks in order to measure
@@ -64,9 +64,9 @@ func benchmarkRetrievalIndexes(b *testing.B, o *Options, count int) {
 	uploader := db.NewPutter(ModePutUpload)
 	syncer := db.NewSetter(ModeSetSync)
 	requester := db.NewGetter(ModeGetRequest)
-	addrs := make([]chunk.Address, count)
+	addrs := make([]storage.Address, count)
 	for i := 0; i < count; i++ {
-		chunk := generateTestRandomChunk()
+		chunk := generateFakeRandomChunk()
 		err := uploader.Put(chunk)
 		if err != nil {
 			b.Fatal(err)
@@ -134,9 +134,9 @@ func benchmarkUpload(b *testing.B, o *Options, count int) {
 	db, cleanupFunc := newTestDB(b, o)
 	defer cleanupFunc()
 	uploader := db.NewPutter(ModePutUpload)
-	chunks := make([]chunk.Chunk, count)
+	chunks := make([]storage.Chunk, count)
 	for i := 0; i < count; i++ {
-		chunk := generateTestRandomChunk()
+		chunk := generateFakeRandomChunk()
 		chunks[i] = chunk
 	}
 	b.StartTimer()

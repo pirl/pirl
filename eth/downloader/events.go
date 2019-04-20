@@ -16,10 +16,6 @@
 
 package downloader
 
-import "git.pirl.io/community/pirl/core/types"
-
-type DoneEvent struct {
-	Latest *types.Header
-}
+type DoneEvent struct{}
 type StartEvent struct{}
 type FailedEvent struct{ Err error }

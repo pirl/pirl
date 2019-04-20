@@ -21,10 +21,10 @@ import (
 	"encoding/binary"
 	"io"
 	"math/big"
-	"reflect"
 	"sort"
 	"sync/atomic"
 	"time"
+	"unsafe"
 
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/common/hexutil"
@@ -34,7 +34,7 @@ import (
 
 var (
 	EmptyRootHash  = DeriveSha(Transactions{})
-	EmptyUncleHash = rlpHash([]*Header(nil))
+	EmptyUncleHash = CalcUncleHash(nil)
 )
 
 // A BlockNonce is a 64-bit hash which proves (combined with the
@@ -102,12 +102,10 @@ func (h *Header) Hash() common.Hash {
 	return rlpHash(h)
 }
 
-var headerSize = common.StorageSize(reflect.TypeOf(Header{}).Size())
-
 // Size returns the approximate memory used by all internal contents. It is used
 // to approximate and limit the memory consumption of various caches.
 func (h *Header) Size() common.StorageSize {
-	return headerSize + common.StorageSize(len(h.Extra)+(h.Difficulty.BitLen()+h.Number.BitLen())/8)
+	return common.StorageSize(unsafe.Sizeof(*h)) + common.StorageSize(len(h.Extra)+(h.Difficulty.BitLen()+h.Number.BitLen())/8)
 }
 
 func rlpHash(x interface{}) (h common.Hash) {
@@ -324,9 +322,6 @@ func (c *writeCounter) Write(b []byte) (int, error) {
 }
 
 func CalcUncleHash(uncles []*Header) common.Hash {
-	if len(uncles) == 0 {
-		return EmptyUncleHash
-	}
 	return rlpHash(uncles)
 }
 

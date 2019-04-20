@@ -23,7 +23,7 @@ import (
 	"testing"
 
 	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/ethdb/memorydb"
+	"git.pirl.io/community/pirl/ethdb"
 )
 
 func TestIterator(t *testing.T) {
@@ -120,14 +120,11 @@ func TestNodeIteratorCoverage(t *testing.T) {
 			}
 		}
 	}
-	it := db.diskdb.NewIterator()
-	for it.Next() {
-		key := it.Key()
+	for _, key := range db.diskdb.(*ethdb.MemDatabase).Keys() {
 		if _, ok := hashes[common.BytesToHash(key)]; !ok {
 			t.Errorf("state entry not reported %x", key)
 		}
 	}
-	it.Release()
 }
 
 type kvs struct{ k, v string }
@@ -292,7 +289,7 @@ func TestIteratorContinueAfterErrorDisk(t *testing.T)    { testIteratorContinueA
 func TestIteratorContinueAfterErrorMemonly(t *testing.T) { testIteratorContinueAfterError(t, true) }
 
 func testIteratorContinueAfterError(t *testing.T, memonly bool) {
-	diskdb := memorydb.New()
+	diskdb := ethdb.NewMemDatabase()
 	triedb := NewDatabase(diskdb)
 
 	tr, _ := New(common.Hash{}, triedb)
@@ -312,11 +309,7 @@ func testIteratorContinueAfterError(t *testing.T, memonly bool) {
 	if memonly {
 		memKeys = triedb.Nodes()
 	} else {
-		it := diskdb.NewIterator()
-		for it.Next() {
-			diskKeys = append(diskKeys, it.Key())
-		}
-		it.Release()
+		diskKeys = diskdb.Keys()
 	}
 	for i := 0; i < 20; i++ {
 		// Create trie that will load all nodes from DB.
@@ -383,7 +376,7 @@ func TestIteratorContinueAfterSeekErrorMemonly(t *testing.T) {
 
 func testIteratorContinueAfterSeekError(t *testing.T, memonly bool) {
 	// Commit test trie to db, then remove the node containing "bars".
-	diskdb := memorydb.New()
+	diskdb := ethdb.NewMemDatabase()
 	triedb := NewDatabase(diskdb)
 
 	ctr, _ := New(common.Hash{}, triedb)
