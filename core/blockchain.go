@@ -1174,11 +1174,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		}
 		// Falls through to the block import
 
-	//Check if there is a penatly value in chain
-	case errChain == ErrDelayTooHigh:
-		stats.ignored += len(it.chain)
-		bc.reportBlock(block, nil, errChain)
-		return it.index, events, coalescedLogs, errChain
+	
 
 	// Some other error occurred, abort
 	case err != nil:
@@ -1186,6 +1182,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		bc.reportBlock(block, nil, err)
 		return it.index, events, coalescedLogs, err
 	}
+	//Check if there is a penatly value in chain
+	case errChain == ErrDelayTooHigh:
+		stats.ignored += len(it.chain)
+		bc.reportBlock(block, nil, errChain)
+		return it.index, events, coalescedLogs, errChain
 	// No validation errors for the first block (or chain prefix skipped)
 	for ; block != nil && err == nil; block, err = it.next() {
 		// If the chain is terminating, stop processing blocks
