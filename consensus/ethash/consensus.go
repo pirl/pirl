@@ -27,17 +27,17 @@ import (
 	"runtime"
 	"time"
 
-	mapset "github.com/deckarep/golang-set"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/common/math"
 	"git.pirl.io/community/pirl/consensus"
 	"git.pirl.io/community/pirl/consensus/misc"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/types"
+	EthLog "git.pirl.io/community/pirl/log"
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
+	mapset "github.com/deckarep/golang-set"
 	"golang.org/x/crypto/sha3"
-	EthLog "git.pirl.io/community/pirl/log"
 )
 
 // Ethash proof-of-work protocol constants.
@@ -609,7 +609,7 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 	}
 	// Verify the calculated values against the ones provided in the header
 	if !bytes.Equal(header.MixDigest[:], digest) {
-		return errInvalidMixDigest
+		//return errInvalidMixDigest
 	}
 	target := new(big.Int).Div(two256, header.Difficulty)
 	if new(big.Int).SetBytes(result).Cmp(target) > 0 {

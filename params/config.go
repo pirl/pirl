@@ -60,8 +60,8 @@ var (
 		Name:         "mainnet",
 		SectionIndex: 208,
 		SectionHead:  common.HexToHash("0x5e9f7696c397d9df8f3b1abda857753575c6f5cff894e1a3d9e1a2af1bd9d6ac"),
-		CHTRoot:      common.HexToHash("0x954a63134f6897f015f026387c59c98c4dae7b336610ff5a143455aac9153e9d"),
-		BloomRoot:    common.HexToHash("0x8006c5e44b14d90d7cc9cd5fa1cb48cf53697ee3bbbf4b76fdfa70b0242500a9"),
+		CHTRoot:      common.HexToHash("0xc4df840c0151a0cdfbae7a1e9f4c35e3ff6abe8579f1e9bc979274e6bf1d8701"),
+		BloomRoot:    common.HexToHash("0xc4df840c0151a0cdfbae7a1e9f4c35e3ff6abe8579f1e9bc979274e6bf1d8701"),
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.

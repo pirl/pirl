@@ -28,7 +28,6 @@ import (
 
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/consensus"
-	"git.pirl.io/community/pirl/consensus/misc"
 	"git.pirl.io/community/pirl/core"
 	"git.pirl.io/community/pirl/core/types"
 	"git.pirl.io/community/pirl/eth/downloader"
