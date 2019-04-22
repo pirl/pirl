@@ -1139,7 +1139,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 
 	// Peek the error for the first block to decide the directing import logic
 	it := newInsertIterator(chain, results, bc.Validator())
-
+	errMixDigest := errors.New("invalid mix digest")
 	block, err := it.next()
 	switch {
 	// First block is pruned, insert as sidechain and reorg only if TD grows enough
@@ -1179,7 +1179,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, errChain)
 		return it.index, events, coalescedLogs, errChain
-
+	case err == errMixDigest:
+		fmt.Println("i catched the error")
+		return it.index, events, coalescedLogs, err
 	// Some other error occurred, abort
 	case err != nil:
 		stats.ignored += len(it.chain)
