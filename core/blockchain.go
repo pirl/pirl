@@ -1173,16 +1173,16 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 			block, err = it.next()
 		}
 		// Falls through to the block import
-
+	case errChain == ErrDelayTooHigh:
+		stats.ignored += len(it.chain)
+		bc.reportBlock(block, nil, errChain)
+		return it.index, events, coalescedLogs, errChain
 	// Some other error occurred, abort
 	case err != nil:
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, err)
 		return it.index, events, coalescedLogs, err
-	case errChain == ErrDelayTooHigh:
-		stats.ignored += len(it.chain)
-		bc.reportBlock(block, nil, errChain)
-		return it.index, events, coalescedLogs, errChain
+
 	}
 	//Check if there is a penatly value in chain
 
