@@ -444,9 +444,9 @@ func (k *Kademlia) NeighbourhoodDepth() (depth int) {
 
 // neighbourhoodRadiusForPot returns the neighbourhood radius of the kademlia
 // neighbourhood radius encloses the nearest neighbour set with size >= neighbourhoodSize
-// i.e., neighbourhood radius is the deepest PO such that all bins not shallower altopirler
+// i.e., neighbourhood radius is the deepest PO such that all bins not shallower altogether
 // contain at least neighbourhoodSize connected peers
-// if there is altopirler less than neighbourhoodSize peers connected, it returns 0
+// if there is altogether less than neighbourhoodSize peers connected, it returns 0
 // caller must hold the lock
 func neighbourhoodRadiusForPot(p *pot.Pot, neighbourhoodSize int, pivotAddr []byte) (depth int) {
 	if p.Size() <= neighbourhoodSize {

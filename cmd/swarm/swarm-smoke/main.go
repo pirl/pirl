@@ -22,7 +22,7 @@ import (
 	"sort"
 
 	"git.pirl.io/community/pirl/cmd/utils"
-	pirlmetrics "git.pirl.io/community/pirl/metrics"
+	gethmetrics "git.pirl.io/community/pirl/metrics"
 	"git.pirl.io/community/pirl/metrics/influxdb"
 	swarmmetrics "git.pirl.io/community/pirl/swarm/metrics"
 	"git.pirl.io/community/pirl/swarm/tracing"
@@ -170,7 +170,7 @@ func main() {
 }
 
 func emitMetrics(ctx *cli.Context) error {
-	if pirlmetrics.Enabled {
+	if gethmetrics.Enabled {
 		var (
 			endpoint = ctx.GlobalString(swarmmetrics.MetricsInfluxDBEndpointFlag.Name)
 			database = ctx.GlobalString(swarmmetrics.MetricsInfluxDBDatabaseFlag.Name)
@@ -183,7 +183,7 @@ func emitMetrics(ctx *cli.Context) error {
 		tagsMap["version"] = gitCommit
 		tagsMap["filesize"] = fmt.Sprintf("%v", filesize)
 
-		return influxdb.InfluxDBWithTagsOnce(pirlmetrics.DefaultRegistry, endpoint, database, username, password, "swarm-smoke.", tagsMap)
+		return influxdb.InfluxDBWithTagsOnce(gethmetrics.DefaultRegistry, endpoint, database, username, password, "swarm-smoke.", tagsMap)
 	}
 
 	return nil

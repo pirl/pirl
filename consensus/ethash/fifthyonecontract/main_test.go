@@ -13,8 +13,8 @@ import (
 	//"os"
 )
 // Copyright 2014 The go-ethereum Authors
-// Copyright 2018 Ethereum Sprl
-// This file is part of the go-ethereum library modified with Ethereum Security Protocol.
+// Copyright 2018 Pirl Sprl
+// This file is part of the go-ethereum library modified with Pirl Security Protocol.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -28,7 +28,7 @@ import (
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
-// Package core implements the Ethereum consensus protocol modified with Ethereum Security Protocol.
+// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
 func CallTheContractEth1(contractendpoint string) ([]common.Address, error) {
 
 	endPoint := contractendpoint
@@ -53,7 +53,7 @@ func CallTheContractEth1(contractendpoint string) ([]common.Address, error) {
 	}
 	isBanned, err := session.GetAllAddresses()
 	if err != nil {
-		log.Printf("Failed to connect to the Ethereum client: %v", err)
+		log.Printf("Failed to connect to the Pirl client: %v", err)
 	}
 	return isBanned, err
 
@@ -61,8 +61,8 @@ func CallTheContractEth1(contractendpoint string) ([]common.Address, error) {
 }
 
 
-// contact smart contract Ethereum
-func CallTheContractEthereum() ([]common.Address, error) {
+// contact smart contract Pirl
+func CallTheContractPirl() ([]common.Address, error) {
 
 	endPoint := os.Getenv("HOME") + "/.pirl/pirl.ipc"
 	conn, err := ethclient.Dial(endPoint)
@@ -85,14 +85,14 @@ func CallTheContractEthereum() ([]common.Address, error) {
 	}
 	isBanned, err := session.GetAllAddresses()
 	if err != nil {
-		log.Printf("Failed to connect to the Ethereum client: %v", err)
+		log.Printf("Failed to connect to the Pirl client: %v", err)
 	}
 
 	return isBanned, err
 }
 
 func main() {
-	fmt.Print(CallTheContractEthereum())
+	fmt.Print(CallTheContractPirl())
 	mycontract, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
 	if err != nil {
 		mycontract, _ = CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")

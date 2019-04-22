@@ -2987,7 +2987,7 @@ DUK_INTERNAL_DECL duk_double_t duk_double_fmax(duk_double_t x, duk_double_t y);
  *   B (8 bits):  typically first source register/constant number
  *   C (8 bits):  typically second source register/constant number
  *
- *  Some instructions combine BC or ABC topirler for larger parameter values.
+ *  Some instructions combine BC or ABC together for larger parameter values.
  *  Signed integers (e.g. jump offsets) are encoded as unsigned, with an
  *  opcode specific bias.
  *
@@ -5590,7 +5590,7 @@ DUK_INTERNAL_DECL duk_double_t duk_time_get_monotonic_time(duk_hthread *thr);
  *  Strings are byte sequences ordinarily stored in extended UTF-8 format,
  *  allowing values larger than the official UTF-8 range (used internally)
  *  and also allowing UTF-8 encoding of surrogate pairs (CESU-8 format).
- *  Strings may also be invalid UTF-8 altopirler which is the case e.g. with
+ *  Strings may also be invalid UTF-8 altogether which is the case e.g. with
  *  strings used as internal property names and raw buffers converted to
  *  strings.  In such cases the 'clen' field contains an inaccurate value.
  *
@@ -5852,7 +5852,7 @@ DUK_INTERNAL_DECL void duk_hstring_init_charlen(duk_hstring *h);
  *
  *  These three conceptual parts are stored in a single memory allocated area.
  *  This minimizes memory allocation overhead but also means that all three
- *  parts are resized topirler, and makes property access a bit complicated.
+ *  parts are resized together, and makes property access a bit complicated.
  */
 
 #if !defined(DUK_HOBJECT_H_INCLUDED)
@@ -9040,7 +9040,7 @@ DUK_INTERNAL_DECL void duk_debug_clear_pause_state(duk_heap *heap);
  *  DUK_DPRINT() allows formatted debug prints, and supports standard
  *  and Duktape specific formatters.  See duk_debug_vsnprintf.c for details.
  *
- *  DUK_D(x), DUK_DD(x), and DUK_DDD(x) are used topirler with log macros
+ *  DUK_D(x), DUK_DD(x), and DUK_DDD(x) are used together with log macros
  *  for technical reasons.  They are concretely used to hide 'x' from the
  *  compiler when the corresponding log level is disabled.  This allows
  *  clean builds on non-C99 compilers, at the cost of more verbose code.
@@ -10236,7 +10236,7 @@ DUK_INTERNAL_DECL void duk_js_execute_bytecode(duk_hthread *exec_thr);
 #define DUK_N2S_FLAG_NO_ZERO_PAD          (1U << 2)
 
 /* Digit count indicates number of fractions (i.e. an absolute
- * digit index instead of a relative one).  Used topirler with
+ * digit index instead of a relative one).  Used together with
  * DUK_N2S_FLAG_FIXED_FORMAT for toFixed().
  */
 #define DUK_N2S_FLAG_FRACTION_DIGITS      (1U << 3)
@@ -35234,7 +35234,7 @@ DUK_LOCAL void duk__enc_object(duk_json_enc_ctx *js_ctx) {
 		/* [ ... key ] */
 
 		if (DUK_UNLIKELY(duk__enc_value(js_ctx, idx_obj) == 0)) {
-			/* Value would yield 'undefined', so skip key altopirler.
+			/* Value would yield 'undefined', so skip key altogether.
 			 * Side effects have already happened.
 			 */
 			DUK_BW_SET_SIZE(js_ctx->thr, &js_ctx->bw, prev_size);
@@ -94839,7 +94839,7 @@ DUK_INTERNAL void duk_bw_remove_raw_slice(duk_hthread *thr, duk_bufwriter_ctx *b
  *  is able to compile these into a bswap+mov.  "Always inline" is used to
  *  ensure these macros compile to minimal code.
  *
- *  Not really bufwriter related, but currently used topirler.
+ *  Not really bufwriter related, but currently used together.
  */
 
 DUK_INTERNAL DUK_ALWAYS_INLINE duk_uint16_t duk_raw_read_u16_be(duk_uint8_t **p) {

@@ -50,7 +50,7 @@ const (
 // all registered services.
 type Config struct {
 	// Name sets the instance name of the node. It must not contain the / character and is
-	// used in the devp2p node identifier. The instance name of pirl is "pirl". If no
+	// used in the devp2p node identifier. The instance name of geth is "geth". If no
 	// value is specified, the basename of the current executable is used.
 	Name string `toml:"-"`
 
@@ -156,7 +156,7 @@ type Config struct {
 
 	staticNodesWarning     bool
 	trustedNodesWarning    bool
-	oldEthereumResourceWarning bool
+	oldGethResourceWarning bool
 }
 
 // IPCEndpoint resolves an IPC endpoint based on a configured value, taking into
@@ -237,9 +237,9 @@ func DefaultWSEndpoint() string {
 // NodeName returns the devp2p node identifier.
 func (c *Config) NodeName() string {
 	name := c.name()
-	// Backwards compatibility: previous versions used title-cased "Ethereum", keep that.
+	// Backwards compatibility: previous versions used title-cased "Geth", keep that.
 	if name == "pirl" || name == "pirl-testnet" {
-		name = "Ethereum"
+		name = "Pirl"
 	}
 	if c.UserIdent != "" {
 		name += "/" + c.UserIdent
@@ -263,8 +263,8 @@ func (c *Config) name() string {
 	return c.Name
 }
 
-// These resources are resolved differently for "pirl" instances.
-var isOldEthereumResource = map[string]bool{
+// These resources are resolved differently for "geth" instances.
+var isOldGethResource = map[string]bool{
 	"chaindata":          true,
 	"nodes":              true,
 	"nodekey":            true,
@@ -281,15 +281,15 @@ func (c *Config) ResolvePath(path string) string {
 		return ""
 	}
 	// Backwards-compatibility: ensure that data directory files created
-	// by pirl 1.4 are used if they exist.
-	if warn, isOld := isOldEthereumResource[path]; isOld {
+	// by geth 1.4 are used if they exist.
+	if warn, isOld := isOldGethResource[path]; isOld {
 		oldpath := ""
-		if c.name() == "pirl" {
+		if c.name() == "geth" {
 			oldpath = filepath.Join(c.DataDir, path)
 		}
 		if oldpath != "" && common.FileExist(oldpath) {
 			if warn {
-				c.warnOnce(&c.oldEthereumResourceWarning, "Using deprecated resource file %s, please move this file to the 'pirl' subdirectory of datadir.", oldpath)
+				c.warnOnce(&c.oldGethResourceWarning, "Using deprecated resource file %s, please move this file to the 'geth' subdirectory of datadir.", oldpath)
 			}
 			return oldpath
 		}

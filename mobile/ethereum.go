@@ -16,7 +16,7 @@
 
 // Contains all the wrappers from the go-ethereum root package.
 
-package pirl
+package geth
 
 import (
 	"errors"

@@ -733,7 +733,7 @@ type updateStatsEntry struct {
 }
 
 // updateMaxConfirmedTd updates the block delay statistics of active peers. Whenever a new highest Td is confirmed,
-// adds it to the end of a linked list topirler with the time it has been confirmed. Then checks which peers have
+// adds it to the end of a linked list together with the time it has been confirmed. Then checks which peers have
 // already confirmed a head with the same or higher Td (which counts as zero block delay) and updates their statistics.
 // Those who have not confirmed such a head by now will be updated by a subsequent checkUpdateStats call with a
 // positive block delay value.

@@ -27,14 +27,14 @@ import (
 )
 
 func tmpdir(t *testing.T) string {
-	dir, err := ioutil.TempDir("", "pirl-test")
+	dir, err := ioutil.TempDir("", "geth-test")
 	if err != nil {
 		t.Fatal(err)
 	}
 	return dir
 }
 
-type testpirl struct {
+type testgeth struct {
 	*cmdtest.TestCmd
 
 	// template variables for expect
@@ -43,8 +43,8 @@ type testpirl struct {
 }
 
 func init() {
-	// Run the app if we've been exec'd as "pirl-test" in runEthereum.
-	reexec.Register("pirl-test", func() {
+	// Run the app if we've been exec'd as "geth-test" in runGeth.
+	reexec.Register("geth-test", func() {
 		if err := app.Run(os.Args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -61,10 +61,10 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// spawns pirl with the given command line args. If the args don't set --datadir, the
+// spawns geth with the given command line args. If the args don't set --datadir, the
 // child g gets a temporary data directory.
-func runEthereum(t *testing.T, args ...string) *testpirl {
-	tt := &testpirl{}
+func runGeth(t *testing.T, args ...string) *testgeth {
+	tt := &testgeth{}
 	tt.TestCmd = cmdtest.NewTestCmd(t, tt)
 	for i, arg := range args {
 		switch {
@@ -90,9 +90,9 @@ func runEthereum(t *testing.T, args ...string) *testpirl {
 		}()
 	}
 
-	// Boot "pirl". This actually runs the test binary but the TestMain
+	// Boot "geth". This actually runs the test binary but the TestMain
 	// function will prevent any tests from running.
-	tt.Run("pirl-test", args...)
+	tt.Run("geth-test", args...)
 
 	return tt
 }

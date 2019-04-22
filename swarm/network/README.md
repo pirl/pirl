@@ -106,7 +106,7 @@ Effectively this means that the peer needs to persist a record of an arbitrary a
 once the appropriate ranges of the hashstream are retrieved and buffered, downstream peer just scans the hashes, looks them up in localstore, if not found, create a request entry.
 The range is referenced by the chunk index. Alongside the name (indicating the stream, e.g., content chunks for bin 6) and the range
 downstream peer sends a 128 long bitvector indicating which chunks are needed.
-Newly created requests are satisfied bound topirler in a waitgroup which when done, will promptt sending the next one.
+Newly created requests are satisfied bound together in a waitgroup which when done, will promptt sending the next one.
 to be able to do check and storage concurrently, we keep a buffer of one, we start with two batches of hashes.
 If there is nothing to give, upstream peers SetNextBatch is blocking. Subscription ends with an unsubscribe. which removes the syncer from the map.
 
@@ -135,7 +135,7 @@ For this the check of a state should be exhaustive. If historical syncing finish
 surprises. In other words historical syncing this process is self verifying. With session syncing however, it is not enough to check going back covering the range from old offset to new. Continuity (i.e., that the new state is extension of the old) needs to be verified: after downstream peer reads the range into a buffer, it appends the buffer the last known state at the last known offset and verifies the resulting hash matches
 the latest state. Past intervals of historical syncing are checked via the session root.
 Upstream peer signs the states, downstream peers can use as handover proofs.
-Downstream  peers sign off on a state topirler with an initial offset.
+Downstream  peers sign off on a state together with an initial offset.
 
 Once historical syncing is complete and the session does not lag, downstream peer only preserves the latest upstream state and store the signed version.
 

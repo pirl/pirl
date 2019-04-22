@@ -159,7 +159,7 @@ func (msg *PssMsg) String() string {
 }
 
 // Signature for a message handler function for a PssMsg
-// Implementations of this type are passed to Pss.Register topirler with a topic,
+// Implementations of this type are passed to Pss.Register together with a topic,
 type HandlerFunc func(msg []byte, p *p2p.Peer, asymmetric bool, keyid string) error
 
 type handlerCaps struct {

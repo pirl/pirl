@@ -1,7 +1,7 @@
 /*
  * Windows backend common header for libusb 1.0
  *
- * This file brings topirler header code common between
+ * This file brings together header code common between
  * the desktop Windows and Windows CE backends.
  * Copyright © 2012-2013 RealVNC Ltd.
  * Copyright © 2009-2012 Pete Batard <pete@akeo.ie>
