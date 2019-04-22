@@ -61,9 +61,9 @@ var (
 	MainnetTrustedCheckpoint = &TrustedCheckpoint{
 		Name:         "mainnet",
 		SectionIndex: 208,
-		SectionHead:  common.HexToHash("0x0a78d5dbede0661b62ab9578c819e6f0eaf30a455985e7917b89512ceaf1a56b"),
-		CHTRoot:      common.HexToHash("0x0a78d5dbede0661b62ab9578c819e6f0eaf30a455985e7917b89512ceaf1a56b"),
-		BloomRoot:    common.HexToHash("0x0a78d5dbede0661b62ab9578c819e6f0eaf30a455985e7917b89512ceaf1a56b"),
+		SectionHead:  common.HexToHash(""),
+		CHTRoot:      common.HexToHash(""),
+		BloomRoot:    common.HexToHash(""),
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.
