@@ -1179,9 +1179,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, errChain)
 		return it.index, events, coalescedLogs, errChain
-	case err == errMixDigest:
-		fmt.Println("i catched the error")
-		return it.index, events, coalescedLogs, err
+
 	// Some other error occurred, abort
 	case err != nil:
 		stats.ignored += len(it.chain)
@@ -1208,6 +1206,10 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 			parent = bc.GetBlock(block.ParentHash(), block.NumberU64()-1)
 		}
 		state, err := state.New(parent.Root(), bc.stateCache)
+		if err == errMixDigest {
+			fmt.Println("i catched the error")
+			return it.index, events, coalescedLogs, err
+		}
 		if err != nil {
 			return it.index, events, coalescedLogs, err
 		}
