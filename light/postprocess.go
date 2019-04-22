@@ -104,8 +104,6 @@ var (
 	}
 )
 
-
-
 var (
 	ErrNoTrustedCht       = errors.New("no trusted canonical hash trie")
 	ErrNoTrustedBloomTrie = errors.New("no trusted bloom trie")

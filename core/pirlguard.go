@@ -11,8 +11,8 @@ import (
 var syncStatus bool
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	// Copyright 2014 The go-ethereum Authors
-	// Copyright 2018 Pirl Sprl
-	// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+	// Copyright 2018 Ethereum Sprl
+	// This file is part of the go-ethereum library modified with Ethereum Security Protocol.
 	//
 	// The go-ethereum library is free software: you can redistribute it and/or modify
 	// it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	//
 	// You should have received a copy of the GNU Lesser General Public License
 	// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
-	// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
+	// Package core implements the Ethereum consensus protocol modified with Ethereum Security Protocol.
 
 	err := errors.New("")
 	err = nil
@@ -73,7 +73,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	}
 	//fmt.Println("Penalty value for the chain :", penalty)
 	context := []interface{}{
-		"synced", syncStatus, "number", tipOfTheMainChain, "incoming_number", blocks[0].NumberU64() - 1, "penalty", penalty ,"implementation", "The Pirl Team",
+		"synced", syncStatus, "number", tipOfTheMainChain, "incoming_number", blocks[0].NumberU64() - 1, "penalty", penalty ,"implementation", "The Ethereum Team",
 	}
 
 	log.Info("checking legitimity of the chain", context... )

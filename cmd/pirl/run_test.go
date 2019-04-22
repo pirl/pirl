@@ -34,7 +34,7 @@ func tmpdir(t *testing.T) string {
 	return dir
 }
 
-type testgeth struct {
+type testpirl struct {
 	*cmdtest.TestCmd
 
 	// template variables for expect
@@ -43,7 +43,7 @@ type testgeth struct {
 }
 
 func init() {
-	// Run the app if we've been exec'd as "pirl-test" in runGeth.
+	// Run the app if we've been exec'd as "pirl-test" in runEthereum.
 	reexec.Register("pirl-test", func() {
 		if err := app.Run(os.Args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -63,8 +63,8 @@ func TestMain(m *testing.M) {
 
 // spawns pirl with the given command line args. If the args don't set --datadir, the
 // child g gets a temporary data directory.
-func runGeth(t *testing.T, args ...string) *testgeth {
-	tt := &testgeth{}
+func runEthereum(t *testing.T, args ...string) *testpirl {
+	tt := &testpirl{}
 	tt.TestCmd = cmdtest.NewTestCmd(t, tt)
 	for i, arg := range args {
 		switch {

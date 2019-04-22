@@ -12,7 +12,7 @@ import (
 	"git.pirl.io/community/pirl/p2p/protocols"
 	"git.pirl.io/community/pirl/swarm/network"
 	"git.pirl.io/community/pirl/swarm/pot"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
 type testCase struct {
@@ -54,6 +54,7 @@ func TestForwardBasic(t *testing.T) {
 
 	kad := network.NewKademlia(base[:], network.NewKadParams())
 	ps := createPss(t, kad)
+	defer ps.Stop()
 	addPeers(kad, peerAddresses)
 
 	const firstNearest = depth * 2 // shallowest peer in the nearest neighbours' bin

@@ -57,6 +57,7 @@ type LightChain struct {
 	scope         event.SubscriptionScope
 	genesisBlock  *types.Block
 
+	mu      sync.RWMutex
 	chainmu sync.RWMutex
 
 	bodyCache    *lru.Cache // Cache for the most recent block bodies
@@ -156,7 +157,7 @@ func (self *LightChain) loadLastState() error {
 	// Issue a status log and return
 	header := self.hc.CurrentHeader()
 	headerTd := self.GetTd(header.Hash(), header.Number.Uint64())
-	log.Info("Loaded most recent local header", "number", header.Number, "hash", header.Hash(), "td", headerTd, "age", common.PrettyAge(time.Unix(header.Time.Int64(), 0)))
+	log.Info("Loaded most recent local header", "number", header.Number, "hash", header.Hash(), "td", headerTd, "age", common.PrettyAge(time.Unix(int64(header.Time), 0)))
 
 	return nil
 }
@@ -164,8 +165,8 @@ func (self *LightChain) loadLastState() error {
 // SetHead rewinds the local chain to a new head. Everything above the new
 // head will be deleted and the new one set.
 func (bc *LightChain) SetHead(head uint64) {
-	bc.chainmu.Lock()
-	defer bc.chainmu.Unlock()
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
 
 	bc.hc.SetHead(head, nil)
 	bc.loadLastState()
@@ -187,8 +188,8 @@ func (bc *LightChain) ResetWithGenesisBlock(genesis *types.Block) {
 	// Dump the entire block chain and purge the caches
 	bc.SetHead(0)
 
-	bc.chainmu.Lock()
-	defer bc.chainmu.Unlock()
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
 
 	// Prepare the genesis block and reinitialise the chain
 	rawdb.WriteTd(bc.chainDb, genesis.Hash(), genesis.NumberU64(), genesis.Difficulty())
@@ -314,8 +315,8 @@ func (bc *LightChain) Stop() {
 // Rollback is designed to remove a chain of links from the database that aren't
 // certain enough to be valid.
 func (self *LightChain) Rollback(chain []common.Hash) {
-	self.chainmu.Lock()
-	defer self.chainmu.Unlock()
+	self.mu.Lock()
+	defer self.mu.Unlock()
 
 	for i := len(chain) - 1; i >= 0; i-- {
 		hash := chain[i]
@@ -361,13 +362,19 @@ func (self *LightChain) InsertHeaderChain(chain []*types.Header, checkFreq int) 
 
 	// Make sure only one thread manipulates the chain at once
 	self.chainmu.Lock()
-	defer self.chainmu.Unlock()
+	defer func() {
+		self.chainmu.Unlock()
+		time.Sleep(time.Millisecond * 10) // ugly hack; do not hog chain lock in case syncing is CPU-limited by validation
+	}()
 
 	self.wg.Add(1)
 	defer self.wg.Done()
 
 	var events []interface{}
 	whFunc := func(header *types.Header) error {
+		self.mu.Lock()
+		defer self.mu.Unlock()
+
 		status, err := self.hc.WriteHeader(header)
 
 		switch status {
@@ -434,8 +441,8 @@ func (self *LightChain) GetBlockHashesFromHash(hash common.Hash, max uint64) []c
 //
 // Note: ancestor == 0 returns the same block, 1 returns its parent and so on.
 func (bc *LightChain) GetAncestor(hash common.Hash, number, ancestor uint64, maxNonCanonical *uint64) (common.Hash, uint64) {
-	bc.chainmu.RLock()
-	defer bc.chainmu.RUnlock()
+	bc.chainmu.Lock()
+	defer bc.chainmu.Unlock()
 
 	return bc.hc.GetAncestor(hash, number, ancestor, maxNonCanonical)
 }
@@ -476,12 +483,12 @@ func (self *LightChain) SyncCht(ctx context.Context) bool {
 	}
 	// Retrieve the latest useful header and update to it
 	if header, err := GetHeaderByNumber(ctx, self.odr, latest); header != nil && err == nil {
-		self.chainmu.Lock()
-		defer self.chainmu.Unlock()
+		self.mu.Lock()
+		defer self.mu.Unlock()
 
 		// Ensure the chain didn't move past the latest block while retrieving it
 		if self.hc.CurrentHeader().Number.Uint64() < header.Number.Uint64() {
-			log.Info("Updated latest header based on CHT", "number", header.Number, "hash", header.Hash(), "age", common.PrettyAge(time.Unix(header.Time.Int64(), 0)))
+			log.Info("Updated latest header based on CHT", "number", header.Number, "hash", header.Hash(), "age", common.PrettyAge(time.Unix(int64(header.Time), 0)))
 			self.hc.SetCurrentHeader(header)
 		}
 		return true

@@ -26,7 +26,7 @@ import (
 	"git.pirl.io/community/pirl/p2p"
 	"git.pirl.io/community/pirl/rlp"
 	"git.pirl.io/community/pirl/swarm/storage"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
 const (
@@ -159,7 +159,7 @@ func (msg *PssMsg) String() string {
 }
 
 // Signature for a message handler function for a PssMsg
-// Implementations of this type are passed to Pss.Register together with a topic,
+// Implementations of this type are passed to Pss.Register topirler with a topic,
 type HandlerFunc func(msg []byte, p *p2p.Peer, asymmetric bool, keyid string) error
 
 type handlerCaps struct {

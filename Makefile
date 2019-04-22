@@ -7,7 +7,7 @@
 .PHONY: pirl-linux-arm pirl-linux-arm-5 pirl-linux-arm-6 pirl-linux-arm-7 pirl-linux-arm64
 .PHONY: pirl-darwin pirl-darwin-386 pirl-darwin-amd64
 .PHONY: pirl-windows pirl-windows-386 pirl-windows-amd64
-##export GOPATH=$(pwd)
+
 GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
@@ -32,7 +32,7 @@ android:
 ios:
 	build/env.sh go run build/ci.go xcode --local
 	@echo "Done building."
-	@echo "Import \"$(GOBIN)/pirl.framework\" to use the library."
+	@echo "Import \"$(GOBIN)/Ethereum.framework\" to use the library."
 
 test: all
 	build/env.sh go run build/ci.go test

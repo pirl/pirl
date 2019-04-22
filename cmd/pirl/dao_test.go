@@ -106,18 +106,18 @@ func testDAOForkBlockNewChain(t *testing.T, test int, genesis string, expectBloc
 	datadir := tmpdir(t)
 	defer os.RemoveAll(datadir)
 
-	// Start a Geth instance with the requested flags set and immediately terminate
+	// Start a Ethereum instance with the requested flags set and immediately terminate
 	if genesis != "" {
 		json := filepath.Join(datadir, "genesis.json")
 		if err := ioutil.WriteFile(json, []byte(genesis), 0600); err != nil {
 			t.Fatalf("test %d: failed to write genesis file: %v", test, err)
 		}
-		runGeth(t, "--datadir", datadir, "init", json).WaitExit()
+		runEthereum(t, "--datadir", datadir, "init", json).WaitExit()
 	} else {
 		// Force chain initialization
 		args := []string{"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none", "--ipcdisable", "--datadir", datadir}
-		geth := runGeth(t, append(args, []string{"--exec", "2+2", "console"}...)...)
-		geth.WaitExit()
+		pirl := runEthereum(t, append(args, []string{"--exec", "2+2", "console"}...)...)
+		pirl.WaitExit()
 	}
 	// Retrieve the DAO config flag from the database
 	path := filepath.Join(datadir, "pirl", "chaindata")

@@ -25,7 +25,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"git.pirl.io/community/pirl"
+	ethereum "git.pirl.io/community/pirl"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/types"
@@ -211,11 +211,11 @@ func New(mode SyncMode, checkpoint uint64, stateDb ethdb.Database, mux *event.Ty
 	if lightchain == nil {
 		lightchain = chain
 	}
-
 	dl := &Downloader{
 		mode:           mode,
-		checkpoint:        checkpoint,
+		stateDB:        stateDb,
 		mux:            mux,
+		checkpoint:     checkpoint,
 		queue:          newQueue(),
 		peers:          newPeerSet(),
 		rttEstimate:    uint64(rttMaxEstimate),
@@ -1499,7 +1499,7 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 		} else {
 			// The InsertChain method in blockchain.go will sometimes return an out-of-bounds index,
 			// when it needs to preprocess blocks to import a sidechain.
-			// The importer will put together a new list of blocks to import, which is a superset
+			// The importer will put topirler a new list of blocks to import, which is a superset
 			// of the blocks delivered from the downloader, and the indexing will be off.
 			log.Debug("Downloaded item processing failed on sidechain import", "index", index, "err", err)
 		}

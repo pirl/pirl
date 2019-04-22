@@ -82,7 +82,7 @@ func TestBzzWithFeed(t *testing.T) {
 	srv := NewTestSwarmServer(t, serverFunc, nil)
 	defer srv.Close()
 
-	// put together some data for our test:
+	// put topirler some data for our test:
 	dataBytes := []byte(`
 	//
 	// Create some data our manifest will point to. Data that could be very big and wouldn't fit in a feed update.

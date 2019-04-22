@@ -16,7 +16,7 @@
 
 // Contains a wrapper for the Whisper client.
 
-package geth
+package pirl
 
 import (
 	"git.pirl.io/community/pirl/whisper/shhclient"

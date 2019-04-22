@@ -1,6 +1,6 @@
 // Copyright 2014 The go-ethereum Authors
-// Copyright 2018 Pirl Sprl
-// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+// Copyright 2018 Ethereum Sprl
+// This file is part of the go-ethereum library modified with Ethereum Security Protocol.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
-// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
+// Package core implements the Ethereum consensus protocol modified with Ethereum Security Protocol.
 
 package redlist
 

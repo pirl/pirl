@@ -54,7 +54,7 @@ const (
 )
 
 var (
-	syncChallengeTimeout = 15 * time.Second // Time allowance for a node to reply to the DAO handshake challenge
+	syncChallengeTimeout = 15 * time.Second // Time allowance for a node to reply to the sync progress challenge
 )
 
 // errIncompatibleConfig is returned if the requested protocols and configs are
@@ -70,8 +70,10 @@ type ProtocolManager struct {
 
 	fastSync  uint32 // Flag whether fast sync is enabled (gets disabled if we already have blocks)
 	acceptTxs uint32 // Flag whether we're considered synchronised (enables transaction processing)
+
 	checkpointNumber uint64      // Block number for the sync progress validator to cross reference
 	checkpointHash   common.Hash // Block hash for the sync progress validator to cross reference
+
 	txpool      txPool
 	blockchain  *core.BlockChain
 	chainconfig *params.ChainConfig
@@ -300,12 +302,11 @@ func (pm *ProtocolManager) handle(p *peer) error {
 	if pm.checkpointHash != (common.Hash{}) {
 		// Request the peer's checkpoint header for chain height/weight validation
 		if err := p.RequestHeadersByNumber(pm.checkpointNumber, 1, 0, false); err != nil {
-	return err
+			return err
 		}
 		// Start a timer to disconnect if the peer doesn't reply in time
 		p.syncDrop = time.AfterFunc(syncChallengeTimeout, func() {
-			p.Log().Warn("Checkpoint challenge timed out, dropping", "addr", p.RemoteAddr(), "type",
-				p.Name())
+			p.Log().Warn("Checkpoint challenge timed out, dropping", "addr", p.RemoteAddr(), "type", p.Name())
 			pm.removePeer(p.id)
 		})
 		// Make sure it's cleaned up if the peer dies off
@@ -471,7 +472,6 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 				if headers[0].Hash() != pm.checkpointHash {
 					return errors.New("checkpoint hash mismatch")
 				}
-				p.Log().Debug("Verified to be on the same side of the DAO fork")
 				return nil
 			}
 			// Otherwise if it's a whitelisted block, validate against the set

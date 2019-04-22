@@ -490,7 +490,7 @@ func (sw *AsyncHasher) Write(i int, section []byte) {
 //
 // b: digest is appended to b
 // length: known length of the input (unsafe; undefined if out of range)
-// meta: metadata to hash together with BMT root for the final digest
+// meta: metadata to hash topirler with BMT root for the final digest
 //   e.g., span for protection against existential forgery
 func (sw *AsyncHasher) Sum(b []byte, length int, meta []byte) (s []byte) {
 	sw.mtx.Lock()
@@ -519,7 +519,7 @@ func (sw *AsyncHasher) Sum(b []byte, length int, meta []byte) (s []byte) {
 	if len(meta) == 0 {
 		return append(b, s...)
 	}
-	// hash together meta and BMT root hash using the pools
+	// hash topirler meta and BMT root hash using the pools
 	return doSum(sw.pool.hasher(), b, meta, s)
 }
 

@@ -38,7 +38,7 @@ import (
 	"git.pirl.io/community/pirl/swarm/network"
 	"git.pirl.io/community/pirl/swarm/pss"
 	"git.pirl.io/community/pirl/swarm/state"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
 type protoCtrl struct {

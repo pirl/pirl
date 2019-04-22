@@ -728,7 +728,7 @@ func main() {
 ### Subcommands categories
 
 For additional organization in apps that have many subcommands, you can
-associate a category for each command to group them together in the help
+associate a category for each command to group them topirler in the help
 output.
 
 E.g.

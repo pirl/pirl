@@ -43,12 +43,12 @@ var DefaultConfig = Config{
 		DatasetsInMem:  1,
 		DatasetsOnDisk: 2,
 	},
-	NetworkId:      3125659152,
+	NetworkId:      1,
 	LightPeers:     100,
-	DatabaseCache:  768,
+	DatabaseCache:  512,
 	TrieCleanCache: 256,
 	TrieDirtyCache: 256,
-	TrieTimeout:    5 * time.Minute,
+	TrieTimeout:    60 * time.Minute,
 	MinerGasFloor:  8000000,
 	MinerGasCeil:   8000000,
 	MinerGasPrice:  big.NewInt(params.GWei),
@@ -69,9 +69,9 @@ func init() {
 		}
 	}
 	if runtime.GOOS == "windows" {
-		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, "AppData", "Pirl")
+		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, "AppData", "Ethash")
 	} else {
-		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, ".pirl")
+		DefaultConfig.Ethash.DatasetDir = filepath.Join(home, ".ethash")
 	}
 }
 
@@ -135,6 +135,9 @@ type Config struct {
 
 	// Constantinople block override (TODO: remove after the fork)
 	ConstantinopleOverride *big.Int
+
+	// RPCGasCap is the global gas cap for eth-call variants.
+	RPCGasCap *big.Int `toml:",omitempty"`
 }
 
 type configMarshaling struct {
