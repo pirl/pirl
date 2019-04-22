@@ -1182,9 +1182,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 
 	// Some other error occurred, abort
 	case err != nil:
-		fmt.Println("this is here : 1185")
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, err)
+		SyncStatus = false
 		return it.index, events, coalescedLogs, err
 	}
 	// No validation errors for the first block (or chain prefix skipped)
@@ -1216,7 +1216,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		receipts, logs, usedGas, err := bc.processor.Process(block, state, bc.vmConfig)
 		t1 := time.Now()
 		if err != nil {
-			fmt.Println("this is here : 1219")
 			bc.reportBlock(block, receipts, err)
 			return it.index, events, coalescedLogs, err
 		}
