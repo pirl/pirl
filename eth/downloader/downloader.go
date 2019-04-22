@@ -944,21 +944,21 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 				}
 				headers = filled[proced:]
 				from += uint64(proced)
-			} else {
+			//} else {
 				// If we're closing in on the chain head, but haven't yet reached it, delay
 				// the last few headers so mini reorgs on the head don't cause invalid hash
 				// chain errors.
-				if n := len(headers); n > 0 {
+				//	if n := len(headers); n > 0 {
 					// Retrieve the current head we're at
-					head := uint64(0)
-					if d.mode == LightSync {
-						head = d.lightchain.CurrentHeader().Number.Uint64()
-					} else {
-						head = d.blockchain.CurrentFastBlock().NumberU64()
-						if full := d.blockchain.CurrentBlock().NumberU64(); head < full {
-							head = full
-						}
-					}
+				//	head := uint64(0)
+				//	if d.mode == LightSync {
+				//		head = d.lightchain.CurrentHeader().Number.Uint64()
+				//	} else {
+				//		head = d.blockchain.CurrentFastBlock().NumberU64()
+				//		if full := d.blockchain.CurrentBlock().NumberU64(); head < full {
+							//			head = full
+				//		}
+				//	}
 					// If the head is way older than this batch, delay the last few headers
 					//if head+uint64(reorgProtThreshold) < headers[n-1].Number.Uint64() {
 					//	delay := reorgProtHeaderDelay
@@ -967,7 +967,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 					//	}
 					//	headers = headers[:n-delay]
 					//}
-				}
+				//}
 			}
 			// Insert all the new headers and fetch the next batch
 			if len(headers) > 0 {
