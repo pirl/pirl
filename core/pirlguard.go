@@ -9,7 +9,7 @@ import (
 	"git.pirl.io/community/pirl/params"
 )
 
-var SyncStatus bool
+var syncStatus bool
 
 func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	// Copyright 2014 The go-ethereum Authors
@@ -35,18 +35,18 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	timeMap := make(map[uint64]int64)
 	tipOfTheMainChain := bc.CurrentBlock().NumberU64()
 
-	if !SyncStatus {
+	if !syncStatus {
 		if tipOfTheMainChain == blocks[0].NumberU64()-1 {
 			//fmt.Println("We are synced")
-			SyncStatus = true
+			syncStatus = true
 		} else {
 			//fmt.Println("Still syncing!")
-			SyncStatus = false
+			syncStatus = false
 		}
 	}
 
 	if len(blocks) > 0 && bc.CurrentBlock().NumberU64() > uint64(params.TimeCapsuleBlock) {
-		if SyncStatus && len(blocks) > int(params.TimeCapsuleLength) {
+		if syncStatus && len(blocks) > int(params.TimeCapsuleLength) {
 			for _, b := range blocks {
 				timeMap[b.NumberU64()] = calculatePenaltyTimeForBlock(tipOfTheMainChain, b.NumberU64())
 			}
@@ -72,7 +72,7 @@ func (bc *BlockChain) checkChainForAttack(blocks types.Blocks) error {
 	}
 	//fmt.Println("Penalty value for the chain :", penalty)
 	context := []interface{}{
-		"synced", SyncStatus, "number", tipOfTheMainChain, "incoming_number", blocks[0].NumberU64() - 1, "penalty", penalty, "implementation", "The Pirl Team",
+		"synced", syncStatus, "number", tipOfTheMainChain, "incoming_number", blocks[0].NumberU64() - 1, "penalty", penalty, "implementation", "The Pirl Team",
 	}
 
 	log.Info("checking legitimity of the chain", context...)

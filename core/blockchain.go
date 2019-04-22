@@ -1184,8 +1184,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 	case err != nil:
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, err)
-		SyncStatus = false
-		return it.index, events, coalescedLogs, err
+		return it.index + 1, events, coalescedLogs, err
 	}
 	// No validation errors for the first block (or chain prefix skipped)
 	for ; block != nil && err == nil; block, err = it.next() {
