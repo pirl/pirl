@@ -83,7 +83,7 @@ func newLDBStore(t *testing.T) (*LDBStore, func()) {
 	return db, cleanup
 }
 
-func mputRandomChunks(store ChunkStore, n int) ([]Chunk, error) {
+func mputRandomChunks(store ChunkStore, n int, chunksize int64) ([]Chunk, error) {
 	return mput(store, n, GenerateRandomChunk)
 }
 
@@ -91,7 +91,7 @@ func mput(store ChunkStore, n int, f func(i int64) Chunk) (hs []Chunk, err error
 	// put to localstore and wait for stored channel
 	// does not check delivery error state
 	errc := make(chan error)
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	for i := int64(0); i < int64(n); i++ {
 		chunk := f(ch.DefaultSize)
@@ -142,11 +142,10 @@ func mget(store ChunkStore, hs []Address, f func(h Address, chunk Chunk) error) 
 		close(errc)
 	}()
 	var err error
-	timeout := 10 * time.Second
 	select {
 	case err = <-errc:
-	case <-time.NewTimer(timeout).C:
-		err = fmt.Errorf("timed out after %v", timeout)
+	case <-time.NewTimer(5 * time.Second).C:
+		err = fmt.Errorf("timed out after 5 seconds")
 	}
 	return err
 }
@@ -159,8 +158,8 @@ func (r *brokenLimitedReader) Read(buf []byte) (int, error) {
 	return r.lr.Read(buf)
 }
 
-func testStoreRandom(m ChunkStore, n int, t *testing.T) {
-	chunks, err := mputRandomChunks(m, n)
+func testStoreRandom(m ChunkStore, n int, chunksize int64, t *testing.T) {
+	chunks, err := mputRandomChunks(m, n, chunksize)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -170,8 +169,8 @@ func testStoreRandom(m ChunkStore, n int, t *testing.T) {
 	}
 }
 
-func testStoreCorrect(m ChunkStore, n int, t *testing.T) {
-	chunks, err := mputRandomChunks(m, n)
+func testStoreCorrect(m ChunkStore, n int, chunksize int64, t *testing.T) {
+	chunks, err := mputRandomChunks(m, n, chunksize)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -195,7 +194,7 @@ func testStoreCorrect(m ChunkStore, n int, t *testing.T) {
 	}
 }
 
-func benchmarkStorePut(store ChunkStore, n int, b *testing.B) {
+func benchmarkStorePut(store ChunkStore, n int, chunksize int64, b *testing.B) {
 	chunks := make([]Chunk, n)
 	i := 0
 	f := func(dataSize int64) Chunk {
@@ -222,8 +221,8 @@ func benchmarkStorePut(store ChunkStore, n int, b *testing.B) {
 	}
 }
 
-func benchmarkStoreGet(store ChunkStore, n int, b *testing.B) {
-	chunks, err := mputRandomChunks(store, n)
+func benchmarkStoreGet(store ChunkStore, n int, chunksize int64, b *testing.B) {
+	chunks, err := mputRandomChunks(store, n, chunksize)
 	if err != nil {
 		b.Fatalf("expected no error, got %v", err)
 	}
@@ -265,15 +264,6 @@ func (m *MapChunkStore) Get(_ context.Context, ref Address) (Chunk, error) {
 		return nil, ErrChunkNotFound
 	}
 	return chunk, nil
-}
-
-// Need to implement Has from SyncChunkStore
-func (m *MapChunkStore) Has(ctx context.Context, ref Address) bool {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-
-	_, has := m.chunks[ref.Hex()]
-	return has
 }
 
 func (m *MapChunkStore) Close() {

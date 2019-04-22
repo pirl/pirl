@@ -557,7 +557,7 @@ func (s *Service) assembleBlockStats(block *types.Block) *blockStats {
 		Number:     header.Number,
 		Hash:       header.Hash(),
 		ParentHash: header.ParentHash,
-		Timestamp:  new(big.Int).SetUint64(header.Time),
+		Timestamp:  header.Time,
 		Miner:      author,
 		GasUsed:    header.GasUsed,
 		GasLimit:   header.GasLimit,

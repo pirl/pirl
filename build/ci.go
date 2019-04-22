@@ -441,8 +441,11 @@ func archiveBasename(arch string, archiveVersion string) string {
 func archiveUpload(archive string, blobstore string, signer string) error {
 	// If signing was requested, generate the signature files
 	if signer != "" {
-		key := getenvBase64(signer)
-		if err := build.PGPSignFile(archive, archive+".asc", string(key)); err != nil {
+		pgpkey, err := base64.StdEncoding.DecodeString(os.Getenv(signer))
+		if err != nil {
+			return fmt.Errorf("invalid base64 %s", signer)
+		}
+		if err := build.PGPSignFile(archive, archive+".asc", string(pgpkey)); err != nil {
 			return err
 		}
 	}
@@ -485,8 +488,7 @@ func maybeSkipArchive(env build.Environment) {
 func doDebianSource(cmdline []string) {
 	var (
 		signer  = flag.String("signer", "", `Signing key name, also used as package author`)
-		upload  = flag.String("upload", "", `Where to upload the source package (usually "ethereum/ethereum")`)
-		sshUser = flag.String("sftp-user", "", `Username for SFTP upload (usually "geth-ci")`)
+		upload  = flag.String("upload", "", `Where to upload the source package (usually "ppa:ethereum/ethereum")`)
 		workdir = flag.String("workdir", "", `Output directory for packages (uses temp dir if unset)`)
 		now     = time.Now()
 	)
@@ -496,7 +498,11 @@ func doDebianSource(cmdline []string) {
 	maybeSkipArchive(env)
 
 	// Import the signing key.
-	if key := getenvBase64("PPA_SIGNING_KEY"); len(key) > 0 {
+	if b64key := os.Getenv("PPA_SIGNING_KEY"); b64key != "" {
+		key, err := base64.StdEncoding.DecodeString(b64key)
+		if err != nil {
+			log.Fatal("invalid base64 PPA_SIGNING_KEY")
+		}
 		gpg := exec.Command("gpg", "--import")
 		gpg.Stdin = bytes.NewReader(key)
 		build.MustRun(gpg)
@@ -507,56 +513,20 @@ func doDebianSource(cmdline []string) {
 		for _, distro := range debDistros {
 			meta := newDebMetadata(distro, *signer, env, now, pkg.Name, pkg.Version, pkg.Executables)
 			pkgdir := stageDebianSource(*workdir, meta)
-			debuild := exec.Command("debuild", "-S", "-sa", "-us", "-uc", "-d", "-Zxz")
+			debuild := exec.Command("debuild", "-S", "-sa", "-us", "-uc")
 			debuild.Dir = pkgdir
 			build.MustRun(debuild)
 
-			var (
-				basename = fmt.Sprintf("%s_%s", meta.Name(), meta.VersionString())
-				source   = filepath.Join(*workdir, basename+".tar.xz")
-				dsc      = filepath.Join(*workdir, basename+".dsc")
-				changes  = filepath.Join(*workdir, basename+"_source.changes")
-			)
+			changes := fmt.Sprintf("%s_%s_source.changes", meta.Name(), meta.VersionString())
+			changes = filepath.Join(*workdir, changes)
 			if *signer != "" {
 				build.MustRunCommand("debsign", changes)
 			}
 			if *upload != "" {
-				ppaUpload(*workdir, *upload, *sshUser, []string{source, dsc, changes})
+				build.MustRunCommand("dput", *upload, changes)
 			}
 		}
 	}
-}
-
-func ppaUpload(workdir, ppa, sshUser string, files []string) {
-	p := strings.Split(ppa, "/")
-	if len(p) != 2 {
-		log.Fatal("-upload PPA name must contain single /")
-	}
-	if sshUser == "" {
-		sshUser = p[0]
-	}
-	incomingDir := fmt.Sprintf("~%s/ubuntu/%s", p[0], p[1])
-	// Create the SSH identity file if it doesn't exist.
-	var idfile string
-	if sshkey := getenvBase64("PPA_SSH_KEY"); len(sshkey) > 0 {
-		idfile = filepath.Join(workdir, "sshkey")
-		if _, err := os.Stat(idfile); os.IsNotExist(err) {
-			ioutil.WriteFile(idfile, sshkey, 0600)
-		}
-	}
-	// Upload
-	dest := sshUser + "@ppa.launchpad.net"
-	if err := build.UploadSFTP(idfile, dest, incomingDir, files); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func getenvBase64(variable string) []byte {
-	dec, err := base64.StdEncoding.DecodeString(os.Getenv(variable))
-	if err != nil {
-		log.Fatal("invalid base64 " + variable)
-	}
-	return []byte(dec)
 }
 
 func makeWorkdir(wdflag string) string {
@@ -830,10 +800,15 @@ func doAndroidArchive(cmdline []string) {
 	os.Rename(archive, meta.Package+".aar")
 	if *signer != "" && *deploy != "" {
 		// Import the signing key into the local GPG instance
-		key := getenvBase64(*signer)
+		b64key := os.Getenv(*signer)
+		key, err := base64.StdEncoding.DecodeString(b64key)
+		if err != nil {
+			log.Fatalf("invalid base64 %s", *signer)
+		}
 		gpg := exec.Command("gpg", "--import")
 		gpg.Stdin = bytes.NewReader(key)
 		build.MustRun(gpg)
+
 		keyID, err := build.PGPKeyID(string(key))
 		if err != nil {
 			log.Fatal(err)

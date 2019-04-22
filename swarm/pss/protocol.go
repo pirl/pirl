@@ -241,16 +241,20 @@ func (p *Protocol) AddPeer(peer *p2p.Peer, topic Topic, asymmetric bool, key str
 		rw.sendFunc = p.Pss.SendSym
 	}
 	if asymmetric {
-		if !p.Pss.isPubKeyStored(key) {
+		p.Pss.pubKeyPoolMu.Lock()
+		if _, ok := p.Pss.pubKeyPool[key]; !ok {
 			return nil, fmt.Errorf("asym key does not exist: %s", key)
 		}
+		p.Pss.pubKeyPoolMu.Unlock()
 		p.RWPoolMu.Lock()
 		p.pubKeyRWPool[key] = rw
 		p.RWPoolMu.Unlock()
 	} else {
-		if !p.Pss.isSymKeyStored(key) {
+		p.Pss.symKeyPoolMu.Lock()
+		if _, ok := p.Pss.symKeyPool[key]; !ok {
 			return nil, fmt.Errorf("symkey does not exist: %s", key)
 		}
+		p.Pss.symKeyPoolMu.Unlock()
 		p.RWPoolMu.Lock()
 		p.symKeyRWPool[key] = rw
 		p.RWPoolMu.Unlock()

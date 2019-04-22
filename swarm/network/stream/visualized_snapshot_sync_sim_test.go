@@ -24,6 +24,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"sync"
 	"testing"
 	"time"
@@ -36,6 +37,7 @@ import (
 	"git.pirl.io/community/pirl/p2p/simulations/adapters"
 	"git.pirl.io/community/pirl/rlp"
 	"git.pirl.io/community/pirl/swarm/log"
+	"git.pirl.io/community/pirl/swarm/network"
 	"git.pirl.io/community/pirl/swarm/network/simulation"
 	"git.pirl.io/community/pirl/swarm/state"
 	"git.pirl.io/community/pirl/swarm/storage"
@@ -66,6 +68,31 @@ func setupSim(serviceMap map[string]simulation.ServiceFunc) (int, int, *simulati
 	return nodeCount, chunkCount, sim
 }
 
+//watch for disconnections and wait for healthy
+func watchSim(sim *simulation.Simulation) (context.Context, context.CancelFunc) {
+	ctx, cancelSimRun := context.WithTimeout(context.Background(), 1*time.Minute)
+
+	if _, err := sim.WaitTillHealthy(ctx); err != nil {
+		panic(err)
+	}
+
+	disconnections := sim.PeerEvents(
+		context.Background(),
+		sim.NodeIDs(),
+		simulation.NewPeerEventsFilter().Drop(),
+	)
+
+	go func() {
+		for d := range disconnections {
+			log.Error("peer drop", "node", d.NodeID, "peer", d.PeerID)
+			panic("unexpected disconnect")
+			cancelSimRun()
+		}
+	}()
+
+	return ctx, cancelSimRun
+}
+
 //This test requests bogus hashes into the network
 func TestNonExistingHashesWithServer(t *testing.T) {
 
@@ -77,25 +104,19 @@ func TestNonExistingHashesWithServer(t *testing.T) {
 		panic(err)
 	}
 
+	ctx, cancelSimRun := watchSim(sim)
+	defer cancelSimRun()
+
 	//in order to get some meaningful visualization, it is beneficial
 	//to define a minimum duration of this test
 	testDuration := 20 * time.Second
 
-	result := sim.Run(ctx, func(ctx context.Context, sim *simulation.Simulation) (err error) {
-		disconnected := watchDisconnections(ctx, sim)
-		defer func() {
-			if err != nil {
-				if yes, ok := disconnected.Load().(bool); ok && yes {
-					err = errors.New("disconnect events received")
-				}
-			}
-		}()
-
+	result := sim.Run(ctx, func(ctx context.Context, sim *simulation.Simulation) error {
 		//check on the node's FileStore (netstore)
 		id := sim.Net.GetRandomUpNode().ID()
 		item, ok := sim.NodeItem(id, bucketKeyFileStore)
 		if !ok {
-			return errors.New("No filestore")
+			t.Fatalf("No filestore")
 		}
 		fileStore := item.(*storage.FileStore)
 		//create a bogus hash
@@ -133,8 +154,6 @@ func sendSimTerminatedEvent(sim *simulation.Simulation) {
 //It also sends some custom events so that the frontend
 //can visualize messages like SendOfferedMsg, WantedHashesMsg, DeliveryMsg
 func TestSnapshotSyncWithServer(t *testing.T) {
-	//t.Skip("temporarily disabled as simulations.WaitTillHealthy cannot be trusted")
-
 	//define a wrapper object to be able to pass around data
 	wrapper := &netWrapper{}
 
@@ -150,10 +169,21 @@ func TestSnapshotSyncWithServer(t *testing.T) {
 
 	sim := simulation.New(map[string]simulation.ServiceFunc{
 		"streamer": func(ctx *adapters.ServiceContext, bucket *sync.Map) (s node.Service, cleanup func(), err error) {
-			addr, netStore, delivery, clean, err := newNetStoreAndDeliveryWithRequestFunc(ctx, bucket, dummyRequestFromPeers)
+			n := ctx.Config.Node()
+			addr := network.NewAddr(n)
+			store, datadir, err := createTestLocalStorageForID(n.ID(), addr)
 			if err != nil {
 				return nil, nil, err
 			}
+			bucket.Store(bucketKeyStore, store)
+			localStore := store.(*storage.LocalStore)
+			netStore, err := storage.NewNetStore(localStore, nil)
+			if err != nil {
+				return nil, nil, err
+			}
+			kad := network.NewKademlia(addr.Over(), network.NewKadParams())
+			delivery := NewDelivery(kad, netStore)
+			netStore.NewNetFetcherFunc = network.NewFetcherFactory(dummyRequestFromPeers, true).New
 
 			r := NewRegistry(addr.ID(), delivery, netStore, state.NewInmemoryStore(), &RegistryOptions{
 				Retrieval:       RetrievalDisabled,
@@ -169,8 +199,9 @@ func TestSnapshotSyncWithServer(t *testing.T) {
 			bucket.Store(bucketKeyRegistry, tr)
 
 			cleanup = func() {
+				netStore.Close()
 				tr.Close()
-				clean()
+				os.RemoveAll(datadir)
 			}
 
 			return tr, cleanup, nil
@@ -195,6 +226,9 @@ func TestSnapshotSyncWithServer(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
+	ctx, cancelSimRun := watchSim(sim)
+	defer cancelSimRun()
 
 	//run the sim
 	result := runSim(conf, ctx, sim, chunkCount)

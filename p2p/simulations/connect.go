@@ -32,9 +32,6 @@ var (
 // It is useful when constructing a chain network topology
 // when Network adds and removes nodes dynamically.
 func (net *Network) ConnectToLastNode(id enode.ID) (err error) {
-	net.lock.Lock()
-	defer net.lock.Unlock()
-
 	ids := net.getUpNodeIDs()
 	l := len(ids)
 	if l < 2 {
@@ -44,35 +41,29 @@ func (net *Network) ConnectToLastNode(id enode.ID) (err error) {
 	if last == id {
 		last = ids[l-2]
 	}
-	return net.connectNotConnected(last, id)
+	return net.connect(last, id)
 }
 
 // ConnectToRandomNode connects the node with provided NodeID
 // to a random node that is up.
 func (net *Network) ConnectToRandomNode(id enode.ID) (err error) {
-	net.lock.Lock()
-	defer net.lock.Unlock()
-
-	selected := net.getRandomUpNode(id)
+	selected := net.GetRandomUpNode(id)
 	if selected == nil {
 		return ErrNodeNotFound
 	}
-	return net.connectNotConnected(selected.ID(), id)
+	return net.connect(selected.ID(), id)
 }
 
 // ConnectNodesFull connects all nodes one to another.
 // It provides a complete connectivity in the network
 // which should be rarely needed.
 func (net *Network) ConnectNodesFull(ids []enode.ID) (err error) {
-	net.lock.Lock()
-	defer net.lock.Unlock()
-
 	if ids == nil {
 		ids = net.getUpNodeIDs()
 	}
 	for i, lid := range ids {
 		for _, rid := range ids[i+1:] {
-			if err = net.connectNotConnected(lid, rid); err != nil {
+			if err = net.connect(lid, rid); err != nil {
 				return err
 			}
 		}
@@ -83,19 +74,12 @@ func (net *Network) ConnectNodesFull(ids []enode.ID) (err error) {
 // ConnectNodesChain connects all nodes in a chain topology.
 // If ids argument is nil, all nodes that are up will be connected.
 func (net *Network) ConnectNodesChain(ids []enode.ID) (err error) {
-	net.lock.Lock()
-	defer net.lock.Unlock()
-
-	return net.connectNodesChain(ids)
-}
-
-func (net *Network) connectNodesChain(ids []enode.ID) (err error) {
 	if ids == nil {
 		ids = net.getUpNodeIDs()
 	}
 	l := len(ids)
 	for i := 0; i < l-1; i++ {
-		if err := net.connectNotConnected(ids[i], ids[i+1]); err != nil {
+		if err := net.connect(ids[i], ids[i+1]); err != nil {
 			return err
 		}
 	}
@@ -105,9 +89,6 @@ func (net *Network) connectNodesChain(ids []enode.ID) (err error) {
 // ConnectNodesRing connects all nodes in a ring topology.
 // If ids argument is nil, all nodes that are up will be connected.
 func (net *Network) ConnectNodesRing(ids []enode.ID) (err error) {
-	net.lock.Lock()
-	defer net.lock.Unlock()
-
 	if ids == nil {
 		ids = net.getUpNodeIDs()
 	}
@@ -115,18 +96,15 @@ func (net *Network) ConnectNodesRing(ids []enode.ID) (err error) {
 	if l < 2 {
 		return nil
 	}
-	if err := net.connectNodesChain(ids); err != nil {
+	if err := net.ConnectNodesChain(ids); err != nil {
 		return err
 	}
-	return net.connectNotConnected(ids[l-1], ids[0])
+	return net.connect(ids[l-1], ids[0])
 }
 
 // ConnectNodesStar connects all nodes into a star topology
 // If ids argument is nil, all nodes that are up will be connected.
 func (net *Network) ConnectNodesStar(ids []enode.ID, center enode.ID) (err error) {
-	net.lock.Lock()
-	defer net.lock.Unlock()
-
 	if ids == nil {
 		ids = net.getUpNodeIDs()
 	}
@@ -134,15 +112,16 @@ func (net *Network) ConnectNodesStar(ids []enode.ID, center enode.ID) (err error
 		if center == id {
 			continue
 		}
-		if err := net.connectNotConnected(center, id); err != nil {
+		if err := net.connect(center, id); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (net *Network) connectNotConnected(oneID, otherID enode.ID) error {
-	return ignoreAlreadyConnectedErr(net.connect(oneID, otherID))
+// connect connects two nodes but ignores already connected error.
+func (net *Network) connect(oneID, otherID enode.ID) error {
+	return ignoreAlreadyConnectedErr(net.Connect(oneID, otherID))
 }
 
 func ignoreAlreadyConnectedErr(err error) error {

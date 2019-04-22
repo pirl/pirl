@@ -50,7 +50,7 @@ const (
 // all registered services.
 type Config struct {
 	// Name sets the instance name of the node. It must not contain the / character and is
-	// used in the devp2p node identifier. The instance name of geth is "geth". If no
+	// used in the devp2p node identifier. The instance name of pirl is "pirl". If no
 	// value is specified, the basename of the current executable is used.
 	Name string `toml:"-"`
 
@@ -268,8 +268,8 @@ var isOldGethResource = map[string]bool{
 	"chaindata":          true,
 	"nodes":              true,
 	"nodekey":            true,
-	"static-nodes.json":  false, // no warning for these because they have their
-	"trusted-nodes.json": false, // own separate warning.
+	"static-nodes.json":  true,
+	"trusted-nodes.json": true,
 }
 
 // ResolvePath resolves path in the instance directory.
@@ -282,15 +282,13 @@ func (c *Config) ResolvePath(path string) string {
 	}
 	// Backwards-compatibility: ensure that data directory files created
 	// by geth 1.4 are used if they exist.
-	if warn, isOld := isOldGethResource[path]; isOld {
+	if c.name() == "geth" && isOldGethResource[path] {
 		oldpath := ""
-		if c.name() == "geth" {
+		if c.Name == "geth" {
 			oldpath = filepath.Join(c.DataDir, path)
 		}
 		if oldpath != "" && common.FileExist(oldpath) {
-			if warn {
-				c.warnOnce(&c.oldGethResourceWarning, "Using deprecated resource file %s, please move this file to the 'geth' subdirectory of datadir.", oldpath)
-			}
+			// TODO: print warning
 			return oldpath
 		}
 	}

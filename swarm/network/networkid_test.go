@@ -44,7 +44,7 @@ var (
 
 const (
 	NumberOfNets = 4
-	MaxTimeout   = 15 * time.Second
+	MaxTimeout   = 6
 )
 
 func init() {
@@ -146,7 +146,7 @@ func setupNetwork(numnodes int) (net *simulations.Network, err error) {
 			return nil, fmt.Errorf("create node %d rpc client fail: %v", i, err)
 		}
 		//now setup and start event watching in order to know when we can upload
-		ctx, watchCancel := context.WithTimeout(context.Background(), MaxTimeout)
+		ctx, watchCancel := context.WithTimeout(context.Background(), MaxTimeout*time.Second)
 		defer watchCancel()
 		watchSubscriptionEvents(ctx, nodes[i].ID(), client, errc, quitC)
 		//on every iteration we connect to all previous ones

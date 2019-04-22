@@ -20,15 +20,4 @@ WORKDIR /
 COPY --from=builder /swarm /geth /swarm-smoke /
 ADD run.sh /run.sh
 ADD run-smoke.sh /run-smoke.sh
-ENTRYPOINT ["/run-smoke.sh"]
-
-FROM alpine:3.8 as swarm-global-store
-WORKDIR /
-COPY --from=builder /go/bin/global-store /
-ENTRYPOINT ["/global-store"]
-
-FROM alpine:3.8 as swarm
-WORKDIR /
-COPY --from=builder /go/bin/swarm /go/bin/geth /
-ADD run.sh /run.sh
 ENTRYPOINT ["/run.sh"]

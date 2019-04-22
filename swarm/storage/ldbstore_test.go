@@ -79,22 +79,22 @@ func testPoFunc(k Address) (ret uint8) {
 	return uint8(Proximity(basekey, k[:]))
 }
 
-func testDbStoreRandom(n int, mock bool, t *testing.T) {
+func testDbStoreRandom(n int, chunksize int64, mock bool, t *testing.T) {
 	db, cleanup, err := newTestDbStore(mock, true)
 	defer cleanup()
 	if err != nil {
 		t.Fatalf("init dbStore failed: %v", err)
 	}
-	testStoreRandom(db, n, t)
+	testStoreRandom(db, n, chunksize, t)
 }
 
-func testDbStoreCorrect(n int, mock bool, t *testing.T) {
+func testDbStoreCorrect(n int, chunksize int64, mock bool, t *testing.T) {
 	db, cleanup, err := newTestDbStore(mock, false)
 	defer cleanup()
 	if err != nil {
 		t.Fatalf("init dbStore failed: %v", err)
 	}
-	testStoreCorrect(db, n, t)
+	testStoreCorrect(db, n, chunksize, t)
 }
 
 func TestMarkAccessed(t *testing.T) {
@@ -138,35 +138,35 @@ func TestMarkAccessed(t *testing.T) {
 }
 
 func TestDbStoreRandom_1(t *testing.T) {
-	testDbStoreRandom(1, false, t)
+	testDbStoreRandom(1, 0, false, t)
 }
 
 func TestDbStoreCorrect_1(t *testing.T) {
-	testDbStoreCorrect(1, false, t)
+	testDbStoreCorrect(1, 4096, false, t)
 }
 
 func TestDbStoreRandom_1k(t *testing.T) {
-	testDbStoreRandom(1000, false, t)
+	testDbStoreRandom(1000, 0, false, t)
 }
 
 func TestDbStoreCorrect_1k(t *testing.T) {
-	testDbStoreCorrect(1000, false, t)
+	testDbStoreCorrect(1000, 4096, false, t)
 }
 
 func TestMockDbStoreRandom_1(t *testing.T) {
-	testDbStoreRandom(1, true, t)
+	testDbStoreRandom(1, 0, true, t)
 }
 
 func TestMockDbStoreCorrect_1(t *testing.T) {
-	testDbStoreCorrect(1, true, t)
+	testDbStoreCorrect(1, 4096, true, t)
 }
 
 func TestMockDbStoreRandom_1k(t *testing.T) {
-	testDbStoreRandom(1000, true, t)
+	testDbStoreRandom(1000, 0, true, t)
 }
 
 func TestMockDbStoreCorrect_1k(t *testing.T) {
-	testDbStoreCorrect(1000, true, t)
+	testDbStoreCorrect(1000, 4096, true, t)
 }
 
 func testDbStoreNotFound(t *testing.T, mock bool) {
@@ -243,38 +243,54 @@ func TestMockIterator(t *testing.T) {
 	testIterator(t, true)
 }
 
-func benchmarkDbStorePut(n int, mock bool, b *testing.B) {
+func benchmarkDbStorePut(n int, processors int, chunksize int64, mock bool, b *testing.B) {
 	db, cleanup, err := newTestDbStore(mock, true)
 	defer cleanup()
 	if err != nil {
 		b.Fatalf("init dbStore failed: %v", err)
 	}
-	benchmarkStorePut(db, n, b)
+	benchmarkStorePut(db, n, chunksize, b)
 }
 
-func benchmarkDbStoreGet(n int, mock bool, b *testing.B) {
+func benchmarkDbStoreGet(n int, processors int, chunksize int64, mock bool, b *testing.B) {
 	db, cleanup, err := newTestDbStore(mock, true)
 	defer cleanup()
 	if err != nil {
 		b.Fatalf("init dbStore failed: %v", err)
 	}
-	benchmarkStoreGet(db, n, b)
+	benchmarkStoreGet(db, n, chunksize, b)
 }
 
-func BenchmarkDbStorePut_500(b *testing.B) {
-	benchmarkDbStorePut(500, false, b)
+func BenchmarkDbStorePut_1_500(b *testing.B) {
+	benchmarkDbStorePut(500, 1, 4096, false, b)
 }
 
-func BenchmarkDbStoreGet_500(b *testing.B) {
-	benchmarkDbStoreGet(500, false, b)
+func BenchmarkDbStorePut_8_500(b *testing.B) {
+	benchmarkDbStorePut(500, 8, 4096, false, b)
 }
 
-func BenchmarkMockDbStorePut_500(b *testing.B) {
-	benchmarkDbStorePut(500, true, b)
+func BenchmarkDbStoreGet_1_500(b *testing.B) {
+	benchmarkDbStoreGet(500, 1, 4096, false, b)
 }
 
-func BenchmarkMockDbStoreGet_500(b *testing.B) {
-	benchmarkDbStoreGet(500, true, b)
+func BenchmarkDbStoreGet_8_500(b *testing.B) {
+	benchmarkDbStoreGet(500, 8, 4096, false, b)
+}
+
+func BenchmarkMockDbStorePut_1_500(b *testing.B) {
+	benchmarkDbStorePut(500, 1, 4096, true, b)
+}
+
+func BenchmarkMockDbStorePut_8_500(b *testing.B) {
+	benchmarkDbStorePut(500, 8, 4096, true, b)
+}
+
+func BenchmarkMockDbStoreGet_1_500(b *testing.B) {
+	benchmarkDbStoreGet(500, 1, 4096, true, b)
+}
+
+func BenchmarkMockDbStoreGet_8_500(b *testing.B) {
+	benchmarkDbStoreGet(500, 8, 4096, true, b)
 }
 
 // TestLDBStoreWithoutCollectGarbage tests that we can put a number of random chunks in the LevelDB store, and
@@ -287,7 +303,7 @@ func TestLDBStoreWithoutCollectGarbage(t *testing.T) {
 	ldb.setCapacity(uint64(capacity))
 	defer cleanup()
 
-	chunks, err := mputRandomChunks(ldb, n)
+	chunks, err := mputRandomChunks(ldb, n, int64(ch.DefaultSize))
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -367,7 +383,7 @@ func testLDBStoreCollectGarbage(t *testing.T) {
 			putCount = roundTarget
 		}
 		remaining -= putCount
-		chunks, err := mputRandomChunks(ldb, putCount)
+		chunks, err := mputRandomChunks(ldb, putCount, int64(ch.DefaultSize))
 		if err != nil {
 			t.Fatal(err.Error())
 		}
@@ -414,7 +430,7 @@ func TestLDBStoreAddRemove(t *testing.T) {
 	defer cleanup()
 
 	n := 100
-	chunks, err := mputRandomChunks(ldb, n)
+	chunks, err := mputRandomChunks(ldb, n, int64(ch.DefaultSize))
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -562,7 +578,7 @@ func TestLDBStoreCollectGarbageAccessUnlikeIndex(t *testing.T) {
 	ldb.setCapacity(uint64(capacity))
 	defer cleanup()
 
-	chunks, err := mputRandomChunks(ldb, n)
+	chunks, err := mputRandomChunks(ldb, n, int64(ch.DefaultSize))
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -575,7 +591,7 @@ func TestLDBStoreCollectGarbageAccessUnlikeIndex(t *testing.T) {
 			t.Fatalf("fail add chunk #%d - %s: %v", i, chunks[i].Address(), err)
 		}
 	}
-	_, err = mputRandomChunks(ldb, 2)
+	_, err = mputRandomChunks(ldb, 2, int64(ch.DefaultSize))
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -609,7 +625,7 @@ func TestCleanIndex(t *testing.T) {
 	ldb.setCapacity(uint64(capacity))
 	defer cleanup()
 
-	chunks, err := mputRandomChunks(ldb, n)
+	chunks, err := mputRandomChunks(ldb, n, 4096)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -740,7 +756,7 @@ func TestCleanIndex(t *testing.T) {
 	}
 
 	// check that the iterator quits properly
-	chunks, err = mputRandomChunks(ldb, 4100)
+	chunks, err = mputRandomChunks(ldb, 4100, 4096)
 	if err != nil {
 		t.Fatal(err)
 	}

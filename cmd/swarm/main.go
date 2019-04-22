@@ -39,16 +39,13 @@ import (
 	"git.pirl.io/community/pirl/log"
 	"git.pirl.io/community/pirl/node"
 	"git.pirl.io/community/pirl/p2p/enode"
-	"git.pirl.io/community/pirl/rpc"
 	"git.pirl.io/community/pirl/swarm"
 	bzzapi "git.pirl.io/community/pirl/swarm/api"
 	swarmmetrics "git.pirl.io/community/pirl/swarm/metrics"
-	"git.pirl.io/community/pirl/swarm/storage/mock"
-	mockrpc "git.pirl.io/community/pirl/swarm/storage/mock/rpc"
 	"git.pirl.io/community/pirl/swarm/tracing"
 	sv "git.pirl.io/community/pirl/swarm/version"
 
-	cli "gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v1"
 )
 
 const clientIdentifier = "swarm"
@@ -69,10 +66,9 @@ OPTIONS:
 {{end}}{{end}}
 `
 
-// Git SHA1 commit hash of the release (set via linker flags)
-// this variable will be assigned if corresponding parameter is passed with install, but not with test
-// e.g.: go install -ldflags "-X main.gitCommit=ed1312d01b19e04ef578946226e5d8069d5dfd5a" ./cmd/swarm
-var gitCommit string
+var (
+	gitCommit string // Git SHA1 commit hash of the release (set via linker flags)
+)
 
 //declare a few constant error messages, useful for later error check comparisons in test
 var (
@@ -91,9 +87,8 @@ var defaultSubcommandHelp = cli.Command{
 
 var defaultNodeConfig = node.DefaultConfig
 
-// This init function sets defaults so cmd/swarm can run alongside geth.
+// This init function sets defaults so cmd/swarm can run alongside pirl.
 func init() {
-	sv.GitCommit = gitCommit
 	defaultNodeConfig.Name = clientIdentifier
 	defaultNodeConfig.Version = sv.VersionWithCommit(gitCommit)
 	defaultNodeConfig.P2P.ListenAddr = ":30399"
@@ -145,8 +140,6 @@ func init() {
 		dbCommand,
 		// See config.go
 		DumpConfigCommand,
-		// hashesCommand
-		hashesCommand,
 	}
 
 	// append a hidden help subcommand to all commands that have subcommands
@@ -161,6 +154,7 @@ func init() {
 		utils.BootnodesFlag,
 		utils.KeyStoreDirFlag,
 		utils.ListenPortFlag,
+		utils.NoDiscoverFlag,
 		utils.DiscoveryV5Flag,
 		utils.NetrestrictFlag,
 		utils.NodeKeyFileFlag,
@@ -193,13 +187,10 @@ func init() {
 		SwarmUploadDefaultPath,
 		SwarmUpFromStdinFlag,
 		SwarmUploadMimeType,
-		// bootnode mode
-		SwarmBootnodeModeFlag,
 		// storage flags
 		SwarmStorePath,
 		SwarmStoreCapacity,
 		SwarmStoreCacheCapacity,
-		SwarmGlobalStoreAPIFlag,
 	}
 	rpcFlags := []cli.Flag{
 		utils.WSEnabledFlag,
@@ -236,17 +227,12 @@ func main() {
 
 func keys(ctx *cli.Context) error {
 	privateKey := getPrivKey(ctx)
-	pubkey := crypto.FromECDSAPub(&privateKey.PublicKey)
-	pubkeyhex := hex.EncodeToString(pubkey)
+	pub := hex.EncodeToString(crypto.FromECDSAPub(&privateKey.PublicKey))
 	pubCompressed := hex.EncodeToString(crypto.CompressPubkey(&privateKey.PublicKey))
-	bzzkey := crypto.Keccak256Hash(pubkey).Hex()
-
 	if !ctx.Bool(SwarmCompressedFlag.Name) {
-		fmt.Println(fmt.Sprintf("bzzkey=%s", bzzkey[2:]))
-		fmt.Println(fmt.Sprintf("publicKey=%s", pubkeyhex))
+		fmt.Println(fmt.Sprintf("publicKey=%s", pub))
 	}
 	fmt.Println(fmt.Sprintf("publicKeyCompressed=%s", pubCompressed))
-
 	return nil
 }
 
@@ -275,9 +261,9 @@ func bzzd(ctx *cli.Context) error {
 	//pss operates on ws
 	cfg.WSModules = append(cfg.WSModules, "pss")
 
-	//geth only supports --datadir via command line
+	//pirl only supports --datadir via command line
 	//in order to be consistent within swarm, if we pass --datadir via environment variable
-	//or via config file, we get the same directory for geth and swarm
+	//or via config file, we get the same directory for pirl and swarm
 	if _, err := os.Stat(bzzconfig.Path); err == nil {
 		cfg.DataDir = bzzconfig.Path
 	}
@@ -286,10 +272,6 @@ func bzzd(ctx *cli.Context) error {
 	setSwarmBootstrapNodes(ctx, &cfg)
 	//setup the ethereum node
 	utils.SetNodeConfig(ctx, &cfg)
-
-	//always disable discovery from p2p package - swarm discovery is done with the `hive` protocol
-	cfg.P2P.NoDiscovery = true
-
 	stack, err := node.New(&cfg)
 	if err != nil {
 		utils.Fatalf("can't create node: %v", err)
@@ -312,15 +294,6 @@ func bzzd(ctx *cli.Context) error {
 		stack.Stop()
 	}()
 
-	// add swarm bootnodes, because swarm doesn't use p2p package's discovery discv5
-	go func() {
-		s := stack.Server()
-
-		for _, n := range cfg.P2P.BootstrapNodes {
-			s.AddPeer(n)
-		}
-	}()
-
 	stack.Wait()
 	return nil
 }
@@ -328,18 +301,8 @@ func bzzd(ctx *cli.Context) error {
 func registerBzzService(bzzconfig *bzzapi.Config, stack *node.Node) {
 	//define the swarm service boot function
 	boot := func(_ *node.ServiceContext) (node.Service, error) {
-		var nodeStore *mock.NodeStore
-		if bzzconfig.GlobalStoreAPI != "" {
-			// connect to global store
-			client, err := rpc.Dial(bzzconfig.GlobalStoreAPI)
-			if err != nil {
-				return nil, fmt.Errorf("global store: %v", err)
-			}
-			globalStore := mockrpc.NewGlobalStore(client)
-			// create a node store for this swarm key on global store
-			nodeStore = globalStore.NewNodeStore(common.HexToAddress(bzzconfig.BzzKey))
-		}
-		return swarm.NewSwarm(bzzconfig, nodeStore)
+		// In production, mockStore must be always nil.
+		return swarm.NewSwarm(bzzconfig, nil)
 	}
 	//register within the ethereum node
 	if err := stack.Register(boot); err != nil {
@@ -465,5 +428,5 @@ func setSwarmBootstrapNodes(ctx *cli.Context, cfg *node.Config) {
 		}
 		cfg.P2P.BootstrapNodes = append(cfg.P2P.BootstrapNodes, node)
 	}
-
+	log.Debug("added default swarm bootnodes", "length", len(cfg.P2P.BootstrapNodes))
 }

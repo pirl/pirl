@@ -67,7 +67,6 @@ type BzzConfig struct {
 	HiveParams   *HiveParams
 	NetworkID    uint64
 	LightNode    bool
-	BootnodeMode bool
 }
 
 // Bzz is the swarm protocol bundle
@@ -88,7 +87,7 @@ type Bzz struct {
 // * overlay driver
 // * peer store
 func NewBzz(config *BzzConfig, kad *Kademlia, store state.Store, streamerSpec *protocols.Spec, streamerRun func(*BzzPeer) error) *Bzz {
-	bzz := &Bzz{
+	return &Bzz{
 		Hive:         NewHive(config.HiveParams, kad, store),
 		NetworkID:    config.NetworkID,
 		LightNode:    config.LightNode,
@@ -97,13 +96,6 @@ func NewBzz(config *BzzConfig, kad *Kademlia, store state.Store, streamerSpec *p
 		streamerRun:  streamerRun,
 		streamerSpec: streamerSpec,
 	}
-
-	if config.BootnodeMode {
-		bzz.streamerRun = nil
-		bzz.streamerSpec = nil
-	}
-
-	return bzz
 }
 
 // UpdateLocalAddr updates underlayaddress of the running node

@@ -144,6 +144,7 @@ func (d *Delivery) handleRetrieveRequestMsg(ctx context.Context, sp *Peer, req *
 	ctx, osp = spancontext.StartSpan(
 		ctx,
 		"retrieve.request")
+	defer osp.Finish()
 
 	s, err := sp.getServer(NewStream(swarmChunkServerStreamName, "", true))
 	if err != nil {
@@ -166,7 +167,6 @@ func (d *Delivery) handleRetrieveRequestMsg(ctx context.Context, sp *Peer, req *
 	}()
 
 	go func() {
-		defer osp.Finish()
 		chunk, err := d.chunkStore.Get(ctx, req.Addr)
 		if err != nil {
 			retrieveChunkFail.Inc(1)
@@ -213,12 +213,11 @@ func (d *Delivery) handleChunkDeliveryMsg(ctx context.Context, sp *Peer, req *Ch
 	ctx, osp = spancontext.StartSpan(
 		ctx,
 		"chunk.delivery")
+	defer osp.Finish()
 
 	processReceivedChunksCount.Inc(1)
 
 	go func() {
-		defer osp.Finish()
-
 		req.peer = sp
 		err := d.chunkStore.Put(ctx, storage.NewChunk(req.Addr, req.SData))
 		if err != nil {
@@ -256,8 +255,8 @@ func (d *Delivery) RequestFromPeers(ctx context.Context, req *network.Request) (
 				return true
 			}
 			sp = d.getPeer(id)
-			// sp is nil, when we encounter a peer that is not registered for delivery, i.e. doesn't support the `stream` protocol
 			if sp == nil {
+				//log.Warn("Delivery.RequestFromPeers: peer not found", "id", id)
 				return true
 			}
 			spID = &id
@@ -272,7 +271,7 @@ func (d *Delivery) RequestFromPeers(ctx context.Context, req *network.Request) (
 		Addr:      req.Addr,
 		SkipCheck: req.SkipCheck,
 		HopCount:  req.HopCount,
-	}, Top, "request.from.peers")
+	}, Top)
 	if err != nil {
 		return nil, nil, err
 	}
