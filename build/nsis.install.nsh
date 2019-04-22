@@ -13,9 +13,9 @@ PageEx license
 PageExEnd
 
 # Install pirl binary
-Section "Ethereum" GETH_IDX
+Section "Pirl" GETH_IDX
   SetOutPath $INSTDIR
-  file {{.Ethereum}}
+  file {{.Pirl}}
 
   # Create start menu launcher
   createDirectory "$SMPROGRAMS\${APPNAME}"
