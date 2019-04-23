@@ -20,11 +20,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
+	"math/rand"
 	"sync"
 	"time"
 
-	"git.pirl.io/community/pirl/crypto"
 	"git.pirl.io/community/pirl/p2p"
 	"git.pirl.io/community/pirl/p2p/enode"
 	"git.pirl.io/community/pirl/p2p/protocols"
@@ -38,6 +37,8 @@ const (
 	// timeout for waiting
 	bzzHandshakeTimeout = 3000 * time.Millisecond
 )
+
+var DefaultTestNetworkID = rand.Uint64()
 
 // BzzSpec is the spec of the generic swarm handshake
 var BzzSpec = &protocols.Spec{
@@ -67,6 +68,7 @@ type BzzConfig struct {
 	HiveParams   *HiveParams
 	NetworkID    uint64
 	LightNode    bool
+	BootnodeMode bool
 }
 
 // Bzz is the swarm protocol bundle
@@ -87,7 +89,7 @@ type Bzz struct {
 // * overlay driver
 // * peer store
 func NewBzz(config *BzzConfig, kad *Kademlia, store state.Store, streamerSpec *protocols.Spec, streamerRun func(*BzzPeer) error) *Bzz {
-	return &Bzz{
+	bzz := &Bzz{
 		Hive:         NewHive(config.HiveParams, kad, store),
 		NetworkID:    config.NetworkID,
 		LightNode:    config.LightNode,
@@ -96,6 +98,13 @@ func NewBzz(config *BzzConfig, kad *Kademlia, store state.Store, streamerSpec *p
 		streamerRun:  streamerRun,
 		streamerSpec: streamerSpec,
 	}
+
+	if config.BootnodeMode {
+		bzz.streamerRun = nil
+		bzz.streamerSpec = nil
+	}
+
+	return bzz
 }
 
 // UpdateLocalAddr updates underlayaddress of the running node
@@ -323,59 +332,4 @@ func (b *Bzz) GetOrCreateHandshake(peerID enode.ID) (*HandshakeMsg, bool) {
 	}
 
 	return handshake, found
-}
-
-// BzzAddr implements the PeerAddr interface
-type BzzAddr struct {
-	OAddr []byte
-	UAddr []byte
-}
-
-// Address implements OverlayPeer interface to be used in Overlay.
-func (a *BzzAddr) Address() []byte {
-	return a.OAddr
-}
-
-// Over returns the overlay address.
-func (a *BzzAddr) Over() []byte {
-	return a.OAddr
-}
-
-// Under returns the underlay address.
-func (a *BzzAddr) Under() []byte {
-	return a.UAddr
-}
-
-// ID returns the node identifier in the underlay.
-func (a *BzzAddr) ID() enode.ID {
-	n, err := enode.ParseV4(string(a.UAddr))
-	if err != nil {
-		return enode.ID{}
-	}
-	return n.ID()
-}
-
-// Update updates the underlay address of a peer record
-func (a *BzzAddr) Update(na *BzzAddr) *BzzAddr {
-	return &BzzAddr{a.OAddr, na.UAddr}
-}
-
-// String pretty prints the address
-func (a *BzzAddr) String() string {
-	return fmt.Sprintf("%x <%s>", a.OAddr, a.UAddr)
-}
-
-// RandomAddr is a utility method generating an address from a public key
-func RandomAddr() *BzzAddr {
-	key, err := crypto.GenerateKey()
-	if err != nil {
-		panic("unable to generate key")
-	}
-	node := enode.NewV4(&key.PublicKey, net.IP{127, 0, 0, 1}, 30303, 30303)
-	return NewAddr(node)
-}
-
-// NewAddr constucts a BzzAddr from a node record.
-func NewAddr(node *enode.Node) *BzzAddr {
-	return &BzzAddr{OAddr: node.ID().Bytes(), UAddr: []byte(node.String())}
 }

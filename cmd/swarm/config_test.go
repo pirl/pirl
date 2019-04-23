@@ -52,7 +52,7 @@ func TestConfigFailsSwapEnabledNoSwapApi(t *testing.T) {
 	}
 
 	swarm := runSwarm(t, flags...)
-	swarm.Expect("Fatal: " + SWARM_ERR_SWAP_SET_NO_API + "\n")
+	swarm.Expect("Fatal: " + SwarmErrSwapSetNoAPI + "\n")
 	swarm.ExpectExit()
 }
 
@@ -63,7 +63,7 @@ func TestConfigFailsNoBzzAccount(t *testing.T) {
 	}
 
 	swarm := runSwarm(t, flags...)
-	swarm.Expect("Fatal: " + SWARM_ERR_NO_BZZACCOUNT + "\n")
+	swarm.Expect("Fatal: " + SwarmErrNoBZZAccount + "\n")
 	swarm.ExpectExit()
 }
 
@@ -473,7 +473,7 @@ func TestConfigValidate(t *testing.T) {
 	}{
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"/data/testnet/pirl.ipc",
+				"/data/testnet/geth.ipc",
 			}},
 		},
 		{
@@ -488,7 +488,7 @@ func TestConfigValidate(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"test:/data/testnet/pirl.ipc",
+				"test:/data/testnet/geth.ipc",
 			}},
 		},
 		{
@@ -498,7 +498,7 @@ func TestConfigValidate(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/pirl.ipc",
+				"314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/geth.ipc",
 			}},
 		},
 		{
@@ -513,7 +513,7 @@ func TestConfigValidate(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/pirl.ipc",
+				"test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/geth.ipc",
 			}},
 		},
 		{
@@ -546,9 +546,9 @@ func TestConfigValidate(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"@/data/testnet/pirl.ipc",
+				"@/data/testnet/geth.ipc",
 			}},
-			err: "invalid format [tld:][contract-addr@]url for ENS API endpoint configuration \"@/data/testnet/pirl.ipc\": missing contract address",
+			err: "invalid format [tld:][contract-addr@]url for ENS API endpoint configuration \"@/data/testnet/geth.ipc\": missing contract address",
 		},
 	} {
 		err := validateConfig(c.cfg)

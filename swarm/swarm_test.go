@@ -170,8 +170,12 @@ func TestNewSwarm(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+			nodekey, err := crypto.GenerateKey()
+			if err != nil {
+				t.Fatal(err)
+			}
 
-			config.Init(privkey)
+			config.Init(privkey, nodekey)
 
 			if tc.configure != nil {
 				tc.configure(config)
@@ -199,8 +203,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 	}{
 		{
 			description: "IPC endpoint",
-			value:       "/data/testnet/pirl.ipc",
-			endpoint:    "/data/testnet/pirl.ipc",
+			value:       "/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 		},
 		{
 			description: "HTTP endpoint",
@@ -214,8 +218,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 		},
 		{
 			description: "IPC Endpoint and TLD",
-			value:       "test:/data/testnet/pirl.ipc",
-			endpoint:    "/data/testnet/pirl.ipc",
+			value:       "test:/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 			tld:         "test",
 		},
 		{
@@ -232,8 +236,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 		},
 		{
 			description: "IPC Endpoint and contract address",
-			value:       "314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/pirl.ipc",
-			endpoint:    "/data/testnet/pirl.ipc",
+			value:       "314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 			addr:        common.HexToAddress("314159265dD8dbb310642f98f50C066173C1259b"),
 		},
 		{
@@ -250,8 +254,8 @@ func TestParseEnsAPIAddress(t *testing.T) {
 		},
 		{
 			description: "IPC Endpoint, TLD and contract address",
-			value:       "test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/pirl.ipc",
-			endpoint:    "/data/testnet/pirl.ipc",
+			value:       "test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/geth.ipc",
+			endpoint:    "/data/testnet/geth.ipc",
 			addr:        common.HexToAddress("314159265dD8dbb310642f98f50C066173C1259b"),
 			tld:         "test",
 		},
@@ -307,8 +311,12 @@ func TestLocalStoreAndRetrieve(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	nodekey, err := crypto.GenerateKey()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	config.Init(privkey)
+	config.Init(privkey, nodekey)
 
 	swarm, err := NewSwarm(config, nil)
 	if err != nil {

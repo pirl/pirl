@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"git.pirl.io/community/pirl/metrics"
-	ch "git.pirl.io/community/pirl/swarm/chunk"
+	"git.pirl.io/community/pirl/swarm/chunk"
 	"git.pirl.io/community/pirl/swarm/log"
 	"git.pirl.io/community/pirl/swarm/spancontext"
 	opentracing "github.com/opentracing/opentracing-go"
@@ -127,7 +127,7 @@ type TreeChunker struct {
 func TreeJoin(ctx context.Context, addr Address, getter Getter, depth int) *LazyChunkReader {
 	jp := &JoinerParams{
 		ChunkerParams: ChunkerParams{
-			chunkSize: ch.DefaultSize,
+			chunkSize: chunk.DefaultSize,
 			hashSize:  int64(len(addr)),
 		},
 		addr:   addr,
@@ -147,7 +147,7 @@ func TreeSplit(ctx context.Context, data io.Reader, size int64, putter Putter) (
 	tsp := &TreeSplitterParams{
 		SplitterParams: SplitterParams{
 			ChunkerParams: ChunkerParams{
-				chunkSize: ch.DefaultSize,
+				chunkSize: chunk.DefaultSize,
 				hashSize:  putter.RefSize(),
 			},
 			reader: data,
@@ -465,7 +465,7 @@ func (r *LazyChunkReader) ReadAt(b []byte, off int64) (read int, err error) {
 		length *= r.chunkSize
 	}
 	wg.Add(1)
-	go r.join(b, off, off+length, depth, treeSize/r.branches, r.chunkData, &wg, errC, quitC)
+	go r.join(cctx, b, off, off+length, depth, treeSize/r.branches, r.chunkData, &wg, errC, quitC)
 	go func() {
 		wg.Wait()
 		close(errC)
@@ -485,7 +485,7 @@ func (r *LazyChunkReader) ReadAt(b []byte, off int64) (read int, err error) {
 	return len(b), nil
 }
 
-func (r *LazyChunkReader) join(b []byte, off int64, eoff int64, depth int, treeSize int64, chunkData ChunkData, parentWg *sync.WaitGroup, errC chan error, quitC chan bool) {
+func (r *LazyChunkReader) join(ctx context.Context, b []byte, off int64, eoff int64, depth int, treeSize int64, chunkData ChunkData, parentWg *sync.WaitGroup, errC chan error, quitC chan bool) {
 	defer parentWg.Done()
 	// find appropriate block level
 	for chunkData.Size() < uint64(treeSize) && depth > r.depth {
@@ -533,10 +533,9 @@ func (r *LazyChunkReader) join(b []byte, off int64, eoff int64, depth int, treeS
 		go func(j int64) {
 			childAddress := chunkData[8+j*r.hashSize : 8+(j+1)*r.hashSize]
 			startTime := time.Now()
-			chunkData, err := r.getter.Get(r.ctx, Reference(childAddress))
+			chunkData, err := r.getter.Get(ctx, Reference(childAddress))
 			if err != nil {
 				metrics.GetOrRegisterResettingTimer("lcr.getter.get.err", nil).UpdateSince(startTime)
-				log.Debug("lazychunkreader.join", "key", fmt.Sprintf("%x", childAddress), "err", err)
 				select {
 				case errC <- fmt.Errorf("chunk %v-%v not found; key: %s", off, off+treeSize, fmt.Sprintf("%x", childAddress)):
 				case <-quitC:
@@ -554,19 +553,19 @@ func (r *LazyChunkReader) join(b []byte, off int64, eoff int64, depth int, treeS
 			if soff < off {
 				soff = off
 			}
-			r.join(b[soff-off:seoff-off], soff-roff, seoff-roff, depth-1, treeSize/r.branches, chunkData, wg, errC, quitC)
+			r.join(ctx, b[soff-off:seoff-off], soff-roff, seoff-roff, depth-1, treeSize/r.branches, chunkData, wg, errC, quitC)
 		}(i)
 	} //for
 }
 
 // Read keeps a cursor so cannot be called simulateously, see ReadAt
 func (r *LazyChunkReader) Read(b []byte) (read int, err error) {
-	log.Debug("lazychunkreader.read", "key", r.addr)
+	log.Trace("lazychunkreader.read", "key", r.addr)
 	metrics.GetOrRegisterCounter("lazychunkreader.read", nil).Inc(1)
 
 	read, err = r.ReadAt(b, r.off)
 	if err != nil && err != io.EOF {
-		log.Debug("lazychunkreader.readat", "read", read, "err", err)
+		log.Trace("lazychunkreader.readat", "read", read, "err", err)
 		metrics.GetOrRegisterCounter("lazychunkreader.read.err", nil).Inc(1)
 	}
 
@@ -581,6 +580,11 @@ var errWhence = errors.New("Seek: invalid whence")
 var errOffset = errors.New("Seek: invalid offset")
 
 func (r *LazyChunkReader) Seek(offset int64, whence int) (int64, error) {
+	cctx, sp := spancontext.StartSpan(
+		r.ctx,
+		"lcr.seek")
+	defer sp.Finish()
+
 	log.Debug("lazychunkreader.seek", "key", r.addr, "offset", offset)
 	switch whence {
 	default:
@@ -590,8 +594,9 @@ func (r *LazyChunkReader) Seek(offset int64, whence int) (int64, error) {
 	case 1:
 		offset += r.off
 	case 2:
+
 		if r.chunkData == nil { //seek from the end requires rootchunk for size. call Size first
-			_, err := r.Size(context.TODO(), nil)
+			_, err := r.Size(cctx, nil)
 			if err != nil {
 				return 0, fmt.Errorf("can't get size: %v", err)
 			}

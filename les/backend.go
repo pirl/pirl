@@ -25,6 +25,7 @@ import (
 	"git.pirl.io/community/pirl/accounts"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/common/hexutil"
+	"git.pirl.io/community/pirl/common/mclock"
 	"git.pirl.io/community/pirl/consensus"
 	"git.pirl.io/community/pirl/core"
 	"git.pirl.io/community/pirl/core/bloombits"
@@ -78,7 +79,7 @@ type LightEthereum struct {
 }
 
 func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
-	chainDb, err := eth.CreateDB(ctx, config, "lightchaindata")
+	chainDb, err := ctx.OpenDatabase("lightchaindata", config.DatabaseCache, config.DatabaseHandles, "eth/db/chaindata/")
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +101,7 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 		chainConfig:    chainConfig,
 		eventMux:       ctx.EventMux,
 		peers:          peers,
-		reqDist:        newRequestDistributor(peers, quitSync),
+		reqDist:        newRequestDistributor(peers, quitSync, &mclock.System{}),
 		accountManager: ctx.AccountManager,
 		engine:         eth.CreateConsensusEngine(ctx, chainConfig, &config.Ethash, nil, false, chainDb),
 		shutdownChan:   make(chan bool),
@@ -109,12 +110,16 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 		bloomIndexer:   eth.NewBloomIndexer(chainDb, params.BloomBitsBlocksClient, params.HelperTrieConfirmations),
 	}
 
+	var trustedNodes []string
+	if leth.config.ULC != nil {
+		trustedNodes = leth.config.ULC.TrustedServers
+	}
 	leth.relay = NewLesTxRelay(peers, leth.reqDist)
-	leth.serverPool = newServerPool(chainDb, quitSync, &leth.wg)
+	leth.serverPool = newServerPool(chainDb, quitSync, &leth.wg, trustedNodes)
 	leth.retriever = newRetrieveManager(peers, leth.reqDist, leth.serverPool)
 
 	leth.odr = NewLesOdr(chainDb, light.DefaultClientIndexerConfig, leth.retriever)
-	leth.chtIndexer = light.NewChtIndexer(chainDb, leth.odr, params.CHTFrequencyClient, params.HelperTrieConfirmations)
+	leth.chtIndexer = light.NewChtIndexer(chainDb, leth.odr, params.CHTFrequency, params.HelperTrieConfirmations)
 	leth.bloomTrieIndexer = light.NewBloomTrieIndexer(chainDb, leth.odr, params.BloomBitsBlocksClient, params.BloomTrieFrequency)
 	leth.odr.SetIndexers(leth.chtIndexer, leth.bloomTrieIndexer, leth.bloomIndexer)
 
@@ -136,10 +141,33 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 	}
 
 	leth.txPool = light.NewTxPool(leth.chainConfig, leth.blockchain, leth.relay)
-	if leth.protocolManager, err = NewProtocolManager(leth.chainConfig, light.DefaultClientIndexerConfig, true, config.NetworkId, leth.eventMux, leth.engine, leth.peers, leth.blockchain, nil, chainDb, leth.odr, leth.relay, leth.serverPool, quitSync, &leth.wg); err != nil {
+
+	if leth.protocolManager, err = NewProtocolManager(
+		leth.chainConfig,
+		light.DefaultClientIndexerConfig,
+		true,
+		config.NetworkId,
+		leth.eventMux,
+		leth.engine,
+		leth.peers,
+		leth.blockchain,
+		nil,
+		chainDb,
+		leth.odr,
+		leth.relay,
+		leth.serverPool,
+		quitSync,
+		&leth.wg,
+		config.ULC); err != nil {
 		return nil, err
 	}
-	leth.ApiBackend = &LesApiBackend{leth, nil}
+
+	if leth.protocolManager.isULCEnabled() {
+		log.Warn("Ultra light client is enabled", "trustedNodes", len(leth.protocolManager.ulc.trustedKeys), "minTrustedFraction", leth.protocolManager.ulc.minTrustedFraction)
+		leth.blockchain.DisableCheckFreq()
+	}
+	leth.ApiBackend = &LesApiBackend{ctx.ExtRPCEnabled(), leth, nil}
+
 	gpoParams := config.GPO
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.MinerGasPrice
@@ -151,8 +179,6 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 func lesTopic(genesisHash common.Hash, protocolVersion uint) discv5.Topic {
 	var name string
 	switch protocolVersion {
-	case lpv1:
-		name = "LES"
 	case lpv2:
 		name = "LES2"
 	default:
@@ -165,12 +191,12 @@ type LightDummyAPI struct{}
 
 // Etherbase is the address that mining rewards will be send to
 func (s *LightDummyAPI) Etherbase() (common.Address, error) {
-	return common.Address{}, fmt.Errorf("not supported")
+	return common.Address{}, fmt.Errorf("mining is not supported in light mode")
 }
 
 // Coinbase is the address that mining rewards will be send to (alias for Etherbase)
 func (s *LightDummyAPI) Coinbase() (common.Address, error) {
-	return common.Address{}, fmt.Errorf("not supported")
+	return common.Address{}, fmt.Errorf("mining is not supported in light mode")
 }
 
 // Hashrate returns the POW hashrate

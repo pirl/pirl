@@ -25,7 +25,6 @@ import (
 
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/core/rawdb"
-	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/params"
 )
 
@@ -120,8 +119,8 @@ func testDAOForkBlockNewChain(t *testing.T, test int, genesis string, expectBloc
 		geth.WaitExit()
 	}
 	// Retrieve the DAO config flag from the database
-	path := filepath.Join(datadir, "pirl", "chaindata")
-	db, err := ethdb.NewLDBDatabase(path, 0, 0)
+	path := filepath.Join(datadir, "geth", "chaindata")
+	db, err := rawdb.NewLevelDBDatabase(path, 0, 0, "")
 	if err != nil {
 		t.Fatalf("test %d: failed to open test database: %v", test, err)
 	}

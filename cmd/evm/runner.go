@@ -31,10 +31,10 @@ import (
 	"git.pirl.io/community/pirl/cmd/utils"
 	"git.pirl.io/community/pirl/common"
 	"git.pirl.io/community/pirl/core"
+	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/core/state"
 	"git.pirl.io/community/pirl/core/vm"
 	"git.pirl.io/community/pirl/core/vm/runtime"
-	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/log"
 	"git.pirl.io/community/pirl/params"
 	cli "gopkg.in/urfave/cli.v1"
@@ -99,12 +99,12 @@ func runCmd(ctx *cli.Context) error {
 	if ctx.GlobalString(GenesisFlag.Name) != "" {
 		gen := readGenesis(ctx.GlobalString(GenesisFlag.Name))
 		genesisConfig = gen
-		db := ethdb.NewMemDatabase()
+		db := rawdb.NewMemoryDatabase()
 		genesis := gen.ToBlock(db)
 		statedb, _ = state.New(genesis.Root(), state.NewDatabase(db))
 		chainConfig = gen.Config
 	} else {
-		statedb, _ = state.New(common.Hash{}, state.NewDatabase(ethdb.NewMemDatabase()))
+		statedb, _ = state.New(common.Hash{}, state.NewDatabase(rawdb.NewMemoryDatabase()))
 		genesisConfig = new(core.Genesis)
 	}
 	if ctx.GlobalString(SenderFlag.Name) != "" {

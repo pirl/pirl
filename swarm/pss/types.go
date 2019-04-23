@@ -26,7 +26,7 @@ import (
 	"git.pirl.io/community/pirl/p2p"
 	"git.pirl.io/community/pirl/rlp"
 	"git.pirl.io/community/pirl/swarm/storage"
-	whisper "git.pirl.io/community/pirl/whisper/whisperv5"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 )
 
 const (

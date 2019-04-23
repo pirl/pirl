@@ -21,10 +21,10 @@ import (
 )
 
 const (
-	VersionMajor = 1        // Major version component of the current release
-	VersionMinor = 8        // Minor version component of the current releasek
-	VersionPatch = 3       // Patch version component of the current release
-	VersionMeta  = "hulk" // Version metadata to append to the version string
+	VersionMajor = 1          // Major version component of the current release
+	VersionMinor = 9          // Minor version component of the current release
+	VersionPatch = 0          // Patch version component of the current release
+	VersionMeta  = "zeus" // Version metadata to append to the version string
 )
 
 // Version holds the textual version string.

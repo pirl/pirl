@@ -20,6 +20,7 @@ import (
 	"reflect"
 
 	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/core/rawdb"
 	"git.pirl.io/community/pirl/ethdb"
 	"git.pirl.io/community/pirl/event"
 	"git.pirl.io/community/pirl/p2p"
@@ -39,11 +40,11 @@ type ServiceContext struct {
 // OpenDatabase opens an existing database with the given name (or creates one
 // if no previous can be found) from within the node's data directory. If the
 // node is an ephemeral one, a memory database is returned.
-func (ctx *ServiceContext) OpenDatabase(name string, cache int, handles int) (ethdb.Database, error) {
+func (ctx *ServiceContext) OpenDatabase(name string, cache int, handles int, namespace string) (ethdb.Database, error) {
 	if ctx.config.DataDir == "" {
-		return ethdb.NewMemDatabase(), nil
+		return rawdb.NewMemoryDatabase(), nil
 	}
-	db, err := ethdb.NewLDBDatabase(ctx.config.ResolvePath(name), cache, handles)
+	db, err := rawdb.NewLevelDBDatabase(ctx.config.ResolvePath(name), cache, handles, namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +66,12 @@ func (ctx *ServiceContext) Service(service interface{}) error {
 		return nil
 	}
 	return ErrServiceUnknown
+}
+
+// ExtRPCEnabled returns the indicator whether node enables the external
+// RPC(http, ws or graphql).
+func (ctx *ServiceContext) ExtRPCEnabled() bool {
+	return ctx.config.ExtRPCEnabled()
 }
 
 // ServiceConstructor is the function signature of the constructors needed to be
