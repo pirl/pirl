@@ -944,8 +944,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 				}
 				headers = filled[proced:]
 				from += uint64(proced)
-			}
-			else {
+			} else {
 				// If we're closing in on the chain head, but haven't yet reached it, delay
 				// the last few headers so mini reorgs on the head don't cause invalid hash
 				// chain errors.
@@ -960,8 +959,8 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 							head = full
 						}
 					}
-					 //If the head is way older than this batch, delay the last few headers
-					//if head+uint64(reorgProtThreshold) < headers[n-1].Number.Uint64() {
+					// If the head is way older than this batch, delay the last few headers
+					if head+uint64(reorgProtThreshold) < headers[n-1].Number.Uint64() {
 						delay := reorgProtHeaderDelay
 						if delay > n {
 							delay = n
