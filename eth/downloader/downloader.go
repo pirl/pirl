@@ -60,7 +60,7 @@ var (
 	maxHeadersProcess = 2048      // Number of header download results to import at once into the chain
 	maxResultsProcess = 2048      // Number of content download results to import at once into the chain
 
-	reorgProtThreshold   = 48 // Threshold number of recent blocks to disable mini reorg protection
+	reorgProtThreshold   = 12 // Threshold number of recent blocks to disable mini reorg protection
 	reorgProtHeaderDelay = 2  // Number of headers to delay delivering to cover mini reorgs
 
 	fsHeaderCheckFrequency = 100             // Verification frequency of the downloaded headers during fast sync
@@ -960,13 +960,13 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 						}
 					}
 					// If the head is way older than this batch, delay the last few headers
-					if head+uint64(reorgProtThreshold) < headers[n-1].Number.Uint64() {
-						delay := reorgProtHeaderDelay
-						if delay > n {
-							delay = n
-						}
-						headers = headers[:n-delay]
-					}
+					//if head+uint64(reorgProtThreshold) < headers[n-1].Number.Uint64() {
+					//	delay := reorgProtHeaderDelay
+					//	if delay > n {
+					//		delay = n
+					//	}
+					//	headers = headers[:n-delay]
+					//}
 				}
 			}
 			// Insert all the new headers and fetch the next batch
