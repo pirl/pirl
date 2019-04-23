@@ -1124,7 +1124,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
 
-	errChain := bc.checkChainForAttack(chain)
+	// errChain := bc.checkChainForAttack(chain)
 
 	// Peek the error for the first block to decide the directing import logic
 	it := newInsertIterator(chain, results, bc.validator)
@@ -1172,11 +1172,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		stats.ignored += len(it.chain)
 		bc.reportBlock(block, nil, err)
 		return it.index, events, coalescedLogs, err
-	//Check if there is a penatly value in chain
-	case errChain == ErrDelayTooHigh:
-		stats.ignored += len(it.chain)
-		bc.reportBlock(block, nil, errChain)
-		return it.index, events, coalescedLogs, errChain
+		//Check if there is a penatly value in chain
+		// case errChain == ErrDelayTooHigh:
+		// 	stats.ignored += len(it.chain)
+		// 	bc.reportBlock(block, nil, errChain)
+		// 	return it.index, events, coalescedLogs, errChain
 	}
 	// No validation errors for the first block (or chain prefix skipped)
 	for ; block != nil && err == nil; block, err = it.next() {
