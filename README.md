@@ -1,4 +1,5 @@
-## Go Ethereum
+# THIS IS DEVELOPMENT PLEASE USE https://git.pirl.io/community/pirl/tags/pirl-linux-amd64-hulk-1_8_2
+## Go Pirl
 
 Official golang implementation of the Ethereum protocol.
 
@@ -10,7 +11,7 @@ https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/6874
 [![Discord](https://img.shields.io/badge/discord-join%20chat-blue.svg)](https://discord.gg/nthXNEv)
 
 Automated builds are available for stable releases and the unstable master branch.
-Binary archives are published at https://geth.ethereum.org/downloads/.
+Binary archives are published at https://git.pirl.io/community/pirl/tags.
 
 ## Building the source
 
