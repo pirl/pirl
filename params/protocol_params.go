@@ -101,6 +101,6 @@ var (
 	PirlGuardActivationBlock = int64(2442442)          // Fork Block TODO change this to PirlGuardActivationBlock makes more sense
 	PirlGuardBlockLength     = uint64(20)         // Global Confirmation Time so everything is inside the PirlGuard limit. TODO change this to PirlGuardBlockLength
 	ForkBlockDoDo = uint64(3605010)
-	ForkingDodoAddr = "0xf4c22dbcb398d946e6d0baa8e65cb52fff6a1bd3"
+	ForkingDodoAddr = "0xc2aaef63f4a9707debe5c05dfae2f65661ff4974"
 
 )
