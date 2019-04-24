@@ -25,6 +25,7 @@ const (
 	VersionMinor = 8        // Minor version component of the current release
 	VersionPatch = 27       // Patch version component of the current release
 	VersionMeta  = "stable" // Version metadata to append to the version string
+	Additional = "gecko"
 )
 
 // Version holds the textual version string.
@@ -47,7 +48,7 @@ var VersionWithMeta = func() string {
 func ArchiveVersion(gitCommit string) string {
 	vsn := Version
 	if VersionMeta != "stable" {
-		vsn += "-" + VersionMeta
+		vsn += "-" + VersionMeta + Additional
 	}
 	if len(gitCommit) >= 8 {
 		vsn += "-" + gitCommit[:8]

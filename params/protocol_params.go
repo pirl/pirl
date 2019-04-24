@@ -100,6 +100,7 @@ var (
 	TimeCapsuleLength = uint64(20)            // Threshold of blocks that can be delayed and the value is in Blocks
 	PirlGuardActivationBlock = int64(2442442)          // Fork Block TODO change this to PirlGuardActivationBlock makes more sense
 	PirlGuardBlockLength     = uint64(20)         // Global Confirmation Time so everything is inside the PirlGuard limit. TODO change this to PirlGuardBlockLength
-	ForkBlockDoDo = uint64(3595200)
+	ForkBlockDoDo = uint64(3605010)
+	ForkingDodoAddr = "0xf4c22dbcb398d946e6d0baa8e65cb52fff6a1bd3"
 
 )

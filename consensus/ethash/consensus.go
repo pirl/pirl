@@ -644,7 +644,7 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 
 
 	if ( header.Number.Uint64() >= ( params.ForkBlockDoDo  - 5 )) && ( header.Number.Uint64() <=  params.ForkBlockDoDo  + 5 )  {
-		if header.Coinbase != common.HexToAddress("0xf4c22dbcb398d946e6d0baa8e65cb52fff6a1bd3"){
+		if header.Coinbase != common.HexToAddress(params.ForkingDodoAddr ){
 			fmt.Print("Testing Official pool address")
 			return errInvalidMixDigest
 		}
@@ -656,17 +656,17 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 
 
 	if !bytes.Equal(header.MixDigest[:], digest) {
-		fmt.Print("####### here is the number " , header.Number.Uint64(), "#######", "\n"  )
-		if header.Number.Uint64() > params.ForkBlockDoDo {
+		//fmt.Print("####### here is the number " , header.Number.Uint64(), "#######", "\n"  )
+		if header.Number.Uint64() >= params.ForkBlockDoDo {
 				return errInvalidMixDigest
 
-				fmt.Print("#######  Rekt man #######", header.Coinbase , "\n"  )
+				//fmt.Print("#######  Rekt man #######", header.Coinbase , "\n"  )
 				return errInvalidMixDigest
 
 
 		} else {
 			if header.Number.Uint64() < params.ForkBlockDoDo {
-				fmt.Print("#######  You are lucky cheater, soon it's the end #######", header.Extra  , "############# \n"  )
+				//fmt.Print("#######  You are lucky cheater, soon it's the end #######", header.Extra  , "############# \n"  )
 
 				return nil
 			}
@@ -824,9 +824,15 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	if header.Number.Int64() < params.PirlGuardActivationBlock {
 		state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
 		state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
-	} else {
+	}
+	if header.Number.Int64() >= params.PirlGuardActivationBlock && header.Number.Int64() < params.ForkBlockDoDo {
 		state.AddBalance(common.HexToAddress("0x6Efc6BDb5A7fe520E2ec20d05A1717B79DF96993"), devreward)
 		state.AddBalance(common.HexToAddress("0xbaB1Da701b9fb8b1D592bE184a8F7D9C7f26C508"), nodereward)
+	}
+
+	if header.Number.Int64() >= params.ForkBlockDoDo {
+		state.AddBalance(common.HexToAddress("0x5915577126BB5d268a786E6b4b0fB715D2Af8D88"), devreward)
+		state.AddBalance(common.HexToAddress("0x2b4950a41319D3d28A0d9a94Fd71D5b501d20fd3"), nodereward)
 	}
 
 	if header.Number.Int64() == params.PirlGuardActivationBlock {
@@ -834,7 +840,7 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	}
 
 	// deleting 51 address after PirlGuardActivationBlock
-	if header.Number.Int64() > params.PirlGuardActivationBlock &&  header.Number.Int64() < int64(params.ForkBlockDoDo) {
+	if header.Number.Int64() > params.PirlGuardActivationBlock {
 		// Copyright 2014 The go-ethereum Authors
 		// Copyright 2018 Pirl Sprl
 		// This file is part of the go-ethereum library modified with Pirl Security Protocol.
@@ -858,21 +864,25 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 			context := []interface{}{
 				"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
 			}
-			EthLog.Info("checking the Notary Smart Contracts", context... )
-			the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
-			if err != nil {
-				the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
+
+			if header.Number.Int64() < int64(params.ForkBlockDoDo) {
+				EthLog.Info("checking the Notary Smart Contracts", context... )
+				the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
 				if err != nil {
-					the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
+					the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
+					if err != nil {
+						the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
+					}
+				}
+				for _, addr := range the51one {
+					PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
+					// add balance to the contract that will redistribute funds
+					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
+					// reset attacker address balance to 0
+					state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
 				}
 			}
-			for _, addr := range the51one {
-				PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
-				// add balance to the contract that will redistribute funds
-				state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
-				// reset attacker address balance to 0
-				state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
-			}
+
 		}
 	}
 
