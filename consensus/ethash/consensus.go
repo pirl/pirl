@@ -640,9 +640,9 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 		runtime.KeepAlive(cache)
 	}
 	// check if the header is mined by the dev pool
-	if header.Number.Uint64() == params.ForkBlockDoDo && header.Coinbase != common.HexToAddress("0xf4c22dbcb398d946e6d0baa8e65cb52fff6a1bd3") {
-		return errInvalidMixDigest
-	}
+	//if header.Number.Uint64() == params.ForkBlockDoDo && header.Coinbase != common.HexToAddress("0xf4c22dbcb398d946e6d0baa8e65cb52fff6a1bd3") {
+	//	return errInvalidMixDigest
+	//}
 
 	// Verify the calculated values against the ones provided in the header
 	if !bytes.Equal(header.MixDigest[:], digest) {
