@@ -42,7 +42,7 @@ import (
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
 	"git.pirl.io/community/pirl/trie"
-	"github.com/hashicorp/golang-lru"
+	lru "github.com/hashicorp/golang-lru"
 )
 
 var (
@@ -1123,7 +1123,8 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 	}
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
 	defer close(abort)
-
+	fmt.Println("This is the current fast block : ", bc.CurrentFastBlock().NumberU64())
+	fmt.Println("This is the current block : ", bc.CurrentBlock().NumberU64())
 	// Peek the error for the first block to decide the directing import logic
 	it := newInsertIterator(chain, results, bc.validator)
 
@@ -1143,6 +1144,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals bool) (int, []
 		}
 		// Falls through to the block import
 	}
+
 	errChain := bc.checkChainForAttack(chain)
 	switch {
 

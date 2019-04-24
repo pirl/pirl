@@ -34,5 +34,5 @@ var (
 	ErrNonceTooHigh = errors.New("nonce too high")
 
 	// ErrDelayTooHigh is returned when the delay between the blocks in the presented chain is too high
-	ErrDelayTooHigh = errors.New("Chain time values are not right!")
+	ErrDelayTooHigh = errors.New("chain time values are not right")
 )

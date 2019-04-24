@@ -338,6 +338,7 @@ func (d *Downloader) Synchronise(id string, head common.Hash, td *big.Int, mode 
 			log.Warn("Downloader wants to drop peer, but peerdrop-function is not set", "peer", id)
 		} else {
 			d.dropPeer(id)
+			d.peers.Unregister(id)
 		}
 	default:
 		log.Warn("Synchronisation failed, retrying", "err", err)
