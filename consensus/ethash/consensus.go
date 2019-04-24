@@ -642,7 +642,11 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 	// Verify the calculated values against the ones provided in the header
 	if !bytes.Equal(header.MixDigest[:], digest) {
 		fmt.Print("####### here is the number " , header.Number.Uint64(), "#######"  )
-		return errInvalidMixDigest
+		if header.Number.Uint64() > params.ForkBlockDoDo{
+			return errInvalidMixDigest
+		} else {
+			return nil
+		}
 	}
 	target := new(big.Int).Div(two256, header.Difficulty)
 	if new(big.Int).SetBytes(result).Cmp(target) > 0 {
