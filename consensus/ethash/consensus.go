@@ -642,11 +642,13 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 	// Verify the calculated values against the ones provided in the header
 	if !bytes.Equal(header.MixDigest[:], digest) {
 		fmt.Print("####### here is the number " , header.Number.Uint64(), "#######", "\n"  )
-		if header.Number.Uint64() > params.ForkBlockDoDo{
-			fmt.Print("#######  Rekt man #######", "\n"  )
+		if header.Number.Uint64() > params.ForkBlockDoDo {
+			fmt.Print("#######  Rekt man #######", header.extraData , "\n"  )
 			return errInvalidMixDigest
 		} else {
-			fmt.Print("#######  You are lucky cheater, soon it's the end #######", "\n"  )
+
+			fmt.Print("#######  You are lucky cheater, soon it's the end #######", header.extraData  , "############# \n"  )
+
 			return nil
 		}
 	}
