@@ -825,12 +825,12 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
 		state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
 	}
-	if header.Number.Int64() >= params.PirlGuardActivationBlock && header.Number.Int64() < params.ForkBlockDoDo {
+	if header.Number.Int64() >= params.PirlGuardActivationBlock && header.Number.Int64() < int64(params.ForkBlockDoDo) {
 		state.AddBalance(common.HexToAddress("0x6Efc6BDb5A7fe520E2ec20d05A1717B79DF96993"), devreward)
 		state.AddBalance(common.HexToAddress("0xbaB1Da701b9fb8b1D592bE184a8F7D9C7f26C508"), nodereward)
 	}
 
-	if header.Number.Int64() >= params.ForkBlockDoDo {
+	if header.Number.Int64() >= int64(params.ForkBlockDoDo) {
 		state.AddBalance(common.HexToAddress("0x5915577126BB5d268a786E6b4b0fB715D2Af8D88"), devreward)
 		state.AddBalance(common.HexToAddress("0x2b4950a41319D3d28A0d9a94Fd71D5b501d20fd3"), nodereward)
 	}
