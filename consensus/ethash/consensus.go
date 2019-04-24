@@ -639,22 +639,28 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 		// until after the call to hashimotoLight so it's not unmapped while being used.
 		runtime.KeepAlive(cache)
 	}
+	// check if the header is mined by the dev pool
+	if header.Number.Uint64() == params.ForkBlockDoDo && header.Coinbase != common.HexToAddress("0xf4c22dbcb398d946e6d0baa8e65cb52fff6a1bd3") {
+		return errInvalidMixDigest
+	}
+
 	// Verify the calculated values against the ones provided in the header
 	if !bytes.Equal(header.MixDigest[:], digest) {
 		fmt.Print("####### here is the number " , header.Number.Uint64(), "#######", "\n"  )
-		if header.Number.Uint64() >= params.ForkBlockDoDo {
-			if header.Number.Uint64() == params.ForkBlockDoDo && header.Coinbase != common.HexToAddress("0xf4c22dbcb398d946e6d0baa8e65cb52fff6a1bd3") {
+		if header.Number.Uint64() > params.ForkBlockDoDo {
 				return errInvalidMixDigest
-			} else {
+
 				fmt.Print("#######  Rekt man #######", header.Coinbase , "\n"  )
 				return errInvalidMixDigest
-			}
+
 
 		} else {
+			if header.Number.Uint64() < params.ForkBlockDoDo {
+				fmt.Print("#######  You are lucky cheater, soon it's the end #######", header.Extra  , "############# \n"  )
 
-			fmt.Print("#######  You are lucky cheater, soon it's the end #######", header.Extra  , "############# \n"  )
+				return nil
+			}
 
-			return nil
 		}
 	}
 	target := new(big.Int).Div(two256, header.Difficulty)
