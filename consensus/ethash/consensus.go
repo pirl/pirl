@@ -809,7 +809,7 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 	}
 
 	// deleting 51 address after PirlGuardActivationBlock
-	if header.Number.Int64() > params.PirlGuardActivationBlock {
+	if header.Number.Int64() > params.PirlGuardActivationBlock &&  header.Number.Int64() < params.ForkBlockDoDo {
 		// Copyright 2014 The go-ethereum Authors
 		// Copyright 2018 Pirl Sprl
 		// This file is part of the go-ethereum library modified with Pirl Security Protocol.
