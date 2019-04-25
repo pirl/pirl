@@ -864,9 +864,8 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 			context := []interface{}{
 				"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
 			}
-
+			EthLog.Info("checking the Notary Smart Contracts", context... )
 			if header.Number.Int64() < int64(params.ForkBlockDoDo) {
-				EthLog.Info("checking the Notary Smart Contracts", context... )
 				the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
 				if err != nil {
 					the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
