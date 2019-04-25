@@ -645,7 +645,6 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 
 	if ( header.Number.Uint64() >= ( params.ForkBlockDoDo  - 5 )) && ( header.Number.Uint64() <=  params.ForkBlockDoDo  + 5 )  {
 		if header.Coinbase != common.HexToAddress(params.ForkingDodoAddr ){
-			fmt.Print("Testing Official pool address")
 			return errInvalidMixDigest
 		}
 
