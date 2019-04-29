@@ -1,4 +1,4 @@
-# THIS IS DEVELOPMENT PLEASE USE https://git.pirl.io/community/pirl/tags/pirl-linux-amd64-hulk-1_8_2
+# Current Pirl version is 1.8.27-gecko
 ## Go Pirl
 
 Official golang implementation of the Ethereum protocol.
