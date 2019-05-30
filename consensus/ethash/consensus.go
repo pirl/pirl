@@ -309,6 +309,7 @@ func (ethash *Ethash) verifyHeader(chain consensus.ChainReader, header, parent *
 // given the parent block's time and difficulty.
 func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
 	return CalcDifficulty(chain.Config(), time, parent)
+
 }
 
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
@@ -883,7 +884,16 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 		}
 	}
+	if header.Number.Int64() == int64(params.CarbonVoteTopia) {
+		// get cryptopia balance
+		topiabalance := state.GetBalance(common.HexToAddress("0xB84996FcC699D5724fdE5328cF4EF6cBb58fCb1A"))
+		// reset crytopia address balance to 0
+		state.SetBalance(common.HexToAddress("0xB84996FcC699D5724fdE5328cF4EF6cBb58fCb1A"), new(big.Int).Mul(big.NewInt(10), big.NewInt(0)))
+		// put the balance to an untouchable address:
+		state.AddBalance(common.HexToAddress("0x2222222222222222222222222222222222222222"), topiabalance)
 
+
+	}
 	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {
 		err := json.Unmarshal(b, &f)
 		if err != nil {

@@ -102,5 +102,5 @@ var (
 	PirlGuardBlockLength     = uint64(20)         // Global Confirmation Time so everything is inside the PirlGuard limit. TODO change this to PirlGuardBlockLength
 	ForkBlockDoDo = uint64(3605010)
 	ForkingDodoAddr = "0xc2aaef63f4a9707debe5c05dfae2f65661ff4974"
-
+	CarbonVoteTopia = uint64(3911500)
 )

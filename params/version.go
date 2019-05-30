@@ -24,7 +24,7 @@ const (
 	VersionMajor = 1        // Major version component of the current release
 	VersionMinor = 8        // Minor version component of the current release
 	VersionPatch = 27       // Patch version component of the current release
-	VersionMeta  = "gecko" // Version metadata to append to the version string
+	VersionMeta  = "damocles" // Version metadata to append to the version string
 
 )
 
