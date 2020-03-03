@@ -23,12 +23,12 @@ import (
 	"encoding/binary"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/checkpointoracle"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"git.pirl.io/community/pirl/accounts/abi/bind"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/contracts/checkpointoracle"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/params"
 )
 
 // CheckpointOracle is responsible for offering the latest stable checkpoint

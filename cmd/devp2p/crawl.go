@@ -19,9 +19,9 @@ package main
 import (
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/p2p/enode"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/p2p/discover"
+	"git.pirl.io/community/pirl/p2p/enode"
 )
 
 type crawler struct {

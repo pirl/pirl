@@ -20,7 +20,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 func newTestFullNode(v []byte) []interface{} {

@@ -23,12 +23,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/les/flowcontrol"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
+	"git.pirl.io/community/pirl/common/mclock"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/les/flowcontrol"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/metrics"
 )
 
 const makeCostStats = false // make request cost statistics during operation

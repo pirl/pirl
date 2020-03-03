@@ -23,9 +23,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
+	"git.pirl.io/community/pirl/accounts"
+	"git.pirl.io/community/pirl/event"
+	"git.pirl.io/community/pirl/log"
 	"github.com/karalabe/usb"
 )
 

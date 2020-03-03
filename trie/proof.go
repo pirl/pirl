@@ -20,10 +20,10 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/ethdb"
+	"git.pirl.io/community/pirl/log"
+	"git.pirl.io/community/pirl/rlp"
 )
 
 // Prove constructs a merkle proof for key. The result contains all encoded nodes

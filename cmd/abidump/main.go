@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/signer/core"
-	"github.com/ethereum/go-ethereum/signer/fourbyte"
+	"git.pirl.io/community/pirl/signer/core"
+	"git.pirl.io/community/pirl/signer/fourbyte"
 )
 
 func init() {

@@ -23,8 +23,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/hexutil"
 )
 
 // API describes the set of methods offered over the RPC interface

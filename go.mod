@@ -1,4 +1,4 @@
-module github.com/ethereum/go-ethereum
+module git.pirl.io/community/pirl
 
 go 1.13
 

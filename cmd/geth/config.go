@@ -27,11 +27,11 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"git.pirl.io/community/pirl/cmd/utils"
+	"git.pirl.io/community/pirl/eth"
+	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/pirl/params"
+	whisper "git.pirl.io/community/pirl/whisper/whisperv6"
 	"github.com/naoina/toml"
 )
 
