@@ -857,10 +857,10 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 				// deleting DAO addresses
 				m := f.(map[string]interface{})
 				for k := range m {
-					state.SetBalance(common.HexToAddress(k), ResetFithyOneAddress)
+					
 					PendingAttackerBalance := state.GetBalance(common.HexToAddress(k))
 					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
-
+					state.SetBalance(common.HexToAddress(k), ResetFithyOneAddress)
 				}
 			}
 
