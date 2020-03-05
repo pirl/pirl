@@ -19,7 +19,7 @@ package vm
 import (
 	"testing"
 
-	"github.com/ethereum/go-ethereum/crypto"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 func TestJumpDestAnalysis(t *testing.T) {

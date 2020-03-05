@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common/math"
+	"git.pirl.io/community/pirl/common/math"
 )
 
 // Memory implements a simple memory model for the ethereum virtual machine.

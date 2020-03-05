@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/event"
+	"git.pirl.io/community/pirl/event"
 )
 
 // This example demonstrates how SubscriptionScope can be used to control the lifetime of

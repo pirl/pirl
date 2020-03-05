@@ -19,8 +19,8 @@ package vm
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
+	"git.pirl.io/community/pirl/common"
+	"git.pirl.io/community/pirl/common/math"
 )
 
 // calcMemSize64 calculates the required memory size, and returns

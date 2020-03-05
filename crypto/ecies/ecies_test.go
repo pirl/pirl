@@ -39,7 +39,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/crypto"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 // Ensure the KDF generates appropriately sized keys.

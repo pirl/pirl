@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
+	"git.pirl.io/community/pirl/cmd/utils"
 	"gopkg.in/urfave/cli.v1"
 )
 

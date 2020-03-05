@@ -22,7 +22,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/mclock"
+	"git.pirl.io/community/pirl/common/mclock"
 )
 
 const (

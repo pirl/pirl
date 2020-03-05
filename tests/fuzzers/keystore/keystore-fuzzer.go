@@ -19,7 +19,7 @@ package keystore
 import (
 	"os"
 
-	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"git.pirl.io/community/pirl/accounts/keystore"
 )
 
 func Fuzz(input []byte) int {

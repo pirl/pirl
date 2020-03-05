@@ -35,7 +35,7 @@ package whisperv6
 import (
 	"time"
 
-	"github.com/ethereum/go-ethereum/crypto"
+	"git.pirl.io/community/pirl/crypto"
 )
 
 // Whisper protocol parameters

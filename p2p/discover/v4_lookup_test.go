@@ -23,8 +23,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/p2p/enode"
+	"git.pirl.io/community/pirl/crypto"
+	"git.pirl.io/community/pirl/p2p/enode"
 )
 
 func TestUDPv4_Lookup(t *testing.T) {
