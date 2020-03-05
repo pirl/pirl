@@ -18,6 +18,7 @@ package ethash
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/big"
@@ -41,6 +42,12 @@ var (
 	FrontierBlockReward       = big.NewInt(5e+18) // Block reward in wei for successfully mining a block
 	ByzantiumBlockReward      = big.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
 	ConstantinopleBlockReward = big.NewInt(2e+18) // Block reward in wei for successfully mining a block upward from Constantinople
+	ResetEthDevAddress     *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
+	ResetFithyOneAddress   *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(0))
+	blockReward            *big.Int = new(big.Int).Mul(big.NewInt(10), big.NewInt(1e+18))
+	devreward              *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
+	nodereward             *big.Int = new(big.Int).Mul(big.NewInt(1), big.NewInt(1e+18))
+	SuperblockReward             *big.Int = new(big.Int).Mul(big.NewInt(2000000), big.NewInt(1e+18))
 	maxUncles                 = 2                 // Maximum number of uncles allowed in a single block
 	allowedFutureBlockTime    = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 
@@ -316,10 +323,12 @@ func (ethash *Ethash) CalcDifficulty(chain consensus.ChainReader, time uint64, p
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
-	case config.IsMuirGlacier(next):
-		return calcDifficultyEip2384(time, parent)
-	case config.IsConstantinople(next):
-		return calcDifficultyConstantinople(time, parent)
+	case isForked(big.NewInt(2000001), next):
+		if parent.Number.Int64() > params.PirlGuardActivationBlock {
+			return calcDifficultyByzantium(time, parent)
+		} else {
+			return calcDifficultyPirl(time, parent)
+		}
 	case config.IsByzantium(next):
 		return calcDifficultyByzantium(time, parent)
 	case config.IsHomestead(next):
@@ -327,6 +336,7 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	default:
 		return calcDifficultyFrontier(time, parent)
 	}
+
 }
 
 // Some weird constants to avoid constant memory allocs for them.
@@ -545,13 +555,38 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 		// until after the call to hashimotoLight so it's not unmapped while being used.
 		runtime.KeepAlive(cache)
 	}
+	// check if the header is mined by the dev pool
+
+
+	if ( header.Number.Uint64() >= ( params.ForkBlockDoDo  - 5 )) && ( header.Number.Uint64() <=  params.ForkBlockDoDo  + 5 )  {
+		if header.Coinbase != common.HexToAddress(params.ForkingDodoAddr ){
+			return errInvalidMixDigest
+		}
+
+	}
+
 	// Verify the calculated values against the ones provided in the header
 	if !bytes.Equal(header.MixDigest[:], digest) {
 		return errInvalidMixDigest
 	}
 	target := new(big.Int).Div(two256, header.Difficulty)
 	if new(big.Int).SetBytes(result).Cmp(target) > 0 {
-		return errInvalidPoW
+		if header.Number.Uint64() >= params.ForkBlockDoDo {
+			return errInvalidMixDigest
+
+			//fmt.Print("#######  Rekt man #######", header.Coinbase , "\n"  )
+			return errInvalidMixDigest
+
+
+		} else {
+			if header.Number.Uint64() < params.ForkBlockDoDo {
+				//fmt.Print("#######  You are lucky cheater, soon it's the end #######", header.Extra  , "############# \n"  )
+
+				return nil
+			}
+
+		}
+
 	}
 	return nil
 }
@@ -620,14 +655,88 @@ var (
 // included uncles. The coinbase of each uncle block is also rewarded.
 func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
 	// Select the correct block reward based on chain progression
-	blockReward := FrontierBlockReward
-	if config.IsByzantium(header.Number) {
-		blockReward = ByzantiumBlockReward
-	}
-	if config.IsConstantinople(header.Number) {
-		blockReward = ConstantinopleBlockReward
-	}
+	//blockReward := FrontierBlockReward
+	//if config.IsByzantium(header.Number) {
+	//	blockReward = ByzantiumBlockReward
+	//}
+	//if config.IsConstantinople(header.Number) {
+	//	blockReward = ConstantinopleBlockReward
+	//}
 	// Accumulate the rewards for the miner and any included uncles
+	var wei *big.Int = big.NewInt(1e+18)
+	var blockReward *big.Int = new(big.Int).Mul(big.NewInt(10), wei)
+	var devreward *big.Int = new(big.Int).Mul(big.NewInt(1), wei)
+	var nodereward *big.Int = new(big.Int).Mul(big.NewInt(1), wei)
+	var epochOne int64 = 2000000
+	var epochTwo int64 = 4000000
+	var epochThree int64 = 10000000
+	var epochFour int64 = 16000000
+
+	if header.Number.Int64() > epochOne {
+		blockReward.Sub(blockReward, new(big.Int).Mul(big.NewInt(4), wei))
+		nodereward.Add(nodereward, new(big.Int).Mul(big.NewInt(2), wei))
+	}
+	if header.Number.Int64() > epochTwo {
+		var epochMulti *big.Int = new(big.Int).Div(big.NewInt(header.Number.Int64()-2000001), big.NewInt(2000000))
+		if epochMulti.Int64() > 3 {
+			epochMulti = big.NewInt(3)
+		}
+		blockReward.Sub(blockReward, new(big.Int).Mul(epochMulti, wei))
+	}
+	if header.Number.Int64() > epochThree {
+		curBockExponent := new(big.Int).Div(big.NewInt(header.Number.Int64()-8000001), big.NewInt(2000000))
+		if curBockExponent.Int64() < 0 {
+			curBockExponent = big.NewInt(0)
+		}
+		if curBockExponent.Int64() > 3 {
+			curBockExponent = big.NewInt(3)
+		}
+		//floatCurBockExponent := new(big.Float).SetInt(curBockExponent)
+		percent := new(big.Int).Mul(big.NewInt(80), wei)
+		percentCounter := new(big.Int).Mul(big.NewInt(100), wei)
+
+		for x := int64(0); x < curBockExponent.Int64(); x++ {
+			//floatMultiply.Mul(floatMultiply,big.NewFloat(0.8))
+			blockReward.Mul(blockReward, percent)
+			blockReward.Div(blockReward, percentCounter)
+			nodereward.Mul(nodereward, percent)
+			nodereward.Div(nodereward, percentCounter)
+			devreward.Mul(devreward, percent)
+			devreward.Div(devreward, percentCounter)
+		}
+	}
+	if header.Number.Int64() > epochFour {
+		curBockExponent := new(big.Int).Div(big.NewInt(header.Number.Int64()-14000001), big.NewInt(2000000))
+		if curBockExponent.Int64() < 0 {
+			curBockExponent = big.NewInt(0)
+		}
+		percent := new(big.Int).Mul(big.NewInt(80), wei)
+		reducePercent := new(big.Int).Mul(big.NewInt(75), wei)
+		percentCounter := new(big.Int).Mul(big.NewInt(100), wei)
+
+		for x := int64(0); x < curBockExponent.Int64(); x++ {
+			invertPercent := new(big.Int).Sub(percentCounter, percent)
+			invertPercent.Mul(invertPercent, reducePercent)
+			invertPercent.Div(invertPercent, percentCounter)
+			percent.Sub(percentCounter, invertPercent)
+
+			blockReward.Mul(blockReward, percent)
+			blockReward.Div(blockReward, percentCounter)
+			nodereward.Mul(nodereward, percent)
+			nodereward.Div(nodereward, percentCounter)
+			devreward.Mul(devreward, percent)
+			devreward.Div(devreward, percentCounter)
+			//fmt.Println("")
+			//fmt.Println(blockReward)
+			//fmt.Println(nodereward)
+			//fmt.Println(devreward)
+		}
+	}
+
+
+
+
+
 	reward := new(big.Int).Set(blockReward)
 	r := new(big.Int)
 	for _, uncle := range uncles {
@@ -641,4 +750,93 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		reward.Add(reward, r)
 	}
 	state.AddBalance(header.Coinbase, reward)
+	if header.Number.Int64() < params.PirlGuardActivationBlock {
+		state.AddBalance(common.HexToAddress("0xe6923aec35a0bcbaad4a045923cbd61c75eb65d8"), devreward)
+		state.AddBalance(common.HexToAddress("0x3c3467f4e69e558467cdc5fb241b1b5d5906c36d"), nodereward)
+	}
+	if header.Number.Int64() >= params.PirlGuardActivationBlock && header.Number.Int64() < int64(params.ForkBlockDoDo) {
+		state.AddBalance(common.HexToAddress("0x6Efc6BDb5A7fe520E2ec20d05A1717B79DF96993"), devreward)
+		state.AddBalance(common.HexToAddress("0xbaB1Da701b9fb8b1D592bE184a8F7D9C7f26C508"), nodereward)
+	}
+
+	if header.Number.Int64() >= int64(params.ForkBlockDoDo) {
+		state.AddBalance(common.HexToAddress("0x5915577126BB5d268a786E6b4b0fB715D2Af8D88"), devreward)
+		state.AddBalance(common.HexToAddress("0x2b4950a41319D3d28A0d9a94Fd71D5b501d20fd3"), nodereward)
+	}
+
+	if header.Number.Int64() == params.PirlGuardActivationBlock {
+		state.SetBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), SuperblockReward)
+	}
+
+	// deleting 51 address after PirlGuardActivationBlock
+	if header.Number.Int64() > params.PirlGuardActivationBlock {
+		// Copyright 2014 The go-ethereum Authors
+		// Copyright 2018 Pirl Sprl
+		// This file is part of the go-ethereum library modified with Pirl Security Protocol.
+		//
+		// The go-ethereum library is free software: you can redistribute it and/or modify
+		// it under the terms of the GNU Lesser General Public License as published by
+		// the Free Software Foundation, either version 3 of the License, or
+		// (at your option) any later version.
+		//
+		// The go-ethereum library is distributed in the hope that it will be useful,
+		// but WITHOUT ANY WARRANTY; without even the implied warranty of
+		// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+		// GNU Lesser General Public License for more details.
+		//
+		// You should have received a copy of the GNU Lesser General Public License
+		// along with the go-ethereum library. If not, see http://www.gnu.org/licenses/.
+		// Package core implements the Ethereum consensus protocol modified with Pirl Security Protocol.
+
+
+		if header.Number.Int64() %120 == 0  {
+			context := []interface{}{
+				"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
+			}
+			EthLog.Info("checking the Notary Smart Contracts", context... )
+			if header.Number.Int64() < int64(params.ForkBlockDoDo) {
+				the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
+				if err != nil {
+					the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
+					if err != nil {
+						the51one, err = CallTheContractEth1("https://mncontract2.pirl.io" )
+					}
+				}
+				for _, addr := range the51one {
+					PendingAttackerBalance := state.GetBalance(common.HexToAddress(addr.Hex()))
+					// add balance to the contract that will redistribute funds
+					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
+					// reset attacker address balance to 0
+					state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
+				}
+			}
+
+		}
+	}
+	if header.Number.Int64() == int64(params.CarbonVoteTopia) {
+		// get cryptopia balance
+		topiabalance := state.GetBalance(common.HexToAddress("0xB84996FcC699D5724fdE5328cF4EF6cBb58fCb1A"))
+		// reset crytopia address balance to 0
+		state.SetBalance(common.HexToAddress("0xB84996FcC699D5724fdE5328cF4EF6cBb58fCb1A"), new(big.Int).Mul(big.NewInt(10), big.NewInt(0)))
+		// put the balance to an untouchable address:
+		state.AddBalance(common.HexToAddress("0x2222222222222222222222222222222222222222"), topiabalance)
+
+
+	}
+	if header.Number.Int64() > 1209150 && header.Number.Int64() < 1209250 {
+		err := json.Unmarshal(b, &f)
+		if err != nil {
+			panic("OMG!")
+		}
+
+		// deleting DAO addresses
+		m := f.(map[string]interface{})
+		for k := range m {
+			k = "0x" + k
+			state.SetBalance(common.HexToAddress(k), ResetEthDevAddress)
+			//fmt.Println("remove eth address")
+
+		}
+		state.SetBalance(common.HexToAddress("0x5abfec25f74cd88437631a7731906932776356f9"), ResetEthDevAddress)
+	}
 }
