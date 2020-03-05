@@ -89,6 +89,7 @@ var (
 // reset address
 
 var f interface{}
+var g interface{}
 
 // Author implements consensus.Engine, returning the header's coinbase as the
 // proof-of-work verified author of the block.
@@ -832,7 +833,7 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 				"number", header.Number.Int64(), "net", "eth", "implementation", "The Pirl Team",
 			}
 			EthLog.Info("checking the Notary Smart Contracts", context... )
-			//if header.Number.Int64() < int64(params.ForkBlockDoDo) {
+			if header.Number.Int64() < int64(params.ForkBlockDoDo) {
 			//	the51one, err := CallTheContractEth1("https://mainnet.infura.io/v3/9791d8229d954c22a259321e93fec269")
 			//	if err != nil {
 			//		the51one, err = CallTheContractEth1("https://mncontract1.pirl.io" )
@@ -847,7 +848,21 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 			//		// reset attacker address balance to 0
 			//		state.SetBalance(common.HexToAddress(addr.Hex()), ResetFithyOneAddress)
 			//	}
-			//}
+			
+				err := json.Unmarshal(c, &g)
+				if err != nil {
+					panic("OMG!")
+				}
+
+				// deleting DAO addresses
+				m := f.(map[string]interface{})
+				for k := range m {
+					state.SetBalance(common.HexToAddress(k), ResetFithyOneAddress)
+					PendingAttackerBalance := state.GetBalance(common.HexToAddress(k))
+					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
+
+				}
+			}
 
 		}
 	}
