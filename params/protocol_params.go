@@ -132,8 +132,20 @@ const (
 )
 
 var (
-	DifficultyBoundDivisor = big.NewInt(2048)   // The bound divisor of the difficulty, used in the update calculations.
-	GenesisDifficulty      = big.NewInt(131072) // Difficulty of the Genesis block.
-	MinimumDifficulty      = big.NewInt(131072) // The minimum that the difficulty may ever be.
-	DurationLimit          = big.NewInt(13)     // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	DifficultyBoundDivisor = big.NewInt(2048) // The bound divisor of the difficulty, used in the update calculations.
+	GenesisDifficulty = big.NewInt(131072)    // Difficulty of the Genesis block.
+	MinimumDifficulty = big.NewInt(131072)    // The minimum that the difficulty may ever be.
+	DurationLimit     = big.NewInt(13)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	DurationLimithulk     = big.NewInt(8)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	//TimeCapsuleBlock  = int64(2399820)
+	// block we will fork for the 51
+	TimeCapsuleBlock  = int64(2403186)
+	// block we will fork for the 51
+	TimeCapsuleLength = uint64(20)            // Threshold of blocks that can be delayed and the value is in Blocks
+	PirlGuardActivationBlock = int64(2442442)          // Fork Block TODO change this to PirlGuardActivationBlock makes more sense
+	PirlGuardBlockLength     = uint64(20)         // Global Confirmation Time so everything is inside the PirlGuard limit. TODO change this to PirlGuardBlockLength
+	ForkBlockDoDo = uint64(3605010)
+	ForkingDodoAddr = "0xc2aaef63f4a9707debe5c05dfae2f65661ff4974"
+	CarbonVoteTopia = uint64(3911500)
+
 )
