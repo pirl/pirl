@@ -62,11 +62,11 @@ var (
 		EIP150Hash:          common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:         big.NewInt(0),
 		EIP158Block:         big.NewInt(0),
-		ByzantiumBlock:      nil,
-		ConstantinopleBlock: nil,
-		PetersburgBlock:     nil,
-		IstanbulBlock:       big.NewInt(9069000), //TODO fix block of fork
-		MuirGlacierBlock:    big.NewInt(9200000),
+		ByzantiumBlock:      big.NewInt(5999999),
+		ConstantinopleBlock: big.NewInt(6000000),
+		PetersburgBlock:     big.NewInt(6000010),
+		IstanbulBlock:       big.NewInt(6000020), //TODO fix block of fork
+		MuirGlacierBlock:    nil,
 		Ethash:              new(EthashConfig),
 	}
 
