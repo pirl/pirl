@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	//git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99
+	//git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
 	github.com/Azure/azure-storage-blob-go v0.7.0
 	github.com/Azure/go-autorest/autorest/adal v0.8.0 // indirect

@@ -1,5 +1,7 @@
 //git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99 h1:SppOldXbN5FAsGq7L5M3DVNeDrNB3c95Sn1Ap9rZSYA=
 //git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99/go.mod h1:uey2zlSDCcMvLDTqxLUYXwj/X3KObEmwh9kdy5CXgtk=
+//git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99 h1:SppOldXbN5FAsGq7L5M3DVNeDrNB3c95Sn1Ap9rZSYA=
+//git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99/go.mod h1:uey2zlSDCcMvLDTqxLUYXwj/X3KObEmwh9kdy5CXgtk=
 github.com/Azure/azure-pipeline-go v0.2.1/go.mod h1:UGSo8XybXnIGZ3epmeBw7Jdz+HiUVpqIlpz/HKHylF4=
 github.com/Azure/azure-pipeline-go v0.2.2 h1:6oiIS9yaG6XCCzhgAgKFfIWyo4LLCiDhZot6ltoThhY=
 github.com/Azure/azure-pipeline-go v0.2.2/go.mod h1:4rQ/NZncSvGqNkkOsNpOU1tgoNuIlp9AfUH5G1tvCHc=
