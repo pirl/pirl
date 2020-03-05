@@ -1,5 +1,5 @@
-git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99 h1:SppOldXbN5FAsGq7L5M3DVNeDrNB3c95Sn1Ap9rZSYA=
-git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99/go.mod h1:uey2zlSDCcMvLDTqxLUYXwj/X3KObEmwh9kdy5CXgtk=
+//git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99 h1:SppOldXbN5FAsGq7L5M3DVNeDrNB3c95Sn1Ap9rZSYA=
+//git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99/go.mod h1:uey2zlSDCcMvLDTqxLUYXwj/X3KObEmwh9kdy5CXgtk=
 github.com/Azure/azure-pipeline-go v0.2.1/go.mod h1:UGSo8XybXnIGZ3epmeBw7Jdz+HiUVpqIlpz/HKHylF4=
 github.com/Azure/azure-pipeline-go v0.2.2 h1:6oiIS9yaG6XCCzhgAgKFfIWyo4LLCiDhZot6ltoThhY=
 github.com/Azure/azure-pipeline-go v0.2.2/go.mod h1:4rQ/NZncSvGqNkkOsNpOU1tgoNuIlp9AfUH5G1tvCHc=
@@ -158,6 +158,8 @@ github.com/pborman/uuid v0.0.0-20170112150404-1b00554d8222 h1:goeTyGkArOZIVOMA0d
 github.com/pborman/uuid v0.0.0-20170112150404-1b00554d8222/go.mod h1:VyrYX9gd7irzKovcSS6BIIEwPRkP2Wm2m9ufcdFSJ34=
 github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7 h1:oYW+YCJ1pachXTQmzR3rNLYGGz4g/UgFcjb28p/viDM=
 github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7/go.mod h1:CRroGNssyjTd/qIG2FyxByd2S8JEAZXBl4qUrZf8GS0=
+github.com/pirl/pirl v0.0.0-20191214194016-64bdc9f17aba h1:L0tFAAlVr08kIpPVFyjwi1P+tRr0YJk+t7BBN2Bv7z4=
+github.com/pirl/pirl v0.0.0-20191214194016-64bdc9f17aba/go.mod h1:QqyOofYY/oTJiw3o1+SHH83L2vcy/iV9APfSh483VVA=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

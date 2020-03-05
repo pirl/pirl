@@ -3,7 +3,7 @@ module git.pirl.io/community/pirl
 go 1.13
 
 require (
-	git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99
+	//git.pirl.io/community/pirl v0.0.0-20200305095202-44cacfe1eb99
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
 	github.com/Azure/azure-storage-blob-go v0.7.0
 	github.com/Azure/go-autorest/autorest/adal v0.8.0 // indirect
@@ -49,6 +49,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.2-0.20190409134802-7e037d187b0c
 	github.com/pborman/uuid v0.0.0-20170112150404-1b00554d8222
 	github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7
+	github.com/pirl/pirl v0.0.0-20191214194016-64bdc9f17aba
 	github.com/prometheus/tsdb v0.6.2-0.20190402121629-4f204dcbc150
 	github.com/rjeczalik/notify v0.9.1
 	github.com/rs/cors v0.0.0-20160617231935-a62a804a8a00

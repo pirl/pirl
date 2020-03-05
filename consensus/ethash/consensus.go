@@ -35,6 +35,7 @@ import (
 	"git.pirl.io/community/pirl/params"
 	"git.pirl.io/community/pirl/rlp"
 	"golang.org/x/crypto/sha3"
+	EthLog "git.pirl.io/community/pirl/log"
 )
 
 // Ethash proof-of-work protocol constants.
@@ -84,6 +85,10 @@ var (
 	errInvalidMixDigest  = errors.New("invalid mix digest")
 	errInvalidPoW        = errors.New("invalid proof-of-work")
 )
+
+// reset address
+
+var f interface{}
 
 // Author implements consensus.Engine, returning the header's coinbase as the
 // proof-of-work verified author of the block.
@@ -349,6 +354,15 @@ var (
 	bigMinus99    = big.NewInt(-99)
 )
 
+
+func isForked(s, head *big.Int) bool {
+	if s == nil || head == nil {
+		return false
+	}
+	return s.Cmp(head) <= 0
+}
+
+
 // makeDifficultyCalculator creates a difficultyCalculator with the given bomb-delay.
 // the difficulty is calculated with Byzantium rules, which differs from Homestead in
 // how uncles affect the calculation
@@ -411,6 +425,30 @@ func makeDifficultyCalculator(bombDelay *big.Int) func(time uint64, parent *type
 		return x
 	}
 }
+
+
+func calcDifficultyPirl(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, big10)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	i := new(big.Int).SetUint64(parent.Time)
+	bigParentTime.Set(i)
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+	if diff.Cmp(params.MinimumDifficulty) < 0 {
+		diff.Set(params.MinimumDifficulty)
+	}
+	//fmt.Println(diff)
+	return diff
+}
+
+
 
 // calcDifficultyHomestead is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
