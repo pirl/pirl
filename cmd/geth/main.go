@@ -29,24 +29,24 @@ import (
 	"time"
 
 	"github.com/elastic/gosigar"
-	"git.pirl.io/community/pirl/accounts"
-	"git.pirl.io/community/pirl/accounts/keystore"
-	"git.pirl.io/community/pirl/cmd/utils"
-	"git.pirl.io/community/pirl/common"
-	"git.pirl.io/community/pirl/console"
-	"git.pirl.io/community/pirl/eth"
-	"git.pirl.io/community/pirl/eth/downloader"
-	"git.pirl.io/community/pirl/ethclient"
-	"git.pirl.io/community/pirl/internal/debug"
-	"git.pirl.io/community/pirl/les"
-	"git.pirl.io/community/pirl/log"
-	"git.pirl.io/community/pirl/metrics"
-	"git.pirl.io/community/pirl/node"
+	"git.pirl.io/community/go-pirl/accounts"
+	"git.pirl.io/community/go-pirl/accounts/keystore"
+	"git.pirl.io/community/go-pirl/cmd/utils"
+	"git.pirl.io/community/go-pirl/common"
+	"git.pirl.io/community/go-pirl/console"
+	"git.pirl.io/community/go-pirl/eth"
+	"git.pirl.io/community/go-pirl/eth/downloader"
+	"git.pirl.io/community/go-pirl/ethclient"
+	"git.pirl.io/community/go-pirl/internal/debug"
+	"git.pirl.io/community/go-pirl/les"
+	"git.pirl.io/community/go-pirl/log"
+	"git.pirl.io/community/go-pirl/metrics"
+	"git.pirl.io/community/go-pirl/node"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
 const (
-	clientIdentifier = "geth" // Client identifier to advertise over the network
+	clientIdentifier = "pirl" // Client identifier to advertise over the network
 )
 
 var (
