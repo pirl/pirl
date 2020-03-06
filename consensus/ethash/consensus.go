@@ -671,29 +671,30 @@ func (ethash *Ethash) verifySeal(chain consensus.ChainReader, header *types.Head
 
 	// Verify the calculated values against the ones provided in the header
 	if !bytes.Equal(header.MixDigest[:], digest) {
-		return errInvalidMixDigest
-	}
-	target := new(big.Int).Div(two256, header.Difficulty)
-	if new(big.Int).SetBytes(result).Cmp(target) > 0 {
 		if header.Number.Uint64() >= params.ForkBlockDoDo {
-			return errInvalidMixDigest
+				return errInvalidMixDigest
 
-			//fmt.Print("#######  Rekt man #######", header.Coinbase , "\n"  )
-			return errInvalidMixDigest
+				//#TODO need to check the removal, 2 return
+				return errInvalidMixDigest
 
 
 		} else {
 			if header.Number.Uint64() < params.ForkBlockDoDo {
-				//fmt.Print("#######  You are lucky cheater, soon it's the end #######", header.Extra  , "############# \n"  )
+				//escape the invalid header of the hack
 
 				return nil
 			}
 
 		}
-
+	}
+	target := new(big.Int).Div(two256, header.Difficulty)
+	if new(big.Int).SetBytes(result).Cmp(target) > 0 {
+		return errInvalidPoW
 	}
 	return nil
 }
+
+
 
 // Prepare implements consensus.Engine, initializing the difficulty field of a
 // header to conform to the ethash protocol. The changes are done inline.
