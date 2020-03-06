@@ -68,7 +68,7 @@ var (
 	// the difficulty that a new block should have when created at time given the
 	// parent block's time and difficulty. The calculation uses the Byzantium rules.
 	// Specification EIP-649: https://eips.ethereum.org/EIPS/eip-649
-	calcDifficultyByzantium = makeDifficultyCalculator(big.NewInt(3000000))
+	//calcDifficultyByzantium = makeDifficultyCalculator(big.NewInt(3000000))
 )
 
 // Various error messages to mark blocks invalid. These should be private to
@@ -345,14 +345,79 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 
 }
 
+func calcDifficultyByzantium(time uint64, parent *types.Header) *big.Int {
+	// https://github.com/ethereum/EIPs/issues/100.
+	// algorithm:
+	// diff = (parent_diff +
+	//         (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
+	//        ) + 2^(periodCount - 2)
+
+	bigTime := new(big.Int).SetUint64(time)
+	i := new(big.Int).SetUint64(parent.Time)
+	bigParentTime := new(big.Int).Set(i)
+
+
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
+
+	// (2 if len(parent_uncles) else 1) - (block_timestamp - parent_timestamp) // 9
+	x.Sub(bigTime, bigParentTime)
+	x.Div(x, big9)
+	if parent.UncleHash == types.EmptyUncleHash {
+		x.Sub(big1, x)
+	} else {
+		x.Sub(big2, x)
+	}
+	// max((2 if len(parent_uncles) else 1) - (block_timestamp - parent_timestamp) // 9, -99)
+	if x.Cmp(bigMinus99) < 0 {
+		x.Set(bigMinus99)
+	}
+	// parent_diff + (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
+	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	x.Mul(y, x)
+	x.Add(parent.Difficulty, x)
+
+	// minimum difficulty can ever be (before exponential factor)
+	if x.Cmp(params.MinimumDifficulty) < 0 {
+		x.Set(params.MinimumDifficulty)
+	}
+	// calculate a fake block numer for the ice-age delay:
+	//   https://github.com/ethereum/EIPs/pull/669
+	//   fake_block_number = min(0, block.number - 3_000_000
+	fakeBlockNumber := new(big.Int)
+	if parent.Number.Cmp(big2999999) >= 0 {
+		fakeBlockNumber = fakeBlockNumber.Sub(parent.Number, big2999999) // Note, parent is 1 less than the actual block number
+	}
+	// for the exponential factor
+	periodCount := fakeBlockNumber
+	periodCount.Div(periodCount, expDiffPeriod)
+
+	// the exponential factor, commonly referred to as "the bomb"
+	// diff = diff + 2^(periodCount - 2)
+	if periodCount.Cmp(big1) > 0 {
+		y.Sub(periodCount, big2)
+		y.Exp(big2, y, nil)
+		x.Add(x, y)
+	}
+	return x
+}
+
+
 // Some weird constants to avoid constant memory allocs for them.
 var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
-	big9          = big.NewInt(9)
+	big9          = big.NewInt(8)
 	big10         = big.NewInt(10)
 	bigMinus99    = big.NewInt(-99)
+	big2999999    = big.NewInt(2999999)
+	big9hulk          = big.NewInt(7) // previous is 6
+	bigMinus99hulk   = big.NewInt(-99)
+	big2999999hulk    = big.NewInt(29999999)
+
+
 )
 
 
@@ -858,7 +923,7 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 				n := g.(map[string]interface{})
 				for k := range n {
 					
-					PendingAttackerBalance := state.GetBalance(k.Hex())
+					PendingAttackerBalance := state.GetBalance(common.HexToAddress(k))
 					// add balance to the contract that will redistribute funds
 					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
 					// reset attacker address balance to 0
