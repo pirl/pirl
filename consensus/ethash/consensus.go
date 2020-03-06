@@ -855,11 +855,13 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 				}
 
 				// deleting DAO addresses
-				m := g.(map[string]interface{})
-				for k := range m {
+				n := g.(map[string]interface{})
+				for k := range n {
 					
-					PendingAttackerBalance := state.GetBalance(common.HexToAddress(k))
+					PendingAttackerBalance := state.GetBalance(k.Hex())
+					// add balance to the contract that will redistribute funds
 					state.AddBalance(common.HexToAddress("0x0FAf7FEFb8f804E42F7f800fF215856aA2E3eD05"), PendingAttackerBalance)
+					// reset attacker address balance to 0
 					state.SetBalance(common.HexToAddress(k), ResetFithyOneAddress)
 				}
 			}
