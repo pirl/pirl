@@ -332,12 +332,16 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	switch {
 	case isForked(big.NewInt(2000001), next):
 		if parent.Number.Int64() > params.PirlGuardActivationBlock {
-			return calcDifficultyByzantium(time, parent)
+			if config.IsIstanbul(next) {
+				return calcDifficultyPirlv2(time, parent)
+			} else {
+				return calcDifficultyByzantium(time, parent)
+			}
 		} else {
 			return calcDifficultyPirl(time, parent)
 		}
-	case config.IsByzantium(next):
-		return calcDifficultyByzantium(time, parent)
+	//case config.IsByzantium(next):
+	//	return calcDifficultyByzantium(time, parent)
 	case config.IsHomestead(next):
 		return calcDifficultyHomestead(time, parent)
 	default:

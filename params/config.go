@@ -45,7 +45,7 @@ var TrustedCheckpoints = map[common.Hash]*TrustedCheckpoint{
 // CheckpointOracles associates each known checkpoint oracles with the genesis hash of
 // the chain it belongs to.
 var CheckpointOracles = map[common.Hash]*CheckpointOracleConfig{
-	MainnetGenesisHash: MainnetCheckpointOracle,
+	//MainnetGenesisHash: MainnetCheckpointOracle,
 	TestnetGenesisHash: TestnetCheckpointOracle,
 	RinkebyGenesisHash: RinkebyCheckpointOracle,
 	GoerliGenesisHash:  GoerliCheckpointOracle,
@@ -63,9 +63,9 @@ var (
 		EIP155Block:         big.NewInt(0),
 		EIP158Block:         big.NewInt(0),
 		ByzantiumBlock:      big.NewInt(5980052),
-		ConstantinopleBlock: big.NewInt(5980072),
-		PetersburgBlock:     big.NewInt(5980092),
-		IstanbulBlock:       big.NewInt(5980100), 
+		ConstantinopleBlock: big.NewInt(5980055),
+		PetersburgBlock:     big.NewInt(5980060),
+		IstanbulBlock:       big.NewInt(5980070),
 		MuirGlacierBlock:    nil,
 		Ethash:              new(EthashConfig),
 	}
