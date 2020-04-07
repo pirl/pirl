@@ -136,7 +136,8 @@ var (
 	GenesisDifficulty = big.NewInt(131072)    // Difficulty of the Genesis block.
 	MinimumDifficulty = big.NewInt(131072)    // The minimum that the difficulty may ever be.
 	DurationLimit     = big.NewInt(13)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	DurationLimithulk     = big.NewInt(8)        // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	DurationLimithulk     = big.NewInt(8)
+	DurationLimitPirlHash = big.NewInt(8)// The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 	//TimeCapsuleBlock  = int64(2399820)
 	// block we will fork for the 51
 	TimeCapsuleBlock  = int64(2403186)
