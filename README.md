@@ -1,4 +1,7 @@
-# Current Pirl version is 1.8.27-gecko
+# THIS VERSION OF PIRL IS DEPRECIATED, WE HAVE MOVED TO NPOS PROTOCOL
+
+
+## Current Pirl version is 1.8.27-gecko
 ## Go Pirl
 
 Official golang implementation of the Ethereum protocol.
